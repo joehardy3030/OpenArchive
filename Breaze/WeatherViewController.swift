@@ -9,10 +9,13 @@
 import UIKit
 
 class WeatherViewController: UIViewController {
-
+    var store = WeatherStore()
+    //var store: WeatherStore!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        store.fetchInterestingPhotos()
     }
 
     override func didReceiveMemoryWarning() {

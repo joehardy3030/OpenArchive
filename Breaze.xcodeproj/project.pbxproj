@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D8357A9720240BAD005657DF /* WundergroundAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8357A9620240BAD005657DF /* WundergroundAPI.swift */; };
+		D8357A9920240C00005657DF /* AQSAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8357A9820240C00005657DF /* AQSAPI.swift */; };
 		D85A4EEF2022D0B600E480FB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A4EEE2022D0B600E480FB /* AppDelegate.swift */; };
 		D85A4EF12022D0B600E480FB /* WeatherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A4EF02022D0B600E480FB /* WeatherViewController.swift */; };
 		D85A4EF32022D0B600E480FB /* SmogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A4EF22022D0B600E480FB /* SmogViewController.swift */; };
@@ -15,6 +17,7 @@
 		D85A4EFB2022D0B600E480FB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D85A4EF92022D0B600E480FB /* LaunchScreen.storyboard */; };
 		D85A4F062022D0B600E480FB /* BreazeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A4F052022D0B600E480FB /* BreazeTests.swift */; };
 		D85A4F112022D0B600E480FB /* BreazeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A4F102022D0B600E480FB /* BreazeUITests.swift */; };
+		D884508E2026B18500C5379C /* WeatherStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D884508D2026B18500C5379C /* WeatherStore.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +38,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D8357A9620240BAD005657DF /* WundergroundAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WundergroundAPI.swift; sourceTree = "<group>"; };
+		D8357A9820240C00005657DF /* AQSAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AQSAPI.swift; sourceTree = "<group>"; };
 		D85A4EEB2022D0B500E480FB /* Breaze.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Breaze.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D85A4EEE2022D0B600E480FB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D85A4EF02022D0B600E480FB /* WeatherViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherViewController.swift; sourceTree = "<group>"; };
@@ -49,6 +54,7 @@
 		D85A4F0C2022D0B600E480FB /* BreazeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BreazeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D85A4F102022D0B600E480FB /* BreazeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreazeUITests.swift; sourceTree = "<group>"; };
 		D85A4F122022D0B600E480FB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D884508D2026B18500C5379C /* WeatherStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherStore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,8 +86,8 @@
 			isa = PBXGroup;
 			children = (
 				D85A4EED2022D0B500E480FB /* Breaze */,
-				D85A4F042022D0B600E480FB /* BreazeTests */,
 				D85A4F0F2022D0B600E480FB /* BreazeUITests */,
+				D85A4F042022D0B600E480FB /* BreazeTests */,
 				D85A4EEC2022D0B500E480FB /* Products */,
 			);
 			sourceTree = "<group>";
@@ -102,6 +108,9 @@
 				D85A4EEE2022D0B600E480FB /* AppDelegate.swift */,
 				D85A4EF02022D0B600E480FB /* WeatherViewController.swift */,
 				D85A4EF22022D0B600E480FB /* SmogViewController.swift */,
+				D8357A9620240BAD005657DF /* WundergroundAPI.swift */,
+				D884508D2026B18500C5379C /* WeatherStore.swift */,
+				D8357A9820240C00005657DF /* AQSAPI.swift */,
 				D85A4EF42022D0B600E480FB /* Main.storyboard */,
 				D85A4EF72022D0B600E480FB /* Assets.xcassets */,
 				D85A4EF92022D0B600E480FB /* LaunchScreen.storyboard */,
@@ -262,8 +271,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D884508E2026B18500C5379C /* WeatherStore.swift in Sources */,
+				D8357A9920240C00005657DF /* AQSAPI.swift in Sources */,
 				D85A4EF32022D0B600E480FB /* SmogViewController.swift in Sources */,
 				D85A4EEF2022D0B600E480FB /* AppDelegate.swift in Sources */,
+				D8357A9720240BAD005657DF /* WundergroundAPI.swift in Sources */,
 				D85A4EF12022D0B600E480FB /* WeatherViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

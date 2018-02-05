@@ -10,12 +10,13 @@ import UIKit
 
 class WeatherViewController: UIViewController {
     var store = WeatherStore()
-    //var store: WeatherStore!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        store.fetchInterestingPhotos()
+        store.fetchSimpleForecast()
+        store.fetchHourlyForecast()
+
     }
 
     override func didReceiveMemoryWarning() {

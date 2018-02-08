@@ -54,13 +54,27 @@ struct WundergroundAPI {
             }
             var finalSimpleForecast = [SimpleForecastDay]()
             for forecastdayJSON in forecastdaysArray {
-                print(forecastdayJSON)
+                if let simpleForecastDay = simpleForecastDay(fromJSON: forecastdayJSON) {
+                    finalSimpleForecast.append(simpleForecastDay)
+                    print(simpleForecastDay.high)
+                }
             }
             return .success(finalSimpleForecast)
         }
         catch let error {
             return .failure(error)
         }
+    }
+    
+    private static func simpleForecastDay(fromJSON json: [String : Any]) -> SimpleForecastDay? {
+        guard
+            let highDictionary = json["high"] as? [String:Any],
+            let high = highDictionary["fahrenheit"] as? String
+            else {
+                return nil
+        }
+        print("High temp \(high) F")
+        return SimpleForecastDay(high: high)
     }
 
     static func hourlyForecast(fromJSON data: Data) -> HourlyForecastResult {

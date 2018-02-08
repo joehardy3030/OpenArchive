@@ -14,8 +14,17 @@ class WeatherViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        store.fetchSimpleForecast()
-        store.fetchHourlyForecast()
+        store.fetchSimpleForecast {
+            (SimpleForecastResult) -> Void in
+            
+            switch SimpleForecastResult {
+            case let .success(simpleForecast):
+                print("Successfully found \(simpleForecast)")
+            case let .failure(error):
+                print("Error fetching simple forecast: \(error)")
+            }
+        }
+        //store.fetchHourlyForecast()
 
     }
 

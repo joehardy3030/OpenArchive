@@ -9,16 +9,16 @@
 import Foundation
 
 class SimpleForecastDay {
-   // "high": {
-   // celsius = 22;
-   // fahrenheit = 72;
-    //}
+
     let high: String
-    //let remoteURL: URL
-    //let photoID: String
-    //let dateTaken: Date
+    let low: String
+    let icon: String
+    let icon_url: String
     
-    init(high: String) {
+    init(high: String, low: String, icon: String, icon_url: String) {
         self.high = high
+        self.low = low
+        self.icon = icon
+        self.icon_url = icon_url
     }
 }

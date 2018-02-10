@@ -8,7 +8,15 @@
 
 import UIKit
 
-class WeatherViewController: UIViewController {
+class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        <#code#>
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        <#code#>
+    }
+    
     var store = WeatherStore()
     
     override func viewDidLoad() {
@@ -19,7 +27,10 @@ class WeatherViewController: UIViewController {
             
             switch SimpleForecastResult {
             case let .success(simpleForecast):
-                print("Successfully found \(simpleForecast)")
+                for simpleForecastDay in simpleForecast {
+                        print("Successfully found \(simpleForecastDay.high)")
+                }
+                
             case let .failure(error):
                 print("Error fetching simple forecast: \(error)")
             }

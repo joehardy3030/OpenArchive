@@ -76,17 +76,19 @@ struct WundergroundAPI {
             let lowDictionary = json["low"] as? [String:Any],
             let low = lowDictionary["fahrenheit"] as? String,
             let icon = json["icon"] as? String,
-            let icon_url = json["icon_url"] as? String
-           // let avehumidity = json["avehumidity"] as? String
+            let icon_url = json["icon_url"] as? String,
+            let conditions = json["conditions"] as? String,
+            let avehumidity = json["avehumidity"] as? Int
         
             else {
                 return nil
         }
-      //  print(avehumidity)
         return SimpleForecastDay(high: high,
                                  low: low,
                                  icon: icon,
-                                 icon_url: icon_url)
+                                 icon_url: icon_url,
+                                 conditions: conditions,
+                                 avehumidity: avehumidity)
     }
 
     static func hourlyForecast(fromJSON data: Data) -> HourlyForecastResult {

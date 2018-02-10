@@ -30,6 +30,6 @@ class SimpleForecastDay: NSObject {
         self.conditions = conditions
         self.avehumidity = avehumidity
         
-        super.init()
+        super.init()            
     }
 }

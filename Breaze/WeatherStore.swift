@@ -6,7 +6,7 @@
 //  Copyright © 2018 Carquinez. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 enum HourlyForecastResult {
     case success([HourlyForecastHour])

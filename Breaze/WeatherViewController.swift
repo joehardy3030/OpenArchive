@@ -11,6 +11,7 @@ import UIKit
 class WeatherViewController: UITableViewController {
     
     var store = WeatherStore()
+    var weatherArray = [SimpleForecastDay]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,10 +21,14 @@ class WeatherViewController: UITableViewController {
             
             switch SimpleForecastResult {
             case let .success(simpleForecast):
+                self.weatherArray = simpleForecast
+                print("count \(self.weatherArray.count)")
                 for simpleForecastDay in simpleForecast {
                         print("Successfully found \(simpleForecastDay.high)")
                 }
-                
+         //       DispatchQueue.main.async{
+          //          self.tableView.reloadData()
+           //     }
             case let .failure(error):
                 print("Error fetching simple forecast: \(error)")
             }
@@ -37,6 +42,9 @@ class WeatherViewController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.weatherArray.count
+    }
 
 }
 

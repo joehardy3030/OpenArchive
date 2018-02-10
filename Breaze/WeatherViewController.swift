@@ -8,14 +8,7 @@
 
 import UIKit
 
-class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        <#code#>
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        <#code#>
-    }
+class WeatherViewController: UITableViewController {
     
     var store = WeatherStore()
     

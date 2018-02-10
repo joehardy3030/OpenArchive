@@ -48,7 +48,10 @@ class WeatherViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // create an instance of UITableViewCell
-        let cell = UITableViewCell(style: .value1, reuseIdentifier: "UITableViewCell")
+       // let cell = UITableViewCell(style: .value1, reuseIdentifier: "UITableViewCell")
+        
+        // Get a new or recycled cell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "SimpleForecastCell", for: indexPath)
         
         // Set the text on the cell with the description of the item
         // that s the nth index of items, where n = row this cell

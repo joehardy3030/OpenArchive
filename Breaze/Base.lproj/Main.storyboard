@@ -10,10 +10,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Weather-->
+        <!--Weather View-->
         <scene sceneID="re0-fr-pA4">
             <objects>
-                <tableViewController id="gcX-n8-h88" customClass="WeatherViewController" customModule="Breaze" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController title="Weather View" id="gcX-n8-h88" customClass="WeatherViewController" customModule="Breaze" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="u6W-Ow-ypS">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -39,10 +39,10 @@
             </objects>
             <point key="canvasLocation" x="1559" y="-321"/>
         </scene>
-        <!--Smog-->
+        <!--Smog View-->
         <scene sceneID="wg7-f3-ORb">
             <objects>
-                <viewController id="8rJ-Kc-sve" customClass="SmogViewController" customModule="Breaze" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Smog View" id="8rJ-Kc-sve" customClass="SmogViewController" customModule="Breaze" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="QS5-Rx-YEW">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -74,7 +74,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4Nw-L8-lE0" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1641" y="359"/>
+            <point key="canvasLocation" x="1558" y="359"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="yl2-sM-qoP">
@@ -94,10 +94,10 @@
             </objects>
             <point key="canvasLocation" x="0.0" y="0.0"/>
         </scene>
-        <!--Weather-->
+        <!--Weather Tab-->
         <scene sceneID="5fX-LB-sWl">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="As3-A3-L2b" sceneMemberID="viewController">
+                <navigationController title="Weather Tab" automaticallyAdjustsScrollViewInsets="NO" id="As3-A3-L2b" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Weather" image="weather_icon_33" id="acW-dT-cKf"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="zGl-ih-qM6">
@@ -113,10 +113,10 @@
             </objects>
             <point key="canvasLocation" x="748.79999999999995" y="-320.23988005997006"/>
         </scene>
-        <!--Smog-->
+        <!--Smog Tab-->
         <scene sceneID="BCR-Jv-BzP">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="2bO-0c-8PH" sceneMemberID="viewController">
+                <navigationController title="Smog Tab" automaticallyAdjustsScrollViewInsets="NO" id="2bO-0c-8PH" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Smog" image="utilities_icon" id="cPa-gy-q4n"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="wtV-bq-f5z">

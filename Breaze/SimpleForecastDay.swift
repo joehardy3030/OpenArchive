@@ -6,9 +6,9 @@
 //  Copyright © 2018 Carquinez. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
-class SimpleForecastDay {
+class SimpleForecastDay: NSObject {
 
     let high: String
     let low: String
@@ -29,5 +29,7 @@ class SimpleForecastDay {
         self.icon_url = icon_url
         self.conditions = conditions
         self.avehumidity = avehumidity
+        
+        super.init()
     }
 }

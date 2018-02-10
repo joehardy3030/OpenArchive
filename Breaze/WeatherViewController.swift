@@ -26,9 +26,9 @@ class WeatherViewController: UITableViewController {
                 for simpleForecastDay in simpleForecast {
                         print("Successfully found \(simpleForecastDay.high)")
                 }
-         //       DispatchQueue.main.async{
-          //          self.tableView.reloadData()
-           //     }
+                DispatchQueue.main.async{
+                    self.tableView.reloadData()
+                }
             case let .failure(error):
                 print("Error fetching simple forecast: \(error)")
             }
@@ -44,6 +44,21 @@ class WeatherViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.weatherArray.count
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // create an instance of UITableViewCell
+        let cell = UITableViewCell(style: .value1, reuseIdentifier: "UITableViewCell")
+        
+        // Set the text on the cell with the description of the item
+        // that s the nth index of items, where n = row this cell
+        // will appear in the tableview
+        let weatherDay = self.weatherArray[indexPath.row]
+        
+        cell.textLabel?.text = weatherDay.high
+        cell.detailTextLabel?.text = weatherDay.low
+        
+        return cell
     }
 
 }

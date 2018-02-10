@@ -18,6 +18,8 @@
 		D85A4F062022D0B600E480FB /* BreazeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A4F052022D0B600E480FB /* BreazeTests.swift */; };
 		D85A4F112022D0B600E480FB /* BreazeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A4F102022D0B600E480FB /* BreazeUITests.swift */; };
 		D8715B9B2029216800BC13AA /* HourlyForecastHour.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8715B9A2029216800BC13AA /* HourlyForecastHour.swift */; };
+		D8715B9D202FB70300BC13AA /* SmogStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8715B9C202FB70300BC13AA /* SmogStore.swift */; };
+		D8715B9F202FB72800BC13AA /* SmogHour.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8715B9E202FB72800BC13AA /* SmogHour.swift */; };
 		D8721E65202919140025348F /* SimpleForecastDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8721E64202919140025348F /* SimpleForecastDay.swift */; };
 		D884508E2026B18500C5379C /* WeatherStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D884508D2026B18500C5379C /* WeatherStore.swift */; };
 /* End PBXBuildFile section */
@@ -57,6 +59,8 @@
 		D85A4F102022D0B600E480FB /* BreazeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreazeUITests.swift; sourceTree = "<group>"; };
 		D85A4F122022D0B600E480FB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D8715B9A2029216800BC13AA /* HourlyForecastHour.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyForecastHour.swift; sourceTree = "<group>"; };
+		D8715B9C202FB70300BC13AA /* SmogStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmogStore.swift; sourceTree = "<group>"; };
+		D8715B9E202FB72800BC13AA /* SmogHour.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmogHour.swift; sourceTree = "<group>"; };
 		D8721E64202919140025348F /* SimpleForecastDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleForecastDay.swift; sourceTree = "<group>"; };
 		D884508D2026B18500C5379C /* WeatherStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherStore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -116,6 +120,8 @@
 				D884508D2026B18500C5379C /* WeatherStore.swift */,
 				D85A4EF02022D0B600E480FB /* WeatherViewController.swift */,
 				D8357A9820240C00005657DF /* AQSAPI.swift */,
+				D8715B9C202FB70300BC13AA /* SmogStore.swift */,
+				D8715B9E202FB72800BC13AA /* SmogHour.swift */,
 				D85A4EF22022D0B600E480FB /* SmogViewController.swift */,
 				D85A4EF42022D0B600E480FB /* Main.storyboard */,
 				D85A4EF72022D0B600E480FB /* Assets.xcassets */,
@@ -279,12 +285,14 @@
 			files = (
 				D884508E2026B18500C5379C /* WeatherStore.swift in Sources */,
 				D8357A9920240C00005657DF /* AQSAPI.swift in Sources */,
+				D8715B9D202FB70300BC13AA /* SmogStore.swift in Sources */,
 				D85A4EF32022D0B600E480FB /* SmogViewController.swift in Sources */,
 				D8715B9B2029216800BC13AA /* HourlyForecastHour.swift in Sources */,
 				D85A4EEF2022D0B600E480FB /* AppDelegate.swift in Sources */,
 				D8357A9720240BAD005657DF /* WundergroundAPI.swift in Sources */,
 				D85A4EF12022D0B600E480FB /* WeatherViewController.swift in Sources */,
 				D8721E65202919140025348F /* SimpleForecastDay.swift in Sources */,
+				D8715B9F202FB72800BC13AA /* SmogHour.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

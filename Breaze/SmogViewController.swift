@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SmogViewController: UIViewController {
+class SmogViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()

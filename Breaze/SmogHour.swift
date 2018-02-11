@@ -6,4 +6,19 @@
 //  Copyright © 2018 Carquinez. All rights reserved.
 //
 
-import Foundation
+import UIKit
+
+class SmogHour: NSObject {
+    
+    let ppm25: String
+    let ozone: String
+    
+    init(ppm25: String,
+         ozone: String) {
+        self.ppm25 = ppm25
+        self.ozone = ozone
+        
+        super.init()
+    }
+}
+

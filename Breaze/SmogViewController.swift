@@ -10,8 +10,12 @@ import UIKit
 
 class SmogViewController: UITableViewController {
 
+    var store = SmogStore()
+    var smogArray = [SmogHour]()
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        store.fetchSmogForecast()
         // Do any additional setup after loading the view, typically from a nib.
     }
 

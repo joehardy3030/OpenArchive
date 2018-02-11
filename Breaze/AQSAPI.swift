@@ -20,7 +20,7 @@ enum AQSURLMethod: String {
 struct AQSAPI {
     
     static var smogForecastURL: URL {
-        return smogURL(method: .weatherForecast, parameters: nil)
+        return smogURL(method: .smogForecast, parameters: nil)
     }
     
     // This private function returns the URL

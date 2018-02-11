@@ -45,8 +45,10 @@ class SmogStore {
         let task = session.dataTask(with: request) { (data, response, error) -> Void in
             if let jsonData = data {
                 do {
-                    let jsonObject = try JSONSerialization.jsonObject(with: jsonData, options: [])
-                    print(jsonObject)
+                    //let jsonObject = try JSONSerialization.jsonObject(with: jsonData, options: [])
+                    let stringObject = String(data: jsonData, encoding: .utf8)
+                    //print(jsonObject
+                    print(stringObject!)
                 }
                 catch let error {
                     print("Error creating JSON object: \(error)")

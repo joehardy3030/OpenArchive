@@ -13,13 +13,14 @@ enum SmogError: Error {
 }
 
 enum AQSURLMethod: String {
-    case smogForecast = "https://api.wunderground.com/api/ffd1b93b6a497308/conditions/forecast/q/CA/El_Cerrito.json"
+    case smogForecast = "https://aqs.epa.gov/api/rawData?user=jlhardyphd@gmail.com&pw=orangemouse54&format=DMCSV&param=44201&bdate=20110501&edate=20110501&state=37&county=063"
+    case weatherForecast = "https://api.wunderground.com/api/ffd1b93b6a497308/conditions/forecast/q/CA/El_Cerrito.json"
 }
 
 struct AQSAPI {
     
     static var smogForecastURL: URL {
-        return smogURL(method: .smogForecast, parameters: nil)
+        return smogURL(method: .weatherForecast, parameters: nil)
     }
     
     // This private function returns the URL
@@ -47,26 +48,16 @@ struct AQSAPI {
         }
     }
 
-    private static func simpleForecastDay(fromJSON json: [String : Any]) -> SimpleForecastDay? {
+    private static func smogForecastHour(fromJSON json: [String : Any]) -> SmogHour? {
         guard
-            let highDictionary = json["high"] as? [String:Any],
-            let high = highDictionary["fahrenheit"] as? String,
-            let lowDictionary = json["low"] as? [String:Any],
-            let low = lowDictionary["fahrenheit"] as? String,
-            let icon = json["icon"] as? String,
-            let icon_url = json["icon_url"] as? String,
-            let conditions = json["conditions"] as? String,
-            let avehumidity = json["avehumidity"] as? Int
+            let ppm25 = json["ppm25"] as? String,
+            let ozone = json["ozone"] as? String
             
             else {
                 return nil
         }
-        return SimpleForecastDay(high: high,
-                                 low: low,
-                                 icon: icon,
-                                 icon_url: icon_url,
-                                 conditions: conditions,
-                                 avehumidity: avehumidity)
+        return SmogHour(ppm25: ppm25,
+                        ozone: ozone)
     }
     
 }

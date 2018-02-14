@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		D8357A9720240BAD005657DF /* WundergroundAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8357A9620240BAD005657DF /* WundergroundAPI.swift */; };
-		D8357A9920240C00005657DF /* AQSAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8357A9820240C00005657DF /* AQSAPI.swift */; };
+		D84F92CA2033F1A100DD3855 /* AirNowAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84F92C92033F1A100DD3855 /* AirNowAPI.swift */; };
 		D85A4EEF2022D0B600E480FB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A4EEE2022D0B600E480FB /* AppDelegate.swift */; };
 		D85A4EF12022D0B600E480FB /* WeatherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A4EF02022D0B600E480FB /* WeatherViewController.swift */; };
 		D85A4EF32022D0B600E480FB /* SmogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A4EF22022D0B600E480FB /* SmogViewController.swift */; };
@@ -43,7 +43,7 @@
 
 /* Begin PBXFileReference section */
 		D8357A9620240BAD005657DF /* WundergroundAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WundergroundAPI.swift; sourceTree = "<group>"; };
-		D8357A9820240C00005657DF /* AQSAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AQSAPI.swift; sourceTree = "<group>"; };
+		D84F92C92033F1A100DD3855 /* AirNowAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirNowAPI.swift; sourceTree = "<group>"; };
 		D85A4EEB2022D0B500E480FB /* Breaze.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Breaze.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D85A4EEE2022D0B600E480FB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D85A4EF02022D0B600E480FB /* WeatherViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherViewController.swift; sourceTree = "<group>"; };
@@ -119,7 +119,7 @@
 				D8715B9A2029216800BC13AA /* HourlyForecastHour.swift */,
 				D884508D2026B18500C5379C /* WeatherStore.swift */,
 				D85A4EF02022D0B600E480FB /* WeatherViewController.swift */,
-				D8357A9820240C00005657DF /* AQSAPI.swift */,
+				D84F92C92033F1A100DD3855 /* AirNowAPI.swift */,
 				D8715B9C202FB70300BC13AA /* SmogStore.swift */,
 				D8715B9E202FB72800BC13AA /* SmogHour.swift */,
 				D85A4EF22022D0B600E480FB /* SmogViewController.swift */,
@@ -284,11 +284,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				D884508E2026B18500C5379C /* WeatherStore.swift in Sources */,
-				D8357A9920240C00005657DF /* AQSAPI.swift in Sources */,
 				D8715B9D202FB70300BC13AA /* SmogStore.swift in Sources */,
 				D85A4EF32022D0B600E480FB /* SmogViewController.swift in Sources */,
 				D8715B9B2029216800BC13AA /* HourlyForecastHour.swift in Sources */,
 				D85A4EEF2022D0B600E480FB /* AppDelegate.swift in Sources */,
+				D84F92CA2033F1A100DD3855 /* AirNowAPI.swift in Sources */,
 				D8357A9720240BAD005657DF /* WundergroundAPI.swift in Sources */,
 				D85A4EF12022D0B600E480FB /* WeatherViewController.swift in Sources */,
 				D8721E65202919140025348F /* SimpleForecastDay.swift in Sources */,

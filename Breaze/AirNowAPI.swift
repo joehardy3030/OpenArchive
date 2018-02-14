@@ -1,8 +1,8 @@
 //
-//  AQSAPI.swift
+//  AirNowAPI.swift
 //  Breaze
 //
-//  Created by Joseph Hardy on 2/1/18.
+//  Created by Joseph Hardy on 2/13/18.
 //  Copyright © 2018 Carquinez. All rights reserved.
 //
 
@@ -12,13 +12,12 @@ enum SmogError: Error {
     case invalidJSONData
 }
 
-enum AQSURLMethod: String {
-    case smogForecast = "https://aqs.epa.gov/api/rawData?user=jlhardyphd@gmail.com&pw=orangemouse54&format=DMCSV&param=44201&bdate=20110501&edate=20110501&state=37&county=063"
-//    case smogForecast = "https://aqs.epa.gov/api/rawData?user=jlhardyphd@gmail.com&pw=orangemouse54&format=DMCSV&param=44201&bdate=20180210&edate=20180210&state=37&county=063"
+enum AirNowMethod: String {
+    case smogForecast = "https://www.airnowapi.org/aq/observation/zipCode/current/?format=application/json&zipCode=94530&distance=25&API_KEY=6127988D-CB19-4E37-969F-56F4B394D406"
     case weatherForecast = "https://api.wunderground.com/api/ffd1b93b6a497308/conditions/forecast/q/CA/El_Cerrito.json"
 }
 
-struct AQSAPI {
+struct AirNowAPI {
     
     static var smogForecastURL: URL {
         return smogURL(method: .smogForecast, parameters: nil)
@@ -27,7 +26,7 @@ struct AQSAPI {
     // This private function returns the URL
     // It takes the Method as a parameter,
     // as well as a set of optional dictionory of query parameters
-    private static func smogURL(method: AQSURLMethod, parameters: [String:String]?) -> URL
+    private static func smogURL(method: AirNowMethod, parameters: [String:String]?) -> URL
     {
         let components = URLComponents(string: method.rawValue)!
         
@@ -48,7 +47,7 @@ struct AQSAPI {
             return .failure(error)
         }
     }
-
+    
     private static func smogForecastHour(fromJSON json: [String : Any]) -> SmogHour? {
         guard
             let ppm25 = json["ppm25"] as? String,
@@ -62,5 +61,4 @@ struct AQSAPI {
     }
     
 }
-
 

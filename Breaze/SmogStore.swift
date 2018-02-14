@@ -24,7 +24,7 @@ class SmogStore {
         guard let jsonData = data else {
             return .failure(error!)
         }
-        return AQSAPI.smogForecast(fromJSON: jsonData)
+        return AirNowAPI.smogForecast(fromJSON: jsonData)
     }
     
  //   func fetchSmogForecast(completion: @escaping (SmogResult) -> Void) {
@@ -40,19 +40,13 @@ class SmogStore {
     
     func fetchSmogForecast() {
         
-        let url = AQSAPI.smogForecastURL
+        let url = AirNowAPI.smogForecastURL
         let request = URLRequest(url: url)
         let task = session.dataTask(with: request) { (data, response, error) -> Void in
-            if let jsonData = data {
-                do {
-                    //let jsonObject = try JSONSerialization.jsonObject(with: jsonData, options: [])
-                    let stringObject = String(data: jsonData, encoding: .utf8)
+            if let stringData = data {
+                let stringObject = String(data: stringData, encoding: .utf8)
                     //print(jsonObject
                     print(stringObject!)
-                }
-                catch let error {
-                    print("Error creating JSON object: \(error)")
-                }
             }
             else if let requestError = error {
                 print("Error fetching hourly forecast: \(requestError)")

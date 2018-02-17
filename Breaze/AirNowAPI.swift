@@ -68,7 +68,7 @@ struct AirNowAPI {
             //        return .failure(SmogError.invalidJSONData)
            // }
             print(jsonArray)
-            var finalSmogForecast = [SmogHour]()
+            var finalSmogForecast = [SmogReading]()
             //let finalSmogForecast = jsonObject
             return .success(finalSmogForecast)
         }

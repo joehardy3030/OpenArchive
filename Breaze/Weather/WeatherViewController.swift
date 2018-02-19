@@ -51,15 +51,15 @@ class WeatherViewController: UITableViewController {
        // let cell = UITableViewCell(style: .value1, reuseIdentifier: "UITableViewCell")
         
         // Get a new or recycled cell
-        let cell = tableView.dequeueReusableCell(withIdentifier: "SimpleForecastCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "SimpleForecastCell", for: indexPath) as! WeatherCell
         
         // Set the text on the cell with the description of the item
         // that s the nth index of items, where n = row this cell
         // will appear in the tableview
         let weatherDay = self.weatherArray[indexPath.row]
 
-        cell.textLabel?.text = weatherDay.high
-        cell.detailTextLabel?.text = weatherDay.low
+        cell.highTempLabel?.text = weatherDay.high
+        cell.lowTempLabel?.text = weatherDay.low
         
         return cell
     }

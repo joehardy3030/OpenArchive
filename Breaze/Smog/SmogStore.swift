@@ -39,25 +39,5 @@ class SmogStore {
         task.resume()
      }
     
-  //  func fetchSmogForecast() {
-        
-  //      let url = AirNowAPI.smogForecastURL
- //       let request = URLRequest(url: url)
- //       let task = session.dataTask(with: request) { (data, response, error) -> Void in
- //           if let stringData = data {
-  //              let stringObject = String(data: stringData, encoding: .utf8)
-                    //print(jsonObject
-   //                 print(stringObject!)
-   //         }
-   //         else if let requestError = error {
-   //             print("Error fetching hourly forecast: \(requestError)")
-   //         }
-   //         else {
-    //            print("Unexpected error with the request")
-    //        }
-    //    }
-     //   task.resume()
-  //  }
-    
 }
 

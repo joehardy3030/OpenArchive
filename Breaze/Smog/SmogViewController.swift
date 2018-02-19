@@ -15,7 +15,6 @@ class SmogViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        //store.fetchSmogForecast()
         
         store.fetchSmogForecast {
             (SmogForecastResult) -> Void in

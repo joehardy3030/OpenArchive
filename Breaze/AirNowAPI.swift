@@ -37,23 +37,7 @@ struct AirNowAPI {
         print(components.url!)
         return components.url!
     }
-    
-//    static func smogForecast(fromJSON data: Data) -> SmogForecastResult {
- //       do {
-  //          let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])
-         //   print(jsonObject)
-            
-           // var finalSmogForecast = [SmogHour]()
-            //let finalSmogForecast = jsonObject
-          //  return .success(finalSmogForecast)
-      //  }
-      //  catch let error {
-      //      return .failure(error)
-       // }
-    //}
 
-
-    
     static func smogForecast(fromJSON data: Data) -> SmogForecastResult {
         do {
             let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])

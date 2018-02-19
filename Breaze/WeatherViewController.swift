@@ -57,7 +57,7 @@ class WeatherViewController: UITableViewController {
         // that s the nth index of items, where n = row this cell
         // will appear in the tableview
         let weatherDay = self.weatherArray[indexPath.row]
-        
+
         cell.textLabel?.text = weatherDay.high
         cell.detailTextLabel?.text = weatherDay.low
         

@@ -13,6 +13,7 @@ class SmogCell: UITableViewCell {
     @IBOutlet var siteNameLabel: UILabel!
     @IBOutlet var parameterLabel: UILabel!
     @IBOutlet var AQILabel: UILabel!
+
     
     override func awakeFromNib() {
         super.awakeFromNib()

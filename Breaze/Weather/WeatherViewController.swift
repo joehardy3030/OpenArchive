@@ -63,6 +63,9 @@ class WeatherViewController: UITableViewController {
         cell.iconLabel?.text = weatherDay.icon
         cell.dayLabel?.text = weatherDay.weekday_short
 
+        let iconImage : UIImage = UIImage(named: weatherDay.icon)!
+        cell.iconImage?.image = iconImage
+        
         return cell
     }
 

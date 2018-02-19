@@ -60,7 +60,7 @@ class SmogViewController: UITableViewController {
         cell.parameterLabel?.text = smogReading.parameter
         cell.siteNameLabel?.text = smogReading.siteName
         cell.AQILabel?.text = String(smogReading.AQI)
-        
+
         return cell
     }
 

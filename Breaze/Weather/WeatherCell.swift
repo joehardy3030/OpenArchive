@@ -12,11 +12,16 @@ class WeatherCell: UITableViewCell {
     
     @IBOutlet var highTempLabel: UILabel!
     @IBOutlet var lowTempLabel: UILabel!
+    @IBOutlet var dayLabel: UILabel!
+    @IBOutlet var iconLabel: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()
         
         highTempLabel.adjustsFontForContentSizeCategory = true
         lowTempLabel.adjustsFontForContentSizeCategory = true
+       // dayLabel.adjustsFontForContentSizeCategory = true
+        iconLabel.adjustsFontForContentSizeCategory = true
+
     }
 }

@@ -47,7 +47,7 @@ struct WundergroundAPI {
                // let currentObservationDictionary = jsonDictionary["current_observation"] as? [String:Any],
                 let forecastDictionary = jsonDictionary["forecast"] as? [AnyHashable: Any],
                 let simpleForecastDictionary = forecastDictionary["simpleforecast"] as? [AnyHashable: Any],
-                let textForecastDictionary = forecastDictionary["txt_forecast"] as? [AnyHashable: Any],
+               // let textForecastDictionary = forecastDictionary["txt_forecast"] as? [AnyHashable: Any],
                 let forecastdaysArray = simpleForecastDictionary["forecastday"] as? [[String: Any]]
                 else {
                     return .failure(WundergroundError.invalidJSONData)
@@ -78,17 +78,21 @@ struct WundergroundAPI {
             let icon = json["icon"] as? String,
             let icon_url = json["icon_url"] as? String,
             let conditions = json["conditions"] as? String,
-            let avehumidity = json["avehumidity"] as? Int
+            let avehumidity = json["avehumidity"] as? Int,
+            let dateDictionary = json["date"] as? [String:Any],
+            let weekday_short = dateDictionary["weekday_short"] as? String
         
             else {
                 return nil
         }
+        //print(weekday_short)
         return SimpleForecastDay(high: high,
                                  low: low,
                                  icon: icon,
                                  icon_url: icon_url,
                                  conditions: conditions,
-                                 avehumidity: avehumidity)
+                                 avehumidity: avehumidity,
+                                 weekday_short: weekday_short)
     }
 
     static func hourlyForecast(fromJSON data: Data) -> HourlyForecastResult {

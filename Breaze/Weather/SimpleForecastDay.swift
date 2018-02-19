@@ -16,19 +16,24 @@ class SimpleForecastDay: NSObject {
     let icon_url: String
     let conditions: String
     let avehumidity: Int
+    let weekday_short: String
+
     
     init(high: String,
          low: String,
          icon: String,
          icon_url: String,
          conditions: String,
-         avehumidity: Int) {
+         avehumidity: Int,
+         weekday_short: String)
+    {
         self.high = high
         self.low = low
         self.icon = icon
         self.icon_url = icon_url
         self.conditions = conditions
         self.avehumidity = avehumidity
+        self.weekday_short = weekday_short
         
         super.init()            
     }

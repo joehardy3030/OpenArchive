@@ -60,7 +60,9 @@ class WeatherViewController: UITableViewController {
 
         cell.highTempLabel?.text = weatherDay.high
         cell.lowTempLabel?.text = weatherDay.low
-        
+        cell.iconLabel?.text = weatherDay.icon
+        cell.dayLabel?.text = weatherDay.weekday_short
+
         return cell
     }
 

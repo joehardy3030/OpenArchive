@@ -94,6 +94,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D84F92CF203A856C00DD3855 /* Weather */ = {
+			isa = PBXGroup;
+			children = (
+				D8357A9620240BAD005657DF /* WundergroundAPI.swift */,
+				D8721E64202919140025348F /* SimpleForecastDay.swift */,
+				D8715B9A2029216800BC13AA /* HourlyForecastHour.swift */,
+				D884508D2026B18500C5379C /* WeatherStore.swift */,
+				D85A4EF02022D0B600E480FB /* WeatherViewController.swift */,
+			);
+			path = Weather;
+			sourceTree = "<group>";
+		};
+		D84F92D0203A85C600DD3855 /* Smog */ = {
+			isa = PBXGroup;
+			children = (
+				D84F92C92033F1A100DD3855 /* AirNowAPI.swift */,
+				D8715B9C202FB70300BC13AA /* SmogStore.swift */,
+				D84F92CB2037E08C00DD3855 /* SmogReading.swift */,
+				D8715B9E202FB72800BC13AA /* SmogHour.swift */,
+				D84F92CD203A7E7800DD3855 /* SmogCell.swift */,
+				D85A4EF22022D0B600E480FB /* SmogViewController.swift */,
+			);
+			path = Smog;
+			sourceTree = "<group>";
+		};
 		D85A4EE22022D0B500E480FB = {
 			isa = PBXGroup;
 			children = (
@@ -118,20 +143,11 @@
 			isa = PBXGroup;
 			children = (
 				D85A4EEE2022D0B600E480FB /* AppDelegate.swift */,
-				D8357A9620240BAD005657DF /* WundergroundAPI.swift */,
-				D8721E64202919140025348F /* SimpleForecastDay.swift */,
-				D8715B9A2029216800BC13AA /* HourlyForecastHour.swift */,
-				D884508D2026B18500C5379C /* WeatherStore.swift */,
-				D85A4EF02022D0B600E480FB /* WeatherViewController.swift */,
-				D84F92C92033F1A100DD3855 /* AirNowAPI.swift */,
-				D8715B9C202FB70300BC13AA /* SmogStore.swift */,
-				D84F92CB2037E08C00DD3855 /* SmogReading.swift */,
-				D8715B9E202FB72800BC13AA /* SmogHour.swift */,
-				D84F92CD203A7E7800DD3855 /* SmogCell.swift */,
-				D85A4EF22022D0B600E480FB /* SmogViewController.swift */,
 				D85A4EF42022D0B600E480FB /* Main.storyboard */,
-				D85A4EF72022D0B600E480FB /* Assets.xcassets */,
 				D85A4EF92022D0B600E480FB /* LaunchScreen.storyboard */,
+				D84F92CF203A856C00DD3855 /* Weather */,
+				D84F92D0203A85C600DD3855 /* Smog */,
+				D85A4EF72022D0B600E480FB /* Assets.xcassets */,
 				D85A4EFC2022D0B600E480FB /* Info.plist */,
 			);
 			path = Breaze;

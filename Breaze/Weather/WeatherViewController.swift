@@ -23,9 +23,6 @@ class WeatherViewController: UITableViewController {
             case let .success(simpleForecast):
                 self.weatherArray = simpleForecast
                 print("count \(self.weatherArray.count)")
-                for simpleForecastDay in simpleForecast {
-                        print("Successfully found \(simpleForecastDay.high)")
-                }
                 DispatchQueue.main.async{
                     self.tableView.reloadData()
                 }
@@ -33,7 +30,6 @@ class WeatherViewController: UITableViewController {
                 print("Error fetching simple forecast: \(error)")
             }
         }
-        //store.fetchHourlyForecast()
 
     }
 

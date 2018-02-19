@@ -11,11 +11,11 @@ import UIKit
 class SmogReading: NSObject {
     
     let parameter: String
-    let AQI: String
+    let AQI: Int
     let siteName: String
 
     init(parameter: String,
-         AQI: String,
+         AQI: Int,
          siteName: String) {
         self.parameter = parameter
         self.AQI = AQI

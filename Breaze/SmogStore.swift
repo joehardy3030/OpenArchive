@@ -27,36 +27,37 @@ class SmogStore {
         return AirNowAPI.smogForecast(fromJSON: jsonData)
     }
     
- //   func fetchSmogForecast(completion: @escaping (SmogResult) -> Void) {
-        
- //       let url = AQSAPI.smogForecastURL
- //       let request = URLRequest(url: url)
- //       let task = session.dataTask(with: request) { (data, response, error) -> Void in
- //           let result = self.processSmogForecastResult(data: data, error: error)
- //           completion(result)
- //       }
- //       task.resume()
- //   }
-    
-    func fetchSmogForecast() {
+    func fetchSmogForecast(completion: @escaping (SmogForecastResult) -> Void) {
         
         let url = AirNowAPI.smogForecastURL
         let request = URLRequest(url: url)
         let task = session.dataTask(with: request) { (data, response, error) -> Void in
-            if let stringData = data {
-                let stringObject = String(data: stringData, encoding: .utf8)
-                    //print(jsonObject
-                    print(stringObject!)
-            }
-            else if let requestError = error {
-                print("Error fetching hourly forecast: \(requestError)")
-            }
-            else {
-                print("Unexpected error with the request")
-            }
+            let result = self.processSmogForecastResult(data: data, error: error)
+            completion(result)
+            print(result)
         }
         task.resume()
-    }
+     }
+    
+  //  func fetchSmogForecast() {
+        
+  //      let url = AirNowAPI.smogForecastURL
+ //       let request = URLRequest(url: url)
+ //       let task = session.dataTask(with: request) { (data, response, error) -> Void in
+ //           if let stringData = data {
+  //              let stringObject = String(data: stringData, encoding: .utf8)
+                    //print(jsonObject
+   //                 print(stringObject!)
+   //         }
+   //         else if let requestError = error {
+   //             print("Error fetching hourly forecast: \(requestError)")
+   //         }
+   //         else {
+    //            print("Unexpected error with the request")
+    //        }
+    //    }
+     //   task.resume()
+  //  }
     
 }
 

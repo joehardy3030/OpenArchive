@@ -51,7 +51,7 @@ struct WundergroundAPI {
                 let forecastdaysArray = simpleForecastDictionary["forecastday"] as? [[String: Any]]
                 else {
                     return .failure(WundergroundError.invalidJSONData)
-            }
+                }
             var finalSimpleForecast = [SimpleForecastDay]()
             for forecastdayJSON in forecastdaysArray {
                 if let simpleForecastDay = simpleForecastDay(fromJSON: forecastdayJSON) {

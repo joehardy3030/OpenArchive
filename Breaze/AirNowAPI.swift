@@ -16,7 +16,7 @@ enum SmogError: Error {
 enum AirNowMethod: String {
     //https://docs.airnowapi.org/CurrentObservationsByZip/query
 //    case smogForecast = "https://www.airnowapi.org/aq/observation/zipCode/current/?format=application/json&zipCode=94530&distance=25&API_KEY=6127988D-CB19-4E37-969F-56F4B394D406"
-    case smogForecast = "https://www.airnowapi.org/aq/data/?startDate=2018-02-16T02&endDate=2018-02-16T03&parameters=O3,PM25,PM10,CO,NO2,SO2&BBOX=-122.448995,37.805168,-122.218282,37.995887&dataType=A&format=application/json&verbose=1&API_KEY=6127988D-CB19-4E37-969F-56F4B394D406"
+    case smogForecast = "https://www.airnowapi.org/aq/data/?startDate=2018-02-16T02&endDate=2018-02-16T03&parameters=O3,PM25,PM10,NO2,SO2&BBOX=-122.448995,37.805168,-122.218282,37.995887&dataType=A&format=application/json&verbose=1&API_KEY=6127988D-CB19-4E37-969F-56F4B394D406"
     case weatherForecast = "https://api.wunderground.com/api/ffd1b93b6a497308/conditions/forecast/q/CA/El_Cerrito.json"
 }
 
@@ -57,19 +57,19 @@ struct AirNowAPI {
     static func smogForecast(fromJSON data: Data) -> SmogForecastResult {
         do {
             let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])
-            //print(jsonObject)
-            let jsonArray = jsonObject as? [[AnyHashable:Any]]
             
-            //guard
-             //   let jsonArray = jsonObject as? [[AnyHashable:Any]],
-             //   for json
-
-             //   else {
-            //        return .failure(SmogError.invalidJSONData)
-           // }
-            print(jsonArray)
+            guard
+            let jsonArray = jsonObject as? [[String:Any]]
+                else {
+                    return .failure(SmogError.invalidJSONData)
+                }
+        
             var finalSmogForecast = [SmogReading]()
-            //let finalSmogForecast = jsonObject
+            for smogForecastJSON in jsonArray {
+                if let smogForecastReading = smogForecastReading(fromJSON: smogForecastJSON) {
+                    finalSmogForecast.append(smogForecastReading)
+                }
+            }
             return .success(finalSmogForecast)
         }
         catch let error {
@@ -77,16 +77,20 @@ struct AirNowAPI {
         }
     }
 
-    private static func smogForecastHour(fromJSON json: [String : Any]) -> SmogHour? {
+    private static func smogForecastReading(fromJSON json: [String : Any]) -> SmogReading? {
         guard
-            let ppm25 = json["ppm25"] as? String,
-            let ozone = json["ozone"] as? String
+            let parameter = json["Parameter"] as? String,
+            let AQI = json["AQI"] as? Int,
+            let siteName = json["SiteName"] as? String
             
             else {
                 return nil
         }
-        return SmogHour(ppm25: ppm25,
-                        ozone: ozone)
+        print(parameter)
+        return SmogReading(parameter: parameter,
+                        AQI: AQI,
+                        siteName: siteName
+        )
     }
     
 }

@@ -61,7 +61,7 @@ class WeatherViewController: UITableViewController {
 
         let iconImage : UIImage = UIImage(named: weatherDay.icon)!
         cell.iconImage?.image = iconImage
-        
+
         return cell
     }
 

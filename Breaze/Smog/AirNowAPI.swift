@@ -59,8 +59,26 @@ struct AirNowAPI {
              }
             for smogReading in finalSmogForecast {
                 if siteNames.contains(smogReading.siteName) {
-                    print("already got one")
+                 //   print("already got one")
                 //    print(smogReading.siteName)
+                    let smogDay = finalSmogDays.first(where:{$0.siteName == smogReading.siteName})
+                    //smogDay?.NO2 = 20
+                    switch smogReading.parameter {
+                    case "SO2":
+                        smogDay?.SO2 = smogReading.AQI
+                   //     print("SO2 \(smogDay?.SO2 ?? -1)")
+                    case "NO2":
+                        smogDay?.NO2 = smogReading.AQI
+                     //   print("NO2 \(smogDay?.NO2 ?? -1)")
+                    case "OZONE":
+                        smogDay?.ozone = smogReading.AQI
+                       // print("Ozone \(smogDay?.ozone ?? -1)")
+                    case "PM2.5":
+                        smogDay?.PM25 = smogReading.AQI
+                       // print("PM2.5 \(smogDay?.PM25 ?? -1)")
+                    default:
+                        print("Fell through the switch")
+                    }
                 }
                 else {
                     siteNames.append(smogReading.siteName)
@@ -69,26 +87,34 @@ struct AirNowAPI {
                     switch smogReading.parameter {
                     case "SO2":
                         smogDay?.SO2 = smogReading.AQI
-                        print("SO2 \(smogDay?.SO2 ?? -1)")
+                        //print("SO2 \(smogDay?.SO2 ?? -1)")
                     case "NO2":
                         smogDay?.NO2 = smogReading.AQI
-                        print("NO2 \(smogDay?.NO2 ?? -1)")
+                        //print("NO2 \(smogDay?.NO2 ?? -1)")
                     case "OZONE":
                         smogDay?.ozone = smogReading.AQI
-                        print("Ozone \(smogDay?.ozone ?? -1)")
+                       // print("Ozone \(smogDay?.ozone ?? -1)")
                     case "PM2.5":
                         smogDay?.PM25 = smogReading.AQI
-                        print("PM2.5 \(smogDay?.PM25 ?? -1)")
+                       // print("PM2.5 \(smogDay?.PM25 ?? -1)")
                     default:
                         print("Fell through the switch")
                     }
-                    print("site name \(smogDay!.siteName)")
+                 //   print("site name \(smogDay!.siteName)")
+                    finalSmogDays.append(smogDay!)
                 }
             }
             //  if siteNames.contain {
             // add a new instance of SmogDaya
             //  }
-            
+        //    print("count smogDays \(finalSmogDays.count)")
+            for smogDay in finalSmogDays {
+                print("siteName \(smogDay.siteName)")
+                print("NO2 \(smogDay.NO2)")
+                print("SO2 \(smogDay.SO2)")
+                print("Ozone \(smogDay.ozone)")
+                print("PM2.5 \(smogDay.PM25)")
+            }
             return .success(finalSmogForecast)
         }
         catch let error {

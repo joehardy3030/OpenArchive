@@ -16,7 +16,7 @@ enum SmogError: Error {
 enum AirNowMethod: String {
     //https://docs.airnowapi.org/CurrentObservationsByZip/query
 //    case smogForecast = "https://www.airnowapi.org/aq/observation/zipCode/current/?format=application/json&zipCode=94530&distance=25&API_KEY=6127988D-CB19-4E37-969F-56F4B394D406"
-    case smogForecast = "https://www.airnowapi.org/aq/data/?startDate=2018-02-16T02&endDate=2018-02-16T03&parameters=O3,PM25,PM10,NO2,SO2&BBOX=-122.448995,37.805168,-122.218282,37.995887&dataType=A&format=application/json&verbose=1&API_KEY=6127988D-CB19-4E37-969F-56F4B394D406"
+    case smogForecast = "https://www.airnowapi.org/aq/data/?startDate=2018-03-18T02&endDate=2018-03-18T03&parameters=O3,PM25,PM10,NO2,SO2&BBOX=-122.448995,37.805168,-122.218282,37.995887&dataType=A&format=application/json&verbose=1&API_KEY=6127988D-CB19-4E37-969F-56F4B394D406"
     case weatherForecast = "https://api.wunderground.com/api/ffd1b93b6a497308/conditions/forecast/q/CA/El_Cerrito.json"
 }
 
@@ -63,7 +63,9 @@ struct AirNowAPI {
                 //    print(smogReading.siteName)
                     let smogDay = finalSmogDays.first(where:{$0.siteName == smogReading.siteName})
                     //smogDay?.NO2 = 20
-                    switch smogReading.parameter {
+                    smogDaySwitch(smogReading: smogReading, smogDay: smogDay!)
+
+/*                    switch smogReading.parameter {
                     case "SO2":
                         smogDay?.SO2 = smogReading.AQI
                    //     print("SO2 \(smogDay?.SO2 ?? -1)")
@@ -78,29 +80,14 @@ struct AirNowAPI {
                        // print("PM2.5 \(smogDay?.PM25 ?? -1)")
                     default:
                         print("Fell through the switch")
-                    }
+                    }*/
                 }
                 else {
                     siteNames.append(smogReading.siteName)
                     let smogDay = smogForecastDay()
                     smogDay?.siteName = smogReading.siteName
-                    switch smogReading.parameter {
-                    case "SO2":
-                        smogDay?.SO2 = smogReading.AQI
-                        //print("SO2 \(smogDay?.SO2 ?? -1)")
-                    case "NO2":
-                        smogDay?.NO2 = smogReading.AQI
-                        //print("NO2 \(smogDay?.NO2 ?? -1)")
-                    case "OZONE":
-                        smogDay?.ozone = smogReading.AQI
-                       // print("Ozone \(smogDay?.ozone ?? -1)")
-                    case "PM2.5":
-                        smogDay?.PM25 = smogReading.AQI
-                       // print("PM2.5 \(smogDay?.PM25 ?? -1)")
-                    default:
-                        print("Fell through the switch")
-                    }
-                 //   print("site name \(smogDay!.siteName)")
+                    smogDaySwitch(smogReading: smogReading, smogDay: smogDay!)
+
                     finalSmogDays.append(smogDay!)
                 }
             }
@@ -150,6 +137,22 @@ struct AirNowAPI {
                        PM25: PM25,
                        siteName: siteName)
     }
+
+    private static func smogDaySwitch(smogReading: SmogReading, smogDay: SmogDay) {
+        switch smogReading.parameter {
+        case "SO2":
+            smogDay.SO2 = smogReading.AQI
+        case "NO2":
+            smogDay.NO2 = smogReading.AQI
+        case "OZONE":
+            smogDay.ozone = smogReading.AQI
+        case "PM2.5":
+            smogDay.PM25 = smogReading.AQI
+        default:
+            print("Fell through the switch")
+        }
+    }
+
    
 }
 

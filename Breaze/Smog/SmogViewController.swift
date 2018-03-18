@@ -11,8 +11,9 @@ import UIKit
 class SmogViewController: UITableViewController {
 
     var store = SmogStore()
-    var smogArray = [SmogReading]()
-
+    //var smogArray = [SmogReading]()
+    var smogArray = [SmogDay]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -57,10 +58,12 @@ class SmogViewController: UITableViewController {
         // will appear in the tableview
         let smogReading = self.smogArray[indexPath.row]
         
-        cell.parameterLabel?.text = smogReading.parameter
+        //cell.parameterLabel?.text = smogReading.parameter
+        cell.parameterLabel?.text = String(smogReading.PM25)
         cell.siteNameLabel?.text = smogReading.siteName
-        cell.AQILabel?.text = String(smogReading.AQI)
-
+       // cell.AQILabel?.text = String(smogReading.AQI)
+        cell.AQILabel?.text = String(smogReading.ozone)
+        
         return cell
     }
 

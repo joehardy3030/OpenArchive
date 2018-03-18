@@ -22,10 +22,10 @@ class SmogViewController: UITableViewController {
             switch SmogForecastResult {
             case let .success(smogForecast):
                 self.smogArray = smogForecast
-                print("count \(self.smogArray.count)")
-                for smogForecastReading in smogForecast {
-                    print("Successfully found \(smogForecastReading.AQI)")
-                }
+              //  print("count \(self.smogArray.count)")
+              //  for smogForecastReading in smogForecast {
+              //      print("Successfully found \(smogForecastReading.AQI)")
+              //  }
                 DispatchQueue.main.async{
                     self.tableView.reloadData()
                 }

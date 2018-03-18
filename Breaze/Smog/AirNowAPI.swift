@@ -49,11 +49,46 @@ struct AirNowAPI {
                 }
         
             var finalSmogForecast = [SmogReading]()
+            var finalSmogDays = [SmogDay]() // new
+            var siteNames = [String]() // new s
             for smogForecastJSON in jsonArray {
                 if let smogForecastReading = smogForecastReading(fromJSON: smogForecastJSON) {
                     finalSmogForecast.append(smogForecastReading)
+                    //print(smogForecastReading)
+                }
+             }
+            for smogReading in finalSmogForecast {
+                if siteNames.contains(smogReading.siteName) {
+                    print("already got one")
+                //    print(smogReading.siteName)
+                }
+                else {
+                    siteNames.append(smogReading.siteName)
+                    let smogDay = smogForecastDay()
+                    smogDay?.siteName = smogReading.siteName
+                    switch smogReading.parameter {
+                    case "SO2":
+                        smogDay?.SO2 = smogReading.AQI
+                        print("SO2 \(smogDay?.SO2 ?? -1)")
+                    case "NO2":
+                        smogDay?.NO2 = smogReading.AQI
+                        print("NO2 \(smogDay?.NO2 ?? -1)")
+                    case "OZONE":
+                        smogDay?.ozone = smogReading.AQI
+                        print("Ozone \(smogDay?.ozone ?? -1)")
+                    case "PM2.5":
+                        smogDay?.PM25 = smogReading.AQI
+                        print("PM2.5 \(smogDay?.PM25 ?? -1)")
+                    default:
+                        print("Fell through the switch")
+                    }
+                    print("site name \(smogDay!.siteName)")
                 }
             }
+            //  if siteNames.contain {
+            // add a new instance of SmogDaya
+            //  }
+            
             return .success(finalSmogForecast)
         }
         catch let error {
@@ -70,12 +105,25 @@ struct AirNowAPI {
             else {
                 return nil
         }
-        print(parameter)
+       // print(parameter)
         return SmogReading(parameter: parameter,
                         AQI: AQI,
-                        siteName: siteName
-        )
+                        siteName: siteName)
     }
     
+    private static func smogForecastDay() -> SmogDay? {
+        let SO2 = -1
+        let NO2 = -1
+        let ozone = -1
+        let PM25 = -1
+        let siteName = "siteName"
+        //print(parameter)
+        return SmogDay(SO2: SO2,
+                       NO2: NO2,
+                       ozone: ozone,
+                       PM25: PM25,
+                       siteName: siteName)
+    }
+   
 }
 

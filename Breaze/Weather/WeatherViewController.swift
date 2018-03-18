@@ -56,12 +56,37 @@ class WeatherViewController: UITableViewController {
 
         cell.highTempLabel?.text = weatherDay.high
         cell.lowTempLabel?.text = weatherDay.low
-        cell.iconLabel?.text = weatherDay.icon
         cell.dayLabel?.text = weatherDay.weekday_short
-
-        let iconImage : UIImage = UIImage(named: weatherDay.icon)!
+        
+        var iconImage = UIImage(named: "clear")
+        switch weatherDay.icon {
+        case "clear":
+            iconImage = UIImage(named: weatherDay.icon)!
+            cell.iconLabel?.text = "Clear"
+        case "rain":
+            iconImage = UIImage(named: weatherDay.icon)!
+            cell.iconLabel?.text = "Rain"
+        case "chancerain":
+            iconImage = UIImage(named: "rain")!
+            cell.iconLabel?.text = "Chance of Rain"
+        case "mostlycloudy":
+            iconImage = UIImage(named: weatherDay.icon)!
+            cell.iconLabel?.text = "Mostly Cloudy"
+        case "partlycloudy":
+            iconImage = UIImage(named: weatherDay.icon)!
+            cell.iconLabel?.text = "Partly Cloudy"
+        case "cloudy":
+            iconImage = UIImage(named: weatherDay.icon)!
+            cell.iconLabel?.text = "Cloudy"
+        case "fog":
+            iconImage = UIImage(named: weatherDay.icon)!
+            cell.iconLabel?.text = "Fog"
+        default:
+            iconImage = UIImage(named: "clear")!
+            cell.iconLabel?.text = weatherDay.icon
+        }
         cell.iconImage?.image = iconImage
-
+       
         return cell
     }
 

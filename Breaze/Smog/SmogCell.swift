@@ -11,15 +11,18 @@ import UIKit
 class SmogCell: UITableViewCell {
     
     @IBOutlet var siteNameLabel: UILabel!
-    @IBOutlet var parameterLabel: UILabel!
-    @IBOutlet var AQILabel: UILabel!
-
+    //@IBOutlet var parameterLabel: UILabel!
+    //@IBOutlet var AQILabel: UILabel!
+    @IBOutlet var PM25Label: UILabel!
+    @IBOutlet var ozoneLabel: UILabel!
+    @IBOutlet var NO2Label: UILabel!
+    @IBOutlet var SO2Label: UILabel! 
     
     override func awakeFromNib() {
         super.awakeFromNib()
         
         siteNameLabel.adjustsFontForContentSizeCategory = true
-        parameterLabel.adjustsFontForContentSizeCategory = true
-        AQILabel.adjustsFontForContentSizeCategory = true
+      //  parameterLabel.adjustsFontForContentSizeCategory = true
+      //  AQILabel.adjustsFontForContentSizeCategory = true
     }
 }

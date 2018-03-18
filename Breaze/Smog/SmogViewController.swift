@@ -59,11 +59,13 @@ class SmogViewController: UITableViewController {
         let smogReading = self.smogArray[indexPath.row]
         
         //cell.parameterLabel?.text = smogReading.parameter
-        cell.parameterLabel?.text = String(smogReading.PM25)
+        cell.PM25Label?.text = String(smogReading.PM25)
         cell.siteNameLabel?.text = smogReading.siteName
        // cell.AQILabel?.text = String(smogReading.AQI)
-        cell.AQILabel?.text = String(smogReading.ozone)
-        
+        cell.ozoneLabel?.text = String(smogReading.ozone)
+        cell.SO2Label?.text = String(smogReading.SO2)
+        cell.NO2Label?.text = String(smogReading.NO2)
+
         return cell
     }
 

@@ -16,7 +16,8 @@ enum SmogError: Error {
 enum AirNowMethod: String {
     //https://docs.airnowapi.org/CurrentObservationsByZip/query
 //    case smogForecast = "https://www.airnowapi.org/aq/observation/zipCode/current/?format=application/json&zipCode=94530&distance=25&API_KEY=6127988D-CB19-4E37-969F-56F4B394D406"
-    case smogForecast = "https://www.airnowapi.org/aq/data/?startDate=2018-03-18T02&endDate=2018-03-18T03&parameters=O3,PM25,PM10,NO2,SO2&BBOX=-122.448995,37.805168,-122.218282,37.995887&dataType=A&format=application/json&verbose=1&API_KEY=6127988D-CB19-4E37-969F-56F4B394D406"
+    //case smogForecast = "https://www.airnowapi.org/aq/data/?startDate=2018-03-18T07&endDate=2018-03-18T07&parameters=O3,PM25,PM10,NO2,SO2&BBOX=-122.448995,37.805168,-122.218282,37.995887&dataType=A&format=application/json&verbose=1&API_KEY=6127988D-CB19-4E37-969F-56F4B394D406"
+    case smogForecast = "https://www.airnowapi.org/aq/data/?parameters=O3,PM25,NO2&BBOX=-122.448995,37.805168,-122.218282,37.995887&dataType=A&format=application/json&verbose=1&API_KEY=6127988D-CB19-4E37-969F-56F4B394D406"
     case weatherForecast = "https://api.wunderground.com/api/ffd1b93b6a497308/conditions/forecast/q/CA/El_Cerrito.json"
 }
 

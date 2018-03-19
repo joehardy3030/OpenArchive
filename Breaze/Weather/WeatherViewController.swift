@@ -69,6 +69,9 @@ class WeatherViewController: UITableViewController {
         case "chancerain":
             iconImage = UIImage(named: "rain")!
             cell.iconLabel?.text = "Chance of Rain"
+        case "tstorms":
+            iconImage = UIImage(named: "rain")!
+            cell.iconLabel?.text = "Thunder Storm"
         case "mostlycloudy":
             iconImage = UIImage(named: weatherDay.icon)!
             cell.iconLabel?.text = "Mostly Cloudy"

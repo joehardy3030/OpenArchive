@@ -43,8 +43,6 @@ class WeatherViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // create an instance of UITableViewCell
-       // let cell = UITableViewCell(style: .value1, reuseIdentifier: "UITableViewCell")
         
         // Get a new or recycled cell
         let cell = tableView.dequeueReusableCell(withIdentifier: "SimpleForecastCell", for: indexPath) as! WeatherCell
@@ -71,7 +69,7 @@ class WeatherViewController: UITableViewController {
             cell.iconLabel?.text = "Chance of Rain"
         case "tstorms":
             iconImage = UIImage(named: "rain")!
-            cell.iconLabel?.text = "Thunder Storm"
+            cell.iconLabel?.text = "Thunder Storms"
         case "mostlycloudy":
             iconImage = UIImage(named: weatherDay.icon)!
             cell.iconLabel?.text = "Mostly Cloudy"
@@ -85,7 +83,7 @@ class WeatherViewController: UITableViewController {
             iconImage = UIImage(named: weatherDay.icon)!
             cell.iconLabel?.text = "Fog"
         default:
-            iconImage = UIImage(named: "clear")!
+            iconImage = UIImage(named: "cloudy")!
             cell.iconLabel?.text = weatherDay.icon
         }
         cell.iconImage?.image = iconImage

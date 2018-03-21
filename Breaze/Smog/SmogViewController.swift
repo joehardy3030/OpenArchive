@@ -58,15 +58,36 @@ class SmogViewController: UITableViewController {
         // will appear in the tableview
         let smogReading = self.smogArray[indexPath.row]
         
-        //cell.parameterLabel?.text = smogReading.parameter
-        cell.PM25Label?.text = String(smogReading.PM25)
         cell.siteNameLabel?.text = smogReading.siteName
-       // cell.AQILabel?.text = String(smogReading.AQI)
+
+        cell.PM25Label?.text = String(smogReading.PM25)
+        cell.PM25Label?.textColor = getTextColor(AQI: smogReading.PM25)
+        
         cell.ozoneLabel?.text = String(smogReading.ozone)
-        cell.SO2Label?.text = String(smogReading.SO2)
+        cell.ozoneLabel?.textColor = getTextColor(AQI: smogReading.ozone)
+ //       cell.SO2Label?.text = String(smogReading.SO2)
+        
         cell.NO2Label?.text = String(smogReading.NO2)
+        cell.NO2Label?.textColor = getTextColor(AQI: smogReading.NO2)
 
         return cell
+    }
+    
+    private func getTextColor(AQI: Int) -> UIColor {
+        let textColor: UIColor
+        switch AQI {
+        case 0...49:
+            textColor = UIColor.green
+        case 50...99:
+            textColor = UIColor.yellow
+        case 100...149:
+            textColor = UIColor.orange
+        case 150...1000:
+            textColor = UIColor.red
+        default:
+            textColor = UIColor.black
+        }
+        return textColor
     }
 
 

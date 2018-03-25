@@ -11,22 +11,19 @@ import UIKit
 class SmogViewController: UITableViewController {
 
     var store = SmogStore()
-    //var smogArray = [SmogReading]()
     var smogArray = [SmogDay]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Pull the smog forecast data when loading the tab
+        // and display it asychronously when the data arrives 
         store.fetchSmogForecast {
             (SmogForecastResult) -> Void in
             
             switch SmogForecastResult {
             case let .success(smogForecast):
                 self.smogArray = smogForecast
-              //  print("count \(self.smogArray.count)")
-              //  for smogForecastReading in smogForecast {
-              //      print("Successfully found \(smogForecastReading.AQI)")
-              //  }
                 DispatchQueue.main.async{
                     self.tableView.reloadData()
                 }

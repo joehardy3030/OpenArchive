@@ -72,11 +72,14 @@ class SmogViewController: UITableViewController {
     
     private func getTextColor(AQI: Int) -> UIColor {
         let textColor: UIColor
+        let goodColor = UIColor.init(red: 0.184, green: 0.5, blue: 0.188, alpha: 1)
+        let moderateColor = UIColor.init(red: 0.8, green: 0.4, blue: 0.0, alpha: 1)
+
         switch AQI {
         case 0...49:
-            textColor = UIColor.green
+            textColor = goodColor
         case 50...99:
-            textColor = UIColor.yellow
+            textColor = moderateColor
         case 100...149:
             textColor = UIColor.orange
         case 150...1000:

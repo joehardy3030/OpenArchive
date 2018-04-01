@@ -8,17 +8,35 @@
 
 import Foundation
 
-class HourlyForecastHour {
+import UIKit
+
+class HourlyForecastHour: NSObject {
     
-    let title: String
-    let remoteURL: URL
-    let photoID: String
-    let dateTaken: Date
+    let high: String
+    let low: String
+    let icon: String
+    let icon_url: String
+    let conditions: String
+    let avehumidity: Int
+    let weekday_short: String
     
-    init(title: String, photoID: String, remoteURL: URL, dateTaken: Date) {
-        self.title = title
-        self.photoID = photoID
-        self.remoteURL = remoteURL
-        self.dateTaken = dateTaken
+    
+    init(high: String,
+         low: String,
+         icon: String,
+         icon_url: String,
+         conditions: String,
+         avehumidity: Int,
+         weekday_short: String)
+    {
+        self.high = high
+        self.low = low
+        self.icon = icon
+        self.icon_url = icon_url
+        self.conditions = conditions
+        self.avehumidity = avehumidity
+        self.weekday_short = weekday_short
+        
+        super.init()
     }
 }

@@ -11,7 +11,7 @@ import UIKit
 class WeatherViewController: UITableViewController {
     
     var store = WeatherStore()
-    var weatherArray = [SimpleForecastDay]()
+    var simpleForecastArray = [SimpleForecastDay]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,8 +21,8 @@ class WeatherViewController: UITableViewController {
             
             switch SimpleForecastResult {
             case let .success(simpleForecast):
-                self.weatherArray = simpleForecast
-                print("count \(self.weatherArray.count)")
+                self.simpleForecastArray = simpleForecast
+                print("count \(self.simpleForecastArray.count)")
                 DispatchQueue.main.async{
                     self.tableView.reloadData()
                 }
@@ -39,7 +39,7 @@ class WeatherViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.weatherArray.count
+        return self.simpleForecastArray.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -50,7 +50,7 @@ class WeatherViewController: UITableViewController {
         // Set the text on the cell with the description of the item
         // that s the nth index of items, where n = row this cell
         // will appear in the tableview
-        let weatherDay = self.weatherArray[indexPath.row]
+        let weatherDay = self.simpleForecastArray[indexPath.row]
 
         cell.highTempLabel?.text = weatherDay.high
         cell.lowTempLabel?.text = weatherDay.low

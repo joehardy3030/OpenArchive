@@ -29,6 +29,7 @@ class WeatherViewController: UITableViewController {
             case let .failure(error):
                 print("Error fetching simple forecast: \(error)")
             }
+            
         }
 
     }
@@ -50,19 +51,19 @@ class WeatherViewController: UITableViewController {
         // Set the text on the cell with the description of the item
         // that s the nth index of items, where n = row this cell
         // will appear in the tableview
-        let weatherDay = self.simpleForecastArray[indexPath.row]
+        let weatherCellData = self.simpleForecastArray[indexPath.row]
 
-        cell.highTempLabel?.text = weatherDay.high
-        cell.lowTempLabel?.text = weatherDay.low
-        cell.dayLabel?.text = weatherDay.weekday_short
+        cell.highTempLabel?.text = weatherCellData.high
+        cell.lowTempLabel?.text = weatherCellData.low
+        cell.dayLabel?.text = weatherCellData.weekday_short
         
         var iconImage = UIImage(named: "clear")
-        switch weatherDay.icon {
+        switch weatherCellData.icon {
         case "clear":
-            iconImage = UIImage(named: weatherDay.icon)!
+            iconImage = UIImage(named: weatherCellData.icon)!
             cell.iconLabel?.text = "Clear"
         case "rain":
-            iconImage = UIImage(named: weatherDay.icon)!
+            iconImage = UIImage(named: weatherCellData.icon)!
             cell.iconLabel?.text = "Rain"
         case "chancerain":
             iconImage = UIImage(named: "rain")!
@@ -71,20 +72,20 @@ class WeatherViewController: UITableViewController {
             iconImage = UIImage(named: "rain")!
             cell.iconLabel?.text = "Thunder Storms"
         case "mostlycloudy":
-            iconImage = UIImage(named: weatherDay.icon)!
+            iconImage = UIImage(named: weatherCellData.icon)!
             cell.iconLabel?.text = "Mostly Cloudy"
         case "partlycloudy":
-            iconImage = UIImage(named: weatherDay.icon)!
+            iconImage = UIImage(named: weatherCellData.icon)!
             cell.iconLabel?.text = "Partly Cloudy"
         case "cloudy":
-            iconImage = UIImage(named: weatherDay.icon)!
+            iconImage = UIImage(named: weatherCellData.icon)!
             cell.iconLabel?.text = "Cloudy"
         case "fog":
-            iconImage = UIImage(named: weatherDay.icon)!
+            iconImage = UIImage(named: weatherCellData.icon)!
             cell.iconLabel?.text = "Fog"
         default:
             iconImage = UIImage(named: "cloudy")!
-            cell.iconLabel?.text = weatherDay.icon
+            cell.iconLabel?.text = weatherCellData.icon
         }
         cell.iconImage?.image = iconImage
        

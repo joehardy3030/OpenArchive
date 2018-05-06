@@ -78,7 +78,7 @@ struct WundergroundAPI {
             else {
                 return nil
         }
-        //print(weekday_short)
+        print(weekday_short)
         return SimpleForecastDay(high: high,
                                  low: low,
                                  icon: icon,
@@ -93,19 +93,18 @@ struct WundergroundAPI {
             let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])
             guard
                 let jsonDictionary = jsonObject as? [AnyHashable:Any],
-                let forecastDictionary = jsonDictionary["forecast"] as? [AnyHashable: Any],
-                let simpleForecastDictionary = forecastDictionary["simpleforecast"] as? [AnyHashable: Any],
-                let forecastdaysArray = simpleForecastDictionary["forecastday"] as? [[String: Any]]
+                let hourlyForecastArray = jsonDictionary["hourly_forecast"] as? [[String: Any]]
                 else {
                     return .failure(WundergroundError.invalidJSONData)
             }
-            var finalSimpleForecast = [HourlyForecastHour]()
-            for forecastdayJSON in forecastdaysArray {
-                if let hourlyForecastHour = hourlyForecastHour(fromJSON: forecastdayJSON) {
-                    finalSimpleForecast.append(hourlyForecastHour)
+            var finalHourlyForecast = [HourlyForecastHour]()
+            for forecastHourJSON in hourlyForecastArray {
+                //print(forecastHourJSON)
+                if let hourlyForecastHour = hourlyForecastHour(fromJSON: forecastHourJSON) {
+                    finalHourlyForecast.append(hourlyForecastHour)
                 }
             }
-            return .success(finalSimpleForecast)
+            return .success(finalHourlyForecast)
         }
         catch let error {
             return .failure(error)
@@ -114,28 +113,28 @@ struct WundergroundAPI {
     
     private static func hourlyForecastHour(fromJSON json: [String : Any]) -> HourlyForecastHour? {
         guard
-            let highDictionary = json["high"] as? [String:Any],
-            let high = highDictionary["fahrenheit"] as? String,
-            let lowDictionary = json["low"] as? [String:Any],
-            let low = lowDictionary["fahrenheit"] as? String,
-            let icon = json["icon"] as? String,
-            let icon_url = json["icon_url"] as? String,
-            let conditions = json["conditions"] as? String,
-            let avehumidity = json["avehumidity"] as? Int,
-            let dateDictionary = json["date"] as? [String:Any],
-            let weekday_short = dateDictionary["weekday_short"] as? String
+           // let tempDictionary = json["temp"] as? [String:Any],
+           // let temp = tempDictionary["english"] as? String,
+           // let wdirDictionary = json["wdir"] as? [String:Any],
+           // let dir = wdirDictionary["dir"] as? String,
+           // let icon = json["icon"] as? String,
+            //let wx = json["wx"] as? String,
+          //  let humidity = json["humidity"] as? String,
+            let timeDictionary = json["FCTTIME"] as? [String:Any],
+            let civil = timeDictionary["civil"] as? String
             
             else {
                 return nil
         }
-        //print(weekday_short)
-        return HourlyForecastHour(high: high,
-                                 low: low,
-                                 icon: icon,
-                                 icon_url: icon_url,
-                                 conditions: conditions,
-                                 avehumidity: avehumidity,
-                                 weekday_short: weekday_short)
+       // print(temp)
+        print(civil)
+        
+        return HourlyForecastHour(//temp: temp,
+                                 //dir: dir,
+                                 //icon: icon,
+                                 //wx: wx,
+                                 //humidity: humidity,
+                                 civil: civil)
     }
 
 

@@ -12,7 +12,8 @@ class WeatherViewController: UITableViewController {
     
     var store = WeatherStore()
     var simpleForecastArray = [SimpleForecastDay]()
-    
+    var hourlyForecastArray = [HourlyForecastHour]()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -22,7 +23,7 @@ class WeatherViewController: UITableViewController {
             switch SimpleForecastResult {
             case let .success(simpleForecast):
                 self.simpleForecastArray = simpleForecast
-                print("count \(self.simpleForecastArray.count)")
+                print("count simple \(self.simpleForecastArray.count)")
                 DispatchQueue.main.async{
                     self.tableView.reloadData()
                 }
@@ -31,6 +32,22 @@ class WeatherViewController: UITableViewController {
             }
             
         }
+
+        store.fetchHourlyForecast {
+            (HourlyForecastResult) -> Void in
+            
+            switch HourlyForecastResult {
+            case let .success(hourlyForecast):
+                self.hourlyForecastArray = hourlyForecast
+                print("count hourly \(self.hourlyForecastArray.count)")
+                DispatchQueue.main.async{
+                    self.tableView.reloadData()
+                }
+            case let .failure(error):
+                print("Error fetching simple forecast: \(error)")
+            }
+            
+        } 
 
     }
 
@@ -52,7 +69,7 @@ class WeatherViewController: UITableViewController {
         // that s the nth index of items, where n = row this cell
         // will appear in the tableview
         let weatherCellData = self.simpleForecastArray[indexPath.row]
-
+        
         cell.highTempLabel?.text = weatherCellData.high
         cell.lowTempLabel?.text = weatherCellData.low
         cell.dayLabel?.text = weatherCellData.weekday_short

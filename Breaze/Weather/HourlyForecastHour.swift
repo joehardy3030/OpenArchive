@@ -12,30 +12,26 @@ import UIKit
 
 class HourlyForecastHour: NSObject {
     
-    let high: String
-    let low: String
-    let icon: String
-    let icon_url: String
-    let conditions: String
-    let avehumidity: Int
-    let weekday_short: String
+   // let temp: String
+    //let dir: String
+   // let icon: String
+   // let wx: String
+   // let humidity: String
+    let civil: String
     
-    
-    init(high: String,
-         low: String,
-         icon: String,
-         icon_url: String,
-         conditions: String,
-         avehumidity: Int,
-         weekday_short: String)
+    init(//temp: String,
+         //dir: String,
+         //icon: String,
+         //wx: String,
+         //humidity: String,
+         civil: String)
     {
-        self.high = high
-        self.low = low
-        self.icon = icon
-        self.icon_url = icon_url
-        self.conditions = conditions
-        self.avehumidity = avehumidity
-        self.weekday_short = weekday_short
+        //self.temp = temp
+        //self.dir = dir
+        //self.icon = icon
+        //self.wx = wx
+        //self.humidity = humidity
+        self.civil = civil
         
         super.init()
     }

@@ -129,15 +129,7 @@ struct WundergroundAPI {
             else {
                 return nil
         }
-        print(temp)
-        print(wspd)
-        print(dir)
-        print(icon)
-        print(wx)
-        print(uvi)
-        print(humidity)
-        print(civil)
-        
+       
         return HourlyForecastHour(temp: temp,
                                   wspd: wspd,
                                   dir: dir,

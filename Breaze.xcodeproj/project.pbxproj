@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7915AFD1209FF46600625E43 /* HourlyForecastCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7915AFD0209FF46600625E43 /* HourlyForecastCell.swift */; };
 		D8357A9720240BAD005657DF /* WundergroundAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8357A9620240BAD005657DF /* WundergroundAPI.swift */; };
 		D84F92CA2033F1A100DD3855 /* AirNowAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84F92C92033F1A100DD3855 /* AirNowAPI.swift */; };
 		D84F92CC2037E08C00DD3855 /* SmogReading.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84F92CB2037E08C00DD3855 /* SmogReading.swift */; };
@@ -45,6 +46,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7915AFD0209FF46600625E43 /* HourlyForecastCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyForecastCell.swift; sourceTree = "<group>"; };
 		D8357A9620240BAD005657DF /* WundergroundAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WundergroundAPI.swift; sourceTree = "<group>"; };
 		D84F92C92033F1A100DD3855 /* AirNowAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirNowAPI.swift; sourceTree = "<group>"; };
 		D84F92CB2037E08C00DD3855 /* SmogReading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmogReading.swift; sourceTree = "<group>"; };
@@ -104,6 +106,7 @@
 				D8721E64202919140025348F /* SimpleForecastDay.swift */,
 				D8715B9A2029216800BC13AA /* HourlyForecastHour.swift */,
 				D84F92D1203A872200DD3855 /* WeatherCell.swift */,
+				7915AFD0209FF46600625E43 /* HourlyForecastCell.swift */,
 				D85A4EF02022D0B600E480FB /* WeatherViewController.swift */,
 			);
 			path = Weather;
@@ -311,6 +314,7 @@
 				D884508E2026B18500C5379C /* WeatherStore.swift in Sources */,
 				D8715B9D202FB70300BC13AA /* SmogStore.swift in Sources */,
 				D85A4EF32022D0B600E480FB /* SmogViewController.swift in Sources */,
+				7915AFD1209FF46600625E43 /* HourlyForecastCell.swift in Sources */,
 				D8E1BCD22055E74E00DB12E9 /* SmogDay.swift in Sources */,
 				D84F92CE203A7E7800DD3855 /* SmogCell.swift in Sources */,
 				D84F92D2203A872200DD3855 /* WeatherCell.swift in Sources */,

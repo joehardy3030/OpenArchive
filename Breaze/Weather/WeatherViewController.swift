@@ -108,6 +108,38 @@ class WeatherViewController: UITableViewController {
        
         return cell
     }
+    
+ /*   private func selectIconImage(icon_name: String) {
+        switch icon_name {
+        case "clear":
+            iconImage = UIImage(named: weatherCellData.icon)!
+            cell.iconLabel?.text = "Clear"
+        case "rain":
+            iconImage = UIImage(named: weatherCellData.icon)!
+            cell.iconLabel?.text = "Rain"
+        case "chancerain":
+            iconImage = UIImage(named: "rain")!
+            cell.iconLabel?.text = "Chance of Rain"
+        case "tstorms":
+            iconImage = UIImage(named: "rain")!
+            cell.iconLabel?.text = "Thunder Storms"
+        case "mostlycloudy":
+            iconImage = UIImage(named: weatherCellData.icon)!
+            cell.iconLabel?.text = "Mostly Cloudy"
+        case "partlycloudy":
+            iconImage = UIImage(named: weatherCellData.icon)!
+            cell.iconLabel?.text = "Partly Cloudy"
+        case "cloudy":
+            iconImage = UIImage(named: weatherCellData.icon)!
+            cell.iconLabel?.text = "Cloudy"
+        case "fog":
+            iconImage = UIImage(named: weatherCellData.icon)!
+            cell.iconLabel?.text = "Fog"
+        default:
+            iconImage = UIImage(named: "cloudy")!
+            cell.iconLabel?.text = weatherCellData.icon
+        }
+    } */
 
 }
 

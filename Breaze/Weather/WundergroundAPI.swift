@@ -113,28 +113,39 @@ struct WundergroundAPI {
     
     private static func hourlyForecastHour(fromJSON json: [String : Any]) -> HourlyForecastHour? {
         guard
-           // let tempDictionary = json["temp"] as? [String:Any],
-           // let temp = tempDictionary["english"] as? String,
-           // let wdirDictionary = json["wdir"] as? [String:Any],
-           // let dir = wdirDictionary["dir"] as? String,
-           // let icon = json["icon"] as? String,
-            //let wx = json["wx"] as? String,
-          //  let humidity = json["humidity"] as? String,
+            let tempDictionary = json["temp"] as? [String:Any],
+            let temp = tempDictionary["english"] as? String,
+            let wspdDictionary = json["wspd"] as? [String:Any],
+            let wspd = wspdDictionary["english"] as? String,
+            let wdirDictionary = json["wdir"] as? [String:Any],
+            let dir = wdirDictionary["dir"] as? String,
+            let icon = json["icon"] as? String,
+            let wx = json["wx"] as? String,
+            let uvi = json["uvi"] as? String,
+            let humidity = json["humidity"] as? String,
             let timeDictionary = json["FCTTIME"] as? [String:Any],
             let civil = timeDictionary["civil"] as? String
             
             else {
                 return nil
         }
-       // print(temp)
+        print(temp)
+        print(wspd)
+        print(dir)
+        print(icon)
+        print(wx)
+        print(uvi)
+        print(humidity)
         print(civil)
         
-        return HourlyForecastHour(//temp: temp,
-                                 //dir: dir,
-                                 //icon: icon,
-                                 //wx: wx,
-                                 //humidity: humidity,
-                                 civil: civil)
+        return HourlyForecastHour(temp: temp,
+                                  wspd: wspd,
+                                  dir: dir,
+                                  icon: icon,
+                                  wx: wx,
+                                  uvi: uvi,
+                                  humidity: humidity,
+                                  civil: civil)
     }
 
 

@@ -13,6 +13,7 @@ import UIKit
 class HourlyForecastHour: NSObject {
     
     let temp: String
+    let wspd: String
     let dir: String
     let icon: String
     let wx: String
@@ -30,6 +31,7 @@ class HourlyForecastHour: NSObject {
          civil: String)
     {
         self.temp = temp
+        self.wspd = wspd
         self.dir = dir
         self.icon = icon
         self.wx = wx

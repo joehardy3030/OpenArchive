@@ -88,7 +88,7 @@
                             <outlet property="delegate" destination="gcX-n8-h88" id="d0r-2E-rht"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Weather" id="5Vl-8N-tLl"/>
+                    <navigationItem key="navigationItem" title="Daily Weather" id="5Vl-8N-tLl"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Dcu-ij-yqi" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -257,7 +257,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="KeX-us-6bC"/>
                     </view>
-                    <navigationItem key="navigationItem" id="7yS-pA-Miz"/>
+                    <navigationItem key="navigationItem" title="Hourly Weather" id="7yS-pA-Miz"/>
                     <connections>
                         <outlet property="HourlyForecastTable" destination="wML-BB-yfD" id="WtQ-5f-5al"/>
                         <outlet property="view" destination="wML-BB-yfD" id="9Yq-7l-s34"/>

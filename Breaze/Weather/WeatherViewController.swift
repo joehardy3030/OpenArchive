@@ -70,8 +70,8 @@ class WeatherViewController: UITableViewController {
         // will appear in the tableview
         let weatherCellData = self.simpleForecastArray[indexPath.row]
         
-        cell.highTempLabel?.text = weatherCellData.high
-        cell.lowTempLabel?.text = weatherCellData.low
+        cell.highTempLabel?.text = weatherCellData.high + " F"
+        cell.lowTempLabel?.text = weatherCellData.low + " F"
         cell.dayLabel?.text = weatherCellData.weekday_short
         
         var iconImage = UIImage(named: "clear")

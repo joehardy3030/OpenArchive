@@ -56,11 +56,11 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         // will appear in the tableview
         let weatherCellData = self.hourlyForecastArray[indexPath.row]
         
-        cell.tempLabel?.text = weatherCellData.temp
-        cell.humidityLabel?.text = weatherCellData.humidity
+        cell.tempLabel?.text = weatherCellData.temp + " F"
+        cell.humidityLabel?.text = weatherCellData.humidity + "%"
         cell.timeLabel?.text = weatherCellData.civil
-        cell.windDirectionLabel?.text = weatherCellData.dir
-        cell.windSpeedLabel?.text = weatherCellData.wspd
+       // cell.windDirectionLabel?.text = weatherCellData.dir
+        cell.windSpeedLabel?.text = weatherCellData.dir + "  " + weatherCellData.wspd + " MPH"
        // cell.conditionsLabel?.text = weatherCellData.wx
         
         

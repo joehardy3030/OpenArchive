@@ -12,7 +12,6 @@ class HourlyForecastCell: UITableViewCell {
     
     @IBOutlet var tempLabel: UILabel!
     @IBOutlet var humidityLabel: UILabel!
-    @IBOutlet var windDirectionLabel: UILabel!
     @IBOutlet var windSpeedLabel: UILabel!
     @IBOutlet var conditionsLabel: UILabel!
     @IBOutlet var timeLabel: UILabel!

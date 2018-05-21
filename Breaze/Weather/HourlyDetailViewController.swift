@@ -18,6 +18,7 @@ class HourlyDetailViewController: UIViewController {
     @IBOutlet var feelslikeLabel: UILabel!
     @IBOutlet var dewpointLabel: UILabel!
     @IBOutlet var MSLPLabel: UILabel!
+    @IBOutlet var humidityLabel: UILabel!
     
     var hourlyForecastHour: HourlyForecastHour!
     var utils = Utils()
@@ -28,6 +29,7 @@ class HourlyDetailViewController: UIViewController {
         timeLabel.text = "Time: " + hourlyForecastHour.civil
         conditionsLabel.text = "Conditions: " + utils.switchConditionsText(icon: hourlyForecastHour.icon)
         tempLabel.text = "Temperature: " + hourlyForecastHour.temp + " F"
+        humidityLabel.text = "Humidity: " + hourlyForecastHour.humidity + "%"
         windLabel.text = "Wind: " + hourlyForecastHour.dir + " " + hourlyForecastHour.wspd + " MPH"
         UVILabel.text = "UVI: " + hourlyForecastHour.uvi
         feelslikeLabel.text = "Feels like: " + hourlyForecastHour.feelslike + " F"

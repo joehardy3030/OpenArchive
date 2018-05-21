@@ -19,12 +19,13 @@ class HourlyDetailViewController: UIViewController {
     @IBOutlet var UVILabel: UILabel!
     
     var hourlyForecastHour: HourlyForecastHour!
+    var utils = Utils()
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         timeLabel.text = hourlyForecastHour.civil
-        conditionsLabel.text = hourlyForecastHour.icon
+        conditionsLabel.text = utils.switchConditionsText(icon: hourlyForecastHour.icon)
         tempLabel.text = hourlyForecastHour.temp
         wspdLabel.text = hourlyForecastHour.wspd
         wdirLabel.text = hourlyForecastHour.dir

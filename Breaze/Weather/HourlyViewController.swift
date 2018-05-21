@@ -10,8 +10,8 @@ import UIKit
 
 class HourlyViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
+    var utils = Utils()
     var store = WeatherStore()
-//    var simpleForecastArray = [SimpleForecastDay]()
     var hourlyForecastArray = [HourlyForecastHour]()
     @IBOutlet weak var HourlyForecastTable: UITableView!
     
@@ -32,9 +32,7 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
             case let .failure(error):
                 print("Error fetching simple forecast: \(error)")
             }
-            
         }
-        
     }
     
     override func didReceiveMemoryWarning() {
@@ -48,6 +46,7 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
+        //var iconImage: UIImage
         // Get a new or recycled cell
         let cell = tableView.dequeueReusableCell(withIdentifier: "HourlyForecastCell", for: indexPath) as! HourlyForecastCell
         
@@ -59,42 +58,9 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         cell.tempLabel?.text = weatherCellData.temp + " F"
         cell.humidityLabel?.text = weatherCellData.humidity + "%"
         cell.timeLabel?.text = weatherCellData.civil
-       // cell.windDirectionLabel?.text = weatherCellData.dir
         cell.windSpeedLabel?.text = weatherCellData.dir + "  " + weatherCellData.wspd + " MPH"
-       // cell.conditionsLabel?.text = weatherCellData.wx
-        
-        
-        var iconImage = UIImage(named: "clear")
-        switch weatherCellData.icon {
-        case "clear":
-            iconImage = UIImage(named: weatherCellData.icon)!
-            cell.conditionsLabel?.text = "Clear"
-        case "rain":
-            iconImage = UIImage(named: weatherCellData.icon)!
-            cell.conditionsLabel?.text = "Rain"
-        case "chancerain":
-            iconImage = UIImage(named: "rain")!
-            cell.conditionsLabel?.text = "Chance of Rain"
-        case "tstorms":
-            iconImage = UIImage(named: "rain")!
-            cell.conditionsLabel?.text = "Thunder Storms"
-        case "mostlycloudy":
-            iconImage = UIImage(named: weatherCellData.icon)!
-            cell.conditionsLabel?.text = "Mostly Cloudy"
-        case "partlycloudy":
-            iconImage = UIImage(named: weatherCellData.icon)!
-            cell.conditionsLabel?.text = "Partly Cloudy"
-        case "cloudy":
-            iconImage = UIImage(named: weatherCellData.icon)!
-            cell.conditionsLabel?.text = "Cloudy"
-        case "fog":
-            iconImage = UIImage(named: weatherCellData.icon)!
-            cell.conditionsLabel?.text = "Fog"
-        default:
-            iconImage = UIImage(named: "cloudy")!
-            cell.conditionsLabel?.text = weatherCellData.icon
-        }
-        cell.iconImage?.image = iconImage
+        cell.conditionsLabel?.text = utils.switchConditionsText(icon: weatherCellData.icon)
+        cell.iconImage?.image = utils.switchConditionsImage(icon: weatherCellData.icon)
         
         return cell
     }

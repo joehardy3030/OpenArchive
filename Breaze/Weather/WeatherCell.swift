@@ -21,8 +21,6 @@ class WeatherCell: UITableViewCell {
         
         highTempLabel.adjustsFontForContentSizeCategory = true
         lowTempLabel.adjustsFontForContentSizeCategory = true
-       // dayLabel.adjustsFontForContentSizeCategory = true
         iconLabel.adjustsFontForContentSizeCategory = true
-
     }
 }

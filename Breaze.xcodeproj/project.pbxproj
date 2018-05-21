@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		7915AFD1209FF46600625E43 /* HourlyForecastCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7915AFD0209FF46600625E43 /* HourlyForecastCell.swift */; };
 		791CE1BF20B2364E00299F76 /* HourlyDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791CE1BE20B2364E00299F76 /* HourlyDetailViewController.swift */; };
+		791CE1C120B252F100299F76 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791CE1C020B252F100299F76 /* Utils.swift */; };
 		7971A1C920A29B7F009438F7 /* HourlyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7971A1C820A29B7F009438F7 /* HourlyViewController.swift */; };
 		D8357A9720240BAD005657DF /* WundergroundAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8357A9620240BAD005657DF /* WundergroundAPI.swift */; };
 		D84F92CA2033F1A100DD3855 /* AirNowAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84F92C92033F1A100DD3855 /* AirNowAPI.swift */; };
@@ -50,6 +51,7 @@
 /* Begin PBXFileReference section */
 		7915AFD0209FF46600625E43 /* HourlyForecastCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyForecastCell.swift; sourceTree = "<group>"; };
 		791CE1BE20B2364E00299F76 /* HourlyDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyDetailViewController.swift; sourceTree = "<group>"; };
+		791CE1C020B252F100299F76 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		7971A1C820A29B7F009438F7 /* HourlyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyViewController.swift; sourceTree = "<group>"; };
 		D8357A9620240BAD005657DF /* WundergroundAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WundergroundAPI.swift; sourceTree = "<group>"; };
 		D84F92C92033F1A100DD3855 /* AirNowAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirNowAPI.swift; sourceTree = "<group>"; };
@@ -157,6 +159,7 @@
 				D85A4EEE2022D0B600E480FB /* AppDelegate.swift */,
 				D85A4EF42022D0B600E480FB /* Main.storyboard */,
 				D85A4EF92022D0B600E480FB /* LaunchScreen.storyboard */,
+				791CE1C020B252F100299F76 /* Utils.swift */,
 				D84F92CF203A856C00DD3855 /* Weather */,
 				D84F92D0203A85C600DD3855 /* Smog */,
 				D85A4EF72022D0B600E480FB /* Assets.xcassets */,
@@ -326,6 +329,7 @@
 				D84F92CE203A7E7800DD3855 /* SmogCell.swift in Sources */,
 				D84F92D2203A872200DD3855 /* WeatherCell.swift in Sources */,
 				D8715B9B2029216800BC13AA /* HourlyForecastHour.swift in Sources */,
+				791CE1C120B252F100299F76 /* Utils.swift in Sources */,
 				D85A4EEF2022D0B600E480FB /* AppDelegate.swift in Sources */,
 				7971A1C920A29B7F009438F7 /* HourlyViewController.swift in Sources */,
 				D84F92CA2033F1A100DD3855 /* AirNowAPI.swift in Sources */,

@@ -13,6 +13,9 @@ import UIKit
 class HourlyForecastHour: NSObject {
     
     let temp: String
+    let feelslike: String
+    let dewpoint: String
+    let mslp: String
     let wspd: String
     let dir: String
     let icon: String
@@ -22,6 +25,9 @@ class HourlyForecastHour: NSObject {
     let civil: String
     
     init(temp: String,
+         feelslike: String,
+         dewpoint: String,
+         mslp: String,
          wspd: String,
          dir: String,
          icon: String,
@@ -31,6 +37,9 @@ class HourlyForecastHour: NSObject {
          civil: String)
     {
         self.temp = temp
+        self.feelslike = feelslike
+        self.dewpoint = dewpoint
+        self.mslp = mslp
         self.wspd = wspd
         self.dir = dir
         self.icon = icon

@@ -115,6 +115,12 @@ struct WundergroundAPI {
         guard
             let tempDictionary = json["temp"] as? [String:Any],
             let temp = tempDictionary["english"] as? String,
+            let feelslikeDictionary = json["feelslike"] as? [String:Any],
+            let feelslike = feelslikeDictionary["english"] as? String,
+            let dewpointDictionary = json["dewpoint"] as? [String:Any],
+            let dewpoint = dewpointDictionary["english"] as? String,
+            let mslpDictionary = json["mslp"] as? [String:Any],
+            let mslp = mslpDictionary["english"] as? String,
             let wspdDictionary = json["wspd"] as? [String:Any],
             let wspd = wspdDictionary["english"] as? String,
             let wdirDictionary = json["wdir"] as? [String:Any],
@@ -131,6 +137,9 @@ struct WundergroundAPI {
         }
        
         return HourlyForecastHour(temp: temp,
+                                  feelslike: feelslike,
+                                  dewpoint: dewpoint,
+                                  mslp: mslp,
                                   wspd: wspd,
                                   dir: dir,
                                   icon: icon,

@@ -99,6 +99,21 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         return cell
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        //If the triggered item is the "showHourlyDetail" segue
+        switch segue.identifier {
+        case "showHourlyDetail"?:
+            if let row = HourlyForecastTable.indexPathForSelectedRow?.row {
+                // Get the HourlyForecastHour associated with this row and pass it along
+                let hourlyForecastHour = self.hourlyForecastArray[row]
+                let hourlyDetailViewController = segue.destination as! HourlyDetailViewController
+                hourlyDetailViewController.hourlyForecastHour = hourlyForecastHour
+            }
+        default:
+            preconditionFailure("Unexpected segue identifier")
+        }
+    }
+    
 }
 
 

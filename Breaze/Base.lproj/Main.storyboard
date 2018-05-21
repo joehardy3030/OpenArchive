@@ -249,6 +249,7 @@
                                             <outlet property="tempLabel" destination="Np3-8c-edU" id="6D3-2c-Nup"/>
                                             <outlet property="timeLabel" destination="euo-4b-PsZ" id="ahn-ld-PB5"/>
                                             <outlet property="windSpeedLabel" destination="jUj-OJ-Onx" id="eM6-E3-CMh"/>
+                                            <segue destination="0Up-Tn-Ar2" kind="show" identifier="showHourlyDetail" id="tum-uB-QEy"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -267,28 +268,28 @@
             </objects>
             <point key="canvasLocation" x="1600.8" y="53.523238380809602"/>
         </scene>
-        <!--View Controller-->
+        <!--Hourly Detail View Controller-->
         <scene sceneID="HXF-E3-0cy">
             <objects>
-                <viewController id="0Up-Tn-Ar2" sceneMemberID="viewController">
+                <viewController id="0Up-Tn-Ar2" customClass="HourlyDetailViewController" customModule="Breaze" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="rjw-lP-6zW">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="PvP-UD-IsE">
-                                <rect key="frame" x="0.0" y="28" width="375" height="259"/>
+                                <rect key="frame" x="20" y="72" width="355" height="166"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="OWi-f4-7sY">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="36.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="355" height="21"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Time" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xeb-Ag-eLm">
-                                                <rect key="frame" x="0.0" y="0.0" width="38" height="36.5"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="38" height="21"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <textField opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="749" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Kfy-rk-DsL">
-                                                <rect key="frame" x="46" y="0.0" width="329" height="36.5"/>
+                                                <rect key="frame" x="46" y="0.0" width="309" height="21"/>
                                                 <nil key="textColor"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <textInputTraits key="textInputTraits"/>
@@ -296,31 +297,31 @@
                                         </subviews>
                                     </stackView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="Conditions" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jhR-DQ-sTb">
-                                        <rect key="frame" x="0.0" y="44.5" width="375" height="36.5"/>
+                                        <rect key="frame" x="0.0" y="29" width="355" height="21"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="253" text="Temp" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dfg-6I-xW0">
-                                        <rect key="frame" x="0.0" y="89" width="375" height="36.5"/>
+                                        <rect key="frame" x="0.0" y="58" width="355" height="21"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="254" verticalHuggingPriority="254" text="Wspd" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h3X-X9-eIf">
-                                        <rect key="frame" x="0.0" y="133.5" width="375" height="36.5"/>
+                                        <rect key="frame" x="0.0" y="87" width="355" height="21"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Wdir" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rUc-qv-qVA">
-                                        <rect key="frame" x="0.0" y="178" width="375" height="36.5"/>
+                                        <rect key="frame" x="0.0" y="116" width="355" height="21"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="255" verticalHuggingPriority="255" text="UVI" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hWZ-my-J67">
-                                        <rect key="frame" x="0.0" y="222.5" width="375" height="36.5"/>
+                                        <rect key="frame" x="0.0" y="145" width="355" height="21"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -344,7 +345,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="Pop-G5-EBH" firstAttribute="trailing" secondItem="PvP-UD-IsE" secondAttribute="trailing" id="MqU-Y0-HwF"/>
-                            <constraint firstItem="PvP-UD-IsE" firstAttribute="leading" secondItem="rjw-lP-6zW" secondAttribute="leading" id="Nce-85-XrR"/>
+                            <constraint firstItem="PvP-UD-IsE" firstAttribute="leading" secondItem="rjw-lP-6zW" secondAttribute="leading" constant="20" id="Nce-85-XrR"/>
                             <constraint firstItem="PvP-UD-IsE" firstAttribute="top" secondItem="Pop-G5-EBH" secondAttribute="top" constant="8" id="bkc-CB-LKC"/>
                             <constraint firstItem="Pop-G5-EBH" firstAttribute="bottom" secondItem="PvP-UD-IsE" secondAttribute="bottom" constant="380" id="f1f-3O-phN"/>
                             <constraint firstItem="PvP-UD-IsE" firstAttribute="top" secondItem="Pop-G5-EBH" secondAttribute="top" constant="8" id="ljy-P8-cAg"/>
@@ -352,6 +353,15 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="Pop-G5-EBH"/>
                     </view>
+                    <connections>
+                        <outlet property="UVILabel" destination="hWZ-my-J67" id="4ON-fX-yyY"/>
+                        <outlet property="conditionsLabel" destination="jhR-DQ-sTb" id="tHI-9X-D48"/>
+                        <outlet property="inputField" destination="Kfy-rk-DsL" id="EUb-le-mhU"/>
+                        <outlet property="tempLabel" destination="dfg-6I-xW0" id="JSJ-1y-xkh"/>
+                        <outlet property="timeLabel" destination="xeb-Ag-eLm" id="P77-QX-iJI"/>
+                        <outlet property="wdirLabel" destination="rUc-qv-qVA" id="BOi-ZG-SkC"/>
+                        <outlet property="wspdLabel" destination="h3X-X9-eIf" id="pw8-La-LbH"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="LrP-AB-rf6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

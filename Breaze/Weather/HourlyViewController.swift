@@ -18,7 +18,8 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
         self.HourlyForecastTable.dataSource = self;
-        
+        self.HourlyForecastTable.addSubview(self.refreshControl)
+
         store.fetchHourlyForecast {
             (HourlyForecastResult) -> Void in
             
@@ -80,6 +81,24 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         }
     }
     
+    
+    @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
+        // Do some reloading of data and update the table view's data source
+        // Fetch more objects from a web service, for example...
+        
+        // Simply adding an object to the data source for this example
+        
+        self.HourlyForecastTable.reloadData()
+        refreshControl.endRefreshing()
+    }
+    
+    lazy var refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(HourlyViewController.handleRefresh(_:)), for: UIControlEvents.valueChanged)
+        refreshControl.tintColor = UIColor.red
+        
+        return refreshControl
+    }()
 }
 
 

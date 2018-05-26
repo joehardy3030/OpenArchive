@@ -19,20 +19,26 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         super.viewDidLoad()
         self.HourlyForecastTable.dataSource = self;
         self.HourlyForecastTable.addSubview(self.refreshControl)
-
+        updateHourlyForecastData()
+    }
+    
+    func updateHourlyForecastData() {
+        // Grab the HourlyForecast data and put it in the HourlyForecastData
         store.fetchHourlyForecast {
             (HourlyForecastResult) -> Void in
-            
             switch HourlyForecastResult {
             case let .success(hourlyForecast):
                 self.hourlyForecastArray = hourlyForecast
                 print("count hourly \(self.hourlyForecastArray.count)")
                 DispatchQueue.main.async{
                     self.HourlyForecastTable.reloadData()
+                    
                 }
             case let .failure(error):
                 print("Error fetching simple forecast: \(error)")
+                
             }
+            
         }
     }
     
@@ -81,24 +87,22 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         }
     }
     
-    
     @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
         // Do some reloading of data and update the table view's data source
         // Fetch more objects from a web service, for example...
-        
-        // Simply adding an object to the data source for this example
-        
-        self.HourlyForecastTable.reloadData()
+        updateHourlyForecastData()
         refreshControl.endRefreshing()
     }
     
     lazy var refreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(HourlyViewController.handleRefresh(_:)), for: UIControlEvents.valueChanged)
-        refreshControl.tintColor = UIColor.red
+        refreshControl.tintColor = UIColor.gray
         
         return refreshControl
     }()
+
+    
 }
 
 

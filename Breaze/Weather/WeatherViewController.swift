@@ -7,15 +7,21 @@
 //
 
 import UIKit
+import CoreLocation
 
-class WeatherViewController: UITableViewController {
+class WeatherViewController: UITableViewController, CLLocationManagerDelegate  {
     
+    var locationManager: CLLocationManager!
+    // https://www.hackingwithswift.com/read/22/2/requesting-location-core-location
     var utils = Utils()
     var store = WeatherStore()
     var simpleForecastArray = [SimpleForecastDay]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        locationManager = CLLocationManager()
+        locationManager.delegate = self
+        locationManager.requestAlwaysAuthorization()
         
         store.fetchSimpleForecast {
             (SimpleForecastResult) -> Void in
@@ -38,6 +44,16 @@ class WeatherViewController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        if status == .authorizedAlways {
+            if CLLocationManager.isMonitoringAvailable(for: CLBeaconRegion.self) {
+                if CLLocationManager.isRangingAvailable() {
+                    // do stuff
+                }
+            }
+        }
+    }
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.simpleForecastArray.count
     }

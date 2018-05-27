@@ -21,7 +21,17 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         self.HourlyForecastTable.addSubview(self.refreshControl)
         updateHourlyForecastData()
     }
-    
+
+//    func viewWillAppear() {
+ //       updateHourlyForecastData()
+  //  }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        updateHourlyForecastData()
+
+    }
+
+
     func updateHourlyForecastData() {
         // Grab the HourlyForecast data and put it in the HourlyForecastData
         store.fetchHourlyForecast {
@@ -53,7 +63,6 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        //var iconImage: UIImage
         // Get a new or recycled cell
         let cell = tableView.dequeueReusableCell(withIdentifier: "HourlyForecastCell", for: indexPath) as! HourlyForecastCell
         
@@ -104,5 +113,3 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
 
     
 }
-
-

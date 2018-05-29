@@ -11,7 +11,9 @@ import CoreLocation
 
 class WeatherViewController: UITableViewController, CLLocationManagerDelegate  {
     
+    @IBOutlet var locationLabel: UILabel!
     var locationManager: CLLocationManager!
+    var currentLocation: CLLocation!
     // https://www.hackingwithswift.com/read/22/2/requesting-location-core-location
     var utils = Utils()
     var store = WeatherStore()
@@ -22,6 +24,7 @@ class WeatherViewController: UITableViewController, CLLocationManagerDelegate  {
         locationManager = CLLocationManager()
         locationManager.delegate = self
         locationManager.requestAlwaysAuthorization()
+        locationManager.requestLocation()
         
         store.fetchSimpleForecast {
             (SimpleForecastResult) -> Void in
@@ -43,17 +46,28 @@ class WeatherViewController: UITableViewController, CLLocationManagerDelegate  {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        if status == .authorizedAlways {
-            if CLLocationManager.isMonitoringAvailable(for: CLBeaconRegion.self) {
-                if CLLocationManager.isRangingAvailable() {
-                    // do stuff
-                }
-            }
-        }
+    
+    func locationManager(_ manager: CLLocationManager,
+                         didFailWithError error: Error) {
+        print("error")
     }
     
+    func locationManager(_ manager: CLLocationManager,
+                                  didUpdateLocations locations: [CLLocation]){
+        
+        var locationText: String!
+        self.currentLocation = locations.last
+        //eventDate = location.timestamp
+        locationText = String(self.currentLocation.coordinate.latitude) + ", " + String(self.currentLocation.coordinate.longitude)
+        
+        DispatchQueue.main.async{
+            //print("Latitude:", self.currentLocation.coordinate.latitude)
+            //print("Longitude:", self.currentLocation.coordinate.longitude)
+            self.locationLabel.text = locationText
+        }
+        
+    }
+
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.simpleForecastArray.count
     }

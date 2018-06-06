@@ -13,12 +13,17 @@ enum WundergroundError: Error {
 }
 
 enum Method: String {
-    case simpleForecast = "https://api.wunderground.com/api/ffd1b93b6a497308/conditions/forecast/q/CA/El_Cerrito.json"
-    case hourlyForecast = "https://api.wunderground.com/api/ffd1b93b6a497308/conditions/forecast/hourly/q/CA/El_Cerrito.json"
+    case hourlyForecast = "/conditions/forecast/hourly/q"
+    case simpleForecast = "/conditions/forecast/q"
 }
 
 struct WundergroundAPI {
- 
+    
+    private static let baseURLString = "https://api.wunderground.com/api"
+    private static let apiKey = "/ffd1b93b6a497308"
+    private static let homeLocation = "/CA/El_Cerrito"
+    private static let fileExtension = ".json"
+    
     static var simpleForecastURL: URL {
         return wundergroundURL(method: .simpleForecast, parameters: nil)
     }
@@ -32,10 +37,20 @@ struct WundergroundAPI {
     // as well as a set of optional dictionory of query parameters
     private static func wundergroundURL(method: Method, parameters: [String:String]?) -> URL
     {
-        let components = URLComponents(string: method.rawValue)!
+        //let components = URLComponents(string: method.rawValue)!
+        var components = baseURLString
+        let queryMethod = method.rawValue
+        let location = homeLocation
+        let fileExt = fileExtension
+        
+        let baseParameters = [
+            "api_key": apiKey
+        ]
 
-        print(components.url!)
-        return components.url!
+        components = components + baseParameters["api_key"]! + queryMethod + location + fileExt
+        
+        print(components)
+        return URL(string: components)!
     }
     
     static func simpleForecast(fromJSON data: Data) -> SimpleForecastResult {

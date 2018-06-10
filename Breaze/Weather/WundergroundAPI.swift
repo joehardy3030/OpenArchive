@@ -32,9 +32,13 @@ struct WundergroundAPI {
         return wundergroundURL(method: .hourlyForecast, parameters: nil)
     }
 
+    static func localSimpleForecastURL(paramaters: [String:String]?) -> URL {
+        return wundergroundURL(method: .simpleForecast, parameters: paramaters)
+    }
+
     // This private function returns the URL
     // It takes the Method as a parameter,
-    // as well as a set of optional dictionory of query parameters
+    // as well as a set of optional dictionary of query parameters
     private static func wundergroundURL(method: Method, parameters: [String:String]?) -> URL
     {
         //let components = URLComponents(string: method.rawValue)!
@@ -93,7 +97,7 @@ struct WundergroundAPI {
             else {
                 return nil
         }
-        print(weekday_short)
+        print(json)
         return SimpleForecastDay(high: high,
                                  low: low,
                                  icon: icon,

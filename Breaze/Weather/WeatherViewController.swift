@@ -56,7 +56,8 @@ class WeatherViewController: UITableViewController, CLLocationManagerDelegate  {
     
     func updateSimpleForecastData() {
         // Grab the HourlyForecast data and put it in the HourlyForecastData
-        store.fetchSimpleForecast {
+        //store.fetchSimpleForecast
+        store.fetchLocalSimpleForecast(parameters:nil){
             (SimpleForecastResult) -> Void in
             switch SimpleForecastResult {
             case let .success(simpleForecast):

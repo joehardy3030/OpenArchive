@@ -59,5 +59,16 @@ class WeatherStore {
         }
         task.resume()
     }
-    
+
+    func fetchLocalSimpleForecast(parameters: [String:String]?, completion: @escaping (SimpleForecastResult) -> Void) {
+        
+        let url = WundergroundAPI.localSimpleForecastURL(paramaters: parameters)
+        let request = URLRequest(url: url)
+        let task = session.dataTask(with: request) { (data, response, error) -> Void in
+            let result = self.processSimpleForecastResult(data: data, error: error)
+            completion(result)
+        }
+        task.resume()
+    }
+
 }

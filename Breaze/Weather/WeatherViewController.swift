@@ -25,21 +25,7 @@ class WeatherViewController: UITableViewController, CLLocationManagerDelegate  {
         locationManager.delegate = self
         locationManager.requestAlwaysAuthorization()
         locationManager.requestLocation()
-        
-        store.fetchSimpleForecast {
-            (SimpleForecastResult) -> Void in
-            
-            switch SimpleForecastResult {
-            case let .success(simpleForecast):
-                self.simpleForecastArray = simpleForecast
-                print("count simple \(self.simpleForecastArray.count)")
-                DispatchQueue.main.async{
-                    self.tableView.reloadData()
-                }
-            case let .failure(error):
-                print("Error fetching simple forecast: \(error)")
-            }
-        }
+        updateSimpleForecastData()
     }
 
     override func didReceiveMemoryWarning() {
@@ -66,6 +52,26 @@ class WeatherViewController: UITableViewController, CLLocationManagerDelegate  {
             self.locationLabel.text = locationText
         }
         
+    }
+    
+    func updateSimpleForecastData() {
+        // Grab the HourlyForecast data and put it in the HourlyForecastData
+        store.fetchSimpleForecast {
+            (SimpleForecastResult) -> Void in
+            switch SimpleForecastResult {
+            case let .success(simpleForecast):
+                self.simpleForecastArray = simpleForecast
+                print("count simple \(self.simpleForecastArray.count)")
+                DispatchQueue.main.async{
+                    self.tableView.reloadData()
+                    
+                }
+            case let .failure(error):
+                print("Error fetching simple forecast: \(error)")
+                
+            }
+            
+        }
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

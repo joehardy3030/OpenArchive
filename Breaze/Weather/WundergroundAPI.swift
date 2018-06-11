@@ -97,7 +97,7 @@ struct WundergroundAPI {
             else {
                 return nil
         }
-        print(json)
+       // print(json)
         return SimpleForecastDay(high: high,
                                  low: low,
                                  icon: icon,

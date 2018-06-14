@@ -19,7 +19,7 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         super.viewDidLoad()
         self.HourlyForecastTable.dataSource = self;
         self.HourlyForecastTable.addSubview(self.refreshControl)
-        updateHourlyForecastData()
+       // updateHourlyForecastData()
     }
 
 //    func viewWillAppear() {
@@ -28,9 +28,7 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         updateHourlyForecastData()
-
     }
-
 
     func updateHourlyForecastData() {
         // Grab the HourlyForecast data and put it in the HourlyForecastData

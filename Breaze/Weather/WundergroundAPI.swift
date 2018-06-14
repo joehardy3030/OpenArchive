@@ -50,9 +50,18 @@ struct WundergroundAPI {
         let baseParameters = [
             "api_key": apiKey
         ]
-
-        components = components + baseParameters["api_key"]! + queryMethod + location + fileExt
         
+//        components = components + baseParameters["api_key"]! + queryMethod + location + fileExt
+
+        if parameters == nil {
+            components = components + baseParameters["api_key"]! + queryMethod + location + fileExt
+            print("El Cerrito")
+        }
+        else {
+            components = components + baseParameters["api_key"]! + queryMethod + "/" + parameters!["latitude"]! + "," + parameters!["longitude"]! + fileExt
+            print(parameters?["latitude"] ?? "")
+            print(parameters?["longitude"] ?? "")
+        }
         print(components)
         return URL(string: components)!
     }

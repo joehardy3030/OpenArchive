@@ -14,7 +14,7 @@ enum HourlyForecastResult {
 }
 
 enum SimpleForecastResult {
-    case success([SimpleForecastDay])
+    case success([SimpleForecastDay], String)
     case failure(Error)
 }
 

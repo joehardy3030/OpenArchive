@@ -71,19 +71,24 @@ struct WundergroundAPI {
             let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])
             guard
                 let jsonDictionary = jsonObject as? [AnyHashable:Any],
+                let conditionsDictionary = jsonDictionary["current_observation"] as? [AnyHashable: Any],
+                let displayLocationDictionary = conditionsDictionary["display_location"] as? [AnyHashable: Any],
+                let displayCity = displayLocationDictionary["city"] as? String,
                 let forecastDictionary = jsonDictionary["forecast"] as? [AnyHashable: Any],
                 let simpleForecastDictionary = forecastDictionary["simpleforecast"] as? [AnyHashable: Any],
                 let forecastdaysArray = simpleForecastDictionary["forecastday"] as? [[String: Any]]
                 else {
                     return .failure(WundergroundError.invalidJSONData)
                 }
+            print(jsonDictionary)
+            print(displayCity)
             var finalSimpleForecast = [SimpleForecastDay]()
             for forecastdayJSON in forecastdaysArray {
                 if let simpleForecastDay = simpleForecastDay(fromJSON: forecastdayJSON) {
                     finalSimpleForecast.append(simpleForecastDay)
                 }
             }
-            return .success(finalSimpleForecast)
+            return .success(finalSimpleForecast, displayCity)
         }
         catch let error {
             return .failure(error)
@@ -106,7 +111,6 @@ struct WundergroundAPI {
             else {
                 return nil
         }
-       // print(json)
         return SimpleForecastDay(high: high,
                                  low: low,
                                  icon: icon,

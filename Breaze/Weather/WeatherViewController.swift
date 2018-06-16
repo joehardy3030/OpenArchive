@@ -24,15 +24,11 @@ class WeatherViewController: UITableViewController, CLLocationManagerDelegate  {
         locationManager = CLLocationManager()
         locationManager.delegate = self
         locationManager.requestAlwaysAuthorization()
-     //   locationManager.requestLocation()
-       // updateSimpleForecastData(paramaters: nil)
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-//        updateSimpleForecastData()
         locationManager.requestLocation()
-
     }
 
     override func didReceiveMemoryWarning() {
@@ -48,15 +44,12 @@ class WeatherViewController: UITableViewController, CLLocationManagerDelegate  {
     func locationManager(_ manager: CLLocationManager,
                                   didUpdateLocations locations: [CLLocation]){
         
-        var locationText: String!
         self.currentLocation = locations.last
         //eventDate = location.timestamp
-        locationText = String(self.currentLocation.coordinate.latitude) + ", " + String(self.currentLocation.coordinate.longitude)
+       // locationText = String(self.currentLocation.coordinate.latitude) + ", " + String(self.currentLocation.coordinate.longitude)
         
         DispatchQueue.main.async{
-            //print("Latitude:", self.currentLocation.coordinate.latitude)
-            //print("Longitude:", self.currentLocation.coordinate.longitude)
-            self.locationLabel.text = locationText
+           // self.locationLabel.text = locationText
             let parameters = [
                 "latitude": String(self.currentLocation.coordinate.latitude),
                 "longitude": String(self.currentLocation.coordinate.longitude)
@@ -69,15 +62,17 @@ class WeatherViewController: UITableViewController, CLLocationManagerDelegate  {
     func updateSimpleForecastData(paramaters: [String:String]?) {
         // Grab the HourlyForecast data and put it in the HourlyForecastData
         //store.fetchSimpleForecast
+       // var locationText: String!
+       // locationText = String(self.currentLocation.coordinate.latitude) + ", " + String(self.currentLocation.coordinate.longitude)
         store.fetchLocalSimpleForecast(parameters: paramaters){
             (SimpleForecastResult) -> Void in
             switch SimpleForecastResult {
-            case let .success(simpleForecast):
+            case let .success(simpleForecast, displayCity):
                 self.simpleForecastArray = simpleForecast
                 print("count simple \(self.simpleForecastArray.count)")
                 DispatchQueue.main.async{
                     self.tableView.reloadData()
-                    
+                    self.locationLabel.text = displayCity
                 }
             case let .failure(error):
                 print("Error fetching simple forecast: \(error)")

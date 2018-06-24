@@ -21,8 +21,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         
         self.locationManager = CLLocationManager()
         self.locationManager.delegate = self
-        locationManager.requestAlwaysAuthorization()
-        locationManager.requestLocation()
+        self.locationManager.requestAlwaysAuthorization()
+        self.locationManager.requestLocation()
 
         // let weatherViewController = WeatherViewController()
         // weatherViewController.store = WeatherStore()
@@ -39,14 +39,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
                          didUpdateLocations locations: [CLLocation]){
         
         self.currentLocation = locations.last
-        DispatchQueue.main.async{
-            let parameters = [
-                "latitude": String(self.currentLocation.coordinate.latitude),
-                "longitude": String(self.currentLocation.coordinate.longitude)
-            ]
-            print(parameters["latitude"])
-            print(parameters["longitude"])
-        }
+//        DispatchQueue.main.async{
+//            let parameters = [
+//                "latitude": String(self.currentLocation.coordinate.latitude),
+ //               "longitude": String(self.currentLocation.coordinate.longitude)
+ //           ]
+ //           print(parameters["latitude"])
+ //           print(parameters["longitude"])
+ //       }
     }
     
     func applicationWillResignActive(_ application: UIApplication) {

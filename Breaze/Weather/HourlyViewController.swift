@@ -27,7 +27,7 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         locationManager = CLLocationManager()
         locationManager.delegate = appDelegate
         self.currentLocation = appDelegate.currentLocation
-        print(self.currentLocation.coordinate.latitude)
+        print(self.currentLocation?.coordinate.latitude as Any)
        // updateHourlyForecastData()
     }
 

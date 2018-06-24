@@ -45,25 +45,17 @@ class WeatherViewController: UITableViewController, CLLocationManagerDelegate  {
                                   didUpdateLocations locations: [CLLocation]){
         
         self.currentLocation = locations.last
-        //eventDate = location.timestamp
-       // locationText = String(self.currentLocation.coordinate.latitude) + ", " + String(self.currentLocation.coordinate.longitude)
-        
         DispatchQueue.main.async{
-           // self.locationLabel.text = locationText
             let parameters = [
                 "latitude": String(self.currentLocation.coordinate.latitude),
                 "longitude": String(self.currentLocation.coordinate.longitude)
             ]
             self.updateSimpleForecastData(paramaters: parameters)
         }
-        
     }
     
     func updateSimpleForecastData(paramaters: [String:String]?) {
         // Grab the HourlyForecast data and put it in the HourlyForecastData
-        //store.fetchSimpleForecast
-       // var locationText: String!
-       // locationText = String(self.currentLocation.coordinate.latitude) + ", " + String(self.currentLocation.coordinate.longitude)
         store.fetchLocalSimpleForecast(parameters: paramaters){
             (SimpleForecastResult) -> Void in
             switch SimpleForecastResult {
@@ -76,12 +68,10 @@ class WeatherViewController: UITableViewController, CLLocationManagerDelegate  {
                 }
             case let .failure(error):
                 print("Error fetching simple forecast: \(error)")
-                
             }
-            
         }
     }
-
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.simpleForecastArray.count
     }

@@ -7,21 +7,41 @@
 //
 
 import UIKit
+import CoreLocation
 
-class HourlyViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class HourlyViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, CLLocationManagerDelegate  {
     
     var utils = Utils()
     var store = WeatherStore()
     var hourlyForecastArray = [HourlyForecastHour]()
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    var locationManager: CLLocationManager!
+    var currentLocation: CLLocation!
+
     @IBOutlet weak var HourlyForecastTable: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.HourlyForecastTable.dataSource = self;
         self.HourlyForecastTable.addSubview(self.refreshControl)
+        locationManager = CLLocationManager()
+        locationManager.delegate = appDelegate
+        self.currentLocation = appDelegate.currentLocation
+        print(self.currentLocation.coordinate.latitude)
        // updateHourlyForecastData()
     }
 
+    func locationManager(_ manager: CLLocationManager,
+                         didFailWithError error: Error) {
+        print("error")
+    }
+    
+    func locationManager(_ manager: CLLocationManager,
+                         didUpdateLocations locations: [CLLocation]){
+        
+        self.currentLocation = locations.last
+        print(self.currentLocation)
+    }
 //    func viewWillAppear() {
  //       updateHourlyForecastData()
   //  }

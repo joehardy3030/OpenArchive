@@ -9,7 +9,7 @@
 import UIKit
 import CoreLocation
 
-class HourlyViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, CLLocationManagerDelegate  {
+class HourlyViewController: UIViewController, UITableViewDataSource, UITableViewDelegate  {
     
     var utils = Utils()
     var store = WeatherStore()
@@ -31,20 +31,6 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
        // updateHourlyForecastData()
     }
 
-    func locationManager(_ manager: CLLocationManager,
-                         didFailWithError error: Error) {
-        print("error")
-    }
-    
-    func locationManager(_ manager: CLLocationManager,
-                         didUpdateLocations locations: [CLLocation]){
-        
-        self.currentLocation = locations.last
-        print(self.currentLocation)
-    }
-//    func viewWillAppear() {
- //       updateHourlyForecastData()
-  //  }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         updateHourlyForecastData()

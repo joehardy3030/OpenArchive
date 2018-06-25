@@ -36,6 +36,10 @@ struct WundergroundAPI {
         return wundergroundURL(method: .simpleForecast, parameters: paramaters)
     }
 
+    static func localHourlyForecastURL(paramaters: [String:String]?) -> URL {
+        return wundergroundURL(method: .hourlyForecast, parameters: paramaters)
+    }
+
     // This private function returns the URL
     // It takes the Method as a parameter,
     // as well as a set of optional dictionary of query parameters

@@ -28,10 +28,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         self.locationManager.delegate = self
         self.locationManager.requestAlwaysAuthorization()
         self.locationManager.requestLocation()
-        //self.locationManager.startUpdatingLocation()
-
-        // let weatherViewController = WeatherViewController()
-        // weatherViewController.store = WeatherStore()
 
         return true
     }
@@ -49,14 +45,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
             NotificationCenter.default.post(name: .alocation, object: nil)
             print("location Updated")
         }
-//        DispatchQueue.main.async{
-//            let parameters = [
-//                "latitude": String(self.currentLocation.coordinate.latitude),
- //               "longitude": String(self.currentLocation.coordinate.longitude)
- //           ]
- //           print(parameters["latitude"])
- //           print(parameters["longitude"])
- //       }
     }
     
     func applicationWillResignActive(_ application: UIApplication) {

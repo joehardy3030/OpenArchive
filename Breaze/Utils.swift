@@ -9,6 +9,7 @@
 import UIKit
 
 class Utils {
+    
     func switchConditionsText(icon: String) -> String {
         var conditions: String
         switch icon {

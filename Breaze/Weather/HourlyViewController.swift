@@ -31,7 +31,7 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        updateHourlyForecastData()
+        updateHourlyForecastData(parameters: nil)
     }
     
     @objc func receivedLocationNotification(notification: NSNotification){
@@ -40,7 +40,7 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
        // }
     }
     
-    func updateHourlyForecastData() {
+    func updateHourlyForecastData(parameters: [String:String]?) {
         // Grab the HourlyForecast data and put it in the HourlyForecastData
         store.fetchHourlyForecast {
             (HourlyForecastResult) -> Void in
@@ -107,7 +107,7 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
     @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
         // Do some reloading of data and update the table view's data source
         // Fetch more objects from a web service, for example...
-        updateHourlyForecastData()
+        updateHourlyForecastData(parameters: nil)
         refreshControl.endRefreshing()
     }
     

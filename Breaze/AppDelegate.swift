@@ -9,6 +9,11 @@
 import UIKit
 import CoreLocation
 
+//let carquinezNotificationKey = "com.carquinez.notificationKey"
+extension Notification.Name {
+    static let alocation = Notification.Name("location")
+}
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate {
 
@@ -23,6 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         self.locationManager.delegate = self
         self.locationManager.requestAlwaysAuthorization()
         self.locationManager.requestLocation()
+        //self.locationManager.startUpdatingLocation()
 
         // let weatherViewController = WeatherViewController()
         // weatherViewController.store = WeatherStore()
@@ -39,6 +45,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
                          didUpdateLocations locations: [CLLocation]){
         
         self.currentLocation = locations.last
+        DispatchQueue.main.async{
+            NotificationCenter.default.post(name: .alocation, object: nil)
+            print("location Updated")
+        }
 //        DispatchQueue.main.async{
 //            let parameters = [
 //                "latitude": String(self.currentLocation.coordinate.latitude),

@@ -15,17 +15,15 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
     var store = WeatherStore()
     var hourlyForecastArray = [HourlyForecastHour]()
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
-    var locationManager: CLLocationManager!
     var currentLocation: CLLocation!
 
     @IBOutlet weak var HourlyForecastTable: UITableView!
-    
+       
     override func viewDidLoad() {
         super.viewDidLoad()
         self.HourlyForecastTable.dataSource = self;
         self.HourlyForecastTable.addSubview(self.refreshControl)
-        locationManager = CLLocationManager()
-        locationManager.delegate = appDelegate
+        NotificationCenter.default.addObserver(self, selector: #selector(receivedLocationNotification(notification:)), name: .alocation, object: nil)
         self.currentLocation = appDelegate.currentLocation
         print(self.currentLocation?.coordinate.latitude as Any)
        // updateHourlyForecastData()
@@ -35,7 +33,13 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         super.viewWillAppear(animated)
         updateHourlyForecastData()
     }
-
+    
+    @objc func receivedLocationNotification(notification: NSNotification){
+       //  DispatchQueue.main.async{
+            print("received notification")
+       // }
+    }
+    
     func updateHourlyForecastData() {
         // Grab the HourlyForecast data and put it in the HourlyForecastData
         store.fetchHourlyForecast {

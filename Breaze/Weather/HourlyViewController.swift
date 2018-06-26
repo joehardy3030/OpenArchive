@@ -26,18 +26,17 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         self.HourlyForecastTable.addSubview(self.refreshControl)
         NotificationCenter.default.addObserver(self, selector: #selector(receivedLocationNotification(notification:)), name: .alocation, object: nil)
         self.currentLocation = appDelegate.currentLocation
-        let parameters = [
-            "latitude": String(self.currentLocation.coordinate.latitude),
-            "longitude": String(self.currentLocation.coordinate.longitude)
-        ]
-        self.updateHourlyForecastData(parameters: parameters)
         print(self.currentLocation?.coordinate.latitude as Any)
        // updateHourlyForecastData()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        //updateHourlyForecastData(parameters: nil)
+        let parameters = [
+            "latitude": String(self.currentLocation.coordinate.latitude),
+            "longitude": String(self.currentLocation.coordinate.longitude)
+        ]
+        self.updateHourlyForecastData(parameters: parameters)
     }
     
     @objc func receivedLocationNotification(notification: NSNotification){
@@ -113,7 +112,11 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
     @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
         // Do some reloading of data and update the table view's data source
         // Fetch more objects from a web service, for example...
-        updateHourlyForecastData(parameters: nil)
+        let parameters = [
+            "latitude": String(self.currentLocation.coordinate.latitude),
+            "longitude": String(self.currentLocation.coordinate.longitude)
+        ]
+        self.updateHourlyForecastData(parameters: parameters)
         refreshControl.endRefreshing()
     }
     

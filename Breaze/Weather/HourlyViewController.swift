@@ -16,7 +16,8 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
     var hourlyForecastArray = [HourlyForecastHour]()
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var currentLocation: CLLocation!
-
+    
+    @IBOutlet var locationLabel: UILabel!
     @IBOutlet weak var HourlyForecastTable: UITableView!
        
     override func viewDidLoad() {
@@ -25,13 +26,18 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         self.HourlyForecastTable.addSubview(self.refreshControl)
         NotificationCenter.default.addObserver(self, selector: #selector(receivedLocationNotification(notification:)), name: .alocation, object: nil)
         self.currentLocation = appDelegate.currentLocation
+        let parameters = [
+            "latitude": String(self.currentLocation.coordinate.latitude),
+            "longitude": String(self.currentLocation.coordinate.longitude)
+        ]
+        self.updateHourlyForecastData(parameters: parameters)
         print(self.currentLocation?.coordinate.latitude as Any)
        // updateHourlyForecastData()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        updateHourlyForecastData(parameters: nil)
+        //updateHourlyForecastData(parameters: nil)
     }
     
     @objc func receivedLocationNotification(notification: NSNotification){
@@ -42,15 +48,15 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
     
     func updateHourlyForecastData(parameters: [String:String]?) {
         // Grab the HourlyForecast data and put it in the HourlyForecastData
-        store.fetchHourlyForecast {
+        store.fetchLocalHourlyForecast(parameters: parameters) {
             (HourlyForecastResult) -> Void in
             switch HourlyForecastResult {
-            case let .success(hourlyForecast):
+            case let .success(hourlyForecast, displayCity):
                 self.hourlyForecastArray = hourlyForecast
                 print("count hourly \(self.hourlyForecastArray.count)")
                 DispatchQueue.main.async{
                     self.HourlyForecastTable.reloadData()
-                    
+                    self.locationLabel.text = displayCity
                 }
             case let .failure(error):
                 print("Error fetching simple forecast: \(error)")

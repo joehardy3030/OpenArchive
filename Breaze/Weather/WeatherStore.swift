@@ -9,7 +9,7 @@
 import UIKit
 
 enum HourlyForecastResult {
-    case success([HourlyForecastHour])
+    case success([HourlyForecastHour], String)
     case failure(Error)
 }
 
@@ -52,6 +52,17 @@ class WeatherStore {
     func fetchHourlyForecast(completion: @escaping (HourlyForecastResult) -> Void)  {
         
         let url = WundergroundAPI.hourlyForecastURL
+        let request = URLRequest(url: url)
+        let task = session.dataTask(with: request) { (data, response, error) -> Void in
+            let result = self.processHourlyForecastResult(data: data, error: error)
+            completion(result)
+        }
+        task.resume()
+    }
+
+    func fetchLocalHourlyForecast(parameters: [String:String]?, completion: @escaping (HourlyForecastResult) -> Void)  {
+        
+        let url = WundergroundAPI.localHourlyForecastURL(paramaters: parameters)
         let request = URLRequest(url: url)
         let task = session.dataTask(with: request) { (data, response, error) -> Void in
             let result = self.processHourlyForecastResult(data: data, error: error)

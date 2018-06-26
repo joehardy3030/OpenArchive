@@ -13,7 +13,7 @@ enum WundergroundError: Error {
 }
 
 enum Method: String {
-    case hourlyForecast = "/conditions/forecast/hourly/q"
+    case hourlyForecast = "/conditions/hourly/q"
     case simpleForecast = "/conditions/forecast/q"
 }
 
@@ -129,6 +129,9 @@ struct WundergroundAPI {
             let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])
             guard
                 let jsonDictionary = jsonObject as? [AnyHashable:Any],
+                let conditionsDictionary = jsonDictionary["current_observation"] as? [AnyHashable: Any],
+                let displayLocationDictionary = conditionsDictionary["display_location"] as? [AnyHashable: Any],
+                let displayCity = displayLocationDictionary["city"] as? String,
                 let hourlyForecastArray = jsonDictionary["hourly_forecast"] as? [[String: Any]]
                 else {
                     return .failure(WundergroundError.invalidJSONData)
@@ -140,7 +143,7 @@ struct WundergroundAPI {
                     finalHourlyForecast.append(hourlyForecastHour)
                 }
             }
-            return .success(finalHourlyForecast)
+            return .success(finalHourlyForecast, displayCity)
         }
         catch let error {
             return .failure(error)

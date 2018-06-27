@@ -11,6 +11,7 @@
 		791CE1BF20B2364E00299F76 /* HourlyDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791CE1BE20B2364E00299F76 /* HourlyDetailViewController.swift */; };
 		791CE1C120B252F100299F76 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791CE1C020B252F100299F76 /* Utils.swift */; };
 		7971A1C920A29B7F009438F7 /* HourlyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7971A1C820A29B7F009438F7 /* HourlyViewController.swift */; };
+		7972654620E3368E00578419 /* Weather.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 7972654420E3368E00578419 /* Weather.xcdatamodeld */; };
 		D8357A9720240BAD005657DF /* WundergroundAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8357A9620240BAD005657DF /* WundergroundAPI.swift */; };
 		D84F92CA2033F1A100DD3855 /* AirNowAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84F92C92033F1A100DD3855 /* AirNowAPI.swift */; };
 		D84F92CC2037E08C00DD3855 /* SmogReading.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84F92CB2037E08C00DD3855 /* SmogReading.swift */; };
@@ -53,6 +54,7 @@
 		791CE1BE20B2364E00299F76 /* HourlyDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyDetailViewController.swift; sourceTree = "<group>"; };
 		791CE1C020B252F100299F76 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		7971A1C820A29B7F009438F7 /* HourlyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyViewController.swift; sourceTree = "<group>"; };
+		7972654520E3368E00578419 /* Weather.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Weather.xcdatamodel; sourceTree = "<group>"; };
 		D8357A9620240BAD005657DF /* WundergroundAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WundergroundAPI.swift; sourceTree = "<group>"; };
 		D84F92C92033F1A100DD3855 /* AirNowAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirNowAPI.swift; sourceTree = "<group>"; };
 		D84F92CB2037E08C00DD3855 /* SmogReading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmogReading.swift; sourceTree = "<group>"; };
@@ -115,6 +117,7 @@
 				7915AFD0209FF46600625E43 /* HourlyForecastCell.swift */,
 				D85A4EF02022D0B600E480FB /* WeatherViewController.swift */,
 				7971A1C820A29B7F009438F7 /* HourlyViewController.swift */,
+				7972654420E3368E00578419 /* Weather.xcdatamodeld */,
 				791CE1BE20B2364E00299F76 /* HourlyDetailViewController.swift */,
 			);
 			path = Weather;
@@ -326,6 +329,7 @@
 				D85A4EF32022D0B600E480FB /* SmogViewController.swift in Sources */,
 				7915AFD1209FF46600625E43 /* HourlyForecastCell.swift in Sources */,
 				D8E1BCD22055E74E00DB12E9 /* SmogDay.swift in Sources */,
+				7972654620E3368E00578419 /* Weather.xcdatamodeld in Sources */,
 				D84F92CE203A7E7800DD3855 /* SmogCell.swift in Sources */,
 				D84F92D2203A872200DD3855 /* WeatherCell.swift in Sources */,
 				D8715B9B2029216800BC13AA /* HourlyForecastHour.swift in Sources */,
@@ -638,6 +642,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		7972654420E3368E00578419 /* Weather.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				7972654520E3368E00578419 /* Weather.xcdatamodel */,
+			);
+			currentVersion = 7972654520E3368E00578419 /* Weather.xcdatamodel */;
+			path = Weather.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = D85A4EE32022D0B500E480FB /* Project object */;
 }

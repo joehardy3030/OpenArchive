@@ -9,7 +9,7 @@
 import UIKit
 import CoreLocation
 
-class WeatherViewController: UITableViewController, CLLocationManagerDelegate  {
+class WeatherViewController: UITableViewController { //, CLLocationManagerDelegate  {
     
     @IBOutlet var locationLabel: UILabel!
     var locationManager: CLLocationManager!
@@ -22,15 +22,17 @@ class WeatherViewController: UITableViewController, CLLocationManagerDelegate  {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-//        locationManager = CLLocationManager()
+        self.updateSimpleForecastData(paramaters: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(receivedLocationNotification(notification:)), name: .alocation, object: nil)
+        
+        //        locationManager = CLLocationManager()
+        
   //      locationManager.delegate = self
   //      locationManager.requestAlwaysAuthorization()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.updateSimpleForecastData(paramaters: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(receivedLocationNotification(notification:)), name: .alocation, object: nil)
     //    locationManager.requestLocation()
     }
 
@@ -60,7 +62,7 @@ class WeatherViewController: UITableViewController, CLLocationManagerDelegate  {
         // }
     }
     
-    func locationManager(_ manager: CLLocationManager,
+/*    func locationManager(_ manager: CLLocationManager,
                          didFailWithError error: Error) {
         print("error")
     }
@@ -77,7 +79,7 @@ class WeatherViewController: UITableViewController, CLLocationManagerDelegate  {
       //      self.updateSimpleForecastData(paramaters: parameters)
         }
     }
-    
+  */
     func updateSimpleForecastData(paramaters: [String:String]?) {
         // Grab the HourlyForecast data and put it in the HourlyForecastData
         store.fetchLocalSimpleForecast(parameters: paramaters){

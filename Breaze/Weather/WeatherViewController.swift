@@ -24,16 +24,11 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         super.viewDidLoad()
         self.updateSimpleForecastData(paramaters: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(receivedLocationNotification(notification:)), name: .alocation, object: nil)
-        
-        //        locationManager = CLLocationManager()
-        
-  //      locationManager.delegate = self
-  //      locationManager.requestAlwaysAuthorization()
+
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-    //    locationManager.requestLocation()
     }
 
     override func didReceiveMemoryWarning() {
@@ -42,7 +37,6 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
     }
     
     @objc func receivedLocationNotification(notification: NSNotification){
-        //  DispatchQueue.main.async{
         print("received notification")
         self.currentLocation = appDelegate.currentLocation
 
@@ -56,30 +50,8 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
             print(self.currentLocation?.coordinate.longitude as Any)
         }
 
-
-        //self.updateSimpleForecastData(paramaters: nil)
-
-        // }
     }
     
-/*    func locationManager(_ manager: CLLocationManager,
-                         didFailWithError error: Error) {
-        print("error")
-    }
-    
-    func locationManager(_ manager: CLLocationManager,
-                                  didUpdateLocations locations: [CLLocation]){
-        
-        self.currentLocation = locations.last
-        DispatchQueue.main.async{
-            let parameters = [
-                "latitude": String(self.currentLocation.coordinate.latitude),
-                "longitude": String(self.currentLocation.coordinate.longitude)
-            ]
-      //      self.updateSimpleForecastData(paramaters: parameters)
-        }
-    }
-  */
     func updateSimpleForecastData(paramaters: [String:String]?) {
         // Grab the HourlyForecast data and put it in the HourlyForecastData
         store.fetchLocalSimpleForecast(parameters: paramaters){

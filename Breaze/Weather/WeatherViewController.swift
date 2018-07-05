@@ -30,12 +30,34 @@ class WeatherViewController: UITableViewController, CLLocationManagerDelegate  {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.updateSimpleForecastData(paramaters: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(receivedLocationNotification(notification:)), name: .alocation, object: nil)
     //    locationManager.requestLocation()
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    @objc func receivedLocationNotification(notification: NSNotification){
+        //  DispatchQueue.main.async{
+        print("received notification")
+        self.currentLocation = appDelegate.currentLocation
+
+        DispatchQueue.main.async{
+            let parameters = [
+                "latitude": String(self.currentLocation.coordinate.latitude),
+                "longitude": String(self.currentLocation.coordinate.longitude)
+            ]
+            self.updateSimpleForecastData(paramaters: parameters)
+            print(self.currentLocation?.coordinate.latitude as Any)
+            print(self.currentLocation?.coordinate.longitude as Any)
+        }
+
+
+        //self.updateSimpleForecastData(paramaters: nil)
+
+        // }
     }
     
     func locationManager(_ manager: CLLocationManager,

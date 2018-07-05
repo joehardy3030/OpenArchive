@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreLocation
+import CoreData
 
 class WeatherViewController: UITableViewController { //, CLLocationManagerDelegate  {
     
@@ -22,6 +23,23 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let context = appDelegate.persistentContainer.viewContext
+      //  let entity = NSEntityDescription.entity(forEntityName: "LastLocation", in: context)
+
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "LastLocation")
+        //request.predicate = NSPredicate(format: "age = %@", "12")
+        request.returnsObjectsAsFaults = false
+        do {
+            let result = try context.fetch(request)
+            for data in result as! [NSManagedObject] {
+                print(data.value(forKey: "longitude") as! String)
+            }
+            
+        } catch {
+            
+            print("Failed")
+        }
         self.updateSimpleForecastData(paramaters: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(receivedLocationNotification(notification:)), name: .alocation, object: nil)
 

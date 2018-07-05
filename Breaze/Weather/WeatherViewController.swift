@@ -18,17 +18,19 @@ class WeatherViewController: UITableViewController, CLLocationManagerDelegate  {
     var utils = Utils()
     var store = WeatherStore()
     var simpleForecastArray = [SimpleForecastDay]()
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        locationManager = CLLocationManager()
-        locationManager.delegate = self
-        locationManager.requestAlwaysAuthorization()
+//        locationManager = CLLocationManager()
+  //      locationManager.delegate = self
+  //      locationManager.requestAlwaysAuthorization()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        locationManager.requestLocation()
+        self.updateSimpleForecastData(paramaters: nil)
+    //    locationManager.requestLocation()
     }
 
     override func didReceiveMemoryWarning() {
@@ -50,7 +52,7 @@ class WeatherViewController: UITableViewController, CLLocationManagerDelegate  {
                 "latitude": String(self.currentLocation.coordinate.latitude),
                 "longitude": String(self.currentLocation.coordinate.longitude)
             ]
-            self.updateSimpleForecastData(paramaters: parameters)
+      //      self.updateSimpleForecastData(paramaters: parameters)
         }
     }
     

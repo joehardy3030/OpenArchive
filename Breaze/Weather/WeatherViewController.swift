@@ -20,27 +20,28 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
     var store = WeatherStore()
     var simpleForecastArray = [SimpleForecastDay]()
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
-
+    struct startingLocation {
+        var latitude: String!
+        var longitude: String!
+    }
+    
     override func viewDidLoad() {
+        var location: startingLocation!
         super.viewDidLoad()
-        
-        let context = appDelegate.persistentContainer.viewContext
-      //  let entity = NSEntityDescription.entity(forEntityName: "LastLocation", in: context)
-
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "LastLocation")
-        //request.predicate = NSPredicate(format: "age = %@", "12")
-        request.returnsObjectsAsFaults = false
-        do {
-            let result = try context.fetch(request)
-            for data in result as! [NSManagedObject] {
-                print(data.value(forKey: "longitude") as! String)
-            }
-            
-        } catch {
-            
-            print("Failed")
+        location = fetchLastLocation()
+        print(location.latitude as String)
+        print(location.longitude as String)
+        if (location != nil) {
+            let parameters = [
+                "latitude": String(location.latitude),
+                "longitude": String(location.longitude)
+            ]
+            self.updateSimpleForecastData(paramaters: parameters)
         }
-        self.updateSimpleForecastData(paramaters: nil)
+        else {
+            self.updateSimpleForecastData(paramaters: nil)
+        }
+
         NotificationCenter.default.addObserver(self, selector: #selector(receivedLocationNotification(notification:)), name: .alocation, object: nil)
 
     }
@@ -68,6 +69,28 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
             print(self.currentLocation?.coordinate.longitude as Any)
         }
 
+    }
+    
+    func fetchLastLocation() -> startingLocation {
+       // let data = [NSManagedObject]()
+        var location = startingLocation()
+        let context = appDelegate.persistentContainer.viewContext
+        //  let entity = NSEntityDescription.entity(forEntityName: "LastLocation", in: context)
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "LastLocation")
+        //request.predicate = NSPredicate(format: "age = %@", "12")
+        request.returnsObjectsAsFaults = false
+        do {
+            let result = try context.fetch(request)
+            for data in result as! [NSManagedObject] {
+                print(data.value(forKey: "longitude") as! String)
+                location.longitude = data.value(forKey: "longitude") as? String
+                location.latitude = data.value(forKey: "latitude") as? String
+            }
+            
+        } catch {
+            print("Failed")
+        }
+        return location
     }
     
     func updateSimpleForecastData(paramaters: [String:String]?) {

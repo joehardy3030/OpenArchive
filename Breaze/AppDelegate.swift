@@ -55,7 +55,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         
         self.currentLocation = locations.last
         lastLocation.setValue(String(self.currentLocation.coordinate.latitude), forKey: "latitude")
-        lastLocation.setValue(String(self.currentLocation.coordinate.latitude), forKey: "longitude")
+        lastLocation.setValue(String(self.currentLocation.coordinate.longitude), forKey: "longitude")
         lastLocation.setValue(Date(), forKey: "dateSaved")
         
         DispatchQueue.main.async{

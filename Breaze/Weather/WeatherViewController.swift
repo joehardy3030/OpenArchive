@@ -21,27 +21,26 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
     var simpleForecastArray = [SimpleForecastDay]()
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     struct startingLocation {
-        var latitude: String!
-        var longitude: String!
+        var latitude: String?
+        var longitude: String?
     }
     
     override func viewDidLoad() {
-        var location: startingLocation!
         super.viewDidLoad()
+        var location = startingLocation()
         location = fetchLastLocation()
-        print(location.latitude as String)
-        print(location.longitude as String)
-        if (location != nil) {
+        print(location.latitude as Any)
+        print(location.longitude as Any)
+        if (location.latitude != nil) {
             let parameters = [
-                "latitude": String(location.latitude),
-                "longitude": String(location.longitude)
+                "latitude": location.latitude!,
+                "longitude": location.longitude!
             ]
             self.updateSimpleForecastData(paramaters: parameters)
         }
         else {
             self.updateSimpleForecastData(paramaters: nil)
         }
-
         NotificationCenter.default.addObserver(self, selector: #selector(receivedLocationNotification(notification:)), name: .alocation, object: nil)
 
     }

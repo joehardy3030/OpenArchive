@@ -15,6 +15,7 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
     @IBOutlet var locationLabel: UILabel!
     var locationManager: CLLocationManager!
     var currentLocation: CLLocation!
+    var refresher: UIRefreshControl!
     // https://www.hackingwithswift.com/read/22/2/requesting-location-core-location
     var utils = Utils()
     var store = WeatherStore()
@@ -27,7 +28,12 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        refresher = UIRefreshControl()
+        tableView.addSubview(refresher)
+        refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControlEvents.valueChanged)
+        refresher.tintColor = UIColor.gray
         var location = startingLocation()
+        //self.tableView.addSubview((self.refreshControl?)!)
         location = fetchLastLocation()
         print(location.latitude as Any)
         print(location.longitude as Any)
@@ -132,6 +138,25 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         cell.iconImage?.image = utils.switchConditionsImage(icon: weatherCellData.icon)
         return cell
     }
-
+    
+    @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
+        // Do some reloading of data and update the table view's data source
+        // Fetch more objects from a web service, for example...
+        let parameters = [
+            "latitude": String(self.currentLocation.coordinate.latitude),
+            "longitude": String(self.currentLocation.coordinate.longitude)
+        ]
+        self.updateSimpleForecastData(paramaters: parameters)
+        refreshControl.endRefreshing()
+    }
+    
+/*    lazy var refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(WeatherViewController.handleRefresh(_:)), for: UIControlEvents.valueChanged)
+        refreshControl.tintColor = UIColor.gray
+        
+        return refreshControl
+    }()
+*/
 }
 

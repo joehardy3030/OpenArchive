@@ -21,7 +21,7 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
     var store = WeatherStore()
     var simpleForecastArray = [SimpleForecastDay]()
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
-    struct startingLocation {
+    struct lastLocation {
         var latitude: String?
         var longitude: String?
     }
@@ -32,7 +32,7 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         tableView.addSubview(refresher)
         refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControlEvents.valueChanged)
         refresher.tintColor = UIColor.gray
-        var location = startingLocation()
+        var location = lastLocation()
         //self.tableView.addSubview((self.refreshControl?)!)
         location = fetchLastLocation()
         print(location.latitude as Any)
@@ -62,13 +62,16 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
     
     @objc func receivedLocationNotification(notification: NSNotification){
         print("received notification")
+        var parameters: [String:String]?
         self.currentLocation = appDelegate.currentLocation
 
         DispatchQueue.main.async{
-            let parameters = [
+            parameters = self.setParameters()
+
+         /*   let parameters = [
                 "latitude": String(self.currentLocation.coordinate.latitude),
                 "longitude": String(self.currentLocation.coordinate.longitude)
-            ]
+            ] */
             self.updateSimpleForecastData(paramaters: parameters)
             print(self.currentLocation?.coordinate.latitude as Any)
             print(self.currentLocation?.coordinate.longitude as Any)
@@ -76,9 +79,9 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
 
     }
     
-    func fetchLastLocation() -> startingLocation {
+    func fetchLastLocation() -> lastLocation {
        // let data = [NSManagedObject]()
-        var location = startingLocation()
+        var location = lastLocation()
         let context = appDelegate.persistentContainer.viewContext
         //  let entity = NSEntityDescription.entity(forEntityName: "LastLocation", in: context)
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "LastLocation")
@@ -142,12 +145,23 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
     @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
         // Do some reloading of data and update the table view's data source
         // Fetch more objects from a web service, for example...
+        /*let parameters = [
+            "latitude": String(self.currentLocation.coordinate.latitude),
+            "longitude": String(self.currentLocation.coordinate.longitude)
+        ] */
+        var parameters: [String:String]?
+        parameters = setParameters()
+        self.updateSimpleForecastData(paramaters: parameters)
+        refreshControl.endRefreshing()
+    }
+    
+    func setParameters() -> [String:String]? {
         let parameters = [
             "latitude": String(self.currentLocation.coordinate.latitude),
             "longitude": String(self.currentLocation.coordinate.longitude)
         ]
-        self.updateSimpleForecastData(paramaters: parameters)
-        refreshControl.endRefreshing()
+
+        return parameters
     }
     
 /*    lazy var refreshControl: UIRefreshControl = {

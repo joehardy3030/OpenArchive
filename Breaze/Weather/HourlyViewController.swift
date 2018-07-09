@@ -8,6 +8,8 @@
 
 import UIKit
 import CoreLocation
+import CoreData
+
 
 class HourlyViewController: UIViewController, UITableViewDataSource, UITableViewDelegate  {
     
@@ -16,6 +18,10 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
     var hourlyForecastArray = [HourlyForecastHour]()
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var currentLocation: CLLocation!
+    struct lastLocation {
+        var latitude: String?
+        var longitude: String?
+    }
     
     @IBOutlet var locationLabel: UILabel!
     @IBOutlet weak var HourlyForecastTable: UITableView!
@@ -32,17 +38,58 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        let parameters = [
+       // var parameters: [String:String]?
+        
+        var location = lastLocation()
+        //self.tableView.addSubview((self.refreshControl?)!)
+        location = fetchLastLocation()
+        print(location.latitude as Any)
+        print(location.longitude as Any)
+        if (location.latitude != nil) {
+            let parameters = [
+                "latitude": location.latitude!,
+                "longitude": location.longitude!
+            ]
+            self.updateHourlyForecastData(parameters: parameters)
+        }
+        else {
+            self.updateHourlyForecastData(parameters: nil)
+        }
+        
+        /*let parameters = [
             "latitude": String(self.currentLocation.coordinate.latitude),
             "longitude": String(self.currentLocation.coordinate.longitude)
         ]
-        self.updateHourlyForecastData(parameters: parameters)
+        */
+        //self.updateHourlyForecastData(parameters: parameters)
     }
     
     @objc func receivedLocationNotification(notification: NSNotification){
        //  DispatchQueue.main.async{
             print("received notification")
        // }
+    }
+    
+    func fetchLastLocation() -> lastLocation {
+        // let data = [NSManagedObject]()
+        var location = lastLocation()
+        let context = appDelegate.persistentContainer.viewContext
+        //  let entity = NSEntityDescription.entity(forEntityName: "LastLocation", in: context)
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "LastLocation")
+        //request.predicate = NSPredicate(format: "age = %@", "12")
+        request.returnsObjectsAsFaults = false
+        do {
+            let result = try context.fetch(request)
+            for data in result as! [NSManagedObject] {
+                print(data.value(forKey: "longitude") as! String)
+                location.longitude = data.value(forKey: "longitude") as? String
+                location.latitude = data.value(forKey: "latitude") as? String
+            }
+            
+        } catch {
+            print("Failed")
+        }
+        return location
     }
     
     func updateHourlyForecastData(parameters: [String:String]?) {
@@ -127,6 +174,15 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         
         return refreshControl
     }()
+    
+    func setParameters() -> [String:String]? {
+        let parameters = [
+            "latitude": String(self.currentLocation.coordinate.latitude),
+            "longitude": String(self.currentLocation.coordinate.longitude)
+        ]
+        
+        return parameters
+    }
 
     
 }

@@ -159,21 +159,19 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
     @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
         // Do some reloading of data and update the table view's data source
         // Fetch more objects from a web service, for example...
-     /*   let parameters = [
-            "latitude": String(self.currentLocation.coordinate.latitude),
-            "longitude": String(self.currentLocation.coordinate.longitude)
-        ]*/
+
         var parameters: [String:String]?
         parameters = setParameters()
-//        self.updateSimpleForecastData(paramaters: parameters)
-        self.updateHourlyForecastData(parameters: parameters)
+        if (parameters!["latitude"] != nil) {
+            self.updateHourlyForecastData(parameters: parameters)
+        }
+        else {
+            self.updateHourlyForecastData(parameters: nil)
+        }
 
         refreshControl.endRefreshing()
     }
 
-//        self.updateHourlyForecastData(parameters: parameters)
-//        refreshControl.endRefreshing()
- //   }
     func setParameters() -> [String:String]? {
         let parameters = [
             "latitude": String(self.currentLocation.coordinate.latitude),

@@ -42,10 +42,10 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
                 "latitude": location.latitude!,
                 "longitude": location.longitude!
             ]
-            self.updateSimpleForecastData(paramaters: parameters)
+            self.updateSimpleForecastData(parameters: parameters)
         }
         else {
-            self.updateSimpleForecastData(paramaters: nil)
+            self.updateSimpleForecastData(parameters: nil)
         }
         NotificationCenter.default.addObserver(self, selector: #selector(receivedLocationNotification(notification:)), name: .alocation, object: nil)
 
@@ -72,7 +72,7 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
                 "latitude": String(self.currentLocation.coordinate.latitude),
                 "longitude": String(self.currentLocation.coordinate.longitude)
             ] */
-            self.updateSimpleForecastData(paramaters: parameters)
+            self.updateSimpleForecastData(parameters: parameters)
             print(self.currentLocation?.coordinate.latitude as Any)
             print(self.currentLocation?.coordinate.longitude as Any)
         }
@@ -101,9 +101,9 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         return location
     }
     
-    func updateSimpleForecastData(paramaters: [String:String]?) {
+    func updateSimpleForecastData(parameters: [String:String]?) {
         // Grab the HourlyForecast data and put it in the HourlyForecastData
-        store.fetchLocalSimpleForecast(parameters: paramaters){
+        store.fetchLocalSimpleForecast(parameters: parameters){
             (SimpleForecastResult) -> Void in
             switch SimpleForecastResult {
             case let .success(simpleForecast, displayCity):
@@ -151,7 +151,14 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         ] */
         var parameters: [String:String]?
         parameters = setParameters()
-        self.updateSimpleForecastData(paramaters: parameters)
+        if (parameters!["latitude"] != nil) {
+            self.updateSimpleForecastData(parameters: parameters)
+        }
+        else {
+            self.updateSimpleForecastData(parameters: nil)
+        }
+
+//        self.updateSimpleForecastData(paramaters: parameters)
         refreshControl.endRefreshing()
     }
     

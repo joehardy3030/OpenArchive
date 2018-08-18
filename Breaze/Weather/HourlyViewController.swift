@@ -100,6 +100,8 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
             case let .success(hourlyForecast, displayCity):
                 self.hourlyForecastArray = hourlyForecast
                 print("count hourly \(self.hourlyForecastArray.count)")
+                print("display city \(displayCity)")
+
                 DispatchQueue.main.async{
                     self.HourlyForecastTable.reloadData()
                     self.locationLabel.text = displayCity

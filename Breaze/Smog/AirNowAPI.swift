@@ -13,12 +13,79 @@ enum SmogError: Error {
 }
 
 
+/*enum Method: String {
+    case hourlyForecast = "/conditions/hourly/q"
+    case simpleForecast = "/conditions/forecast/q"
+}
+
+struct WundergroundAPI {
+    
+    private static let baseURLString = "https://api.wunderground.com/api"
+    private static let apiKey = "/ffd1b93b6a497308"
+    private static let homeLocation = "/CA/El_Cerrito"
+    private static let fileExtension = ".json"
+    
+    static var simpleForecastURL: URL {
+        return wundergroundURL(method: .simpleForecast, parameters: nil)
+    }
+    
+    static var hourlyForecastURL: URL {
+        return wundergroundURL(method: .hourlyForecast, parameters: nil)
+    }
+    
+    static func localSimpleForecastURL(paramaters: [String:String]?) -> URL {
+        return wundergroundURL(method: .simpleForecast, parameters: paramaters)
+    }
+    
+    static func localHourlyForecastURL(paramaters: [String:String]?) -> URL {
+        return wundergroundURL(method: .hourlyForecast, parameters: paramaters)
+    }
+    
+    // This private function returns the URL
+    // It takes the Method as a parameter,
+    // as well as a set of optional dictionary of query parameters
+    private static func wundergroundURL(method: Method, parameters: [String:String]?) -> URL
+    {
+        //let components = URLComponents(string: method.rawValue)!
+        var components = baseURLString
+        let queryMethod = method.rawValue
+        let location = homeLocation
+        let fileExt = fileExtension
+        
+        let baseParameters = [
+            "api_key": apiKey
+        ]
+        
+        //        components = components + baseParameters["api_key"]! + queryMethod + location + fileExt
+        
+        if parameters == nil {
+            components = components + baseParameters["api_key"]! + queryMethod + location + fileExt
+            print("El Cerrito")
+        }
+        else {
+            components = components + baseParameters["api_key"]! + queryMethod + "/" + parameters!["latitude"]! + "," + parameters!["longitude"]! + fileExt
+            print(parameters?["latitude"] ?? "")
+            print(parameters?["longitude"] ?? "")
+        }
+        print(components)
+        return URL(string: components)!
+    }
+*/
+
 enum AirNowMethod: String {
     case smogForecast = "https://www.airnowapi.org/aq/data/?parameters=O3,PM25,NO2&BBOX=-122.448995,37.805168,-122.218282,37.995887&dataType=A&format=application/json&verbose=1&API_KEY=6127988D-CB19-4E37-969F-56F4B394D406"
     case weatherForecast = "https://api.wunderground.com/api/ffd1b93b6a497308/conditions/forecast/q/CA/El_Cerrito.json"
 }
 
 struct AirNowAPI {
+    
+    private static let baseURLString = "https://www.airnowapi.org/aq/data/"
+    private static let parameters = "O3,PM25,NO2"
+    private static let bBox = "-122.448995,37.805168,-122.218282,37.995887"
+    private static let dataType = "A"
+    private static let format = "application/json"
+    private static let verbose = "1"
+    private static let apiKey = "6127988D-CB19-4E37-969F-56F4B394D406"
     
     static var smogForecastURL: URL {
         return smogURL(method: .smogForecast, parameters: nil)

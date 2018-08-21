@@ -171,11 +171,13 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         ] */
         var parameters: [String:String]?
         parameters = setParameters()
-        if (parameters!["latitude"] != nil) {
+        if (parameters != nil) {
             self.updateSimpleForecastData(parameters: parameters)
+            print("Location not nil")
         }
         else {
             self.updateSimpleForecastData(parameters: nil)
+            print("Location nil")
         }
     
 //        self.updateSimpleForecastData(paramaters: parameters)

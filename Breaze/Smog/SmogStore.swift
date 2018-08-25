@@ -30,7 +30,10 @@ class SmogStore {
     
     func fetchSmogForecast(completion: @escaping (SmogForecastResult) -> Void) {
         
-        let url = AirNowAPI.smogForecastURL
+        //let url = AirNowAPI.smogForecastURL
+     //   let location: [String:String]?
+        //let url = AirNowAPI.localSmogURL(location: ["info":"info"])
+        let url = AirNowAPI.localSmogURL(location: nil)
         let request = URLRequest(url: url)
         let task = session.dataTask(with: request) { (data, response, error) -> Void in
             let result = self.processSmogForecastResult(data: data, error: error)

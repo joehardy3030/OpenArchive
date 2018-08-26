@@ -17,8 +17,14 @@ class SmogViewController: UITableViewController {
         super.viewDidLoad()
         
         // Pull the smog forecast data when loading the tab
-        // and display it asychronously when the data arrives 
-        store.fetchSmogForecast {
+        // and display it asychronously when the data arrives
+        let location = [
+            "latitude": "37.785834",
+            "longitude": "-122.406417"
+        ]
+
+        store.fetchSmogForecast(location: location)
+        {
             (SmogForecastResult) -> Void in
             
             switch SmogForecastResult {

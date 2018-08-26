@@ -14,7 +14,6 @@ enum SmogError: Error {
 
 enum AirNowMethod: String {
     case smogForecast = "https://www.airnowapi.org/aq/data/?parameters=O3,PM25,NO2&BBOX=-122.448995,37.805168,-122.218282,37.995887&dataType=A&format=application/json&verbose=1&API_KEY=6127988D-CB19-4E37-969F-56F4B394D406"
-    case weatherForecast = "https://api.wunderground.com/api/ffd1b93b6a497308/conditions/forecast/q/CA/El_Cerrito.json"
 }
 
 struct AirNowAPI {
@@ -33,10 +32,10 @@ struct AirNowAPI {
         return smogURL(method: .smogForecast, location: nil)
     }
     
-    static func localSmogForecastURL(location: [String:String]?) -> URL {
+/*    static func localSmogForecastURL(location: [String:String]?) -> URL {
         return smogURL(method: .smogForecast, location: location)
     }
-    
+  */
     static func localSmogURL(location: [String:String]?) -> URL
     {
         var components = baseURLString
@@ -44,15 +43,17 @@ struct AirNowAPI {
             components = components + question_mark + "parameters=" + parameters + and_sign +
                 "BBOX=" + bBox + and_sign + "dataType=" + dataType + and_sign + "format=" + format +
                 and_sign + "verbose=" + verbose + and_sign + "API_KEY=" + apiKey
-            print(components)
+            print("bBox")
         }
             
-       /*     https://www.airnowapi.org/aq/data/?parameters=O3,PM25,NO2&BBOX=-122.448995,37.805168,-122.218282,37.995887&dataType=A&format=application/json&verbose=1&API_KEY=6127988D-CB19-4E37-969F-56F4B394D406
-        */
-            
         else {
-            print(components)
-            return smogURL(method: .smogForecast, location: location)
+            var locationRectangle = bBox
+            
+            components = components + question_mark + "parameters=" + parameters + and_sign +
+                "BBOX=" + locationRectangle + and_sign + "dataType=" + dataType + and_sign + "format=" + format +
+                and_sign + "verbose=" + verbose + and_sign + "API_KEY=" + apiKey
+            print("locationRectangle")
+            //return smogURL(method: .smogForecast, location: location)
         }
         return URL(string: components)!
     }

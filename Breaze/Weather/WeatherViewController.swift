@@ -100,26 +100,6 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         }
         return location
     }
-    /*
-    func locationToParameters() -> [String:String]? {
-        var location = lastLocation()
-        var parameters: [String:String]?
-        //self.tableView.addSubview((self.refreshControl?)!)
-        location = fetchLastLocation()
-        print(location.latitude as Any)
-        print(location.longitude as Any)
-        if (location.latitude != nil) {
-            parameters = [
-                "latitude": location.latitude!,
-                "longitude": location.longitude!
-            ]
-        }
-        else {
-            print("No location")
-        }
-        return parameters
-    }
-    */
     
     func updateSimpleForecastData(parameters: [String:String]?) {
         // Grab the HourlyForecast data and put it in the HourlyForecastData
@@ -180,7 +160,6 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         refreshControl.endRefreshing()
     }
     
-
     func setParameters() -> [String:String]? {
         // when currentLocation is nil, this barfs
         var parameters: [String:String]?
@@ -193,13 +172,5 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         return parameters
     }
     
-/*    lazy var refreshControl: UIRefreshControl = {
-        let refreshControl = UIRefreshControl()
-        refreshControl.addTarget(self, action: #selector(WeatherViewController.handleRefresh(_:)), for: UIControlEvents.valueChanged)
-        refreshControl.tintColor = UIColor.gray
-        
-        return refreshControl
-    }()
-*/
 }
 

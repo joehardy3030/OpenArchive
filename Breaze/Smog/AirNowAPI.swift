@@ -12,10 +12,6 @@ enum SmogError: Error {
     case invalidJSONData
 }
 
-enum AirNowMethod: String {
-    case smogForecast = "https://www.airnowapi.org/aq/data/?parameters=O3,PM25,NO2&BBOX=-122.448995,37.805168,-122.218282,37.995887&dataType=A&format=application/json&verbose=1&API_KEY=6127988D-CB19-4E37-969F-56F4B394D406"
-}
-
 struct AirNowAPI {
     
     private static let baseURLString = "https://www.airnowapi.org/aq/data/"
@@ -28,14 +24,6 @@ struct AirNowAPI {
     private static let and_sign = "&"
     private static let question_mark = "?"
     
-    static var smogForecastURL: URL {
-        return smogURL(method: .smogForecast, location: nil)
-    }
-    
-/*    static func localSmogForecastURL(location: [String:String]?) -> URL {
-        return smogURL(method: .smogForecast, location: location)
-    }
-  */
     static func localSmogURL(location: [String:String]?) -> URL
     {
         var components = baseURLString
@@ -56,17 +44,6 @@ struct AirNowAPI {
             //return smogURL(method: .smogForecast, location: location)
         }
         return URL(string: components)!
-    }
-    
-    // This private function returns the URL
-    // It takes the Method as a parameter,
-    // as well as a set of optional dictionory of query parameters
-    private static func smogURL(method: AirNowMethod, location: [String:String]?) -> URL
-    {
-        let components = URLComponents(string: method.rawValue)!
-        
-        print(components.url!)
-        return components.url!
     }
     
     // Take the data from the air quality API and return a data SmogForecastResult

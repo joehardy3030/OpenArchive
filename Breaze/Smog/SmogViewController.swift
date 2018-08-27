@@ -7,21 +7,41 @@
 //
 
 import UIKit
+import CoreLocation
+import CoreData
 
 class SmogViewController: UITableViewController {
 
+    var locationManager: CLLocationManager!
+    var currentLocation: CLLocation!
+    var refresher: UIRefreshControl!
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var store = SmogStore()
     var smogArray = [SmogDay]()
+    var utils = Utils()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Pull the smog forecast data when loading the tab
         // and display it asychronously when the data arrives
-        let location = [
+        var lastLoc = utils.fetchLastLocation()
+        print(lastLoc)
+        
+        var location = [
             "latitude": "37.785834",
             "longitude": "-122.406417"
         ]
+        if (lastLoc.latitude != nil) {
+            location = [
+                "latitude": lastLoc.latitude!,
+                "longitude": lastLoc.longitude!
+            ]
+        }
+        else {
+            print("lastLoc is nil")
+        }
+//        NotificationCenter.default.addObserver(self, selector: #selector(receivedLocationNotification(notification:)), name: .alocation, object: nil)
 
         store.fetchSmogForecast(location: location)
         {

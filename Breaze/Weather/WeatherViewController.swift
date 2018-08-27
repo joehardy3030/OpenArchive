@@ -35,8 +35,8 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         var location = lastLocation()
         //self.tableView.addSubview((self.refreshControl?)!)
         location = fetchLastLocation()
-        print(location.latitude as Any)
-        print(location.longitude as Any)
+     //   print(location.latitude as Any)
+      //  print(location.longitude as Any)
         if (location.latitude != nil) {
             let parameters = [
                 "latitude": location.latitude!,
@@ -80,12 +80,10 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
     }
     
     func fetchLastLocation() -> lastLocation {
-       // let data = [NSManagedObject]()
+
         var location = lastLocation()
         let context = appDelegate.persistentContainer.viewContext
-        //  let entity = NSEntityDescription.entity(forEntityName: "LastLocation", in: context)
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "LastLocation")
-        //request.predicate = NSPredicate(format: "age = %@", "12")
         request.returnsObjectsAsFaults = false
         do {
             let result = try context.fetch(request)

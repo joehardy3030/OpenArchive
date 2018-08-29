@@ -27,23 +27,20 @@ struct AirNowAPI {
     private static let heightLat = 0.25
     
     static func localSmogURL(location: [String:String]?) -> URL
+    // create the URL for the HTTP get command for the smog API
     {
         var components = baseURLString
         if location == nil {
             components = components + question_mark + "parameters=" + parameters + and_sign +
                 "BBOX=" + bBox + and_sign + "dataType=" + dataType + and_sign + "format=" + format +
                 and_sign + "verbose=" + verbose + and_sign + "API_KEY=" + apiKey
-            print("bBox")
         }
             
         else {
-            var locationRectangle = bBox
-            var boxBox = drawBox(location: location)
-            print(boxBox!)
+            let bBox = drawBox(location: location)
             components = components + question_mark + "parameters=" + parameters + and_sign +
-                "BBOX=" + boxBox! + and_sign + "dataType=" + dataType + and_sign + "format=" + format +
+                "BBOX=" + bBox! + and_sign + "dataType=" + dataType + and_sign + "format=" + format +
                 and_sign + "verbose=" + verbose + and_sign + "API_KEY=" + apiKey
-            print(components)
         }
         return URL(string: components)!
     }

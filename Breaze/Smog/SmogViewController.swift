@@ -25,7 +25,7 @@ class SmogViewController: UITableViewController {
         
         // Pull the smog forecast data when loading the tab
         // and display it asychronously when the data arrives
-        var lastLoc = utils.fetchLastLocation()
+        let lastLoc = utils.fetchLastLocation()
         print(lastLoc)
         
         var location = [

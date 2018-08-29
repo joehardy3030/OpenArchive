@@ -23,6 +23,8 @@ struct AirNowAPI {
     private static let apiKey = "6127988D-CB19-4E37-969F-56F4B394D406"
     private static let and_sign = "&"
     private static let question_mark = "?"
+    private static let widthLong = 0.25
+    private static let heightLat = 0.25
     
     static func localSmogURL(location: [String:String]?) -> URL
     {
@@ -36,14 +38,32 @@ struct AirNowAPI {
             
         else {
             var locationRectangle = bBox
-            
+            var boxBox = drawBox(location: location)
+            print(boxBox!)
             components = components + question_mark + "parameters=" + parameters + and_sign +
-                "BBOX=" + locationRectangle + and_sign + "dataType=" + dataType + and_sign + "format=" + format +
+                "BBOX=" + boxBox! + and_sign + "dataType=" + dataType + and_sign + "format=" + format +
                 and_sign + "verbose=" + verbose + and_sign + "API_KEY=" + apiKey
-            print("locationRectangle")
-            //return smogURL(method: .smogForecast, location: location)
+            print(components)
         }
         return URL(string: components)!
+    }
+    
+    static private func drawBox(location:[String:String]?) -> String? {
+        let midLatitudeString = location!["latitude"]
+        let midLatitudeFloat = (midLatitudeString! as NSString).doubleValue
+        let topLatitudeFloat = midLatitudeFloat + heightLat
+        let bottomLatitudeFloat = midLatitudeFloat - heightLat
+
+        let midLongitudeString = location!["longitude"]
+        let midLongitudeFloat = (midLongitudeString! as NSString).doubleValue
+        let rightLongitudeFloat = midLongitudeFloat + widthLong
+        let leftLongitudeFloat = midLongitudeFloat - widthLong
+        
+        let boxString = String(leftLongitudeFloat) + "," +  String(bottomLatitudeFloat) + "," + String(rightLongitudeFloat) + "," + String(topLatitudeFloat)
+        print("boxString")
+        print(boxString)
+        
+        return boxString
     }
     
     // Take the data from the air quality API and return a data SmogForecastResult

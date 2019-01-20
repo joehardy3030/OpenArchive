@@ -191,5 +191,37 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         return refreshControl
     }()
     
+    /*
+ @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
+ // Do some reloading of data and update the table view's data source
+ // Fetch more objects from a web service, for example...
+ 
+ var parameters: [String:String]?
+ parameters = setParameters()
+ if (parameters != nil) {
+ self.updateSimpleForecastData(parameters: parameters)
+ print("Location not nil")
+ }
+ else {
+ self.updateSimpleForecastData(parameters: nil)
+ print("Location nil")
+ }
+ 
+ refreshControl.endRefreshing()
+ }
+ 
+ func setParameters() -> [String:String]? {
+ // when currentLocation is nil, this barfs
+ var parameters: [String:String]?
+ if (self.currentLocation?.coordinate.latitude) != nil {
+ parameters = [
+ "latitude": String(self.currentLocation.coordinate.latitude),
+ "longitude": String(self.currentLocation.coordinate.longitude)
+ ]
+ }
+ return parameters
+ }*/
+    
+    
     
 }

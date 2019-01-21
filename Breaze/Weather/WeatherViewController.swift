@@ -30,7 +30,7 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         super.viewDidLoad()
         refresher = UIRefreshControl()
         tableView.addSubview(refresher)
-        refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControlEvents.valueChanged)
+        refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)
         refresher.tintColor = UIColor.gray
         var location = lastLocation()
         //self.tableView.addSubview((self.refreshControl?)!)

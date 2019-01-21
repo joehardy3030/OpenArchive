@@ -200,7 +200,7 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
     
     lazy var refreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
-        refreshControl.addTarget(self, action: #selector(HourlyViewController.handleRefresh(_:)), for: UIControlEvents.valueChanged)
+        refreshControl.addTarget(self, action: #selector(HourlyViewController.handleRefresh(_:)), for: UIControl.Event.valueChanged)
         refreshControl.tintColor = UIColor.gray
         
         return refreshControl

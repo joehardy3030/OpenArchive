@@ -17,6 +17,7 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
     var store = WeatherStore()
     var hourlyForecastArray = [HourlyForecastHour]()
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    var refresher: UIRefreshControl!
     var currentLocation: CLLocation!
     struct lastLocation {
         var latitude: String?
@@ -29,7 +30,14 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
         self.HourlyForecastTable.dataSource = self;
-        self.HourlyForecastTable.addSubview(self.refreshControl)
+//        self.HourlyForecastTable.addSubview(self.refreshControl)
+        
+        refresher = UIRefreshControl()
+        self.HourlyForecastTable.addSubview(self.refresher)
+  //      tableView.addSubview(refresher)
+        refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)
+        refresher.tintColor = UIColor.gray
+
         NotificationCenter.default.addObserver(self, selector: #selector(receivedLocationNotification(notification:)), name: .alocation, object: nil)
         self.currentLocation = appDelegate.currentLocation
         print(self.currentLocation?.coordinate.latitude as Any)
@@ -176,15 +184,6 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         refreshControl.endRefreshing()
     }
 
-/*    func setParameters() -> [String:String]? {
-        let parameters = [
-            "latitude": String(self.currentLocation.coordinate.latitude),
-            "longitude": String(self.currentLocation.coordinate.longitude)
-        ]
-        return parameters
-        
-    }
-  */
     func setParameters() -> [String:String]? {
         // when currentLocation is nil, this barfs
         var parameters: [String:String]?
@@ -196,8 +195,7 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         }
         return parameters
     }
-
-    
+/*
     lazy var refreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(HourlyViewController.handleRefresh(_:)), for: UIControl.Event.valueChanged)
@@ -205,38 +203,5 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         
         return refreshControl
     }()
-    
-    /*
- @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
- // Do some reloading of data and update the table view's data source
- // Fetch more objects from a web service, for example...
- 
- var parameters: [String:String]?
- parameters = setParameters()
- if (parameters != nil) {
- self.updateSimpleForecastData(parameters: parameters)
- print("Location not nil")
- }
- else {
- self.updateSimpleForecastData(parameters: nil)
- print("Location nil")
- }
- 
- refreshControl.endRefreshing()
- }
- 
- func setParameters() -> [String:String]? {
- // when currentLocation is nil, this barfs
- var parameters: [String:String]?
- if (self.currentLocation?.coordinate.latitude) != nil {
- parameters = [
- "latitude": String(self.currentLocation.coordinate.latitude),
- "longitude": String(self.currentLocation.coordinate.longitude)
- ]
- }
- return parameters
- }*/
-    
-    
-    
+  */
 }

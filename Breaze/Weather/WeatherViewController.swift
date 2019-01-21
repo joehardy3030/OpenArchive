@@ -165,7 +165,7 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
             parameters = [
                 "latitude": String(self.currentLocation.coordinate.latitude),
                 "longitude": String(self.currentLocation.coordinate.longitude)
-                ]
+            ]
         }
         return parameters
     }

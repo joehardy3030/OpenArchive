@@ -164,17 +164,19 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
 
         var parameters: [String:String]?
         parameters = setParameters()
-        if (parameters!["latitude"] != nil) {
+        if (parameters != nil) {
             self.updateHourlyForecastData(parameters: parameters)
+            print("Location not nil")
         }
         else {
             self.updateHourlyForecastData(parameters: nil)
+            print("Location nil")
         }
 
         refreshControl.endRefreshing()
     }
 
-    func setParameters() -> [String:String]? {
+/*    func setParameters() -> [String:String]? {
         let parameters = [
             "latitude": String(self.currentLocation.coordinate.latitude),
             "longitude": String(self.currentLocation.coordinate.longitude)
@@ -182,6 +184,19 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         return parameters
         
     }
+  */
+    func setParameters() -> [String:String]? {
+        // when currentLocation is nil, this barfs
+        var parameters: [String:String]?
+        if (self.currentLocation?.coordinate.latitude) != nil {
+            parameters = [
+                "latitude": String(self.currentLocation.coordinate.latitude),
+                "longitude": String(self.currentLocation.coordinate.longitude)
+            ]
+        }
+        return parameters
+    }
+
     
     lazy var refreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()

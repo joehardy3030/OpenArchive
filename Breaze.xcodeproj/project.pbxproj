@@ -10,6 +10,7 @@
 		7915AFD1209FF46600625E43 /* HourlyForecastCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7915AFD0209FF46600625E43 /* HourlyForecastCell.swift */; };
 		791CE1BF20B2364E00299F76 /* HourlyDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791CE1BE20B2364E00299F76 /* HourlyDetailViewController.swift */; };
 		791CE1C120B252F100299F76 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791CE1C020B252F100299F76 /* Utils.swift */; };
+		793614D1220E884E006671C4 /* BARTViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793614D0220E884E006671C4 /* BARTViewController.swift */; };
 		794E5242220D3C5F00C99092 /* BARTCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794E5241220D3C5F00C99092 /* BARTCell.swift */; };
 		79718BA820E5E02B0072DC22 /* LastLocation+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79718BA620E5E02B0072DC22 /* LastLocation+CoreDataClass.swift */; };
 		79718BA920E5E02B0072DC22 /* LastLocation+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79718BA720E5E02B0072DC22 /* LastLocation+CoreDataProperties.swift */; };
@@ -56,6 +57,7 @@
 		7915AFD0209FF46600625E43 /* HourlyForecastCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyForecastCell.swift; sourceTree = "<group>"; };
 		791CE1BE20B2364E00299F76 /* HourlyDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyDetailViewController.swift; sourceTree = "<group>"; };
 		791CE1C020B252F100299F76 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		793614D0220E884E006671C4 /* BARTViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BARTViewController.swift; path = Breaze/BART/BARTViewController.swift; sourceTree = SOURCE_ROOT; };
 		794E5241220D3C5F00C99092 /* BARTCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BARTCell.swift; sourceTree = "<group>"; };
 		79718BA620E5E02B0072DC22 /* LastLocation+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LastLocation+CoreDataClass.swift"; sourceTree = "<group>"; };
 		79718BA720E5E02B0072DC22 /* LastLocation+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LastLocation+CoreDataProperties.swift"; sourceTree = "<group>"; };
@@ -115,6 +117,7 @@
 		794E5240220D3C3000C99092 /* BART */ = {
 			isa = PBXGroup;
 			children = (
+				793614D0220E884E006671C4 /* BARTViewController.swift */,
 				794E5241220D3C5F00C99092 /* BARTCell.swift */,
 			);
 			path = BART;
@@ -364,6 +367,7 @@
 				D85A4EF12022D0B600E480FB /* WeatherViewController.swift in Sources */,
 				79718BA820E5E02B0072DC22 /* LastLocation+CoreDataClass.swift in Sources */,
 				D8721E65202919140025348F /* SimpleForecastDay.swift in Sources */,
+				793614D1220E884E006671C4 /* BARTViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

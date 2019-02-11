@@ -17,8 +17,9 @@ class BARTViewController: UITableViewController {
     var refresher: UIRefreshControl!
     // https://www.hackingwithswift.com/read/22/2/requesting-location-core-location
     var utils = Utils()
-//    var store = WeatherStore()
+    var store = BARTStore()
 //    var simpleForecastArray = [SimpleForecastDay]()
+   
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     struct lastLocation {
         var latitude: String?
@@ -130,10 +131,10 @@ class BARTViewController: UITableViewController {
         // Set the text on the cell with the description of the item
         // that s the nth index of items, where n = row this cell
         // will appear in the tableview
-   /*     let weatherCellData = self.simpleForecastArray[indexPath.row]
+   //     let weatherCellData = self.simpleForecastArray[indexPath.row]
         
-        cell.highTempLabel?.text = weatherCellData.high + " F"
-        cell.lowTempLabel?.text = weatherCellData.low + " F"
+    //    cell.numCarsLabel?.text = "10"
+     /*   cell.lowTempLabel?.text = weatherCellData.low + " F"
         cell.dayLabel?.text = weatherCellData.weekday_short
         
         cell.iconLabel?.text = utils.switchConditionsText(icon: weatherCellData.icon)

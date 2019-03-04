@@ -9,7 +9,7 @@
 import UIKit
 
 enum BARTResult {
-    case success([BARTResult])
+    case success([BARTReading])
     // case success([SmogReading])
     case failure(Error)
 }

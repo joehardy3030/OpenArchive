@@ -9,6 +9,8 @@
 import UIKit
 import CoreLocation
 import CoreData
+import Alamofire
+
 
 class BARTViewController: UITableViewController {
     var locationLabel: UILabel!
@@ -18,7 +20,7 @@ class BARTViewController: UITableViewController {
     // https://www.hackingwithswift.com/read/22/2/requesting-location-core-location
     var utils = Utils()
     var store = BARTStore()
-//    var simpleForecastArray = [SimpleForecastDay]()
+    var BARTReadingArray = [BARTReading]()
    
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     struct lastLocation {
@@ -35,20 +37,22 @@ class BARTViewController: UITableViewController {
         var location = lastLocation()
         //self.tableView.addSubview((self.refreshControl?)!)
         location = fetchLastLocation()
-        //   print(location.latitude as Any)
+        print(location.latitude as Any)
         //  print(location.longitude as Any)
         if (location.latitude != nil) {
             let parameters = [
                 "latitude": location.latitude!,
                 "longitude": location.longitude!
             ]
-//            self.updateSimpleForecastData(parameters: parameters)
+            self.updateBARTData(parameters: parameters)
         }
         else {
-  //          self.updateSimpleForecastData(parameters: nil)
+            self.updateBARTData(parameters: nil)
         }
         NotificationCenter.default.addObserver(self, selector: #selector(receivedLocationNotification(notification:)), name: .alocation, object: nil)
         
+        
+      //  downloadTags(contentID: "two")
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -59,6 +63,7 @@ class BARTViewController: UITableViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
     
     @objc func receivedLocationNotification(notification: NSNotification){
         print("received notification")
@@ -98,25 +103,50 @@ class BARTViewController: UITableViewController {
         }
         return location
     }
+    /*
+    func downloadTags(contentID: String) {
+ //   func downloadTags(contentID: String, completion: @escaping ([String]?) -> Void) {
+        // 1
+        Alamofire.request("http://api.bart.gov/api/etd.aspx?cmd=etd&orig=deln&dir=s&key=MW9S-E7SL-26DU-VV8V")
+            // 2
+            .responseJSON { response in
+                guard response.result.isSuccess,
+                    let value = response.result.value else {
+                        print("Error while fetching tags: \(String(describing: response.result.error))")
+                      //  completion(nil)
+                        return
+                }
+                
+                // 3
+                //let tags = JSON(value)["results"][0]["tags"].array?.map { json in
+                //    json["tag"].stringValue
+                // }
+                let stringValue = String(describing: value)
+                print(stringValue)
+                // 4
+                //completion([stringValue])
+        }
+    }
+    */
     
-/*    func updateSimpleForecastData(parameters: [String:String]?) {
-        // Grab the HourlyForecast data and put it in the HourlyForecastData
-        store.fetchLocalSimpleForecast(parameters: parameters){
-            (SimpleForecastResult) -> Void in
-            switch SimpleForecastResult {
-            case let .success(simpleForecast, displayCity):
-                self.simpleForecastArray = simpleForecast
-                print("count simple \(self.simpleForecastArray.count)")
+    func updateBARTData(parameters: [String:String]?) {
+        // Grab the BART data
+        store.fetchBARTResult(location: parameters){
+            (BARTResult) -> Void in
+            switch BARTResult {
+            case let .success(finalBARTReading):
+                self.BARTReadingArray = finalBARTReading
+                print("count simple \(self.BARTReadingArray.count)")
                 DispatchQueue.main.async{
                     self.tableView.reloadData()
-                    self.locationLabel.text = displayCity
+                 //   self.locationLabel.text = displayCity
                 }
             case let .failure(error):
                 print("Error fetching simple forecast: \(error)")
             }
         }
     }
-  */
+  
     /*
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.simpleForecastArray.count

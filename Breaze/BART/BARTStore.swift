@@ -20,16 +20,16 @@ class BARTStore {
         return URLSession(configuration: config)
     }()
     
-/*    private func processBARTResult(data: Data?, error: Error?) -> BARTResult {
+    private func processBARTResult(data: Data?, error: Error?) -> BARTResult {
         guard let jsonData = data else {
             return .failure(error!)
         }
-        return BARTAPI.BARTTiming(fromJSON: jsonData)
+        return BARTAPI.BARTForecast(fromJSON: jsonData)
     }
-  */
-/*    func fetchBARTResult(location: [String:String]?, completion: @escaping (BARTResult) -> Void) {
+  
+   func fetchBARTResult(location: [String:String]?, completion: @escaping (BARTResult) -> Void) {
         
-        let url = BARTAPI.BARTURL(location: location)
+        let url = BARTAPI.localBARTURL(location: location)
         let request = URLRequest(url: url)
         let task = session.dataTask(with: request) { (data, response, error) -> Void in
             let result = self.processBARTResult(data: data, error: error)
@@ -38,5 +38,5 @@ class BARTStore {
         }
         task.resume()
     }
-  */
+  
 }

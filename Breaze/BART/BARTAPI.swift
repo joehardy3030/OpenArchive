@@ -26,6 +26,7 @@ struct BARTAPI {
     private static let question_mark = "?"
     private static let widthLong = 0.25
     private static let heightLat = 0.25
+    private static let json_param = "y"
 
     
     static func localBARTURL(location: [String:String]?) -> URL
@@ -34,13 +35,15 @@ struct BARTAPI {
         var components = baseURLString
         if location == nil {
             components = components + question_mark + "cmd=" + cmd + and_sign +
-                "orig=" + orig + and_sign + "dir=" + dir + and_sign + "key=" + key
+                "orig=" + orig + and_sign + "dir=" + dir + and_sign + "key=" + key +
+                "json=" + json_param
         }
             
         else {
             let bBox = drawBox(location: location)
             components = components + question_mark + "cmd=" + cmd + and_sign +
-                "orig=" + orig + and_sign + "dir=" + dir + and_sign + "key=" + key
+                "orig=" + orig + and_sign + "dir=" + dir + and_sign + "key=" + key +
+                "json=" + json_param
         }
         return URL(string: components)!
     }
@@ -63,102 +66,63 @@ struct BARTAPI {
         return boxString
     }
     
-    // Take the data from the air quality API and return a data SmogForecastResult
-    // that has a single instance for each location
-    static func smogForecast(fromJSON data: Data) -> SmogForecastResult {
+    // Take the data from the BART API and return a data BARTResult (part of BARTStore)
+    // that has a single instance for each line
+    static func BARTForecast(fromJSON data: Data) -> BARTResult {
         do {
             let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])
             
             guard
-                let jsonArray = jsonObject as? [[String:Any]]
+                //let jsonArray = jsonObject as? [[String:Any]],
+                let rootDictionary = jsonObject as? [AnyHashable:Any],
+                let stationArray = rootDictionary["station"] as? [[AnyHashable: Any]],
+                let etdArray = stationArray[0]["etd"] as? [[AnyHashable: Any]]
+
                 else {
-                    return .failure(SmogError.invalidJSONData)
+                    return .failure(BARTError.invalidJSONData)
             }
             
-            // finalSmogForecast is an array of SmogReading intstances that gives you all
-            // the individual value readings from that call -- one instance per pollutant per location
-            // finalSmogDays is an array of SmogDay that gives you one instance per location per
-            // per call, wrapping all the reading types
-            
-            var finalSmogForecast = [SmogReading]()
-            var finalSmogDays = [SmogDay]()
-            var siteNames = [String]()
-            for smogForecastJSON in jsonArray {
-                if let smogForecastReading = smogForecastReading(fromJSON: smogForecastJSON) {
-                    finalSmogForecast.append(smogForecastReading)
+            var finalBARTReading = [BARTReading]()
+   
+            for etd in etdArray {
+                guard
+                    let estimateArray = etd["estimate"] as? [[AnyHashable: Any]]
+                    else {
+                        return .failure(BARTError.invalidJSONData)
                 }
-            }
-            for smogReading in finalSmogForecast {
-                if siteNames.contains(smogReading.siteName) {
-                    let smogDay = finalSmogDays.first(where:{$0.siteName == smogReading.siteName})
-                    smogDaySwitch(smogReading: smogReading, smogDay: smogDay!)
+                for estimate in estimateArray {
+                    if let BARTEtdReading = BARTEtdReading(fromJSON: estimate) {
+                        finalBARTReading.append(BARTEtdReading)
+                    }
                 }
-                else {
-                    siteNames.append(smogReading.siteName)
-                    let smogDay = smogForecastDay()
-                    smogDay?.siteName = smogReading.siteName
-                    smogDaySwitch(smogReading: smogReading, smogDay: smogDay!)
-                    
-                    finalSmogDays.append(smogDay!)
-                }
+                
             }
-            for smogDay in finalSmogDays {
-                print("siteName \(smogDay.siteName)")
-                print("NO2 \(smogDay.NO2)")
-                print("SO2 \(smogDay.SO2)")
-                print("Ozone \(smogDay.ozone)")
-                print("PM2.5 \(smogDay.PM25)")
+  
+            for BARTEtdReading in finalBARTReading {
+                print("numCars \(BARTEtdReading.numCars)")
+                print("minToArrival \(BARTEtdReading.minToArrival)")
             }
-            return .success(finalSmogDays)
-            //return .success(finalSmogForecast)
+            return .success(finalBARTReading)
         }
         catch let error {
             return .failure(error)
         }
-    }
     
-    private static func smogForecastReading(fromJSON json: [String : Any]) -> SmogReading? {
+}
+    
+    private static func BARTEtdReading(fromJSON etd: [AnyHashable : Any]) -> BARTReading? {
         guard
-            let parameter = json["Parameter"] as? String,
-            let AQI = json["AQI"] as? Int,
-            let siteName = json["SiteName"] as? String
+            let numCars = etd["length"] as? Int,
+            let minToArrival = etd["minutes"] as? Int
             
             else {
                 return nil
         }
-        // print(parameter)
-        return SmogReading(parameter: parameter,
-                           AQI: AQI,
-                           siteName: siteName)
-    }
-    
-    private static func smogForecastDay() -> SmogDay? {
-        let SO2 = -1
-        let NO2 = -1
-        let ozone = -1
-        let PM25 = -1
-        let siteName = "siteName"
-        //print(parameter)
-        return SmogDay(SO2: SO2,
-                       NO2: NO2,
-                       ozone: ozone,
-                       PM25: PM25,
-                       siteName: siteName)
-    }
-    
-    private static func smogDaySwitch(smogReading: SmogReading, smogDay: SmogDay) {
-        switch smogReading.parameter {
-        case "SO2":
-            smogDay.SO2 = smogReading.AQI
-        case "NO2":
-            smogDay.NO2 = smogReading.AQI
-        case "OZONE":
-            smogDay.ozone = smogReading.AQI
-        case "PM2.5":
-            smogDay.PM25 = smogReading.AQI
-        default:
-            print("Fell through the switch")
-        }
+        print(numCars)
+        print(minToArrival)
+        
+        return BARTReading(numCars: numCars,
+                           minToArrival: minToArrival)
     }
     
     

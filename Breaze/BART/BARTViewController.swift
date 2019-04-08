@@ -9,54 +9,56 @@
 import UIKit
 import CoreLocation
 import CoreData
-import Alamofire
+//import Alamofire
 
 
 class BARTViewController: UITableViewController {
-    var locationLabel: UILabel!
-    var locationManager: CLLocationManager!
-    var currentLocation: CLLocation!
-    var refresher: UIRefreshControl!
-    // https://www.hackingwithswift.com/read/22/2/requesting-location-core-location
-    var utils = Utils()
+//    var locationLabel: UILabel!
+//    var locationManager: CLLocationManager!
+ //   var currentLocation: CLLocation!
+ //   var refresher: UIRefreshControl!
+ //    var utils = Utils()
     var store = BARTStore()
     var BARTReadingArray = [BARTReading]()
    
-    let appDelegate = UIApplication.shared.delegate as! AppDelegate
-    struct lastLocation {
+ //   let appDelegate = UIApplication.shared.delegate as! AppDelegate
+ /*   struct lastLocation {
         var latitude: String?
         var longitude: String?
     }
+   */
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        refresher = UIRefreshControl()
+        print("View Did Load")
+/*        refresher = UIRefreshControl()
         tableView.addSubview(refresher)
         refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)
         refresher.tintColor = UIColor.gray
-        var location = lastLocation()
-        //self.tableView.addSubview((self.refreshControl?)!)
-        location = fetchLastLocation()
-        print(location.latitude as Any)
-        //  print(location.longitude as Any)
-        if (location.latitude != nil) {
-            let parameters = [
-                "latitude": location.latitude!,
-                "longitude": location.longitude!
+        let lastLoc = utils.fetchLastLocation()
+        print(lastLoc)
+        
+        var location = [
+            "latitude": "37.785834",
+            "longitude": "-122.406417"
+        ]
+        if (lastLoc.latitude != nil) {
+            location = [
+                "latitude": lastLoc.latitude!,
+                "longitude": lastLoc.longitude!
             ]
-            self.updateBARTData(parameters: parameters)
+            print(location)
         }
         else {
-            self.updateBARTData(parameters: nil)
+            print("lastLoc is nil")
         }
-        NotificationCenter.default.addObserver(self, selector: #selector(receivedLocationNotification(notification:)), name: .alocation, object: nil)
-        
-        
-      //  downloadTags(contentID: "two")
+ */
+        self.updateBARTData(parameters: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        print("View Will Appear")
     }
     
     override func didReceiveMemoryWarning() {
@@ -64,7 +66,7 @@ class BARTViewController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    
+    /*
     @objc func receivedLocationNotification(notification: NSNotification){
         print("received notification")
         var parameters: [String:String]?
@@ -72,7 +74,7 @@ class BARTViewController: UITableViewController {
         
         DispatchQueue.main.async{
             parameters = self.setParameters()
-            
+            print(parameters)
             /*   let parameters = [
              "latitude": String(self.currentLocation.coordinate.latitude),
              "longitude": String(self.currentLocation.coordinate.longitude)
@@ -83,7 +85,9 @@ class BARTViewController: UITableViewController {
         }
         
     }
-    
+ 
+ */
+ /*
     func fetchLastLocation() -> lastLocation {
         
         var location = lastLocation()
@@ -103,6 +107,11 @@ class BARTViewController: UITableViewController {
         }
         return location
     }
+ 
+ */
+    
+    
+    
     /*
     func downloadTags(contentID: String) {
  //   func downloadTags(contentID: String, completion: @escaping ([String]?) -> Void) {
@@ -129,6 +138,7 @@ class BARTViewController: UITableViewController {
     }
     */
     
+    
     func updateBARTData(parameters: [String:String]?) {
         // Grab the BART data
         store.fetchBARTResult(location: parameters){
@@ -142,10 +152,11 @@ class BARTViewController: UITableViewController {
                  //   self.locationLabel.text = displayCity
                 }
             case let .failure(error):
-                print("Error fetching simple forecast: \(error)")
+                print("Error fetching BART Result: \(error)")
             }
         }
     }
+ 
   
     /*
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -171,7 +182,8 @@ class BARTViewController: UITableViewController {
         cell.iconImage?.image = utils.switchConditionsImage(icon: weatherCellData.icon) */
         return cell
     }
-    
+
+    /*
     @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
         // Do some reloading of data and update the table view's data source
         // Fetch more objects from a web service, for example...
@@ -189,7 +201,9 @@ class BARTViewController: UITableViewController {
         
         refreshControl.endRefreshing()
     }
-    
+ */
+
+    /*
     func setParameters() -> [String:String]? {
         // when currentLocation is nil, this barfs
         var parameters: [String:String]?
@@ -201,6 +215,7 @@ class BARTViewController: UITableViewController {
         }
         return parameters
     }
+ */
     
 }
 

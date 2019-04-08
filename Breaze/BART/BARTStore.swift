@@ -34,7 +34,8 @@ class BARTStore {
         let task = session.dataTask(with: request) { (data, response, error) -> Void in
             let result = self.processBARTResult(data: data, error: error)
             completion(result)
-            print(result)
+          //  print(String(data: data!, encoding: String.Encoding.utf8))
+           // print(result)
         }
         task.resume()
     }

@@ -15,9 +15,10 @@ enum BARTError: Error {
 struct BARTAPI {
     
   //  NSString *dataUrl = @"http://api.bart.gov/api/etd.aspx?cmd=etd&orig=deln&dir=s&key=MW9S-E7SL-26DU-VV8V";
-
+ //   https://api.bart.gov/api/etd.aspx?cmd=etd&orig=deln&dir=s&key=MW9S-E7SL-26DU-VV8V&json=y
+  //  https://api.bart.gov/api/etd.aspx?cmd=etd&orig=deln&dir=s&key=MW9S-E7SL-26DU-VV8Vjson=y
     
-    private static let baseURLString = "http://api.bart.gov/api/etd.aspx"
+    private static let baseURLString = "https://api.bart.gov/api/etd.aspx"
     private static let cmd = "etd"
     private static let orig = "deln"
     private static let dir = "s"
@@ -36,14 +37,15 @@ struct BARTAPI {
         if location == nil {
             components = components + question_mark + "cmd=" + cmd + and_sign +
                 "orig=" + orig + and_sign + "dir=" + dir + and_sign + "key=" + key +
-                "json=" + json_param
+                and_sign + "json=" + json_param
+            print(components)
         }
             
         else {
             let bBox = drawBox(location: location)
             components = components + question_mark + "cmd=" + cmd + and_sign +
                 "orig=" + orig + and_sign + "dir=" + dir + and_sign + "key=" + key +
-                "json=" + json_param
+                and_sign + "json=" + json_param
         }
         return URL(string: components)!
     }
@@ -70,15 +72,17 @@ struct BARTAPI {
     // that has a single instance for each line
     static func BARTForecast(fromJSON data: Data) -> BARTResult {
         do {
+            print(String(data: data, encoding: String.Encoding.utf8))
             let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])
-            
             guard
                 //let jsonArray = jsonObject as? [[String:Any]],
-                let rootDictionary = jsonObject as? [AnyHashable:Any],
+                let jsonDictionary = jsonObject as? [AnyHashable:Any],
+                let rootDictionary = jsonDictionary["root"] as? [AnyHashable:Any],
                 let stationArray = rootDictionary["station"] as? [[AnyHashable: Any]],
                 let etdArray = stationArray[0]["etd"] as? [[AnyHashable: Any]]
 
                 else {
+                   // print("Fails right away")
                     return .failure(BARTError.invalidJSONData)
             }
             

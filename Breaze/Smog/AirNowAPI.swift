@@ -102,13 +102,14 @@ struct AirNowAPI {
                     finalSmogDays.append(smogDay!)
                 }
             }
-            for smogDay in finalSmogDays {
+         /*   for smogDay in finalSmogDays {
                 print("siteName \(smogDay.siteName)")
                 print("NO2 \(smogDay.NO2)")
                 print("SO2 \(smogDay.SO2)")
                 print("Ozone \(smogDay.ozone)")
                 print("PM2.5 \(smogDay.PM25)")
             }
+        */
             return .success(finalSmogDays)
             //return .success(finalSmogForecast)
         }
@@ -126,7 +127,7 @@ struct AirNowAPI {
             else {
                 return nil
         }
-       // print(parameter)
+      //  print(json)
         return SmogReading(parameter: parameter,
                         AQI: AQI,
                         siteName: siteName)

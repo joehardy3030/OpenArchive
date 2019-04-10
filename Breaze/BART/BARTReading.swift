@@ -10,11 +10,11 @@ import UIKit
 
 class BARTReading: NSObject {
     
-    var numCars: Int
-    var minToArrival: Int
+    var numCars: String
+    var minToArrival: String
     
-    init(numCars: Int,
-         minToArrival: Int
+    init(numCars: String,
+         minToArrival: String
          ) {
         self.numCars = numCars
         self.minToArrival = minToArrival

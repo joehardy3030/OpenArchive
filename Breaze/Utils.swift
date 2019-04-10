@@ -26,7 +26,7 @@ class Utils {
         do {
             let result = try context.fetch(request)
             for data in result as! [NSManagedObject] {
-                print(data.value(forKey: "longitude") as! String)
+                // print(data.value(forKey: "longitude") as! String)
                 location.longitude = data.value(forKey: "longitude") as? String
                 location.latitude = data.value(forKey: "latitude") as? String
             }

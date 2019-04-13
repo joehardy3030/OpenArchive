@@ -12,12 +12,15 @@ class BARTReading: NSObject {
     
     var numCars: String
     var minToArrival: String
+    var lineColor: String
     
     init(numCars: String,
-         minToArrival: String
+         minToArrival: String,
+         lineColor: String
          ) {
         self.numCars = numCars
         self.minToArrival = minToArrival
+        self.lineColor = lineColor
         
         super.init()
     }

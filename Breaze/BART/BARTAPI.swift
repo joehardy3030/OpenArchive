@@ -16,8 +16,8 @@ struct BARTAPI {
     
     private static let baseURLString = "https://api.bart.gov/api/etd.aspx"
     private static let cmd = "etd"
-    private static let orig = "deln"
-    private static let dir = "s"
+    private static let orig = "mont"
+    private static let dir = "n"
     private static let key = "MW9S-E7SL-26DU-VV8V"
     private static let and_sign = "&"
     private static let question_mark = "?"
@@ -82,12 +82,13 @@ struct BARTAPI {
    
             for etd in etdArray {
                 guard
-                    let estimateArray = etd["estimate"] as? [[String: Any]]
+                    let estimateArray = etd["estimate"] as? [[String: Any]],
+                    let destination = etd["destination"] as? String
                     
                     else {
                         return .failure(BARTError.invalidJSONData)
                 }
-           //     print(estimateArray)
+                print(destination)
                 for estimate in estimateArray {
                     if let BARTEtdReading = BARTEtdReading(fromJSON: estimate) {
                         finalBARTReading.append(BARTEtdReading)
@@ -111,14 +112,16 @@ struct BARTAPI {
     private static func BARTEtdReading(fromJSON estimate: [String : Any]) -> BARTReading? {
         guard
             let numCars = estimate["length"] as? String,
-            let minToArrival = estimate["minutes"] as? String
+            let minToArrival = estimate["minutes"] as? String,
+            let lineColor = estimate["color"] as? String
             
             else {
                 return nil
         }
         
         return BARTReading(numCars: numCars,
-                           minToArrival: minToArrival)
+                           minToArrival: minToArrival,
+                           lineColor: lineColor)
     }
     
     

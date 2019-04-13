@@ -12,6 +12,9 @@ class BARTCell: UITableViewCell {
     
     @IBOutlet var numCarsLabel: UILabel!
     @IBOutlet var minToArrivalLabel: UILabel!
+    @IBOutlet var destinationLabel: UILabel!
+    @IBOutlet var lineColorLabel: UILabel!
+    
     
     override func awakeFromNib() {
         //super.awakeFromNib()

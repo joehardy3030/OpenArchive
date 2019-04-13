@@ -146,7 +146,7 @@ class BARTViewController: UITableViewController {
             switch BARTResult {
             case let .success(finalBARTReading):
                 self.BARTReadingArray = finalBARTReading
-                print("count simple \(self.BARTReadingArray.count)")
+                print("count BARTs \(self.BARTReadingArray.count)")
                 DispatchQueue.main.async{
                     self.tableView.reloadData()
                  //   self.locationLabel.text = displayCity
@@ -158,11 +158,11 @@ class BARTViewController: UITableViewController {
     }
  
   
-    /*
+
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.simpleForecastArray.count
+        return self.BARTReadingArray.count
     }
- */
+ 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
@@ -172,14 +172,16 @@ class BARTViewController: UITableViewController {
         // Set the text on the cell with the description of the item
         // that s the nth index of items, where n = row this cell
         // will appear in the tableview
-   //     let weatherCellData = self.simpleForecastArray[indexPath.row]
+        let BARTCellData = self.BARTReadingArray[indexPath.row]
         
-    //    cell.numCarsLabel?.text = "10"
-     /*   cell.lowTempLabel?.text = weatherCellData.low + " F"
-        cell.dayLabel?.text = weatherCellData.weekday_short
+        cell.numCarsLabel?.text = BARTCellData.numCars + " cars"
+        cell.minToArrivalLabel?.text = BARTCellData.minToArrival + " min"
+        cell.lineColorLabel?.text = BARTCellData.lineColor
+
+      //  cell.dayLabel?.text = weatherCellData.weekday_short
         
-        cell.iconLabel?.text = utils.switchConditionsText(icon: weatherCellData.icon)
-        cell.iconImage?.image = utils.switchConditionsImage(icon: weatherCellData.icon) */
+       // cell.iconLabel?.text = utils.switchConditionsText(icon: weatherCellData.icon)
+       // cell.iconImage?.image = utils.switchConditionsImage(icon: weatherCellData.icon) */
         return cell
     }
 

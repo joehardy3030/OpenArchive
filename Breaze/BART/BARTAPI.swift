@@ -90,7 +90,7 @@ struct BARTAPI {
                 }
                 print(destination)
                 for estimate in estimateArray {
-                    if let BARTEtdReading = BARTEtdReading(fromJSON: estimate) {
+                    if let BARTEtdReading = BARTEtdReading(fromJSON: estimate, destination: destination) {
                         finalBARTReading.append(BARTEtdReading)
                     }
                 }
@@ -109,7 +109,7 @@ struct BARTAPI {
     
 }
     
-    private static func BARTEtdReading(fromJSON estimate: [String : Any]) -> BARTReading? {
+    private static func BARTEtdReading(fromJSON estimate: [String : Any], destination: String) -> BARTReading? {
         guard
             let numCars = estimate["length"] as? String,
             let minToArrival = estimate["minutes"] as? String,
@@ -118,10 +118,11 @@ struct BARTAPI {
             else {
                 return nil
         }
-        
+        print(destination)
         return BARTReading(numCars: numCars,
                            minToArrival: minToArrival,
-                           lineColor: lineColor)
+                           lineColor: lineColor,
+                           destination: destination)
     }
     
     

@@ -177,6 +177,7 @@ class BARTViewController: UITableViewController {
         cell.numCarsLabel?.text = BARTCellData.numCars + " cars"
         cell.minToArrivalLabel?.text = BARTCellData.minToArrival + " min"
         cell.lineColorLabel?.text = BARTCellData.lineColor
+        cell.destinationLabel?.text = BARTCellData.destination
 
       //  cell.dayLabel?.text = weatherCellData.weekday_short
         

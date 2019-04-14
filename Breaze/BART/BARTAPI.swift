@@ -24,24 +24,28 @@ struct BARTAPI {
     private static let widthLong = 0.25
     private static let heightLat = 0.25
     private static let json_param = "y"
-  
-    static func localBARTURL(location: [String:String]?) -> URL
+    
+    static func localBARTURL(location: [String:String]?, inOut: Int) -> URL
         // create the URL for the HTTP get command for the smog API
     {
+        let inboundOrig = "deln"
+        let outboundOrig = "mont"
+        let inboundDir = "s"
+        let outboundDir = "n"
         var components = baseURLString
-        if location == nil {
+
+        if inOut == 0 {
             components = components + question_mark + "cmd=" + cmd + and_sign +
-                "orig=" + orig + and_sign + "dir=" + dir + and_sign + "key=" + key +
+                "orig=" + inboundOrig + and_sign + "dir=" + inboundDir + and_sign + "key=" + key +
                 and_sign + "json=" + json_param
-            print(components)
         }
-            
         else {
-            let bBox = drawBox(location: location)
             components = components + question_mark + "cmd=" + cmd + and_sign +
-                "orig=" + orig + and_sign + "dir=" + dir + and_sign + "key=" + key +
+                "orig=" + outboundOrig + and_sign + "dir=" + outboundDir + and_sign + "key=" + key +
                 and_sign + "json=" + json_param
         }
+        print(components)
+
         return URL(string: components)!
     }
     
@@ -88,7 +92,7 @@ struct BARTAPI {
                     else {
                         return .failure(BARTError.invalidJSONData)
                 }
-                print(destination)
+              //  print(destination)
                 for estimate in estimateArray {
                     if let BARTEtdReading = BARTEtdReading(fromJSON: estimate, destination: destination) {
                         finalBARTReading.append(BARTEtdReading)
@@ -97,10 +101,10 @@ struct BARTAPI {
                 
             }
   
-            for BARTEtdReading in finalBARTReading {
-                print("numCars \(BARTEtdReading.numCars)")
-                print("minToArrival \(BARTEtdReading.minToArrival)")
-            }
+       //     for BARTEtdReading in finalBARTReading {
+       //         print("numCars \(BARTEtdReading.numCars)")
+       //         print("minToArrival \(BARTEtdReading.minToArrival)")
+       //     }
             return .success(finalBARTReading)
         }
         catch let error {
@@ -108,7 +112,8 @@ struct BARTAPI {
         }
     
 }
-    
+    // Take in a chunch of JSON from BARTForecast and
+    // return a BARTReading
     private static func BARTEtdReading(fromJSON estimate: [String : Any], destination: String) -> BARTReading? {
         guard
             let numCars = estimate["length"] as? String,
@@ -118,7 +123,7 @@ struct BARTAPI {
             else {
                 return nil
         }
-        print(destination)
+      //  print(destination)
         return BARTReading(numCars: numCars,
                            minToArrival: minToArrival,
                            lineColor: lineColor,

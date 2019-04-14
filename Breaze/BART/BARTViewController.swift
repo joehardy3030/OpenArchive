@@ -21,7 +21,8 @@ class BARTViewController: UITableViewController {
     var store = BARTStore()
     var BARTReadingArray = [BARTReading]()
    
- //   let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    @IBOutlet var inOutControl: UISegmentedControl!
+    //   let appDelegate = UIApplication.shared.delegate as! AppDelegate
  /*   struct lastLocation {
         var latitude: String?
         var longitude: String?
@@ -30,7 +31,7 @@ class BARTViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("View Did Load")
+    //    print("View Did Load")
 /*        refresher = UIRefreshControl()
         tableView.addSubview(refresher)
         refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)
@@ -58,7 +59,7 @@ class BARTViewController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        print("View Will Appear")
+     //   print("View Will Appear")
     }
     
     override func didReceiveMemoryWarning() {
@@ -66,6 +67,18 @@ class BARTViewController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    @IBAction func inOutChanged(_ sender: Any) {
+        switch inOutControl.selectedSegmentIndex
+        {
+        case 0:
+            print("Inbound Segment Selected")
+        case 1:
+            print("Outbound Segment Selected")
+        default:
+            break
+        }
+        self.updateBARTData(parameters: nil)
+    }
     /*
     @objc func receivedLocationNotification(notification: NSNotification){
         print("received notification")
@@ -141,7 +154,8 @@ class BARTViewController: UITableViewController {
     
     func updateBARTData(parameters: [String:String]?) {
         // Grab the BART data
-        store.fetchBARTResult(location: parameters){
+        store.fetchBARTResult(location: parameters,
+                              inOut: inOutControl.selectedSegmentIndex){
             (BARTResult) -> Void in
             switch BARTResult {
             case let .success(finalBARTReading):

@@ -273,7 +273,7 @@
         <scene sceneID="D6M-fd-xDt">
             <objects>
                 <navigationController id="mE4-GC-GS2" userLabel="BART" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Back" id="QfD-oG-s70"/>
+                    <tabBarItem key="tabBarItem" title="BART" image="bart_icon" id="QfD-oG-s70"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="9QF-uI-xbP">
                         <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -592,6 +592,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="bart_icon" width="28" height="23"/>
         <image name="rain" width="47" height="39"/>
         <image name="utilities_icon" width="32" height="32"/>
         <image name="weather_icon_33" width="34" height="34"/>

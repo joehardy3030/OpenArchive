@@ -14,6 +14,7 @@ class BARTCell: UITableViewCell {
     @IBOutlet var minToArrivalLabel: UILabel!
     @IBOutlet var destinationLabel: UILabel!
     @IBOutlet var lineColorLabel: UILabel!
+    @IBOutlet var lineColorView: UIView!
     
     
     override func awakeFromNib() {

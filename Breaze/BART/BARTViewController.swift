@@ -192,6 +192,9 @@ class BARTViewController: UITableViewController {
         cell.minToArrivalLabel?.text = BARTCellData.minToArrival + " min"
         cell.lineColorLabel?.text = BARTCellData.lineColor
         cell.destinationLabel?.text = BARTCellData.destination
+        cell.lineColorView.backgroundColor = getLineColor(color: BARTCellData.lineColor)
+        
+        //cell.lineColorView.backgroundColor = UIColor .red
 
       //  cell.dayLabel?.text = weatherCellData.weekday_short
         
@@ -199,6 +202,28 @@ class BARTViewController: UITableViewController {
        // cell.iconImage?.image = utils.switchConditionsImage(icon: weatherCellData.icon) */
         return cell
     }
+
+    private func getLineColor(color: String) -> UIColor {
+        var lineColor: UIColor
+        
+        switch color {
+        case "RED":
+            lineColor = UIColor.red
+        case "ORANGE":
+            lineColor = UIColor.orange
+        case "BLUE":
+            lineColor = UIColor.blue
+        case "YELLOW":
+            lineColor = UIColor.yellow
+        case "GREEN":
+            lineColor = UIColor.green
+
+        default:
+            lineColor = UIColor.black
+        }
+        return lineColor
+    }
+
 
     /*
     @objc func handleRefresh(_ refreshControl: UIRefreshControl) {

@@ -101,10 +101,10 @@ struct BARTAPI {
                 
             }
   
-            finalBARTReading.sort {
+            finalBARTReading.sort (by: {
                 $0.minToArrival < $1.minToArrival
-            }
-            
+            })
+
             return .success(finalBARTReading)
         }
         catch let error {

@@ -101,10 +101,9 @@ struct BARTAPI {
                 
             }
   
-       //     for BARTEtdReading in finalBARTReading {
-       //         print("numCars \(BARTEtdReading.numCars)")
-       //         print("minToArrival \(BARTEtdReading.minToArrival)")
-       //     }
+            finalBARTReading.sort {
+                $0.minToArrival < $1.minToArrival
+            }
             return .success(finalBARTReading)
         }
         catch let error {

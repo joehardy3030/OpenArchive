@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		7915AFD1209FF46600625E43 /* HourlyForecastCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7915AFD0209FF46600625E43 /* HourlyForecastCell.swift */; };
+		791864A0226D62670082D497 /* BARTStation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7918649F226D62670082D497 /* BARTStation.swift */; };
 		791CE1BF20B2364E00299F76 /* HourlyDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791CE1BE20B2364E00299F76 /* HourlyDetailViewController.swift */; };
 		791CE1C120B252F100299F76 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791CE1C020B252F100299F76 /* Utils.swift */; };
 		793614D1220E884E006671C4 /* BARTViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793614D0220E884E006671C4 /* BARTViewController.swift */; };
@@ -67,6 +68,7 @@
 		4D96B2C7509FC4CCF930BABF /* Pods-Breaze.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Breaze.release.xcconfig"; path = "Target Support Files/Pods-Breaze/Pods-Breaze.release.xcconfig"; sourceTree = "<group>"; };
 		6A926AF80C0D08EF375C20D5 /* Pods_BreazeUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BreazeUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7915AFD0209FF46600625E43 /* HourlyForecastCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyForecastCell.swift; sourceTree = "<group>"; };
+		7918649F226D62670082D497 /* BARTStation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BARTStation.swift; sourceTree = "<group>"; };
 		791CE1BE20B2364E00299F76 /* HourlyDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyDetailViewController.swift; sourceTree = "<group>"; };
 		791CE1C020B252F100299F76 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		793614D0220E884E006671C4 /* BARTViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BARTViewController.swift; path = Breaze/BART/BARTViewController.swift; sourceTree = SOURCE_ROOT; };
@@ -138,11 +140,12 @@
 		794E5240220D3C3000C99092 /* BART */ = {
 			isa = PBXGroup;
 			children = (
-				793614D4221116D9006671C4 /* BARTAPI.swift */,
 				793614D622113F3C006671C4 /* BARTReading.swift */,
+				7918649F226D62670082D497 /* BARTStation.swift */,
+				793614D4221116D9006671C4 /* BARTAPI.swift */,
 				793614D2220FEDF3006671C4 /* BARTStore.swift */,
-				793614D0220E884E006671C4 /* BARTViewController.swift */,
 				794E5241220D3C5F00C99092 /* BARTCell.swift */,
+				793614D0220E884E006671C4 /* BARTViewController.swift */,
 			);
 			path = BART;
 			sourceTree = "<group>";
@@ -157,7 +160,6 @@
 				CCE8FC1545CF717B71C529A8 /* Pods-BreazeUITests.debug.xcconfig */,
 				1315CB8B613D6B0310848396 /* Pods-BreazeUITests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -496,6 +498,7 @@
 				791CE1BF20B2364E00299F76 /* HourlyDetailViewController.swift in Sources */,
 				D85A4EF32022D0B600E480FB /* SmogViewController.swift in Sources */,
 				7915AFD1209FF46600625E43 /* HourlyForecastCell.swift in Sources */,
+				791864A0226D62670082D497 /* BARTStation.swift in Sources */,
 				D8E1BCD22055E74E00DB12E9 /* SmogDay.swift in Sources */,
 				7972654620E3368E00578419 /* Weather.xcdatamodeld in Sources */,
 				D84F92CE203A7E7800DD3855 /* SmogCell.swift in Sources */,

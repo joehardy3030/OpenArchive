@@ -16,11 +16,12 @@ class BARTViewController: UITableViewController {
 //    var locationLabel: UILabel!
 //    var locationManager: CLLocationManager!
  //   var currentLocation: CLLocation!
- //   var refresher: UIRefreshControl!
+    var refresher: UIRefreshControl!
  //    var utils = Utils()
+    var inboundStation = BARTStation(abbreviation: "ECDN", direction: "s")
+    var outboundStation = BARTStation(abbreviation: "MONT", direction: "n")
     var store = BARTStore()
     var BARTReadingArray = [BARTReading]()
-   
     @IBOutlet var inOutControl: UISegmentedControl!
     //   let appDelegate = UIApplication.shared.delegate as! AppDelegate
  /*   struct lastLocation {
@@ -32,11 +33,13 @@ class BARTViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
     //    print("View Did Load")
-/*        refresher = UIRefreshControl()
-        tableView.addSubview(refresher)
+        setNavTitle()
+        let refresher = UIRefreshControl()
+       // tableView.addSubview(refresher)
         refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)
         refresher.tintColor = UIColor.gray
-        let lastLoc = utils.fetchLastLocation()
+        self.refreshControl = refresher
+/*        let lastLoc = utils.fetchLastLocation()
         print(lastLoc)
         
         var location = [
@@ -68,17 +71,22 @@ class BARTViewController: UITableViewController {
     }
     
     @IBAction func inOutChanged(_ sender: Any) {
+        setNavTitle()
+        self.updateBARTData(parameters: nil)
+    }
+    
+    func setNavTitle() {
         switch inOutControl.selectedSegmentIndex
         {
         case 0:
-            print("Inbound Segment Selected")
+            navigationItem.title = inboundStation.abbreviation
         case 1:
-            print("Outbound Segment Selected")
+            navigationItem.title = outboundStation.abbreviation
         default:
             break
         }
-        self.updateBARTData(parameters: nil)
     }
+    
     /*
     @objc func receivedLocationNotification(notification: NSNotification){
         print("received notification")
@@ -125,32 +133,7 @@ class BARTViewController: UITableViewController {
     
     
     
-    /*
-    func downloadTags(contentID: String) {
- //   func downloadTags(contentID: String, completion: @escaping ([String]?) -> Void) {
-        // 1
-        Alamofire.request("http://api.bart.gov/api/etd.aspx?cmd=etd&orig=deln&dir=s&key=MW9S-E7SL-26DU-VV8V")
-            // 2
-            .responseJSON { response in
-                guard response.result.isSuccess,
-                    let value = response.result.value else {
-                        print("Error while fetching tags: \(String(describing: response.result.error))")
-                      //  completion(nil)
-                        return
-                }
-                
-                // 3
-                //let tags = JSON(value)["results"][0]["tags"].array?.map { json in
-                //    json["tag"].stringValue
-                // }
-                let stringValue = String(describing: value)
-                print(stringValue)
-                // 4
-                //completion([stringValue])
-        }
-    }
-    */
-    
+ 
     
     func updateBARTData(parameters: [String:String]?) {
         // Grab the BART data
@@ -224,12 +207,13 @@ class BARTViewController: UITableViewController {
         return lineColor
     }
 
-
-    /*
+    
     @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
+    
         // Do some reloading of data and update the table view's data source
         // Fetch more objects from a web service, for example...
-        
+    
+        /*
         var parameters: [String:String]?
         parameters = setParameters()
         if (parameters != nil) {
@@ -240,10 +224,12 @@ class BARTViewController: UITableViewController {
   //          self.updateSimpleForecastData(parameters: nil)
             print("Location nil")
         }
-        
-        refreshControl.endRefreshing()
-    }
  */
+        self.updateBARTData(parameters: nil)
+        refreshControl.endRefreshing()
+        
+    }
+
 
     /*
     func setParameters() -> [String:String]? {

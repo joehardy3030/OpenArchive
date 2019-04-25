@@ -274,7 +274,13 @@
                             <outlet property="delegate" destination="GwB-Wm-UvN" id="8cW-pq-5Aw"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="BART" id="Eu6-uE-ds9"/>
+                    <navigationItem key="navigationItem" title="BART" id="Eu6-uE-ds9">
+                        <barButtonItem key="rightBarButtonItem" title="Settings" id="xeD-cn-ZgM">
+                            <connections>
+                                <action selector="SettingsButton:" destination="GwB-Wm-UvN" id="zJg-mL-TJe"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="inOutControl" destination="0FW-DD-4Y2" id="jBd-3E-B9s"/>
                     </connections>
@@ -282,6 +288,21 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0fN-qG-7WH" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1600.8" y="1406.4467766116943"/>
+        </scene>
+        <!--Modal-->
+        <scene sceneID="vGW-s4-yXp">
+            <objects>
+                <viewController id="Oq7-80-sN3" customClass="BARTModal" customModule="Breaze" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="5uK-R5-fr5">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="v2V-Tt-HkA"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="0cp-UR-bCu" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2322" y="1403"/>
         </scene>
         <!--BART-->
         <scene sceneID="D6M-fd-xDt">

@@ -11,8 +11,13 @@ import CoreLocation
 import CoreData
 //import Alamofire
 
+protocol ModalDelegate {
+    func changeValue(value: String)
+}
 
-class BARTViewController: UITableViewController {
+class BARTViewController: UITableViewController, ModalDelegate {
+
+    
 //    var locationLabel: UILabel!
 //    var locationManager: CLLocationManager!
  //   var currentLocation: CLLocation!
@@ -22,6 +27,7 @@ class BARTViewController: UITableViewController {
     var outboundStation = BARTStation(abbreviation: "MONT", direction: "n")
     var store = BARTStore()
     var BARTReadingArray = [BARTReading]()
+    var testValue: String = ""
     @IBOutlet var inOutControl: UISegmentedControl!
     //   let appDelegate = UIApplication.shared.delegate as! AppDelegate
  /*   struct lastLocation {
@@ -70,6 +76,19 @@ class BARTViewController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    @IBAction func SettingsButton(_ sender: UIBarButtonItem) {
+        print("Settings")
+        let modalViewController = BARTModal()
+        let navigationController = UINavigationController(rootViewController: modalViewController)
+        modalViewController.delegate = self
+        self.present(navigationController, animated: true, completion: nil)
+    }
+    
+    func changeValue(value: String) {
+        testValue = value
+        print(testValue)
+    }
+    
     @IBAction func inOutChanged(_ sender: Any) {
         setNavTitle()
         self.updateBARTData(parameters: nil)
@@ -79,9 +98,9 @@ class BARTViewController: UITableViewController {
         switch inOutControl.selectedSegmentIndex
         {
         case 0:
-            navigationItem.title = inboundStation.abbreviation
+            navigationItem.title = self.inboundStation.abbreviation
         case 1:
-            navigationItem.title = outboundStation.abbreviation
+            navigationItem.title = self.outboundStation.abbreviation
         default:
             break
         }
@@ -137,6 +156,17 @@ class BARTViewController: UITableViewController {
     
     func updateBARTData(parameters: [String:String]?) {
         // Grab the BART data
+        
+        switch inOutControl.selectedSegmentIndex
+        {
+        case 0:
+            let station = inboundStation
+        case 1:
+            let station = outboundStation
+        default:
+            break
+        }
+        
         store.fetchBARTResult(location: parameters,
                               inOut: inOutControl.selectedSegmentIndex){
             (BARTResult) -> Void in

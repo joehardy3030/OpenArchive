@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		7915AFD1209FF46600625E43 /* HourlyForecastCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7915AFD0209FF46600625E43 /* HourlyForecastCell.swift */; };
 		791864A0226D62670082D497 /* BARTStation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7918649F226D62670082D497 /* BARTStation.swift */; };
+		791864A222711D930082D497 /* BARTModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791864A122711D930082D497 /* BARTModal.swift */; };
 		791CE1BF20B2364E00299F76 /* HourlyDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791CE1BE20B2364E00299F76 /* HourlyDetailViewController.swift */; };
 		791CE1C120B252F100299F76 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791CE1C020B252F100299F76 /* Utils.swift */; };
 		793614D1220E884E006671C4 /* BARTViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793614D0220E884E006671C4 /* BARTViewController.swift */; };
@@ -69,6 +70,7 @@
 		6A926AF80C0D08EF375C20D5 /* Pods_BreazeUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BreazeUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7915AFD0209FF46600625E43 /* HourlyForecastCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyForecastCell.swift; sourceTree = "<group>"; };
 		7918649F226D62670082D497 /* BARTStation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BARTStation.swift; sourceTree = "<group>"; };
+		791864A122711D930082D497 /* BARTModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BARTModal.swift; sourceTree = "<group>"; };
 		791CE1BE20B2364E00299F76 /* HourlyDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyDetailViewController.swift; sourceTree = "<group>"; };
 		791CE1C020B252F100299F76 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		793614D0220E884E006671C4 /* BARTViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BARTViewController.swift; path = Breaze/BART/BARTViewController.swift; sourceTree = SOURCE_ROOT; };
@@ -144,6 +146,7 @@
 				7918649F226D62670082D497 /* BARTStation.swift */,
 				793614D4221116D9006671C4 /* BARTAPI.swift */,
 				793614D2220FEDF3006671C4 /* BARTStore.swift */,
+				791864A122711D930082D497 /* BARTModal.swift */,
 				794E5241220D3C5F00C99092 /* BARTCell.swift */,
 				793614D0220E884E006671C4 /* BARTViewController.swift */,
 			);
@@ -513,6 +516,7 @@
 				D84F92CA2033F1A100DD3855 /* AirNowAPI.swift in Sources */,
 				D84F92CC2037E08C00DD3855 /* SmogReading.swift in Sources */,
 				D8357A9720240BAD005657DF /* WundergroundAPI.swift in Sources */,
+				791864A222711D930082D497 /* BARTModal.swift in Sources */,
 				79718BA920E5E02B0072DC22 /* LastLocation+CoreDataProperties.swift in Sources */,
 				793614D5221116D9006671C4 /* BARTAPI.swift in Sources */,
 				D85A4EF12022D0B600E480FB /* WeatherViewController.swift in Sources */,

@@ -12,7 +12,7 @@ import CoreData
 //import Alamofire
 
 protocol ModalDelegate {
-    func changeValue(value: String)
+    func changeStation(station: BARTStation)
 }
 
 class BARTViewController: UITableViewController, ModalDelegate {
@@ -78,15 +78,17 @@ class BARTViewController: UITableViewController, ModalDelegate {
     
     @IBAction func SettingsButton(_ sender: UIBarButtonItem) {
         print("Settings")
-        let modalViewController = BARTModal()
+        //let modalViewController = BARTModal()
+        let modalViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "BARTModal") as! BARTModal
+
         let navigationController = UINavigationController(rootViewController: modalViewController)
         modalViewController.delegate = self
         self.present(navigationController, animated: true, completion: nil)
+        //self.present(modalViewController, animated: true, completion: nil)
     }
     
-    func changeValue(value: String) {
-        testValue = value
-        print(testValue)
+    func changeStation(station: BARTStation) {
+            print(station.abbreviation)
     }
     
     @IBAction func inOutChanged(_ sender: Any) {

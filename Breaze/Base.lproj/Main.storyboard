@@ -292,13 +292,27 @@
         <!--Modal-->
         <scene sceneID="vGW-s4-yXp">
             <objects>
-                <viewController id="Oq7-80-sN3" customClass="BARTModal" customModule="Breaze" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="BARTModal" id="Oq7-80-sN3" customClass="BARTModal" customModule="Breaze" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="5uK-R5-fr5">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <pickerView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vQX-6y-5hN">
+                                <rect key="frame" x="0.0" y="154" width="375" height="216"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <connections>
+                                    <outlet property="dataSource" destination="Oq7-80-sN3" id="hvf-z9-Cyb"/>
+                                    <outlet property="delegate" destination="Oq7-80-sN3" id="3f5-Pa-7e7"/>
+                                </connections>
+                            </pickerView>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="v2V-Tt-HkA"/>
                     </view>
+                    <connections>
+                        <outlet property="stationPicker" destination="vQX-6y-5hN" id="LAk-rz-aXb"/>
+                        <outlet property="view" destination="vQX-6y-5hN" id="Sa2-kf-vVo"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0cp-UR-bCu" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

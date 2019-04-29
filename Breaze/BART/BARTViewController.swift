@@ -88,7 +88,9 @@ class BARTViewController: UITableViewController, ModalDelegate {
     }
     
     func changeStation(station: BARTStation) {
-            print(station.abbreviation)
+//        setNavTitle()
+        print(station.abbreviation)
+        navigationItem.title = station.abbreviation
     }
     
     @IBAction func inOutChanged(_ sender: Any) {

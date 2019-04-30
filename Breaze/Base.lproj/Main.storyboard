@@ -202,8 +202,8 @@
                             <rect key="frame" x="0.0" y="0.0" width="375" height="28"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <segments>
-                                <segment title="Inbound"/>
-                                <segment title="Outbound"/>
+                                <segment title="Southbound"/>
+                                <segment title="Northbound"/>
                             </segments>
                             <connections>
                                 <action selector="inOutChanged:" destination="GwB-Wm-UvN" eventType="valueChanged" id="FA0-Bz-eu7"/>

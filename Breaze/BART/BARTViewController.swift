@@ -25,6 +25,7 @@ class BARTViewController: UITableViewController, ModalDelegate {
  //    var utils = Utils()
     var inboundStation = BARTStation(abbreviation: "ECDN", direction: "s")
     var outboundStation = BARTStation(abbreviation: "MONT", direction: "n")
+    var currentStation = BARTStation(abbreviation: "ECDN", direction: "s")
     var store = BARTStore()
     var BARTReadingArray = [BARTReading]()
     var testValue: String = ""
@@ -63,7 +64,7 @@ class BARTViewController: UITableViewController, ModalDelegate {
             print("lastLoc is nil")
         }
  */
-        self.updateBARTData(parameters: nil)
+        self.updateBARTData(station: currentStation, parameters: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -88,14 +89,15 @@ class BARTViewController: UITableViewController, ModalDelegate {
     }
     
     func changeStation(station: BARTStation) {
-//        setNavTitle()
+        // This function is executed when returning from the station selection modal
         print(station.abbreviation)
         navigationItem.title = station.abbreviation
     }
     
     @IBAction func inOutChanged(_ sender: Any) {
+        // this function is executed when the UISegmentedControl is toggled
         setNavTitle()
-        self.updateBARTData(parameters: nil)
+        self.updateBARTData(station: currentStation, parameters: nil)
     }
     
     func setNavTitle() {
@@ -158,7 +160,7 @@ class BARTViewController: UITableViewController, ModalDelegate {
     
  
     
-    func updateBARTData(parameters: [String:String]?) {
+    func updateBARTData(station: BARTStation, parameters: [String:String]?) {
         // Grab the BART data
         
         switch inOutControl.selectedSegmentIndex
@@ -259,7 +261,7 @@ class BARTViewController: UITableViewController, ModalDelegate {
             print("Location nil")
         }
  */
-        self.updateBARTData(parameters: nil)
+        self.updateBARTData(station: currentStation, parameters: nil)
         refreshControl.endRefreshing()
         
     }

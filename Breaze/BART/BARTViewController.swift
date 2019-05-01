@@ -22,10 +22,7 @@ class BARTViewController: UITableViewController, ModalDelegate {
 //    var locationManager: CLLocationManager!
  //   var currentLocation: CLLocation!
     var refresher: UIRefreshControl!
- //    var utils = Utils()
-   // var inboundStation = BARTStation(abbreviation: "DELN", direction: "s")
-   // var outboundStation = BARTStation(abbreviation: "MONT", direction: "n")
-    var currentStation = BARTStation(abbreviation: "DELN", direction: "s")
+   var currentStation = BARTStation(abbreviation: "DELN", direction: "s")
     var store = BARTStore()
     var BARTReadingArray = [BARTReading]()
     var testValue: String = ""
@@ -39,10 +36,8 @@ class BARTViewController: UITableViewController, ModalDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-    //    print("View Did Load")
         setNavTitle()
         let refresher = UIRefreshControl()
-       // tableView.addSubview(refresher)
         refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)
         refresher.tintColor = UIColor.gray
         self.refreshControl = refresher
@@ -69,7 +64,6 @@ class BARTViewController: UITableViewController, ModalDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-     //   print("View Will Appear")
     }
     
     override func didReceiveMemoryWarning() {

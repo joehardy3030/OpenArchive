@@ -25,16 +25,20 @@ struct BARTAPI {
     private static let heightLat = 0.25
     private static let json_param = "y"
     
-    static func localBARTURL(location: [String:String]?, inOut: Int) -> URL
+    static func localBARTURL(location: [String:String]?, station: BARTStation) -> URL
         // create the URL for the HTTP get command for the smog API
     {
-        let inboundOrig = "deln"
-        let outboundOrig = "mont"
-        let inboundDir = "s"
-        let outboundDir = "n"
+        //let inboundOrig = "deln"
+        //let outboundOrig = "mont"
+        //let inboundDir = "s"
+        //let outboundDir = "n"
         var components = baseURLString
 
-        if inOut == 0 {
+        components = components + question_mark + "cmd=" + cmd + and_sign +
+            "orig=" + station.abbreviation + and_sign + "dir=" + station.direction + and_sign + "key=" + key +
+            and_sign + "json=" + json_param
+
+     /*   if inOut == 0 {
             components = components + question_mark + "cmd=" + cmd + and_sign +
                 "orig=" + inboundOrig + and_sign + "dir=" + inboundDir + and_sign + "key=" + key +
                 and_sign + "json=" + json_param
@@ -44,6 +48,7 @@ struct BARTAPI {
                 "orig=" + outboundOrig + and_sign + "dir=" + outboundDir + and_sign + "key=" + key +
                 and_sign + "json=" + json_param
         }
+    */
         print(components)
 
         return URL(string: components)!

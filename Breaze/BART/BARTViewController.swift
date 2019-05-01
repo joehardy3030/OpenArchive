@@ -23,9 +23,9 @@ class BARTViewController: UITableViewController, ModalDelegate {
  //   var currentLocation: CLLocation!
     var refresher: UIRefreshControl!
  //    var utils = Utils()
-    var inboundStation = BARTStation(abbreviation: "ECDN", direction: "s")
-    var outboundStation = BARTStation(abbreviation: "MONT", direction: "n")
-    var currentStation = BARTStation(abbreviation: "ECDN", direction: "s")
+   // var inboundStation = BARTStation(abbreviation: "DELN", direction: "s")
+   // var outboundStation = BARTStation(abbreviation: "MONT", direction: "n")
+    var currentStation = BARTStation(abbreviation: "DELN", direction: "s")
     var store = BARTStore()
     var BARTReadingArray = [BARTReading]()
     var testValue: String = ""
@@ -90,23 +90,31 @@ class BARTViewController: UITableViewController, ModalDelegate {
     
     func changeStation(station: BARTStation) {
         // This function is executed when returning from the station selection modal
-        print(station.abbreviation)
-        navigationItem.title = station.abbreviation
-    }
-    
-    @IBAction func inOutChanged(_ sender: Any) {
-        // this function is executed when the UISegmentedControl is toggled
+        currentStation = station
+        setDirection()
+        print(currentStation.abbreviation)
         setNavTitle()
         self.updateBARTData(station: currentStation, parameters: nil)
     }
     
+    @IBAction func inOutChanged(_ sender: Any) {
+        // this function is executed when the UISegmentedControl is toggled
+        //setNavTitle()
+        setDirection()
+        self.updateBARTData(station: currentStation, parameters: nil)
+    }
+    
     func setNavTitle() {
+        navigationItem.title = currentStation.abbreviation
+    }
+    
+    func setDirection() {
         switch inOutControl.selectedSegmentIndex
         {
         case 0:
-            navigationItem.title = self.inboundStation.abbreviation
+            currentStation.direction = "s"
         case 1:
-            navigationItem.title = self.outboundStation.abbreviation
+            currentStation.direction = "n"
         default:
             break
         }
@@ -163,7 +171,7 @@ class BARTViewController: UITableViewController, ModalDelegate {
     func updateBARTData(station: BARTStation, parameters: [String:String]?) {
         // Grab the BART data
         
-        switch inOutControl.selectedSegmentIndex
+  /*      switch inOutControl.selectedSegmentIndex
         {
         case 0:
             let station = inboundStation
@@ -172,9 +180,9 @@ class BARTViewController: UITableViewController, ModalDelegate {
         default:
             break
         }
-        
+    */
         store.fetchBARTResult(location: parameters,
-                              inOut: inOutControl.selectedSegmentIndex){
+                              station: station){
             (BARTResult) -> Void in
             switch BARTResult {
             case let .success(finalBARTReading):

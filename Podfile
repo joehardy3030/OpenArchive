@@ -6,7 +6,7 @@ target 'Breaze' do
   use_frameworks!
 
   # Pods for Breaze
-  pod 'Alamofire', '~> 4.0'
+  pod 'Alamofire'
 
   target 'BreazeTests' do
     inherit! :search_paths

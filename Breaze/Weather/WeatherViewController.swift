@@ -19,6 +19,7 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
     // https://www.hackingwithswift.com/read/22/2/requesting-location-core-location
     var utils = Utils()
     var store = WeatherStore()
+    var openWeather = OpenWeatherAPI()
     var simpleForecastArray = [SimpleForecastDay]()
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     struct lastLocation {
@@ -42,10 +43,10 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
                 "latitude": location.latitude!,
                 "longitude": location.longitude!
             ]
-            self.updateSimpleForecastData(parameters: parameters)
+            self.updateOpenWeather(parameters: parameters)
         }
         else {
-            self.updateSimpleForecastData(parameters: nil)
+            self.updateOpenWeather(parameters: nil)
         }
         NotificationCenter.default.addObserver(self, selector: #selector(receivedLocationNotification(notification:)), name: .alocation, object: nil)
 
@@ -72,7 +73,7 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
                 "latitude": String(self.currentLocation.coordinate.latitude),
                 "longitude": String(self.currentLocation.coordinate.longitude)
             ] */
-            self.updateSimpleForecastData(parameters: parameters)
+            self.updateOpenWeather(parameters: parameters)
             print(self.currentLocation?.coordinate.latitude as Any)
             print(self.currentLocation?.coordinate.longitude as Any)
         }
@@ -83,7 +84,7 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
 
         var location = lastLocation()
         let context = appDelegate.persistentContainer.viewContext
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "LastLocation")
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "LastLocation")  
         request.returnsObjectsAsFaults = false
         do {
             let result = try context.fetch(request)
@@ -117,6 +118,15 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         }
     }
     
+    func updateOpenWeather(parameters: [String:String]?) {
+        // Grab the HourlyForecast data and put it in the HourlyForecastData
+        let url = openWeather.buildURL(queryType: .daily)
+        openWeather.getWeather(url: url) {
+            (json) -> Void in
+            print(json as Any)
+        }
+    }
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.simpleForecastArray.count
     }
@@ -147,11 +157,11 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         var parameters: [String:String]?
         parameters = setParameters()
         if (parameters != nil) {
-            self.updateSimpleForecastData(parameters: parameters)
+            self.updateOpenWeather(parameters: parameters)
             print("Location not nil")
         }
         else {
-            self.updateSimpleForecastData(parameters: nil)
+            self.updateOpenWeather(parameters: nil)
             print("Location nil")
         }
     

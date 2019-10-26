@@ -1,0 +1,6 @@
+framework module Pods_BreazeTests {
+  umbrella header "Pods-BreazeTests-umbrella.h"
+
+  export *
+  module * { export * }
+}

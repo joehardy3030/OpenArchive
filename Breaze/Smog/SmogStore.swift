@@ -11,7 +11,6 @@ import UIKit
 
 enum SmogForecastResult {
     case success([SmogDay])
-   // case success([SmogReading])
     case failure(Error)
 }
 

@@ -88,4 +88,36 @@ class Utils {
         return iconImage
     }
     
+    func convertKtoF(kelvin: Double?) -> Double? {
+        var farenheight: Double? = nil
+        if let k = kelvin {
+            farenheight = (k - 273.15) * (9.0/5.0) + 32.0
+        }
+        return farenheight
+    }
+    
+    func getDayOfWeek() -> String? {
+        let today = Date()
+        let myCalendar = Calendar(identifier: .gregorian)
+        let numDay = myCalendar.component(.weekday, from: today)
+        switch numDay {
+        case 1:
+            return "Sunday"
+        case 2:
+            return "Monday"
+        case 3:
+            return "Tuesday"
+        case 4:
+            return "Wednesday"
+        case 5:
+            return "Thursday"
+        case 6:
+            return "Friday"
+        case 7:
+            return "Saturday"
+        default:
+            return "Today"
+        }
+    }
+    
 }

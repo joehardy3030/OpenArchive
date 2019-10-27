@@ -44,10 +44,10 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
                 "latitude": location.latitude!,
                 "longitude": location.longitude!
             ]
-            self.updateOpenWeather(parameters: parameters)
+            self.updateOpenWeatherCurrent(parameters: parameters)
         }
         else {
-            self.updateOpenWeather(parameters: nil)
+            self.updateOpenWeatherCurrent(parameters: nil)
         }
         NotificationCenter.default.addObserver(self, selector: #selector(receivedLocationNotification(notification:)), name: .alocation, object: nil)
 
@@ -74,7 +74,7 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
                 "latitude": String(self.currentLocation.coordinate.latitude),
                 "longitude": String(self.currentLocation.coordinate.longitude)
             ] */
-            self.updateOpenWeather(parameters: parameters)
+            self.updateOpenWeatherCurrent(parameters: parameters)
             print(self.currentLocation?.coordinate.latitude as Any)
             print(self.currentLocation?.coordinate.longitude as Any)
         }
@@ -119,12 +119,31 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         }
     }
     
-    func updateOpenWeather(parameters: [String:String]?) {
-        let url = openWeather.buildURL(queryType: .daily)
-        openWeather.getWeather(url: url) {
+    func updateOpenWeatherCurrent(parameters: [String:String]?) {
+        let url = openWeather.buildURL(queryType: .current, parameters: parameters)
+        openWeather.getCurrent(url: url) {
             (weatherModel: WeatherModel?) -> Void in
             if let wm = weatherModel {
+                print(wm)
                 self.weatherArray.append(wm)
+                DispatchQueue.main.async{
+                    self.tableView.reloadData()
+                   // self.locationLabel.text = displayCity
+                }
+                //print(self.weatherArray[0] as Any)
+            }
+            //print(weatherModel as Any)
+        }
+    }
+    
+    func updateOpenWeatherDaily(parameters: [String:String]?) {
+        let url = openWeather.buildURL(queryType: .daily, parameters: parameters)
+        print(url)
+        openWeather.getDaily(url: url) {
+            (weatherModelArray: [WeatherModel]?) -> Void in
+            if let wm = weatherModelArray {
+                print(wm)
+                //self.weatherArray.append(wm)
                 DispatchQueue.main.async{
                     self.tableView.reloadData()
                    // self.locationLabel.text = displayCity
@@ -158,12 +177,13 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         if let low = weatherCellData.low {
             cell.lowTempLabel?.text = String(format:"%.1f", low) + " F"
         }
-        cell.dayLabel?.text = weatherCellData.weekday_short
+        cell.dayLabel?.text = utils.getDayOfWeek()
         
-        if let iconText = weatherCellData.icon {
-            cell.iconLabel?.text = iconText //utils.switchConditionsText(icon: iconText)
+        if let description = weatherCellData.main_description {
+            cell.iconLabel?.text = description
+            cell.iconImage?.image = utils.switchConditionsImage(icon: description.lowercased())
         }
-        //cell.iconImage?.image = utils.switchConditionsImage(icon: weatherCellData.icon)
+        
         return cell
     }
     
@@ -174,11 +194,11 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         var parameters: [String:String]?
         parameters = setParameters()
         if (parameters != nil) {
-            self.updateOpenWeather(parameters: parameters)
+            self.updateOpenWeatherCurrent(parameters: parameters)
             print("Location not nil")
         }
         else {
-            self.updateOpenWeather(parameters: nil)
+            self.updateOpenWeatherCurrent(parameters: nil)
             print("Location nil")
         }
     

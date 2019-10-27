@@ -14,6 +14,7 @@ struct WeatherModel: Codable {
     let low: Double?
     let icon: String?
     let icon_url: String?
+    let main_description: String?
     let conditions: String?
     let avehumidity: Double?
     let weekday_short: String?
@@ -24,6 +25,7 @@ struct WeatherModel: Codable {
                 "low": low as Any,
                 "icon": icon as Any,
                 "icon_url": icon_url as Any,
+                "main_description": main_description as Any,
                 "conidtions": conditions as Any,
                 "avehumidity": avehumidity as Any,
                 "weekday_short": weekday_short as Any]
@@ -34,6 +36,7 @@ struct WeatherModel: Codable {
          low: Double?,
          icon: String?,
          icon_url: String?,
+         main_description: String?,
          conditions: String?,
          avehumidity: Double?,
          weekday_short: String?)
@@ -43,9 +46,11 @@ struct WeatherModel: Codable {
         self.low = low
         self.icon = icon
         self.icon_url = icon_url
+        self.main_description = main_description
         self.conditions = conditions
         self.avehumidity = avehumidity
         self.weekday_short = weekday_short
         
     }
+    
 }

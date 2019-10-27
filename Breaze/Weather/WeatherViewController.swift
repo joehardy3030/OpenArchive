@@ -20,6 +20,7 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
     var utils = Utils()
     var store = WeatherStore()
     var openWeather = OpenWeatherAPI()
+    var weatherArray = [WeatherModel]()
     var simpleForecastArray = [SimpleForecastDay]()
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     struct lastLocation {
@@ -121,13 +122,21 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
     func updateOpenWeather(parameters: [String:String]?) {
         let url = openWeather.buildURL(queryType: .daily)
         openWeather.getWeather(url: url) {
-            (json: WeatherModel?) -> Void in
-             print(json as Any)
+            (weatherModel: WeatherModel?) -> Void in
+            if let wm = weatherModel {
+                self.weatherArray.append(wm)
+                DispatchQueue.main.async{
+                    self.tableView.reloadData()
+                   // self.locationLabel.text = displayCity
+                }
+                //print(self.weatherArray[0] as Any)
+            }
+            //print(weatherModel as Any)
         }
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.simpleForecastArray.count
+        return self.weatherArray.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -138,14 +147,23 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         // Set the text on the cell with the description of the item
         // that s the nth index of items, where n = row this cell
         // will appear in the tableview
-        let weatherCellData = self.simpleForecastArray[indexPath.row]
+        let index = indexPath.row
+        let weatherCellData = self.weatherArray[index]
+        print(weatherCellData)
         
-        cell.highTempLabel?.text = weatherCellData.high + " F"
-        cell.lowTempLabel?.text = weatherCellData.low + " F"
+        if let high = weatherCellData.high
+        {
+            cell.highTempLabel?.text = String(format:"%.1f", high) + " F"
+        }
+        if let low = weatherCellData.low {
+            cell.lowTempLabel?.text = String(format:"%.1f", low) + " F"
+        }
         cell.dayLabel?.text = weatherCellData.weekday_short
         
-        cell.iconLabel?.text = utils.switchConditionsText(icon: weatherCellData.icon)
-        cell.iconImage?.image = utils.switchConditionsImage(icon: weatherCellData.icon)
+        if let iconText = weatherCellData.icon {
+            cell.iconLabel?.text = iconText //utils.switchConditionsText(icon: iconText)
+        }
+        //cell.iconImage?.image = utils.switchConditionsImage(icon: weatherCellData.icon)
         return cell
     }
     

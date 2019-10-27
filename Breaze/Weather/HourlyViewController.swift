@@ -15,6 +15,8 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
     
     var utils = Utils()
     var store = WeatherStore()
+    var openWeather = OpenWeatherAPI()
+    var weatherArray = [WeatherModel]()
     var hourlyForecastArray = [HourlyForecastHour]()
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var refresher: UIRefreshControl!
@@ -58,10 +60,10 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
                 "latitude": location.latitude!,
                 "longitude": location.longitude!
             ]
-            self.updateHourlyForecastData(parameters: parameters)
+            self.updateOpenWeatherHourly(parameters: parameters)
         }
         else {
-            self.updateHourlyForecastData(parameters: nil)
+            self.updateOpenWeatherHourly(parameters: nil)
         }
         
         /*let parameters = [
@@ -122,13 +124,31 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         }
     }
     
+    func updateOpenWeatherHourly(parameters: [String:String]?) {
+        let url = openWeather.buildURL(queryType: .hourly, parameters: parameters)
+        print(url)
+        openWeather.getHourly(url: url) {
+            (weatherModelArray: [WeatherModel]?) -> Void in
+            if let wm = weatherModelArray {
+                print(wm)
+                //self.weatherArray.append(wm)
+                DispatchQueue.main.async{
+                  //  self.HourlyForecastTable.reloadData()
+                    self.locationLabel.text = "Hi"
+                }
+                //print(self.weatherArray[0] as Any)
+            }
+            //print(weatherModel as Any)
+        }
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.hourlyForecastArray.count
+        return 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -173,11 +193,11 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         var parameters: [String:String]?
         parameters = setParameters()
         if (parameters != nil) {
-            self.updateHourlyForecastData(parameters: parameters)
+            self.updateOpenWeatherHourly(parameters: parameters)
             print("Location not nil")
         }
         else {
-            self.updateHourlyForecastData(parameters: nil)
+            self.updateOpenWeatherHourly(parameters: nil)
             print("Location nil")
         }
 

@@ -436,7 +436,6 @@
                     <connections>
                         <outlet property="HourlyForecastTable" destination="wML-BB-yfD" id="WtQ-5f-5al"/>
                         <outlet property="locationLabel" destination="VlJ-V6-kZN" id="x7k-YZ-vO5"/>
-                        <outlet property="view" destination="wML-BB-yfD" id="9Yq-7l-s34"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ufl-Eg-gdT" userLabel="First Responder" sceneMemberID="firstResponder"/>

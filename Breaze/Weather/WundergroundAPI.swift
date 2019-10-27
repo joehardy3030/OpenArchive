@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import SwiftyJSON
+
 
 enum WundergroundError: Error {
     case invalidJSONData

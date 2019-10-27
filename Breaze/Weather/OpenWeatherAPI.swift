@@ -11,7 +11,6 @@ import Alamofire
 
 enum queryType {
     case current
-    case daily
     case hourly
 }
 
@@ -20,9 +19,6 @@ class OpenWeatherAPI: NSObject {
     let utils = Utils()
     let apiKey = "263e9f27a9c219e9d7db30993b91c33b"
     let baseURLString = "https://api.openweathermap.org/data/2.5/"
-    let urlString = "https://api.openweathermap.org/data/2.5/weather?q=London,uk&APPID=263e9f27a9c219e9d7db30993b91c33b"
-    let forecastURLString = "api.openweathermap.org/data/2.5/forecast/daily?lat={lat}&lon={lon}&cnt={cnt}"
-    let cityLocation = "Berkeley,us"
     struct lastLocation {
         var latitude: String?
         var longitude: String?
@@ -50,10 +46,8 @@ class OpenWeatherAPI: NSObject {
             url += apiKey
             return url
         case .hourly:
-            return baseURLString
-        case .daily:
             var url = baseURLString
-            url += "forecast/daily"
+            url += "forecast"
             url += "?lat="
             url += lat
             url += "&lon="
@@ -75,34 +69,19 @@ class OpenWeatherAPI: NSObject {
        }
     }
 
-    func getDaily(url: String, completion: @escaping ([WeatherModel]?) -> Void) {
+    func getHourly(url: String, completion: @escaping ([WeatherModel]?) -> Void) {
         Alamofire.request(url).responseJSON { response in
           if let json = response.result.value {
-            let weatherModelArray = self.deserializeDaily(fromJSON: json)
+            let weatherModelArray = self.deserializeHourly(fromJSON: json)
             //print(weatherModel as Any)
             completion(weatherModelArray)
           }
        }
     }
 
-    private func deserializeDaily(fromJSON json: Any) -> [WeatherModel]? {
+    private func deserializeHourly(fromJSON json: Any) -> [WeatherModel]? {
         guard
-            let json = json as? [String:Any],
-            let _ = json["base"] as? String,
-            let weather_dict = json["weather"] as? [[String:Any]]
-            else {
-                return [WeatherModel]()
-        }
-        let weather = weather_dict[0]
-        guard
-            let description = weather["description"] as? String,
-            let icon = weather["icon"] as? String,
-            let main_description = weather["main"] as? String,
-            let main = json["main"] as? [String:Any],
-            let temp = main["temp"] as? Double,
-            let high = main["temp_max"] as? Double,
-            let low = main["temp_min"] as? Double,
-            let humidity = main["humidity"] as? Double
+            let json = json as? [[String:Any]]
             else {
                 return [WeatherModel]()
         }

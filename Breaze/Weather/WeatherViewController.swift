@@ -21,7 +21,7 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
     var store = WeatherStore()
     var openWeather = OpenWeatherAPI()
     var weatherArray = [WeatherModel]()
-    var simpleForecastArray = [SimpleForecastDay]()
+   // var simpleForecastArray = [SimpleForecastDay]()
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     struct lastLocation {
         var latitude: String?
@@ -100,7 +100,7 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         }
         return location
     }
-    
+   /*
     func updateSimpleForecastData(parameters: [String:String]?) {
         // Grab the HourlyForecast data and put it in the HourlyForecastData
         store.fetchLocalSimpleForecast(parameters: parameters){
@@ -118,7 +118,7 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
             }
         }
     }
-    
+    */
     func updateOpenWeatherCurrent(parameters: [String:String]?) {
         let url = openWeather.buildURL(queryType: .current, parameters: parameters)
         openWeather.getCurrent(url: url) {
@@ -136,23 +136,6 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         }
     }
     
-    func updateOpenWeatherDaily(parameters: [String:String]?) {
-        let url = openWeather.buildURL(queryType: .daily, parameters: parameters)
-        print(url)
-        openWeather.getDaily(url: url) {
-            (weatherModelArray: [WeatherModel]?) -> Void in
-            if let wm = weatherModelArray {
-                print(wm)
-                //self.weatherArray.append(wm)
-                DispatchQueue.main.async{
-                    self.tableView.reloadData()
-                   // self.locationLabel.text = displayCity
-                }
-                //print(self.weatherArray[0] as Any)
-            }
-            //print(weatherModel as Any)
-        }
-    }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.weatherArray.count

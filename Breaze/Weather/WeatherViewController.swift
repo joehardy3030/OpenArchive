@@ -119,11 +119,10 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
     }
     
     func updateOpenWeather(parameters: [String:String]?) {
-        // Grab the HourlyForecast data and put it in the HourlyForecastData
         let url = openWeather.buildURL(queryType: .daily)
         openWeather.getWeather(url: url) {
-            (json) -> Void in
-            print(json as Any)
+            (json: WeatherModel?) -> Void in
+             print(json as Any)
         }
     }
     

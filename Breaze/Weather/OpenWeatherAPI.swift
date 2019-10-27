@@ -42,45 +42,46 @@ class OpenWeatherAPI: NSObject {
         }
     }
     
-    func getWeather(url: String, completion: @escaping (Any) -> Void) {
+    func getWeather(url: String, completion: @escaping (WeatherModel?) -> Void) {
         Alamofire.request(url).responseJSON { response in
           if let json = response.result.value {
-            completion(json)
-            //print("JSON: \(json)") // serialized json response
+            let weatherModel = self.deserializeCurrentWeather(fromJSON: json)
+            //print(weatherModel as Any)
+            completion(weatherModel)
           }
        }
     }
-        
-    //    ?q=London,uk&APPID=263e9f27a9c219e9d7db30993b91c33b"
     
-/*
-    static func simpleForecast(fromJSON data: Data) -> SimpleForecastResult {
-        do {
-            let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])
-            guard
-                let jsonDictionary = jsonObject as? [AnyHashable:Any],
-                let conditionsDictionary = jsonDictionary["current_observation"] as? [AnyHashable: Any],
-                let displayLocationDictionary = conditionsDictionary["display_location"] as? [AnyHashable: Any],
-                let displayCity = displayLocationDictionary["city"] as? String,
-                let forecastDictionary = jsonDictionary["forecast"] as? [AnyHashable: Any],
-                let simpleForecastDictionary = forecastDictionary["simpleforecast"] as? [AnyHashable: Any],
-                let forecastdaysArray = simpleForecastDictionary["forecastday"] as? [[String: Any]]
-                else {
-                    return .failure(WundergroundError.invalidJSONData)
-                }
-            print(jsonDictionary)
-            print(displayCity)
-            var finalSimpleForecast = [SimpleForecastDay]()
-            for forecastdayJSON in forecastdaysArray {
-                if let simpleForecastDay = simpleForecastDay(fromJSON: forecastdayJSON) {
-                    finalSimpleForecast.append(simpleForecastDay)
-                }
-            }
-            return .success(finalSimpleForecast, displayCity)
+    private func deserializeCurrentWeather(fromJSON json: Any) -> WeatherModel? {
+        guard
+            let json = json as? [String:Any],
+            let _ = json["base"] as? String,
+            let weather_dict = json["weather"] as? [[String:Any]]
+            else {
+                return nil
         }
-        catch let error {
-            return .failure(error)
+        let weather = weather_dict[0]
+        guard
+            let description = weather["description"] as? String,
+            let icon = weather["icon"] as? String,
+            let main = json["main"] as? [String:Any],
+            let temp = main["temp"] as? Double,
+            let high = main["temp_max"] as? Double,
+            let low = main["temp_min"] as? Double,
+            let humidity = main["humidity"] as? Double
+            else {
+                return nil
         }
+       
+        return WeatherModel(temp: temp,
+                            high: high,
+                            low: low,
+                            icon: icon,
+                            icon_url: nil,
+                            conditions: description,
+                            avehumidity: humidity,
+                            weekday_short: nil)
+        
     }
- */
+
 }

@@ -23,6 +23,7 @@
 		7972654620E3368E00578419 /* Weather.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 7972654420E3368E00578419 /* Weather.xcdatamodeld */; };
 		799C3C902345582F00D9341E /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C3C8F2345582F00D9341E /* HealthKit.framework */; };
 		79F8DC592363E3E400E5A1AA /* OpenWeatherAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F8DC582363E3E400E5A1AA /* OpenWeatherAPI.swift */; };
+		79F8DC5B2364DBDA00E5A1AA /* WeatherModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F8DC5A2364DBDA00E5A1AA /* WeatherModel.swift */; };
 		C1A86AE7CB901E9AE4559733 /* Pods_BreazeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC1F0E4AA282D7B36ED40FA4 /* Pods_BreazeTests.framework */; };
 		CBC5228E1B6761BEF185B8AD /* Pods_Breaze.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A700AD3051D76CBB67400BC /* Pods_Breaze.framework */; };
 		D51C53AE71B1FA9965B4E724 /* Pods_BreazeUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A926AF80C0D08EF375C20D5 /* Pods_BreazeUITests.framework */; };
@@ -87,6 +88,7 @@
 		799C3C8E2345582E00D9341E /* Breaze.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Breaze.entitlements; sourceTree = "<group>"; };
 		799C3C8F2345582F00D9341E /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
 		79F8DC582363E3E400E5A1AA /* OpenWeatherAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenWeatherAPI.swift; sourceTree = "<group>"; };
+		79F8DC5A2364DBDA00E5A1AA /* WeatherModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherModel.swift; sourceTree = "<group>"; };
 		9C04CF7422E0CBAEE4822157 /* Pods-BreazeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BreazeTests.debug.xcconfig"; path = "Target Support Files/Pods-BreazeTests/Pods-BreazeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BC1F0E4AA282D7B36ED40FA4 /* Pods_BreazeTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BreazeTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCE8FC1545CF717B71C529A8 /* Pods-BreazeUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BreazeUITests.debug.xcconfig"; path = "Target Support Files/Pods-BreazeUITests/Pods-BreazeUITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -177,6 +179,7 @@
 			children = (
 				D8357A9620240BAD005657DF /* WundergroundAPI.swift */,
 				79F8DC582363E3E400E5A1AA /* OpenWeatherAPI.swift */,
+				79F8DC5A2364DBDA00E5A1AA /* WeatherModel.swift */,
 				D884508D2026B18500C5379C /* WeatherStore.swift */,
 				D8721E64202919140025348F /* SimpleForecastDay.swift */,
 				D8715B9A2029216800BC13AA /* HourlyForecastHour.swift */,
@@ -502,6 +505,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D884508E2026B18500C5379C /* WeatherStore.swift in Sources */,
+				79F8DC5B2364DBDA00E5A1AA /* WeatherModel.swift in Sources */,
 				D8715B9D202FB70300BC13AA /* SmogStore.swift in Sources */,
 				791CE1BF20B2364E00299F76 /* HourlyDetailViewController.swift in Sources */,
 				D85A4EF32022D0B600E480FB /* SmogViewController.swift in Sources */,

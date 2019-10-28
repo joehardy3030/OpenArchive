@@ -8,6 +8,7 @@
 
 import UIKit
 import Alamofire
+import SwiftyJSON
 
 enum queryType {
     case current
@@ -80,24 +81,36 @@ class OpenWeatherAPI: NSObject {
     }
 
     private func deserializeHourly(fromJSON json: Any) -> [WeatherModel]? {
-        guard
-            let json = json as? [[String:Any]]
-            else {
-                return [WeatherModel]()
+        var weatherModelArray = [WeatherModel]()
+        let json = JSON(json)
+        let list = json["list"]
+        
+        for (_,subJson):(String, JSON) in list {
+            let weatherModel = deserializeWeatherModel(fromJSON: subJson)
+            weatherModelArray.append(weatherModel)
         }
-        print(json)
+        return weatherModelArray
+    }
+    
+    private func deserializeWeatherModel(fromJSON json: JSON) -> WeatherModel {
+        
+        let temp = json["main"]["temp"].double
+        let high = json["main"]["temp_max"].double
+        let low = json["main"]["temp_min"].double
+        let icon = json["weather"][0]["icon"].string
+        let main_description = json["weather"][0]["main"].string
+        let conditions = json["weather"][0]["description"].string
+        let humidity = json["main"]["humidity"].double
 
-        return [WeatherModel]()
-       /* return WeatherModel(temp: utils.convertKtoF(kelvin: temp),
+        return WeatherModel(temp: utils.convertKtoF(kelvin: temp),
                             high: utils.convertKtoF(kelvin: high),
                             low: utils.convertKtoF(kelvin: low),
                             icon: icon,
                             icon_url: nil,
                             main_description: main_description,
-                            conditions: description,
+                            conditions: conditions,
                             avehumidity: humidity,
                             weekday_short: nil)
-        */
     }
     
     private func deserializeCurrent(fromJSON json: Any) -> WeatherModel? {
@@ -121,7 +134,7 @@ class OpenWeatherAPI: NSObject {
             else {
                 return nil
         }
-        print(json)
+//        print(json)
         return WeatherModel(temp: utils.convertKtoF(kelvin: temp),
                             high: utils.convertKtoF(kelvin: high),
                             low: utils.convertKtoF(kelvin: low),

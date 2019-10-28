@@ -126,19 +126,15 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
     
     func updateOpenWeatherHourly(parameters: [String:String]?) {
         let url = openWeather.buildURL(queryType: .hourly, parameters: parameters)
-        print(url)
         openWeather.getHourly(url: url) {
             (weatherModelArray: [WeatherModel]?) -> Void in
             if let wm = weatherModelArray {
-                print(wm)
-                //self.weatherArray.append(wm)
+                self.weatherArray = wm
                 DispatchQueue.main.async{
-                  //  self.HourlyForecastTable.reloadData()
+                    self.HourlyForecastTable.reloadData()
                     self.locationLabel.text = "Hi"
                 }
-                //print(self.weatherArray[0] as Any)
             }
-            //print(weatherModel as Any)
         }
     }
     
@@ -148,7 +144,7 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
+        return self.weatherArray.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -159,17 +155,34 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         // Set the text on the cell with the description of the item
         // that s the nth index of items, where n = row this cell
         // will appear in the tableview
-        let weatherCellData = self.hourlyForecastArray[indexPath.row]
+        let weatherCellData = self.weatherArray[indexPath.row]
         
-        cell.tempLabel?.text = weatherCellData.temp + " F"
-        cell.humidityLabel?.text = weatherCellData.humidity + "%"
-        cell.timeLabel?.text = weatherCellData.civil
-        cell.windSpeedLabel?.text = weatherCellData.dir + "  " + weatherCellData.wspd + " MPH"
-        cell.conditionsLabel?.text = utils.switchConditionsText(icon: weatherCellData.icon)
-        cell.iconImage?.image = utils.switchConditionsImage(icon: weatherCellData.icon)
+        print(weatherCellData)
         
+        if let temp = weatherCellData.temp
+        {
+            cell.tempLabel?.text = String(format:"%.1f", temp) + " F"
+        }
+        if let humidity = weatherCellData.avehumidity {
+            cell.humidityLabel?.text = String(format:"%.1f", humidity) + " F"
+        }
+        //cell.dayLabel?.text = utils.getDayOfWeek()
+        
+        if let description = weatherCellData.main_description {
+            cell.conditionsLabel?.text = description
+            cell.iconImage?.image = utils.switchConditionsImage(icon: description.lowercased())
+        }
+
         return cell
     }
+/*
+    @IBOutlet var tempLabel: UILabel!
+    @IBOutlet var humidityLabel: UILabel!
+    @IBOutlet var windSpeedLabel: UILabel!
+    @IBOutlet var conditionsLabel: UILabel!
+    @IBOutlet var timeLabel: UILabel!
+    @IBOutlet var iconImage: UIImageView!
+*/
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         //If the triggered item is the "showHourlyDetail" segue

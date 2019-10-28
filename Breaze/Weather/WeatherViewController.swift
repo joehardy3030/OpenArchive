@@ -18,7 +18,7 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
     var refresher: UIRefreshControl!
     // https://www.hackingwithswift.com/read/22/2/requesting-location-core-location
     var utils = Utils()
-    var store = WeatherStore()
+   // var store = WeatherStore()
     var openWeather = OpenWeatherAPI()
     var weatherArray = [WeatherModel]()
    // var simpleForecastArray = [SimpleForecastDay]()
@@ -122,17 +122,14 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
     func updateOpenWeatherCurrent(parameters: [String:String]?) {
         let url = openWeather.buildURL(queryType: .current, parameters: parameters)
         openWeather.getCurrent(url: url) {
-            (weatherModel: WeatherModel?) -> Void in
-            if let wm = weatherModel {
-                print(wm)
+            (weatherModel: WeatherModel?, city: String?) -> Void in
+            if let wm = weatherModel, let c = city {
                 self.weatherArray.append(wm)
                 DispatchQueue.main.async{
                     self.tableView.reloadData()
-                   // self.locationLabel.text = displayCity
+                    self.locationLabel.text = c
                 }
-                //print(self.weatherArray[0] as Any)
             }
-            //print(weatherModel as Any)
         }
     }
     

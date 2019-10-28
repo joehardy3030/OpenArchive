@@ -32,8 +32,8 @@ struct CityModel: Codable {
          population: Double?,
          timezone: Double?,
          sunrise: Double?,
-         sunset: Double?
-)
+         sunset: Double?)
+        
     {
         self.name = name
         self.country = country

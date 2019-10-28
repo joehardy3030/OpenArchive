@@ -14,10 +14,10 @@ import CoreData
 class HourlyViewController: UIViewController, UITableViewDataSource, UITableViewDelegate  {
     
     var utils = Utils()
-    var store = WeatherStore()
+   // var store = WeatherStore()
     var openWeather = OpenWeatherAPI()
     var weatherArray = [WeatherModel]()
-    var hourlyForecastArray = [HourlyForecastHour]()
+//    var hourlyForecastArray = [HourlyForecastHour]()
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var refresher: UIRefreshControl!
     var currentLocation: CLLocation!
@@ -105,12 +105,12 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
     func updateOpenWeatherHourly(parameters: [String:String]?) {
         let url = openWeather.buildURL(queryType: .hourly, parameters: parameters)
         openWeather.getHourly(url: url) {
-            (weatherModelArray: [WeatherModel]?) -> Void in
-            if let wm = weatherModelArray {
+            (weatherModelArray: [WeatherModel]?, city: CityModel?) -> Void in
+            if let wm = weatherModelArray, let c = city {
                 self.weatherArray = wm
                 DispatchQueue.main.async{
                     self.HourlyForecastTable.reloadData()
-                    self.locationLabel.text = "Hi"
+                    self.locationLabel.text = c.name
                 }
             }
         }
@@ -155,9 +155,9 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         switch segue.identifier {
         case "showHourlyDetail"?:
             if let row = HourlyForecastTable.indexPathForSelectedRow?.row {
-                let hourlyForecastHour = self.hourlyForecastArray[row]
+                //let hourlyForecastHour = self.hourlyForecastArray[row]
                 let hourlyDetailViewController = segue.destination as! HourlyDetailViewController
-                hourlyDetailViewController.hourlyForecastHour = hourlyForecastHour
+             //   hourlyDetailViewController.hourlyForecastHour = hourlyForecastHour
             }
         default:
             preconditionFailure("Unexpected segue identifier")

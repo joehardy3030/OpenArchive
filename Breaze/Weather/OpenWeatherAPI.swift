@@ -60,22 +60,23 @@ class OpenWeatherAPI: NSObject {
         }
     }
     
-    func getCurrent(url: String, completion: @escaping (WeatherModel?) -> Void) {
+    func getCurrent(url: String, completion: @escaping (WeatherModel?, String?) -> Void) {
         Alamofire.request(url).responseJSON { response in
           if let json = response.result.value {
+            let j = JSON(json)
+            let city = j["name"].string
             let weatherModel = self.deserializeCurrent(fromJSON: json)
-            completion(weatherModel)
+            completion(weatherModel, city)
           }
        }
     }
 
-    func getHourly(url: String, completion: @escaping ([WeatherModel]?) -> Void) {
+    func getHourly(url: String, completion: @escaping ([WeatherModel]?, CityModel?) -> Void) {
         Alamofire.request(url).responseJSON { response in
           if let json = response.result.value {
             let city = self.deserializeCity(fromJSON: json)
-            print(city as Any)
             let weatherModelArray = self.deserializeHourly(fromJSON: json)
-            completion(weatherModelArray)
+            completion(weatherModelArray, city)
           }
        }
     }
@@ -155,7 +156,6 @@ class OpenWeatherAPI: NSObject {
             else {
                 return nil
         }
-//        print(json)
         return WeatherModel(temp: utils.convertKtoF(kelvin: temp),
                             high: utils.convertKtoF(kelvin: high),
                             low: utils.convertKtoF(kelvin: low),
@@ -164,8 +164,7 @@ class OpenWeatherAPI: NSObject {
                             main_description: main_description,
                             conditions: description,
                             avehumidity: humidity,
-                            weekday_short: nil)
-        
+                            weekday_short: nil)        
     }
 
 }

@@ -17,7 +17,8 @@ struct WeatherModel: Codable {
     let main_description: String?
     let conditions: String?
     let avehumidity: Double?
-    let weekday_short: String?
+    let dt_txt: String?
+    let dt: Int?
     
     var dictionary: [String : Any]? {
         return ["temp": temp as Any,
@@ -28,7 +29,8 @@ struct WeatherModel: Codable {
                 "main_description": main_description as Any,
                 "conidtions": conditions as Any,
                 "avehumidity": avehumidity as Any,
-                "weekday_short": weekday_short as Any]
+                "dt_txt": dt_txt as Any,
+                "dt": dt as Any]
     }
 
     init(temp: Double?,
@@ -39,7 +41,8 @@ struct WeatherModel: Codable {
          main_description: String?,
          conditions: String?,
          avehumidity: Double?,
-         weekday_short: String?)
+         dt_txt: String?,
+         dt: Int?)
     {
         self.temp = temp
         self.high = high
@@ -49,8 +52,8 @@ struct WeatherModel: Codable {
         self.main_description = main_description
         self.conditions = conditions
         self.avehumidity = avehumidity
-        self.weekday_short = weekday_short
-        
+        self.dt_txt = dt_txt
+        self.dt = dt
     }
     
 }

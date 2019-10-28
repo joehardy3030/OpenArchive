@@ -25,41 +25,49 @@ class SmogViewController: UITableViewController {
         
         // Pull the smog forecast data when loading the tab
         // and display it asychronously when the data arrives
-        let lastLoc = utils.fetchLastLocation()
-        print(lastLoc)
-        
-        var location = [
-            "latitude": "37.785834",
-            "longitude": "-122.406417"
-        ]
-        if (lastLoc.latitude != nil) {
-            location = [
-                "latitude": lastLoc.latitude!,
-                "longitude": lastLoc.longitude!
-            ]
-        }
-        else {
-            print("lastLoc is nil")
-        }
+   
 //        NotificationCenter.default.addObserver(self, selector: #selector(receivedLocationNotification(notification:)), name: .alocation, object: nil)
-
-        store.fetchSmogForecast(location: location)
-        {
-            (SmogForecastResult) -> Void in
-            
-            switch SmogForecastResult {
-            case let .success(smogForecast):
-                self.smogArray = smogForecast
-                DispatchQueue.main.async{
-                    self.tableView.reloadData()
-                }
-            case let .failure(error):
-                print("Error fetching simple forecast: \(error)")
-            }
-        }
+        refresher = UIRefreshControl()
+        self.tableView.addSubview(self.refresher)
+        refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)
+        refresher.tintColor = UIColor.gray
+        self.updateSmogForecast()
         // Do any additional setup after loading the view, typically from a nib.
     }
-
+    
+    func updateSmogForecast() {
+        let lastLoc = utils.fetchLastLocation()
+           print(lastLoc)
+           
+           var location = [
+               "latitude": "37.785834",
+               "longitude": "-122.406417"
+           ]
+           if (lastLoc.latitude != nil) {
+               location = [
+                   "latitude": lastLoc.latitude!,
+                   "longitude": lastLoc.longitude!
+               ]
+           }
+           else {
+               print("lastLoc is nil")
+           }
+        store.fetchSmogForecast(location: location)
+         {
+             (SmogForecastResult) -> Void in
+             
+             switch SmogForecastResult {
+             case let .success(smogForecast):
+                 self.smogArray = smogForecast
+                 DispatchQueue.main.async{
+                     self.tableView.reloadData()
+                 }
+             case let .failure(error):
+                 print("Error fetching simple forecast: \(error)")
+             }
+         }
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -116,6 +124,12 @@ class SmogViewController: UITableViewController {
         return textColor
     }
 
+    @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
+        // Do some reloading of data and update the table view's data source
+        // Fetch more objects from a web service, for example...
+        self.updateSmogForecast()
+        refreshControl.endRefreshing()
+    }
 
 }
 

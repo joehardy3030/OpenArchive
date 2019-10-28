@@ -23,8 +23,8 @@ struct AirNowAPI {
     private static let apiKey = "6127988D-CB19-4E37-969F-56F4B394D406"
     private static let and_sign = "&"
     private static let question_mark = "?"
-    private static let widthLong = 0.25
-    private static let heightLat = 0.25
+    private static let widthLong = 0.5
+    private static let heightLat = 0.5
     
     static func localSmogURL(location: [String:String]?) -> URL
     // create the URL for the HTTP get command for the smog API

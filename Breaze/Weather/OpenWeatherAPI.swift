@@ -123,6 +123,9 @@ class OpenWeatherAPI: NSObject {
         let main_description = json["weather"][0]["main"].string
         let conditions = json["weather"][0]["description"].string
         let humidity = json["main"]["humidity"].double
+        let dt = json["dt"].int
+        let dt_txt = json["dt_txt"].string
+        print("dt_txt \(dt_txt)")
 
         return WeatherModel(temp: utils.convertKtoF(kelvin: temp),
                             high: utils.convertKtoF(kelvin: high),
@@ -132,7 +135,8 @@ class OpenWeatherAPI: NSObject {
                             main_description: main_description,
                             conditions: conditions,
                             avehumidity: humidity,
-                            weekday_short: nil)
+                            dt_txt: dt_txt,
+                            dt: dt)
     }
     
     private func deserializeCurrent(fromJSON json: Any) -> WeatherModel? {
@@ -164,7 +168,8 @@ class OpenWeatherAPI: NSObject {
                             main_description: main_description,
                             conditions: description,
                             avehumidity: humidity,
-                            weekday_short: nil)        
+                            dt_txt: nil,
+                            dt: nil)        
     }
 
 }

@@ -139,8 +139,12 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
             cell.tempLabel?.text = String(format:"%.1f", temp) + " F"
         }
         if let humidity = weatherCellData.avehumidity {
-            cell.humidityLabel?.text = String(format:"%.1f", humidity) + " F"
+            cell.humidityLabel?.text = String(format:"%.0f", humidity) + "%"
         }
+        if let dt_txt = weatherCellData.dt_txt {
+            cell.timeLabel?.text = dt_txt
+        }
+        //if let time = weatherCellData.
         
         if let description = weatherCellData.main_description {
             cell.conditionsLabel?.text = description

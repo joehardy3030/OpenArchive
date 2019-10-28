@@ -64,7 +64,6 @@ class OpenWeatherAPI: NSObject {
         Alamofire.request(url).responseJSON { response in
           if let json = response.result.value {
             let weatherModel = self.deserializeCurrent(fromJSON: json)
-            //print(weatherModel as Any)
             completion(weatherModel)
           }
        }
@@ -73,11 +72,33 @@ class OpenWeatherAPI: NSObject {
     func getHourly(url: String, completion: @escaping ([WeatherModel]?) -> Void) {
         Alamofire.request(url).responseJSON { response in
           if let json = response.result.value {
+            let city = self.deserializeCity(fromJSON: json)
+            print(city as Any)
             let weatherModelArray = self.deserializeHourly(fromJSON: json)
-            //print(weatherModel as Any)
             completion(weatherModelArray)
           }
        }
+    }
+    
+    private func deserializeCity(fromJSON json: Any) -> CityModel? {
+        let json = JSON(json)
+        let city = json["city"]
+        let name = city["name"].string
+        let country = city["country"].string
+        let coordinates = ["latitude": city["coord"]["lat"].double,
+                           "longitude": city["coord"]["lon"].double] as [String:Double?]?
+        let population = city["population"].double
+        let timezone = city["population"].double
+        let sunrise = city["sunrise"].double
+        let sunset = city["sunset"].double
+                
+        return CityModel(name: name,
+                         country: country,
+                         coordinates: coordinates,
+                         population: population,
+                         timezone: timezone,
+                         sunrise: sunrise,
+                         sunset: sunset)
     }
 
     private func deserializeHourly(fromJSON json: Any) -> [WeatherModel]? {

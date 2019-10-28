@@ -32,29 +32,20 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
         self.HourlyForecastTable.dataSource = self;
-//        self.HourlyForecastTable.addSubview(self.refreshControl)
         
         refresher = UIRefreshControl()
         self.HourlyForecastTable.addSubview(self.refresher)
-  //      tableView.addSubview(refresher)
         refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)
         refresher.tintColor = UIColor.gray
 
         NotificationCenter.default.addObserver(self, selector: #selector(receivedLocationNotification(notification:)), name: .alocation, object: nil)
         self.currentLocation = appDelegate.currentLocation
-        print(self.currentLocation?.coordinate.latitude as Any)
-       // updateHourlyForecastData()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-       // var parameters: [String:String]?
-        
         var location = lastLocation()
-        //self.tableView.addSubview((self.refreshControl?)!)
         location = fetchLastLocation()
-        print(location.latitude as Any)
-        print(location.longitude as Any)
         if (location.latitude != nil) {
             let parameters = [
                 "latitude": location.latitude!,
@@ -65,33 +56,20 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         else {
             self.updateOpenWeatherHourly(parameters: nil)
         }
-        
-        /*let parameters = [
-            "latitude": String(self.currentLocation.coordinate.latitude),
-            "longitude": String(self.currentLocation.coordinate.longitude)
-        ]
-        */
-        //self.updateHourlyForecastData(parameters: parameters)
     }
     
     @objc func receivedLocationNotification(notification: NSNotification){
-       //  DispatchQueue.main.async{
-            print("received notification")
-       // }
+        print("received notification")
     }
     
     func fetchLastLocation() -> lastLocation {
-        // let data = [NSManagedObject]()
         var location = lastLocation()
         let context = appDelegate.persistentContainer.viewContext
-        //  let entity = NSEntityDescription.entity(forEntityName: "LastLocation", in: context)
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "LastLocation")
-        //request.predicate = NSPredicate(format: "age = %@", "12")
         request.returnsObjectsAsFaults = false
         do {
             let result = try context.fetch(request)
             for data in result as! [NSManagedObject] {
-                print(data.value(forKey: "longitude") as! String)
                 location.longitude = data.value(forKey: "longitude") as? String
                 location.latitude = data.value(forKey: "latitude") as? String
             }
@@ -101,7 +79,7 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         }
         return location
     }
-    
+/*
     func updateHourlyForecastData(parameters: [String:String]?) {
         // Grab the HourlyForecast data and put it in the HourlyForecastData
         store.fetchLocalHourlyForecast(parameters: parameters) {
@@ -123,7 +101,7 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
             
         }
     }
-    
+  */
     func updateOpenWeatherHourly(parameters: [String:String]?) {
         let url = openWeather.buildURL(queryType: .hourly, parameters: parameters)
         openWeather.getHourly(url: url) {
@@ -140,7 +118,6 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -156,9 +133,7 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         // that s the nth index of items, where n = row this cell
         // will appear in the tableview
         let weatherCellData = self.weatherArray[indexPath.row]
-        
-        print(weatherCellData)
-        
+                
         if let temp = weatherCellData.temp
         {
             cell.tempLabel?.text = String(format:"%.1f", temp) + " F"
@@ -166,7 +141,6 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         if let humidity = weatherCellData.avehumidity {
             cell.humidityLabel?.text = String(format:"%.1f", humidity) + " F"
         }
-        //cell.dayLabel?.text = utils.getDayOfWeek()
         
         if let description = weatherCellData.main_description {
             cell.conditionsLabel?.text = description
@@ -175,21 +149,12 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
 
         return cell
     }
-/*
-    @IBOutlet var tempLabel: UILabel!
-    @IBOutlet var humidityLabel: UILabel!
-    @IBOutlet var windSpeedLabel: UILabel!
-    @IBOutlet var conditionsLabel: UILabel!
-    @IBOutlet var timeLabel: UILabel!
-    @IBOutlet var iconImage: UIImageView!
-*/
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         //If the triggered item is the "showHourlyDetail" segue
         switch segue.identifier {
         case "showHourlyDetail"?:
             if let row = HourlyForecastTable.indexPathForSelectedRow?.row {
-                // Get the HourlyForecastHour associated with this row and pass it along
                 let hourlyForecastHour = self.hourlyForecastArray[row]
                 let hourlyDetailViewController = segue.destination as! HourlyDetailViewController
                 hourlyDetailViewController.hourlyForecastHour = hourlyForecastHour
@@ -213,12 +178,10 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
             self.updateOpenWeatherHourly(parameters: nil)
             print("Location nil")
         }
-
         refreshControl.endRefreshing()
     }
 
     func setParameters() -> [String:String]? {
-        // when currentLocation is nil, this barfs
         var parameters: [String:String]?
         if (self.currentLocation?.coordinate.latitude) != nil {
             parameters = [
@@ -228,13 +191,5 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         }
         return parameters
     }
-/*
-    lazy var refreshControl: UIRefreshControl = {
-        let refreshControl = UIRefreshControl()
-        refreshControl.addTarget(self, action: #selector(HourlyViewController.handleRefresh(_:)), for: UIControl.Event.valueChanged)
-        refreshControl.tintColor = UIColor.gray
-        
-        return refreshControl
-    }()
-  */
+
 }

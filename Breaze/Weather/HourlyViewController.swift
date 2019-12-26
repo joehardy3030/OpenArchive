@@ -14,10 +14,8 @@ import CoreData
 class HourlyViewController: UIViewController, UITableViewDataSource, UITableViewDelegate  {
     
     var utils = Utils()
-   // var store = WeatherStore()
     var openWeather = OpenWeatherAPI()
     var weatherArray = [WeatherModel]()
-//    var hourlyForecastArray = [HourlyForecastHour]()
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var refresher: UIRefreshControl!
     var currentLocation: CLLocation!
@@ -79,29 +77,7 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         }
         return location
     }
-/*
-    func updateHourlyForecastData(parameters: [String:String]?) {
-        // Grab the HourlyForecast data and put it in the HourlyForecastData
-        store.fetchLocalHourlyForecast(parameters: parameters) {
-            (HourlyForecastResult) -> Void in
-            switch HourlyForecastResult {
-            case let .success(hourlyForecast, displayCity):
-                self.hourlyForecastArray = hourlyForecast
-                print("count hourly \(self.hourlyForecastArray.count)")
-                print("display city \(displayCity)")
 
-                DispatchQueue.main.async{
-                    self.HourlyForecastTable.reloadData()
-                    self.locationLabel.text = displayCity
-                }
-            case let .failure(error):
-                print("Error fetching simple forecast: \(error)")
-                
-            }
-            
-        }
-    }
-  */
     func updateOpenWeatherHourly(parameters: [String:String]?) {
         let url = openWeather.buildURL(queryType: .hourly, parameters: parameters)
         openWeather.getHourly(url: url) {
@@ -150,22 +126,16 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
             cell.conditionsLabel?.text = description
             cell.iconImage?.image = utils.switchConditionsImage(icon: description.lowercased())
         }
+        if let wind_speed = weatherCellData.wind_speed {
 
-        return cell
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        //If the triggered item is the "showHourlyDetail" segue
-        switch segue.identifier {
-        case "showHourlyDetail"?:
-            if let row = HourlyForecastTable.indexPathForSelectedRow?.row {
-                //let hourlyForecastHour = self.hourlyForecastArray[row]
-                let hourlyDetailViewController = segue.destination as! HourlyDetailViewController
-             //   hourlyDetailViewController.hourlyForecastHour = hourlyForecastHour
+            if let wind_dir = utils.windDirName(num: weatherCellData.wind_dir) {
+                cell.windSpeedLabel?.text = wind_dir + " " + String(format:"%.0f", wind_speed) + " MPH"
             }
-        default:
-            preconditionFailure("Unexpected segue identifier")
+            else {
+                cell.windSpeedLabel?.text = String(format:"%.0f", wind_speed) + " MPH"
+            }
         }
+        return cell
     }
     
     @objc func handleRefresh(_ refreshControl: UIRefreshControl) {

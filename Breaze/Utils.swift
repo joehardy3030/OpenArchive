@@ -119,5 +119,24 @@ class Utils {
             return "Today"
         }
     }
-    
+
+    func windDirName(num: Double?) -> String? {
+        if let num = num {
+            switch num {
+            case 0..<45:
+                return "N"
+            case 45..<135:
+                return "E"
+            case 135..<225:
+                return "S"
+            case 225..<305:
+                return "W"
+            case 305..<361:
+                return "N"
+            default:
+                return nil
+            }
+        }
+        else {return nil}
+    }
 }

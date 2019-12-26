@@ -89,7 +89,7 @@ class OpenWeatherAPI: NSObject {
         let coordinates = ["latitude": city["coord"]["lat"].double,
                            "longitude": city["coord"]["lon"].double] as [String:Double?]?
         let population = city["population"].double
-        let timezone = city["population"].double
+        let timezone = city["timezone"].double
         let sunrise = city["sunrise"].double
         let sunset = city["sunset"].double
                 
@@ -123,10 +123,13 @@ class OpenWeatherAPI: NSObject {
         let main_description = json["weather"][0]["main"].string
         let conditions = json["weather"][0]["description"].string
         let humidity = json["main"]["humidity"].double
+        let wind_speed = json["wind"]["speed"].double
+        let wind_dir = json["wind"]["deg"].double
         let dt = json["dt"].int
         let dt_txt = json["dt_txt"].string
-        print("dt_txt \(dt_txt)")
-
+        let timezone = json["timezone"].int
+        print("wind_speed \(String(describing: wind_speed)), wind_dir \(String(describing: wind_dir))")
+        
         return WeatherModel(temp: utils.convertKtoF(kelvin: temp),
                             high: utils.convertKtoF(kelvin: high),
                             low: utils.convertKtoF(kelvin: low),
@@ -135,8 +138,11 @@ class OpenWeatherAPI: NSObject {
                             main_description: main_description,
                             conditions: conditions,
                             avehumidity: humidity,
+                            wind_speed: wind_speed,
+                            wind_dir: wind_dir,
                             dt_txt: dt_txt,
-                            dt: dt)
+                            dt: dt,
+                            timezone: timezone)
     }
     
     private func deserializeCurrent(fromJSON json: Any) -> WeatherModel? {
@@ -168,8 +174,11 @@ class OpenWeatherAPI: NSObject {
                             main_description: main_description,
                             conditions: description,
                             avehumidity: humidity,
+                            wind_speed: nil,
+                            wind_dir: nil,
                             dt_txt: nil,
-                            dt: nil)        
+                            dt: nil,
+                            timezone: nil)        
     }
 
 }

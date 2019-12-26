@@ -18,10 +18,8 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
     var refresher: UIRefreshControl!
     // https://www.hackingwithswift.com/read/22/2/requesting-location-core-location
     var utils = Utils()
-   // var store = WeatherStore()
     var openWeather = OpenWeatherAPI()
     var weatherArray = [WeatherModel]()
-   // var simpleForecastArray = [SimpleForecastDay]()
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     struct lastLocation {
         var latitude: String?
@@ -37,8 +35,6 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         var location = lastLocation()
         //self.tableView.addSubview((self.refreshControl?)!)
         location = fetchLastLocation()
-     //   print(location.latitude as Any)
-      //  print(location.longitude as Any)
         if (location.latitude != nil) {
             let parameters = [
                 "latitude": location.latitude!,
@@ -100,25 +96,7 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         }
         return location
     }
-   /*
-    func updateSimpleForecastData(parameters: [String:String]?) {
-        // Grab the HourlyForecast data and put it in the HourlyForecastData
-        store.fetchLocalSimpleForecast(parameters: parameters){
-            (SimpleForecastResult) -> Void in
-            switch SimpleForecastResult {
-            case let .success(simpleForecast, displayCity):
-                self.simpleForecastArray = simpleForecast
-                print("count simple \(self.simpleForecastArray.count)")
-                DispatchQueue.main.async{
-                    self.tableView.reloadData()
-                    self.locationLabel.text = displayCity
-                }
-            case let .failure(error):
-                print("Error fetching simple forecast: \(error)")
-            }
-        }
-    }
-    */
+
     func updateOpenWeatherCurrent(parameters: [String:String]?) {
         let url = openWeather.buildURL(queryType: .current, parameters: parameters)
         openWeather.getCurrent(url: url) {

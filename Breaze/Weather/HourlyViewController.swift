@@ -16,6 +16,7 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
     var utils = Utils()
     var openWeather = OpenWeatherAPI()
     var weatherArray = [WeatherModel]()
+    var city: CityModel?
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var refresher: UIRefreshControl!
     var currentLocation: CLLocation!
@@ -84,6 +85,7 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
             (weatherModelArray: [WeatherModel]?, city: CityModel?) -> Void in
             if let wm = weatherModelArray, let c = city {
                 self.weatherArray = wm
+                self.city = city
                 DispatchQueue.main.async{
                     self.HourlyForecastTable.reloadData()
                     self.locationLabel.text = c.name
@@ -117,9 +119,31 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         if let humidity = weatherCellData.avehumidity {
             cell.humidityLabel?.text = String(format:"%.0f", humidity) + "%"
         }
-        if let dt_txt = weatherCellData.dt_txt {
-            cell.timeLabel?.text = dt_txt
-        }
+      //  if let dt_txt = weatherCellData.dt_txt {
+        //    cell.timeLabel?.text = dt_txt
+       // }
+        //if let utcTime = weatherCellData.dt, let timezone = weatherCellData.timezone {
+//        if let ct = self.city {
+           // let newTime = utils.convertTimeTimezone(utcTime: weatherCellData.dt, timezone: ct.timezone)
+           // print("New time \(newTime)")
+            let dateFormatter = DateFormatter()
+           // print("dateFormatter \(dateFormatter)")
+           // if let nt = newTime {
+                if let utcTime = weatherCellData.dt {
+                    let date = Date(timeIntervalSince1970: Double(utcTime) )
+                    dateFormatter.dateFormat = "MMM dd HH:mm"
+                    //print(date)
+                    let localDate = dateFormatter.string(from: date)
+                    //print(localDate)
+                    cell.timeLabel?.text = localDate
+
+                }
+             //   print(localDate)
+            //}
+            //print(city.timezone);
+  //      }
+        
+        //}
         //if let time = weatherCellData.
         
         if let description = weatherCellData.main_description {

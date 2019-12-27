@@ -89,7 +89,7 @@ class OpenWeatherAPI: NSObject {
         let coordinates = ["latitude": city["coord"]["lat"].double,
                            "longitude": city["coord"]["lon"].double] as [String:Double?]?
         let population = city["population"].double
-        let timezone = city["timezone"].double
+        let timezone = city["timezone"].int
         let sunrise = city["sunrise"].double
         let sunset = city["sunset"].double
                 
@@ -128,7 +128,7 @@ class OpenWeatherAPI: NSObject {
         let dt = json["dt"].int
         let dt_txt = json["dt_txt"].string
         let timezone = json["timezone"].int
-        print("wind_speed \(String(describing: wind_speed)), wind_dir \(String(describing: wind_dir))")
+      //  print(json)
         
         return WeatherModel(temp: utils.convertKtoF(kelvin: temp),
                             high: utils.convertKtoF(kelvin: high),

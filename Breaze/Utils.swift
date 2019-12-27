@@ -139,4 +139,13 @@ class Utils {
         }
         else {return nil}
     }
+    
+    func convertTimeTimezone(utcTime: Int?, timezone: Int?) -> Double? {
+        if let utcTime = utcTime, let timezone = timezone {
+            let localTimeInt = utcTime + timezone;
+            print("Local time integer \(localTimeInt)");
+            return Double(localTimeInt)
+        }
+        else { return 0 }
+    }
 }

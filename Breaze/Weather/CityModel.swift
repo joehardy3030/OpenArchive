@@ -12,7 +12,7 @@ struct CityModel: Codable {
     let country: String?
     let coordinates: [String:Double?]?
     let population: Double?
-    let timezone: Double?
+    let timezone: Int?
     let sunrise: Double?
     let sunset: Double?
     
@@ -30,7 +30,7 @@ struct CityModel: Codable {
          country: String?,
          coordinates: [String:Double?]?,
          population: Double?,
-         timezone: Double?,
+         timezone: Int?,
          sunrise: Double?,
          sunset: Double?)
         

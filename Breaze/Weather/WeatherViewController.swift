@@ -102,7 +102,12 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         openWeather.getCurrent(url: url) {
             (weatherModel: WeatherModel?, city: String?) -> Void in
             if let wm = weatherModel, let c = city {
-                self.weatherArray.append(wm)
+                if self.weatherArray.isEmpty {
+                    self.weatherArray.append(wm)
+                }
+                else {
+                    self.weatherArray[0] = wm
+                }
                 DispatchQueue.main.async{
                     self.tableView.reloadData()
                     self.locationLabel.text = c
@@ -127,13 +132,13 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         let index = indexPath.row
         let weatherCellData = self.weatherArray[index]
         print(weatherCellData)
-        
-        if let high = weatherCellData.high
-        {
-            cell.highTempLabel?.text = String(format:"%.1f", high) + " F"
+
+        if let humidity = weatherCellData.avehumidity {
+            cell.humidityLabel?.text = String(format:"%.1f", humidity) + " %"
         }
-        if let low = weatherCellData.low {
-            cell.lowTempLabel?.text = String(format:"%.1f", low) + " F"
+
+        if let temp = weatherCellData.temp {
+            cell.currentTempLabel?.text = String(format:"%.1f", temp) + " F"
         }
         cell.dayLabel?.text = utils.getDayOfWeek()
         

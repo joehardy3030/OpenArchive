@@ -116,35 +116,18 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         {
             cell.tempLabel?.text = String(format:"%.1f", temp) + " F"
         }
+
         if let humidity = weatherCellData.avehumidity {
             cell.humidityLabel?.text = String(format:"%.0f", humidity) + "%"
         }
-      //  if let dt_txt = weatherCellData.dt_txt {
-        //    cell.timeLabel?.text = dt_txt
-       // }
-        //if let utcTime = weatherCellData.dt, let timezone = weatherCellData.timezone {
-//        if let ct = self.city {
-           // let newTime = utils.convertTimeTimezone(utcTime: weatherCellData.dt, timezone: ct.timezone)
-           // print("New time \(newTime)")
-            let dateFormatter = DateFormatter()
-           // print("dateFormatter \(dateFormatter)")
-           // if let nt = newTime {
-                if let utcTime = weatherCellData.dt {
-                    let date = Date(timeIntervalSince1970: Double(utcTime) )
-                    dateFormatter.dateFormat = "MMM dd HH:mm"
-                    //print(date)
-                    let localDate = dateFormatter.string(from: date)
-                    //print(localDate)
-                    cell.timeLabel?.text = localDate
 
-                }
-             //   print(localDate)
-            //}
-            //print(city.timezone);
-  //      }
-        
-        //}
-        //if let time = weatherCellData.
+        if let utcTime = weatherCellData.dt {
+            let dateFormatter = DateFormatter()
+            let date = Date(timeIntervalSince1970: Double(utcTime) )
+            dateFormatter.dateFormat = "MMM dd HH:mm"
+            let localDate = dateFormatter.string(from: date)
+            cell.timeLabel?.text = localDate
+        }
         
         if let description = weatherCellData.main_description {
             cell.conditionsLabel?.text = description

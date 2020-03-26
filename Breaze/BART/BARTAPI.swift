@@ -39,22 +39,46 @@ struct BARTAPI {
         return URL(string: components)!
     }
     
-    static func readBARTstnsJSON() {
+    static func readBARTstnsJSON() -> [BARTStationCodable] {
+        var jsonObj = JSON()
         if let path = Bundle.main.path(forResource: "stns", ofType: "json") {
             do {
                 let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .alwaysMapped)
-                let jsonObj = try JSON(data: data)
-                print("jsonData:\(jsonObj)")
+                jsonObj = try JSON(data: data)
+              //  print("jsonData:\(jsonObj)")
             } catch let error {
                 print("parse error: \(error.localizedDescription)")
             }
         } else {
             print("Invalid filename/path.")
         }
+        let BARTStations = deserializeBARTstns(json: jsonObj)
+        return BARTStations
     }
-  //  static func closestBARTStation(location: [String:String]?) -> BARTStation {
-  //      return BARTStation()
-  //  }
+    
+    static func deserializeBARTstns(json: JSON) -> [BARTStationCodable] {
+        var bartStns = [BARTStationCodable]()
+        
+        let root = json["root"]
+        let stations = root["stations"]
+        let station = stations["station"]
+        
+        for stn in station {
+            let (_, jsonStn) = stn
+            let bartStn = BARTStationCodable()
+            bartStn.address = jsonStn["abbr"].stringValue
+            bartStn.city = jsonStn["city"].stringValue
+            bartStn.zipcode = jsonStn["zipcode"].intValue
+            bartStn.abbr = jsonStn["abbr"].stringValue
+            bartStn.name = jsonStn["name"].stringValue
+            bartStn.gtfs_longitude = jsonStn["gtfs_longitude"].floatValue
+            bartStn.gtfs_latitude = jsonStn["gtfs_latitude"].floatValue
+            
+            bartStns.append(bartStn)
+        }
+        return bartStns
+    }
+    
     
     static private func drawBox(location:[String:String]?) -> String? {
         let midLatitudeString = location!["latitude"]

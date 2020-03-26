@@ -13,12 +13,9 @@ class BARTStation: NSObject {
     var abbreviation: String
     var direction: String
     
-    init(abbreviation: String,
-         direction: String
-        ) {
+    init(abbreviation: String, direction: String) {
         self.abbreviation = abbreviation
         self.direction = direction
-        
         super.init()
     }
 }

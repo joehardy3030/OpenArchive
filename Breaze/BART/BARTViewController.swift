@@ -25,6 +25,7 @@ class BARTViewController: UITableViewController, ModalDelegate {
    var currentStation = BARTStation(abbreviation: "DELN", direction: "s")
     var store = BARTStore()
     var BARTReadingArray = [BARTReading]()
+    var BARTStations = [BARTStationCodable]()
     var testValue: String = ""
     @IBOutlet var inOutControl: UISegmentedControl!
     //   let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -41,7 +42,7 @@ class BARTViewController: UITableViewController, ModalDelegate {
         refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)
         refresher.tintColor = UIColor.gray
         self.refreshControl = refresher
-        BARTAPI.readBARTstnsJSON()
+        BARTStations = BARTAPI.readBARTstnsJSON()
         self.updateBARTData(station: currentStation, parameters: nil)
     }
     

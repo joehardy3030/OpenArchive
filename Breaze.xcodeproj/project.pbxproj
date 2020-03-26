@@ -22,6 +22,7 @@
 		7971A1C920A29B7F009438F7 /* HourlyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7971A1C820A29B7F009438F7 /* HourlyViewController.swift */; };
 		7972654620E3368E00578419 /* Weather.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 7972654420E3368E00578419 /* Weather.xcdatamodeld */; };
 		797EDBEA242D146600584D3B /* stns.json in Resources */ = {isa = PBXBuildFile; fileRef = 797EDBE9242D146500584D3B /* stns.json */; };
+		797EDBEC242D3D6C00584D3B /* BARTStationCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797EDBEB242D3D6C00584D3B /* BARTStationCodable.swift */; };
 		799C3C902345582F00D9341E /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C3C8F2345582F00D9341E /* HealthKit.framework */; };
 		79F4ECC423668CBE000BA3BB /* CityModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F4ECC323668CBE000BA3BB /* CityModel.swift */; };
 		79F8DC592363E3E400E5A1AA /* OpenWeatherAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F8DC582363E3E400E5A1AA /* OpenWeatherAPI.swift */; };
@@ -88,6 +89,7 @@
 		7971A1C820A29B7F009438F7 /* HourlyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyViewController.swift; sourceTree = "<group>"; };
 		7972654520E3368E00578419 /* Weather.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Weather.xcdatamodel; sourceTree = "<group>"; };
 		797EDBE9242D146500584D3B /* stns.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = stns.json; sourceTree = "<group>"; };
+		797EDBEB242D3D6C00584D3B /* BARTStationCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BARTStationCodable.swift; sourceTree = "<group>"; };
 		799C3C8E2345582E00D9341E /* Breaze.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Breaze.entitlements; sourceTree = "<group>"; };
 		799C3C8F2345582F00D9341E /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
 		79F4ECC323668CBE000BA3BB /* CityModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityModel.swift; sourceTree = "<group>"; };
@@ -157,6 +159,7 @@
 				797EDBE9242D146500584D3B /* stns.json */,
 				793614D622113F3C006671C4 /* BARTReading.swift */,
 				7918649F226D62670082D497 /* BARTStation.swift */,
+				797EDBEB242D3D6C00584D3B /* BARTStationCodable.swift */,
 				793614D4221116D9006671C4 /* BARTAPI.swift */,
 				793614D2220FEDF3006671C4 /* BARTStore.swift */,
 				791864A122711D930082D497 /* BARTModal.swift */,
@@ -537,6 +540,7 @@
 				791CE1C120B252F100299F76 /* Utils.swift in Sources */,
 				D85A4EEF2022D0B600E480FB /* AppDelegate.swift in Sources */,
 				793614D3220FEDF3006671C4 /* BARTStore.swift in Sources */,
+				797EDBEC242D3D6C00584D3B /* BARTStationCodable.swift in Sources */,
 				794E5242220D3C5F00C99092 /* BARTCell.swift in Sources */,
 				7971A1C920A29B7F009438F7 /* HourlyViewController.swift in Sources */,
 				D84F92CA2033F1A100DD3855 /* AirNowAPI.swift in Sources */,

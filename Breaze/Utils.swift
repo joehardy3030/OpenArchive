@@ -88,4 +88,64 @@ class Utils {
         return iconImage
     }
     
+    func convertKtoF(kelvin: Double?) -> Double? {
+        var farenheight: Double? = nil
+        if let k = kelvin {
+            farenheight = (k - 273.15) * (9.0/5.0) + 32.0
+        }
+        return farenheight
+    }
+    
+    func getDayOfWeek() -> String? {
+        let today = Date()
+        let myCalendar = Calendar(identifier: .gregorian)
+        let numDay = myCalendar.component(.weekday, from: today)
+        switch numDay {
+        case 1:
+            return "Sunday"
+        case 2:
+            return "Monday"
+        case 3:
+            return "Tuesday"
+        case 4:
+            return "Wednesday"
+        case 5:
+            return "Thursday"
+        case 6:
+            return "Friday"
+        case 7:
+            return "Saturday"
+        default:
+            return "Today"
+        }
+    }
+
+    func windDirName(num: Double?) -> String? {
+        if let num = num {
+            switch num {
+            case 0..<45:
+                return "N"
+            case 45..<135:
+                return "E"
+            case 135..<225:
+                return "S"
+            case 225..<305:
+                return "W"
+            case 305..<361:
+                return "N"
+            default:
+                return nil
+            }
+        }
+        else {return nil}
+    }
+    
+    func convertTimeTimezone(utcTime: Int?, timezone: Int?) -> Double? {
+        if let utcTime = utcTime, let timezone = timezone {
+            let localTimeInt = utcTime + timezone;
+            print("Local time integer \(localTimeInt)");
+            return Double(localTimeInt)
+        }
+        else { return 0 }
+    }
 }

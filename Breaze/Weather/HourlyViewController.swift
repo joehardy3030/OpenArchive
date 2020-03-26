@@ -14,8 +14,9 @@ import CoreData
 class HourlyViewController: UIViewController, UITableViewDataSource, UITableViewDelegate  {
     
     var utils = Utils()
-    var store = WeatherStore()
-    var hourlyForecastArray = [HourlyForecastHour]()
+    var openWeather = OpenWeatherAPI()
+    var weatherArray = [WeatherModel]()
+    var city: CityModel?
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var refresher: UIRefreshControl!
     var currentLocation: CLLocation!
@@ -30,66 +31,44 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
         self.HourlyForecastTable.dataSource = self;
-//        self.HourlyForecastTable.addSubview(self.refreshControl)
         
         refresher = UIRefreshControl()
         self.HourlyForecastTable.addSubview(self.refresher)
-  //      tableView.addSubview(refresher)
         refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)
         refresher.tintColor = UIColor.gray
 
         NotificationCenter.default.addObserver(self, selector: #selector(receivedLocationNotification(notification:)), name: .alocation, object: nil)
         self.currentLocation = appDelegate.currentLocation
-        print(self.currentLocation?.coordinate.latitude as Any)
-       // updateHourlyForecastData()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-       // var parameters: [String:String]?
-        
         var location = lastLocation()
-        //self.tableView.addSubview((self.refreshControl?)!)
         location = fetchLastLocation()
-        print(location.latitude as Any)
-        print(location.longitude as Any)
         if (location.latitude != nil) {
             let parameters = [
                 "latitude": location.latitude!,
                 "longitude": location.longitude!
             ]
-            self.updateHourlyForecastData(parameters: parameters)
+            self.updateOpenWeatherHourly(parameters: parameters)
         }
         else {
-            self.updateHourlyForecastData(parameters: nil)
+            self.updateOpenWeatherHourly(parameters: nil)
         }
-        
-        /*let parameters = [
-            "latitude": String(self.currentLocation.coordinate.latitude),
-            "longitude": String(self.currentLocation.coordinate.longitude)
-        ]
-        */
-        //self.updateHourlyForecastData(parameters: parameters)
     }
     
     @objc func receivedLocationNotification(notification: NSNotification){
-       //  DispatchQueue.main.async{
-            print("received notification")
-       // }
+        print("received notification")
     }
     
     func fetchLastLocation() -> lastLocation {
-        // let data = [NSManagedObject]()
         var location = lastLocation()
         let context = appDelegate.persistentContainer.viewContext
-        //  let entity = NSEntityDescription.entity(forEntityName: "LastLocation", in: context)
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "LastLocation")
-        //request.predicate = NSPredicate(format: "age = %@", "12")
         request.returnsObjectsAsFaults = false
         do {
             let result = try context.fetch(request)
             for data in result as! [NSManagedObject] {
-                print(data.value(forKey: "longitude") as! String)
                 location.longitude = data.value(forKey: "longitude") as? String
                 location.latitude = data.value(forKey: "latitude") as? String
             }
@@ -99,36 +78,28 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         }
         return location
     }
-    
-    func updateHourlyForecastData(parameters: [String:String]?) {
-        // Grab the HourlyForecast data and put it in the HourlyForecastData
-        store.fetchLocalHourlyForecast(parameters: parameters) {
-            (HourlyForecastResult) -> Void in
-            switch HourlyForecastResult {
-            case let .success(hourlyForecast, displayCity):
-                self.hourlyForecastArray = hourlyForecast
-                print("count hourly \(self.hourlyForecastArray.count)")
-                print("display city \(displayCity)")
 
+    func updateOpenWeatherHourly(parameters: [String:String]?) {
+        let url = openWeather.buildURL(queryType: .hourly, parameters: parameters)
+        openWeather.getHourly(url: url) {
+            (weatherModelArray: [WeatherModel]?, city: CityModel?) -> Void in
+            if let wm = weatherModelArray, let c = city {
+                self.weatherArray = wm
+                self.city = city
                 DispatchQueue.main.async{
                     self.HourlyForecastTable.reloadData()
-                    self.locationLabel.text = displayCity
+                    self.locationLabel.text = c.name
                 }
-            case let .failure(error):
-                print("Error fetching simple forecast: \(error)")
-                
             }
-            
         }
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.hourlyForecastArray.count
+        return self.weatherArray.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -139,31 +110,39 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         // Set the text on the cell with the description of the item
         // that s the nth index of items, where n = row this cell
         // will appear in the tableview
-        let weatherCellData = self.hourlyForecastArray[indexPath.row]
-        
-        cell.tempLabel?.text = weatherCellData.temp + " F"
-        cell.humidityLabel?.text = weatherCellData.humidity + "%"
-        cell.timeLabel?.text = weatherCellData.civil
-        cell.windSpeedLabel?.text = weatherCellData.dir + "  " + weatherCellData.wspd + " MPH"
-        cell.conditionsLabel?.text = utils.switchConditionsText(icon: weatherCellData.icon)
-        cell.iconImage?.image = utils.switchConditionsImage(icon: weatherCellData.icon)
-        
-        return cell
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        //If the triggered item is the "showHourlyDetail" segue
-        switch segue.identifier {
-        case "showHourlyDetail"?:
-            if let row = HourlyForecastTable.indexPathForSelectedRow?.row {
-                // Get the HourlyForecastHour associated with this row and pass it along
-                let hourlyForecastHour = self.hourlyForecastArray[row]
-                let hourlyDetailViewController = segue.destination as! HourlyDetailViewController
-                hourlyDetailViewController.hourlyForecastHour = hourlyForecastHour
-            }
-        default:
-            preconditionFailure("Unexpected segue identifier")
+        let weatherCellData = self.weatherArray[indexPath.row]
+                
+        if let temp = weatherCellData.temp
+        {
+            cell.tempLabel?.text = String(format:"%.1f", temp) + " F"
         }
+
+        if let humidity = weatherCellData.avehumidity {
+            cell.humidityLabel?.text = String(format:"%.0f", humidity) + "%"
+        }
+
+        if let utcTime = weatherCellData.dt {
+            let dateFormatter = DateFormatter()
+            let date = Date(timeIntervalSince1970: Double(utcTime) )
+            dateFormatter.dateFormat = "MMM dd HH:mm"
+            let localDate = dateFormatter.string(from: date)
+            cell.timeLabel?.text = localDate
+        }
+        
+        if let description = weatherCellData.main_description {
+            cell.conditionsLabel?.text = description
+            cell.iconImage?.image = utils.switchConditionsImage(icon: description.lowercased())
+        }
+        if let wind_speed = weatherCellData.wind_speed {
+
+            if let wind_dir = utils.windDirName(num: weatherCellData.wind_dir) {
+                cell.windSpeedLabel?.text = wind_dir + " " + String(format:"%.0f", wind_speed) + " MPH"
+            }
+            else {
+                cell.windSpeedLabel?.text = String(format:"%.0f", wind_speed) + " MPH"
+            }
+        }
+        return cell
     }
     
     @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
@@ -173,19 +152,17 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         var parameters: [String:String]?
         parameters = setParameters()
         if (parameters != nil) {
-            self.updateHourlyForecastData(parameters: parameters)
+            self.updateOpenWeatherHourly(parameters: parameters)
             print("Location not nil")
         }
         else {
-            self.updateHourlyForecastData(parameters: nil)
+            self.updateOpenWeatherHourly(parameters: nil)
             print("Location nil")
         }
-
         refreshControl.endRefreshing()
     }
 
     func setParameters() -> [String:String]? {
-        // when currentLocation is nil, this barfs
         var parameters: [String:String]?
         if (self.currentLocation?.coordinate.latitude) != nil {
             parameters = [
@@ -195,13 +172,5 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         }
         return parameters
     }
-/*
-    lazy var refreshControl: UIRefreshControl = {
-        let refreshControl = UIRefreshControl()
-        refreshControl.addTarget(self, action: #selector(HourlyViewController.handleRefresh(_:)), for: UIControl.Event.valueChanged)
-        refreshControl.tintColor = UIColor.gray
-        
-        return refreshControl
-    }()
-  */
+
 }

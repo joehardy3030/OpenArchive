@@ -22,7 +22,9 @@
 		7971A1C920A29B7F009438F7 /* HourlyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7971A1C820A29B7F009438F7 /* HourlyViewController.swift */; };
 		7972654620E3368E00578419 /* Weather.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 7972654420E3368E00578419 /* Weather.xcdatamodeld */; };
 		799C3C902345582F00D9341E /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C3C8F2345582F00D9341E /* HealthKit.framework */; };
+		79F4ECC423668CBE000BA3BB /* CityModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F4ECC323668CBE000BA3BB /* CityModel.swift */; };
 		79F8DC592363E3E400E5A1AA /* OpenWeatherAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F8DC582363E3E400E5A1AA /* OpenWeatherAPI.swift */; };
+		79F8DC5B2364DBDA00E5A1AA /* WeatherModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F8DC5A2364DBDA00E5A1AA /* WeatherModel.swift */; };
 		C1A86AE7CB901E9AE4559733 /* Pods_BreazeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC1F0E4AA282D7B36ED40FA4 /* Pods_BreazeTests.framework */; };
 		CBC5228E1B6761BEF185B8AD /* Pods_Breaze.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A700AD3051D76CBB67400BC /* Pods_Breaze.framework */; };
 		D51C53AE71B1FA9965B4E724 /* Pods_BreazeUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A926AF80C0D08EF375C20D5 /* Pods_BreazeUITests.framework */; };
@@ -86,7 +88,9 @@
 		7972654520E3368E00578419 /* Weather.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Weather.xcdatamodel; sourceTree = "<group>"; };
 		799C3C8E2345582E00D9341E /* Breaze.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Breaze.entitlements; sourceTree = "<group>"; };
 		799C3C8F2345582F00D9341E /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
+		79F4ECC323668CBE000BA3BB /* CityModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityModel.swift; sourceTree = "<group>"; };
 		79F8DC582363E3E400E5A1AA /* OpenWeatherAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenWeatherAPI.swift; sourceTree = "<group>"; };
+		79F8DC5A2364DBDA00E5A1AA /* WeatherModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherModel.swift; sourceTree = "<group>"; };
 		9C04CF7422E0CBAEE4822157 /* Pods-BreazeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BreazeTests.debug.xcconfig"; path = "Target Support Files/Pods-BreazeTests/Pods-BreazeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BC1F0E4AA282D7B36ED40FA4 /* Pods_BreazeTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BreazeTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCE8FC1545CF717B71C529A8 /* Pods-BreazeUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BreazeUITests.debug.xcconfig"; path = "Target Support Files/Pods-BreazeUITests/Pods-BreazeUITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -159,6 +163,17 @@
 			path = BART;
 			sourceTree = "<group>";
 		};
+		79F4ECC523668EEA000BA3BB /* Wunderground */ = {
+			isa = PBXGroup;
+			children = (
+				D8357A9620240BAD005657DF /* WundergroundAPI.swift */,
+				D8715B9A2029216800BC13AA /* HourlyForecastHour.swift */,
+				D8721E64202919140025348F /* SimpleForecastDay.swift */,
+				D884508D2026B18500C5379C /* WeatherStore.swift */,
+			);
+			path = Wunderground;
+			sourceTree = "<group>";
+		};
 		8C539CAA670F9CFD521CA7FB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -175,16 +190,15 @@
 		D84F92CF203A856C00DD3855 /* Weather */ = {
 			isa = PBXGroup;
 			children = (
-				D8357A9620240BAD005657DF /* WundergroundAPI.swift */,
-				79F8DC582363E3E400E5A1AA /* OpenWeatherAPI.swift */,
-				D884508D2026B18500C5379C /* WeatherStore.swift */,
-				D8721E64202919140025348F /* SimpleForecastDay.swift */,
-				D8715B9A2029216800BC13AA /* HourlyForecastHour.swift */,
-				D84F92D1203A872200DD3855 /* WeatherCell.swift */,
-				7915AFD0209FF46600625E43 /* HourlyForecastCell.swift */,
 				D85A4EF02022D0B600E480FB /* WeatherViewController.swift */,
+				D84F92D1203A872200DD3855 /* WeatherCell.swift */,
 				7971A1C820A29B7F009438F7 /* HourlyViewController.swift */,
+				7915AFD0209FF46600625E43 /* HourlyForecastCell.swift */,
 				791CE1BE20B2364E00299F76 /* HourlyDetailViewController.swift */,
+				79F8DC582363E3E400E5A1AA /* OpenWeatherAPI.swift */,
+				79F8DC5A2364DBDA00E5A1AA /* WeatherModel.swift */,
+				79F4ECC323668CBE000BA3BB /* CityModel.swift */,
+				79F4ECC523668EEA000BA3BB /* Wunderground */,
 			);
 			path = Weather;
 			sourceTree = "<group>";
@@ -462,10 +476,12 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Breaze/Pods-Breaze-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -502,6 +518,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D884508E2026B18500C5379C /* WeatherStore.swift in Sources */,
+				79F8DC5B2364DBDA00E5A1AA /* WeatherModel.swift in Sources */,
 				D8715B9D202FB70300BC13AA /* SmogStore.swift in Sources */,
 				791CE1BF20B2364E00299F76 /* HourlyDetailViewController.swift in Sources */,
 				D85A4EF32022D0B600E480FB /* SmogViewController.swift in Sources */,
@@ -520,6 +537,7 @@
 				7971A1C920A29B7F009438F7 /* HourlyViewController.swift in Sources */,
 				D84F92CA2033F1A100DD3855 /* AirNowAPI.swift in Sources */,
 				D84F92CC2037E08C00DD3855 /* SmogReading.swift in Sources */,
+				79F4ECC423668CBE000BA3BB /* CityModel.swift in Sources */,
 				D8357A9720240BAD005657DF /* WundergroundAPI.swift in Sources */,
 				791864A222711D930082D497 /* BARTModal.swift in Sources */,
 				79718BA920E5E02B0072DC22 /* LastLocation+CoreDataProperties.swift in Sources */,

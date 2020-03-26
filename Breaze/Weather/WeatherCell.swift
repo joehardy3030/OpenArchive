@@ -9,9 +9,9 @@
 import UIKit
 
 class WeatherCell: UITableViewCell {
-    
-    @IBOutlet var highTempLabel: UILabel!
-    @IBOutlet var lowTempLabel: UILabel!
+     
+    @IBOutlet var currentTempLabel: UILabel!
+    @IBOutlet var humidityLabel: UILabel!
     @IBOutlet var dayLabel: UILabel!
     @IBOutlet var iconLabel: UILabel!
     @IBOutlet var iconImage: UIImageView!
@@ -19,8 +19,8 @@ class WeatherCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        highTempLabel.adjustsFontForContentSizeCategory = true
-        lowTempLabel.adjustsFontForContentSizeCategory = true
+        currentTempLabel.adjustsFontForContentSizeCategory = true
+        humidityLabel.adjustsFontForContentSizeCategory = true
         iconLabel.adjustsFontForContentSizeCategory = true
     }
 }

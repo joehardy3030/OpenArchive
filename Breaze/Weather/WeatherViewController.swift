@@ -18,9 +18,8 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
     var refresher: UIRefreshControl!
     // https://www.hackingwithswift.com/read/22/2/requesting-location-core-location
     var utils = Utils()
-    var store = WeatherStore()
     var openWeather = OpenWeatherAPI()
-    var simpleForecastArray = [SimpleForecastDay]()
+    var weatherArray = [WeatherModel]()
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     struct lastLocation {
         var latitude: String?
@@ -36,17 +35,15 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         var location = lastLocation()
         //self.tableView.addSubview((self.refreshControl?)!)
         location = fetchLastLocation()
-     //   print(location.latitude as Any)
-      //  print(location.longitude as Any)
         if (location.latitude != nil) {
             let parameters = [
                 "latitude": location.latitude!,
                 "longitude": location.longitude!
             ]
-            self.updateOpenWeather(parameters: parameters)
+            self.updateOpenWeatherCurrent(parameters: parameters)
         }
         else {
-            self.updateOpenWeather(parameters: nil)
+            self.updateOpenWeatherCurrent(parameters: nil)
         }
         NotificationCenter.default.addObserver(self, selector: #selector(receivedLocationNotification(notification:)), name: .alocation, object: nil)
 
@@ -73,7 +70,7 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
                 "latitude": String(self.currentLocation.coordinate.latitude),
                 "longitude": String(self.currentLocation.coordinate.longitude)
             ] */
-            self.updateOpenWeather(parameters: parameters)
+            self.updateOpenWeatherCurrent(parameters: parameters)
             print(self.currentLocation?.coordinate.latitude as Any)
             print(self.currentLocation?.coordinate.longitude as Any)
         }
@@ -99,36 +96,29 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         }
         return location
     }
-    
-    func updateSimpleForecastData(parameters: [String:String]?) {
-        // Grab the HourlyForecast data and put it in the HourlyForecastData
-        store.fetchLocalSimpleForecast(parameters: parameters){
-            (SimpleForecastResult) -> Void in
-            switch SimpleForecastResult {
-            case let .success(simpleForecast, displayCity):
-                self.simpleForecastArray = simpleForecast
-                print("count simple \(self.simpleForecastArray.count)")
+
+    func updateOpenWeatherCurrent(parameters: [String:String]?) {
+        let url = openWeather.buildURL(queryType: .current, parameters: parameters)
+        openWeather.getCurrent(url: url) {
+            (weatherModel: WeatherModel?, city: String?) -> Void in
+            if let wm = weatherModel, let c = city {
+                if self.weatherArray.isEmpty {
+                    self.weatherArray.append(wm)
+                }
+                else {
+                    self.weatherArray[0] = wm
+                }
                 DispatchQueue.main.async{
                     self.tableView.reloadData()
-                    self.locationLabel.text = displayCity
+                    self.locationLabel.text = c
                 }
-            case let .failure(error):
-                print("Error fetching simple forecast: \(error)")
             }
         }
     }
     
-    func updateOpenWeather(parameters: [String:String]?) {
-        // Grab the HourlyForecast data and put it in the HourlyForecastData
-        let url = openWeather.buildURL(queryType: .daily)
-        openWeather.getWeather(url: url) {
-            (json) -> Void in
-            print(json as Any)
-        }
-    }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.simpleForecastArray.count
+        return self.weatherArray.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -139,14 +129,24 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         // Set the text on the cell with the description of the item
         // that s the nth index of items, where n = row this cell
         // will appear in the tableview
-        let weatherCellData = self.simpleForecastArray[indexPath.row]
+        let index = indexPath.row
+        let weatherCellData = self.weatherArray[index]
+        print(weatherCellData)
+
+        if let humidity = weatherCellData.avehumidity {
+            cell.humidityLabel?.text = String(format:"%.1f", humidity) + " %"
+        }
+
+        if let temp = weatherCellData.temp {
+            cell.currentTempLabel?.text = String(format:"%.1f", temp) + " F"
+        }
+        cell.dayLabel?.text = utils.getDayOfWeek()
         
-        cell.highTempLabel?.text = weatherCellData.high + " F"
-        cell.lowTempLabel?.text = weatherCellData.low + " F"
-        cell.dayLabel?.text = weatherCellData.weekday_short
+        if let description = weatherCellData.main_description {
+            cell.iconLabel?.text = description
+            cell.iconImage?.image = utils.switchConditionsImage(icon: description.lowercased())
+        }
         
-        cell.iconLabel?.text = utils.switchConditionsText(icon: weatherCellData.icon)
-        cell.iconImage?.image = utils.switchConditionsImage(icon: weatherCellData.icon)
         return cell
     }
     
@@ -157,11 +157,11 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         var parameters: [String:String]?
         parameters = setParameters()
         if (parameters != nil) {
-            self.updateOpenWeather(parameters: parameters)
+            self.updateOpenWeatherCurrent(parameters: parameters)
             print("Location not nil")
         }
         else {
-            self.updateOpenWeather(parameters: nil)
+            self.updateOpenWeatherCurrent(parameters: nil)
             print("Location nil")
         }
     

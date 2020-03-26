@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SwiftyJSON
 
 enum BARTError: Error {
     case invalidJSONData
@@ -24,6 +25,7 @@ struct BARTAPI {
     private static let widthLong = 0.25
     private static let heightLat = 0.25
     private static let json_param = "y"
+    // https://api.bart.gov/api/stn.aspx?cmd=stns&key=MW9S-E7SL-26DU-VV8V&json=y
     
     static func localBARTURL(location: [String:String]?, station: BARTStation) -> URL
         // create the URL for train times
@@ -37,6 +39,19 @@ struct BARTAPI {
         return URL(string: components)!
     }
     
+    static func readBARTstnsJSON() {
+        if let path = Bundle.main.path(forResource: "stns", ofType: "json") {
+            do {
+                let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .alwaysMapped)
+                let jsonObj = try JSON(data: data)
+                print("jsonData:\(jsonObj)")
+            } catch let error {
+                print("parse error: \(error.localizedDescription)")
+            }
+        } else {
+            print("Invalid filename/path.")
+        }
+    }
   //  static func closestBARTStation(location: [String:String]?) -> BARTStation {
   //      return BARTStation()
   //  }

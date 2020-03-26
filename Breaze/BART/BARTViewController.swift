@@ -41,24 +41,7 @@ class BARTViewController: UITableViewController, ModalDelegate {
         refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)
         refresher.tintColor = UIColor.gray
         self.refreshControl = refresher
-/*        let lastLoc = utils.fetchLastLocation()
-        print(lastLoc)
-        
-        var location = [
-            "latitude": "37.785834",
-            "longitude": "-122.406417"
-        ]
-        if (lastLoc.latitude != nil) {
-            location = [
-                "latitude": lastLoc.latitude!,
-                "longitude": lastLoc.longitude!
-            ]
-            print(location)
-        }
-        else {
-            print("lastLoc is nil")
-        }
- */
+        BARTAPI.readBARTstnsJSON()
         self.updateBARTData(station: currentStation, parameters: nil)
     }
     

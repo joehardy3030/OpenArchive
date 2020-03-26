@@ -17,23 +17,13 @@ protocol ModalDelegate {
 
 class BARTViewController: UITableViewController, ModalDelegate {
 
-    
-//    var locationLabel: UILabel!
-//    var locationManager: CLLocationManager!
- //   var currentLocation: CLLocation!
     var refresher: UIRefreshControl!
-   var currentStation = BARTStation(abbreviation: "DELN", direction: "s")
+    var currentStation = BARTStation(abbreviation: "DELN", direction: "s")
     var store = BARTStore()
     var BARTReadingArray = [BARTReading]()
     var BARTStations = [BARTStationCodable]()
     var testValue: String = ""
     @IBOutlet var inOutControl: UISegmentedControl!
-    //   let appDelegate = UIApplication.shared.delegate as! AppDelegate
- /*   struct lastLocation {
-        var latitude: String?
-        var longitude: String?
-    }
-   */
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,6 +33,7 @@ class BARTViewController: UITableViewController, ModalDelegate {
         refresher.tintColor = UIColor.gray
         self.refreshControl = refresher
         BARTStations = BARTAPI.readBARTstnsJSON()
+        let currentStationC = findStationWithAbbr(abbr: "DELN")
         self.updateBARTData(station: currentStation, parameters: nil)
     }
     
@@ -64,6 +55,14 @@ class BARTViewController: UITableViewController, ModalDelegate {
         modalViewController.delegate = self
         self.present(navigationController, animated: true, completion: nil)
         //self.present(modalViewController, animated: true, completion: nil)
+    }
+    
+    func findStationWithAbbr(abbr: String?) -> BARTStationCodable {
+        let abbrs = BARTStations.map { $0.abbr }
+        if let i = abbrs.firstIndex(of: abbr) {
+            return BARTStations[i]
+        }
+        else { return BARTStationCodable() }
     }
     
     func changeStation(station: BARTStation) {

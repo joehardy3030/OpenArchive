@@ -26,33 +26,20 @@ struct BARTAPI {
     private static let json_param = "y"
     
     static func localBARTURL(location: [String:String]?, station: BARTStation) -> URL
-        // create the URL for the HTTP get command for the smog API
+        // create the URL for train times
     {
-        //let inboundOrig = "deln"
-        //let outboundOrig = "mont"
-        //let inboundDir = "s"
-        //let outboundDir = "n"
         var components = baseURLString
 
         components = components + question_mark + "cmd=" + cmd + and_sign +
             "orig=" + station.abbreviation + and_sign + "dir=" + station.direction + and_sign + "key=" + key +
             and_sign + "json=" + json_param
 
-     /*   if inOut == 0 {
-            components = components + question_mark + "cmd=" + cmd + and_sign +
-                "orig=" + inboundOrig + and_sign + "dir=" + inboundDir + and_sign + "key=" + key +
-                and_sign + "json=" + json_param
-        }
-        else {
-            components = components + question_mark + "cmd=" + cmd + and_sign +
-                "orig=" + outboundOrig + and_sign + "dir=" + outboundDir + and_sign + "key=" + key +
-                and_sign + "json=" + json_param
-        }
-    */
-        print(components)
-
         return URL(string: components)!
     }
+    
+  //  static func closestBARTStation(location: [String:String]?) -> BARTStation {
+  //      return BARTStation()
+  //  }
     
     static private func drawBox(location:[String:String]?) -> String? {
         let midLatitudeString = location!["latitude"]

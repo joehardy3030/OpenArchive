@@ -15,27 +15,47 @@ protocol ModalDelegate {
     func changeStation(station: BARTStationCodable, direction: String)
 }
 
-class BARTViewController: UITableViewController, ModalDelegate {
-
+class BARTViewController: UITableViewController, CLLocationManagerDelegate, ModalDelegate {
+    
+   // let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    let locationManager =  CLLocationManager()
     var refresher: UIRefreshControl!
     var store = BARTStore()
     var BARTReadingArray = [BARTReading]()
-    var BARTStations = [BARTStationCodable]()
-    //var currentStation = BARTStation(abbreviation: "DELN", direction: "s")
-    var currentStation = BARTStationCodable()
+    //var BARTStations = [BARTStationCodable]()
+    var currentStation = BARTStationCodable(address: nil, city: nil, zipcode: nil, abbr: nil, name: nil, gtfs_latitude: nil, gtfs_longitude: nil)
     var currentDirection = "s"
     @IBOutlet var inOutControl: UISegmentedControl!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setNavTitle()
         let refresher = UIRefreshControl()
         refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)
         refresher.tintColor = UIColor.gray
         self.refreshControl = refresher
-        self.BARTStations = BARTAPI.readBARTstnsJSON()
-        self.currentStation = findStationWithAbbr(abbr: "DELN")
-        self.updateBARTData(station: self.currentStation, direction: currentDirection, parameters: nil)
+        if CLLocationManager.locationServicesEnabled() {
+            locationManager.delegate = self
+            locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+            locationManager.requestLocation()
+        }
+        else {
+            self.currentStation = BARTAPI.findStationWithAbbr(abbr: "DELN")
+            self.updateBARTData(station: self.currentStation, direction: self.currentDirection, parameters: nil)
+        }
+        self.currentStation = BARTAPI.findStationWithAbbr(abbr: "DELN")
+        setNavTitle()
+        self.updateBARTData(station: self.currentStation, direction: self.currentDirection, parameters: nil)
+    }
+    
+    func locationManager(_ manager: CLLocationManager,
+                         didFailWithError error: Error) {
+        print("error")
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let locValue: CLLocation = manager.location else { return }
+        self.updateBARTData(station: self.currentStation, direction: self.currentDirection, parameters: nil)
+        print("location = \(locValue.coordinate.latitude) \(locValue.coordinate.longitude)")
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -57,15 +77,7 @@ class BARTViewController: UITableViewController, ModalDelegate {
         self.present(navigationController, animated: true, completion: nil)
         //self.present(modalViewController, animated: true, completion: nil)
     }
-    
-    func findStationWithAbbr(abbr: String?) -> BARTStationCodable {
-        let abbrs = BARTStations.map { $0.abbr }
-        if let i = abbrs.firstIndex(of: abbr) {
-            return BARTStations[i]
-        }
-        else { return BARTStationCodable() }
-    }
-    
+
     func changeStation(station: BARTStationCodable, direction: String) {
         // This function is executed when returning from the station selection modal
         self.currentStation = station
@@ -97,7 +109,6 @@ class BARTViewController: UITableViewController, ModalDelegate {
             break
         }
     }
-
     
     func updateBARTData(station: BARTStationCodable, direction: String, parameters: [String:String]?) {
         store.fetchBARTResult(location: parameters,
@@ -117,12 +128,9 @@ class BARTViewController: UITableViewController, ModalDelegate {
         }
     }
  
-  
-
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.BARTReadingArray.count
     }
- 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         

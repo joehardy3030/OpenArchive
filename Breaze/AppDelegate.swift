@@ -28,19 +28,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         self.locationManager = CLLocationManager()
         self.locationManager.delegate = self
         self.locationManager.requestAlwaysAuthorization()
-        self.locationManager.requestLocation()
-
+        if CLLocationManager.locationServicesEnabled() {
+            self.locationManager.requestLocation()
+        }
+        /*
+        if CLLocationManager.locationServicesEnabled() {
+            //self.locationManager.delegate = self
+            self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+            self.locationManager.startUpdatingLocation()
+        }
+        */
         return true
     }
 
-   /* private static func saveCurrentLocation(context: NSManagedObjectContext) {
-        var lastLocation = LastLocation!
-        context.performAndWait {
-            lastLocation = LastLocation()
-            
-        }
-    }
-*/
     func locationManager(_ manager: CLLocationManager,
                          didFailWithError error: Error) {
         print("error")

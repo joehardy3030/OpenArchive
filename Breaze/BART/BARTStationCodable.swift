@@ -9,11 +9,28 @@
 import UIKit
 
 class BARTStationCodable: Codable {
-    var address: String?
-    var city: String?
-    var zipcode: Int?
-    var abbr: String?
-    var name: String?
-    var gtfs_latitude: Float?
-    var gtfs_longitude: Float?
+    let address: String?
+    let city: String?
+    let zipcode: Int?
+    let abbr: String?
+    let name: String?
+    let gtfs_latitude: Double?
+    let gtfs_longitude: Double?
+    
+    init(address: String?,
+         city: String?,
+         zipcode: Int?,
+         abbr: String?,
+         name: String?,
+         gtfs_latitude: Double?,
+         gtfs_longitude: Double?) {
+        
+        self.address = address
+        self.city = city
+        self.zipcode = zipcode
+        self.abbr = abbr
+        self.name = name
+        self.gtfs_latitude = gtfs_latitude
+        self.gtfs_longitude = gtfs_longitude
+    }
 }

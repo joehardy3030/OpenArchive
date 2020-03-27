@@ -8,10 +8,12 @@
 
 import Foundation
 import SwiftyJSON
+import CoreLocation
 
 enum BARTError: Error {
     case invalidJSONData
 }
+
 
 struct BARTAPI {
     
@@ -22,8 +24,6 @@ struct BARTAPI {
     private static let key = "MW9S-E7SL-26DU-VV8V"
     private static let and_sign = "&"
     private static let question_mark = "?"
-    private static let widthLong = 0.25
-    private static let heightLat = 0.25
     private static let json_param = "y"
     // https://api.bart.gov/api/stn.aspx?cmd=stns&key=MW9S-E7SL-26DU-VV8V&json=y
     
@@ -67,39 +67,39 @@ struct BARTAPI {
         
         for stn in station {
             let (_, jsonStn) = stn
-            let bartStn = BARTStationCodable()
-            bartStn.address = jsonStn["abbr"].stringValue
-            bartStn.city = jsonStn["city"].stringValue
-            bartStn.zipcode = jsonStn["zipcode"].intValue
-            bartStn.abbr = jsonStn["abbr"].stringValue
-            bartStn.name = jsonStn["name"].stringValue
-            bartStn.gtfs_longitude = jsonStn["gtfs_longitude"].floatValue
-            bartStn.gtfs_latitude = jsonStn["gtfs_latitude"].floatValue
+            let bartStn = BARTStationCodable(address: jsonStn["abbr"].string,
+                                             city: jsonStn["city"].string,
+                                             zipcode: jsonStn["zipcode"].int,
+                                             abbr: jsonStn["abbr"].string,
+                                             name: jsonStn["name"].string,
+                                             gtfs_latitude: jsonStn["gtfs_latitude"].double,
+                                             gtfs_longitude: jsonStn["gtfs_longitude"].double)
             
             bartStns.append(bartStn)
         }
         return bartStns
     }
     
-    
-    static private func drawBox(location:[String:String]?) -> String? {
-        let midLatitudeString = location!["latitude"]
-        let midLatitudeFloat = (midLatitudeString! as NSString).doubleValue
-        let topLatitudeFloat = midLatitudeFloat + heightLat
-        let bottomLatitudeFloat = midLatitudeFloat - heightLat
-        
-        let midLongitudeString = location!["longitude"]
-        let midLongitudeFloat = (midLongitudeString! as NSString).doubleValue
-        let rightLongitudeFloat = midLongitudeFloat + widthLong
-        let leftLongitudeFloat = midLongitudeFloat - widthLong
-        
-        let boxString = String(leftLongitudeFloat) + "," +  String(bottomLatitudeFloat) + "," + String(rightLongitudeFloat) + "," + String(topLatitudeFloat)
-        print("boxString")
-        print(boxString)
-        
-        return boxString
+    static func findStationWithAbbr(abbr: String?) -> BARTStationCodable {
+        let BARTStations = readBARTstnsJSON()
+        let abbrs = BARTStations.map { $0.abbr }
+        if let i = abbrs.firstIndex(of: abbr) {
+            return BARTStations[i]
+        }
+        else { return BARTStations[0] }
     }
     
+    static func findClosestStation(currentLocation: CLLocation) -> BARTStationCodable {
+        var dists = [Double]()
+        let stns = readBARTstnsJSON()
+        
+        for stn in stns {
+            let dist = currentLocation.distance(from: currentLocation)
+            print(stn.abbr as Any)
+            print(dist)
+        }
+        return BARTStationCodable(address: nil, city: nil, zipcode: nil, abbr: nil, name: nil, gtfs_latitude: nil, gtfs_longitude: nil)
+    }
     // Take the data from the BART API and return a data BARTResult (part of BARTStore)
     // that has a single instance for each line
     static func BARTForecast(fromJSON data: Data) -> BARTResult {

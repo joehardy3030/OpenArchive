@@ -11,7 +11,7 @@ import UIKit
 class BARTModal: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
 
     var delegate: ModalDelegate?
-    var newStation = BARTStationCodable()
+    var newStation = BARTStationCodable(address: nil, city: nil, zipcode: nil, abbr: nil, name: nil, gtfs_latitude: nil, gtfs_longitude: nil)
 
     @IBOutlet var stationPicker: UIPickerView!
     
@@ -117,7 +117,7 @@ class BARTModal: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate 
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        newStation.abbr = stationPickerData[row]
+        newStation = BARTAPI.findStationWithAbbr(abbr: stationPickerData[row])
     }
 
     

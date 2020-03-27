@@ -33,7 +33,6 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)
         refresher.tintColor = UIColor.gray
         var location = lastLocation()
-        //self.tableView.addSubview((self.refreshControl?)!)
         location = fetchLastLocation()
         if (location.latitude != nil) {
             let parameters = [
@@ -55,7 +54,6 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     @objc func receivedLocationNotification(notification: NSNotification){
@@ -65,11 +63,6 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
 
         DispatchQueue.main.async{
             parameters = self.setParameters()
-
-         /*   let parameters = [
-                "latitude": String(self.currentLocation.coordinate.latitude),
-                "longitude": String(self.currentLocation.coordinate.longitude)
-            ] */
             self.updateOpenWeatherCurrent(parameters: parameters)
             print(self.currentLocation?.coordinate.latitude as Any)
             print(self.currentLocation?.coordinate.longitude as Any)
@@ -78,6 +71,7 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
     }
     
     func fetchLastLocation() -> lastLocation {
+      //  self.currentLocation = appDelegate.currentLocation
 
         var location = lastLocation()
         let context = appDelegate.persistentContainer.viewContext

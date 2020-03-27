@@ -27,10 +27,10 @@ class BARTStore {
         return BARTAPI.BARTForecast(fromJSON: jsonData)
     }
   
-    func fetchBARTResult(location: [String:String]?, station: BARTStation, completion: @escaping (BARTResult) -> Void) {
+    func fetchBARTResult(location: [String:String]?, station: BARTStationCodable, direction: String, completion: @escaping (BARTResult) -> Void) {
         
         //print(inOut)
-        let url = BARTAPI.localBARTURL(location: location, station: station)
+        let url = BARTAPI.localBARTURL(location: location, station: station, direction: direction)
         let request = URLRequest(url: url)
         let task = session.dataTask(with: request) { (data, response, error) -> Void in
             let result = self.processBARTResult(data: data, error: error)

@@ -27,15 +27,17 @@ struct BARTAPI {
     private static let json_param = "y"
     // https://api.bart.gov/api/stn.aspx?cmd=stns&key=MW9S-E7SL-26DU-VV8V&json=y
     
-    static func localBARTURL(location: [String:String]?, station: BARTStation) -> URL
+    static func localBARTURL(location: [String:String]?, station: BARTStationCodable, direction: String) -> URL
         // create the URL for train times
     {
         var components = baseURLString
-
-        components = components + question_mark + "cmd=" + cmd + and_sign +
-            "orig=" + station.abbreviation + and_sign + "dir=" + station.direction + and_sign + "key=" + key +
-            and_sign + "json=" + json_param
-
+        
+        if let abbr = station.abbr {
+            components = components + question_mark + "cmd=" + cmd + and_sign +
+                "orig=" + abbr + and_sign + "dir=" + direction + and_sign + "key=" + key +
+                and_sign + "json=" + json_param
+        }
+        
         return URL(string: components)!
     }
     

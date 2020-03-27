@@ -16,6 +16,4 @@ class BARTStationCodable: Codable {
     var name: String?
     var gtfs_latitude: Float?
     var gtfs_longitude: Float?
-
-    var direction: String?
 }

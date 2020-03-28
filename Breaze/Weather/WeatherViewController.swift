@@ -14,7 +14,6 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
     
     @IBOutlet var locationLabel: UILabel!
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
-    var locationManager: CLLocationManager!
     var currentLocation: CLLocation!
     var refresher: UIRefreshControl!
     var utils = Utils()

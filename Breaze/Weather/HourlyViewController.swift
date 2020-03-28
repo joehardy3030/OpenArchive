@@ -10,20 +10,15 @@ import UIKit
 import CoreLocation
 import CoreData
 
-
 class HourlyViewController: UIViewController, UITableViewDataSource, UITableViewDelegate  {
     
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var utils = Utils()
     var openWeather = OpenWeatherAPI()
     var weatherArray = [WeatherModel]()
     var city: CityModel?
-    let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var refresher: UIRefreshControl!
     var currentLocation: CLLocation!
-    struct lastLocation {
-        var latitude: String?
-        var longitude: String?
-    }
     
     @IBOutlet var locationLabel: UILabel!
     @IBOutlet weak var HourlyForecastTable: UITableView!
@@ -43,8 +38,7 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        var location = lastLocation()
-        location = fetchLastLocation()
+        let location = utils.fetchLastLocation()
         if (location.latitude != nil) {
             let parameters = [
                 "latitude": location.latitude!,
@@ -59,24 +53,6 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
     
     @objc func receivedLocationNotification(notification: NSNotification){
         print("received notification")
-    }
-    
-    func fetchLastLocation() -> lastLocation {
-        var location = lastLocation()
-        let context = appDelegate.persistentContainer.viewContext
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "LastLocation")
-        request.returnsObjectsAsFaults = false
-        do {
-            let result = try context.fetch(request)
-            for data in result as! [NSManagedObject] {
-                location.longitude = data.value(forKey: "longitude") as? String
-                location.latitude = data.value(forKey: "latitude") as? String
-            }
-            
-        } catch {
-            print("Failed")
-        }
-        return location
     }
 
     func updateOpenWeatherHourly(parameters: [String:String]?) {

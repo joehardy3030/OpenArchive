@@ -7,10 +7,13 @@
 //
 
 import Foundation
+import SwiftyJSON
+import CoreLocation
 
 enum BARTError: Error {
     case invalidJSONData
 }
+
 
 struct BARTAPI {
     
@@ -21,55 +24,86 @@ struct BARTAPI {
     private static let key = "MW9S-E7SL-26DU-VV8V"
     private static let and_sign = "&"
     private static let question_mark = "?"
-    private static let widthLong = 0.25
-    private static let heightLat = 0.25
     private static let json_param = "y"
+    // https://api.bart.gov/api/stn.aspx?cmd=stns&key=MW9S-E7SL-26DU-VV8V&json=y
     
-    static func localBARTURL(location: [String:String]?, station: BARTStation) -> URL
-        // create the URL for the HTTP get command for the smog API
+    static func localBARTURL(location: [String:String]?, station: BARTStationCodable, direction: String) -> URL
+        // create the URL for train times
     {
-        //let inboundOrig = "deln"
-        //let outboundOrig = "mont"
-        //let inboundDir = "s"
-        //let outboundDir = "n"
         var components = baseURLString
-
-        components = components + question_mark + "cmd=" + cmd + and_sign +
-            "orig=" + station.abbreviation + and_sign + "dir=" + station.direction + and_sign + "key=" + key +
-            and_sign + "json=" + json_param
-
-     /*   if inOut == 0 {
+        
+        if let abbr = station.abbr {
             components = components + question_mark + "cmd=" + cmd + and_sign +
-                "orig=" + inboundOrig + and_sign + "dir=" + inboundDir + and_sign + "key=" + key +
+                "orig=" + abbr + and_sign + "dir=" + direction + and_sign + "key=" + key +
                 and_sign + "json=" + json_param
         }
-        else {
-            components = components + question_mark + "cmd=" + cmd + and_sign +
-                "orig=" + outboundOrig + and_sign + "dir=" + outboundDir + and_sign + "key=" + key +
-                and_sign + "json=" + json_param
-        }
-    */
-        print(components)
-
+        
         return URL(string: components)!
     }
     
-    static private func drawBox(location:[String:String]?) -> String? {
-        let midLatitudeString = location!["latitude"]
-        let midLatitudeFloat = (midLatitudeString! as NSString).doubleValue
-        let topLatitudeFloat = midLatitudeFloat + heightLat
-        let bottomLatitudeFloat = midLatitudeFloat - heightLat
+    static func readBARTstnsJSON() -> [BARTStationCodable] {
+        var jsonObj = JSON()
+        if let path = Bundle.main.path(forResource: "stns", ofType: "json") {
+            do {
+                let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .alwaysMapped)
+                jsonObj = try JSON(data: data)
+              //  print("jsonData:\(jsonObj)")
+            } catch let error {
+                print("parse error: \(error.localizedDescription)")
+            }
+        } else {
+            print("Invalid filename/path.")
+        }
+        let BARTStations = deserializeBARTstns(json: jsonObj)
+        return BARTStations
+    }
+    
+    static func deserializeBARTstns(json: JSON) -> [BARTStationCodable] {
+        var bartStns = [BARTStationCodable]()
         
-        let midLongitudeString = location!["longitude"]
-        let midLongitudeFloat = (midLongitudeString! as NSString).doubleValue
-        let rightLongitudeFloat = midLongitudeFloat + widthLong
-        let leftLongitudeFloat = midLongitudeFloat - widthLong
+        let root = json["root"]
+        let stations = root["stations"]
+        let station = stations["station"]
         
-        let boxString = String(leftLongitudeFloat) + "," +  String(bottomLatitudeFloat) + "," + String(rightLongitudeFloat) + "," + String(topLatitudeFloat)
-        print("boxString")
-        print(boxString)
+        for stn in station {
+            let (_, jsonStn) = stn
+            let bartStn = BARTStationCodable(address: jsonStn["abbr"].stringValue,
+                                             city: jsonStn["city"].stringValue,
+                                             zipcode: jsonStn["zipcode"].intValue,
+                                             abbr: jsonStn["abbr"].stringValue,
+                                             name: jsonStn["name"].stringValue,
+                                             gtfs_latitude: jsonStn["gtfs_latitude"].doubleValue,
+                                             gtfs_longitude: jsonStn["gtfs_longitude"].doubleValue)
+            
+            bartStns.append(bartStn)
+        }
+        return bartStns
+    }
+    
+    static func findStationWithAbbr(abbr: String?) -> BARTStationCodable {
+        let BARTStations = readBARTstnsJSON()
+        let abbrs = BARTStations.map { $0.abbr }
+        if let i = abbrs.firstIndex(of: abbr) {
+            return BARTStations[i]
+        }
+        else { return BARTStations[0] }
+    }
+    
+    static func findClosestStation(currentLocation: CLLocation) -> BARTStationCodable {
+        var dists = [Double]()
+        let stns = readBARTstnsJSON()
+        let defaultStn = BARTStationCodable(address: nil, city: nil, zipcode: nil, abbr: "PLZA", name: nil, gtfs_latitude: nil, gtfs_longitude: nil)
         
-        return boxString
+        for stn in stns {
+            guard let lat = stn.gtfs_latitude, let lon = stn.gtfs_longitude else { return defaultStn }
+            let stnLoc = CLLocation(latitude: lat, longitude: lon)
+            let dist = stnLoc.distance(from: currentLocation)
+            dists.append(dist)
+        }
+        let minDist = dists.min()
+        let minDistIndex = dists.indices.filter { dists[$0] == minDist }
+        
+        return stns[minDistIndex[0]]
     }
     
     // Take the data from the BART API and return a data BARTResult (part of BARTStore)

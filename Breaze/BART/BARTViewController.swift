@@ -12,54 +12,48 @@ import CoreData
 //import Alamofire
 
 protocol ModalDelegate {
-    func changeStation(station: BARTStation)
+    func changeStation(station: BARTStationCodable, direction: String)
 }
 
-class BARTViewController: UITableViewController, ModalDelegate {
-
+class BARTViewController: UITableViewController, CLLocationManagerDelegate, ModalDelegate {
     
-//    var locationLabel: UILabel!
-//    var locationManager: CLLocationManager!
- //   var currentLocation: CLLocation!
+    let locationManager =  CLLocationManager()
     var refresher: UIRefreshControl!
-   var currentStation = BARTStation(abbreviation: "DELN", direction: "s")
     var store = BARTStore()
     var BARTReadingArray = [BARTReading]()
-    var testValue: String = ""
+    var currentStation = BARTStationCodable(address: nil, city: nil, zipcode: nil, abbr: nil, name: nil, gtfs_latitude: nil, gtfs_longitude: nil)
+    var currentDirection = "s"
     @IBOutlet var inOutControl: UISegmentedControl!
-    //   let appDelegate = UIApplication.shared.delegate as! AppDelegate
- /*   struct lastLocation {
-        var latitude: String?
-        var longitude: String?
-    }
-   */
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setNavTitle()
         let refresher = UIRefreshControl()
         refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)
         refresher.tintColor = UIColor.gray
         self.refreshControl = refresher
-/*        let lastLoc = utils.fetchLastLocation()
-        print(lastLoc)
-        
-        var location = [
-            "latitude": "37.785834",
-            "longitude": "-122.406417"
-        ]
-        if (lastLoc.latitude != nil) {
-            location = [
-                "latitude": lastLoc.latitude!,
-                "longitude": lastLoc.longitude!
-            ]
-            print(location)
+        if CLLocationManager.locationServicesEnabled() {
+            locationManager.delegate = self
+            locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+            locationManager.requestLocation()
         }
         else {
-            print("lastLoc is nil")
+            self.currentStation = BARTAPI.findStationWithAbbr(abbr: "DELN")
+            self.updateBARTData(station: self.currentStation, direction: self.currentDirection, parameters: nil)
+            setNavTitle()
         }
- */
-        self.updateBARTData(station: currentStation, parameters: nil)
+    }
+    
+    func locationManager(_ manager: CLLocationManager,
+                         didFailWithError error: Error) {
+        print("error")
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let locValue: CLLocation = manager.location else { return }
+        let station = BARTAPI.findClosestStation(currentLocation: locValue)
+        self.currentStation = station
+        self.updateBARTData(station: self.currentStation, direction: self.currentDirection, parameters: nil)
+        setNavTitle()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -81,102 +75,43 @@ class BARTViewController: UITableViewController, ModalDelegate {
         self.present(navigationController, animated: true, completion: nil)
         //self.present(modalViewController, animated: true, completion: nil)
     }
-    
-    func changeStation(station: BARTStation) {
+
+    func changeStation(station: BARTStationCodable, direction: String) {
         // This function is executed when returning from the station selection modal
-        currentStation = station
+        self.currentStation = station
         setDirection()
-        print(currentStation.abbreviation)
+        print(self.currentStation.abbr as Any)
         setNavTitle()
-        self.updateBARTData(station: currentStation, parameters: nil)
+        self.updateBARTData(station: currentStation, direction: direction, parameters: nil)
     }
     
     @IBAction func inOutChanged(_ sender: Any) {
         // this function is executed when the UISegmentedControl is toggled
         //setNavTitle()
         setDirection()
-        self.updateBARTData(station: currentStation, parameters: nil)
+        self.updateBARTData(station: currentStation, direction: currentDirection, parameters: nil)
     }
     
     func setNavTitle() {
-        navigationItem.title = currentStation.abbreviation
+        navigationItem.title = currentStation.abbr
     }
     
     func setDirection() {
         switch inOutControl.selectedSegmentIndex
         {
         case 0:
-            currentStation.direction = "s"
+            self.currentDirection = "s"
         case 1:
-            currentStation.direction = "n"
+            self.currentDirection = "n"
         default:
             break
         }
     }
     
-    /*
-    @objc func receivedLocationNotification(notification: NSNotification){
-        print("received notification")
-        var parameters: [String:String]?
-        self.currentLocation = appDelegate.currentLocation
-        
-        DispatchQueue.main.async{
-            parameters = self.setParameters()
-            print(parameters)
-            /*   let parameters = [
-             "latitude": String(self.currentLocation.coordinate.latitude),
-             "longitude": String(self.currentLocation.coordinate.longitude)
-             ] */
-        //    self.updateSimpleForecastData(parameters: parameters)
-            print(self.currentLocation?.coordinate.latitude as Any)
-            print(self.currentLocation?.coordinate.longitude as Any)
-        }
-        
-    }
- 
- */
- /*
-    func fetchLastLocation() -> lastLocation {
-        
-        var location = lastLocation()
-        let context = appDelegate.persistentContainer.viewContext
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "LastLocation")
-        request.returnsObjectsAsFaults = false
-        do {
-            let result = try context.fetch(request)
-            for data in result as! [NSManagedObject] {
-                print(data.value(forKey: "longitude") as! String)
-                location.longitude = data.value(forKey: "longitude") as? String
-                location.latitude = data.value(forKey: "latitude") as? String
-            }
-            
-        } catch {
-            print("Failed")
-        }
-        return location
-    }
- 
- */
-    
-    
-    
- 
-    
-    func updateBARTData(station: BARTStation, parameters: [String:String]?) {
-        // Grab the BART data
-        
-  /*      switch inOutControl.selectedSegmentIndex
-        {
-        case 0:
-            let station = inboundStation
-        case 1:
-            let station = outboundStation
-        default:
-            break
-        }
-    */
+    func updateBARTData(station: BARTStationCodable, direction: String, parameters: [String:String]?) {
         store.fetchBARTResult(location: parameters,
-                              station: station){
+                              station: station,
+                              direction: direction){
             (BARTResult) -> Void in
             switch BARTResult {
             case let .success(finalBARTReading):
@@ -184,7 +119,6 @@ class BARTViewController: UITableViewController, ModalDelegate {
                 print("count BARTs \(self.BARTReadingArray.count)")
                 DispatchQueue.main.async{
                     self.tableView.reloadData()
-                 //   self.locationLabel.text = displayCity
                 }
             case let .failure(error):
                 print("Error fetching BART Result: \(error)")
@@ -192,21 +126,13 @@ class BARTViewController: UITableViewController, ModalDelegate {
         }
     }
  
-  
-
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.BARTReadingArray.count
     }
- 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        // Get a new or recycled cell
         let cell = tableView.dequeueReusableCell(withIdentifier: "BARTCell", for: indexPath) as! BARTCell
-        
-        // Set the text on the cell with the description of the item
-        // that s the nth index of items, where n = row this cell
-        // will appear in the tableview
         let BARTCellData = self.BARTReadingArray[indexPath.row]
         
         cell.numCarsLabel?.text = BARTCellData.numCars + " cars"
@@ -214,13 +140,6 @@ class BARTViewController: UITableViewController, ModalDelegate {
         cell.lineColorLabel?.text = BARTCellData.lineColor
         cell.destinationLabel?.text = BARTCellData.destination
         cell.lineColorView.backgroundColor = getLineColor(color: BARTCellData.lineColor)
-        
-        //cell.lineColorView.backgroundColor = UIColor .red
-
-      //  cell.dayLabel?.text = weatherCellData.weekday_short
-        
-       // cell.iconLabel?.text = utils.switchConditionsText(icon: weatherCellData.icon)
-       // cell.iconImage?.image = utils.switchConditionsImage(icon: weatherCellData.icon) */
         return cell
     }
 
@@ -248,41 +167,11 @@ class BARTViewController: UITableViewController, ModalDelegate {
     
     @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
     
-        // Do some reloading of data and update the table view's data source
-        // Fetch more objects from a web service, for example...
-    
-        /*
-        var parameters: [String:String]?
-        parameters = setParameters()
-        if (parameters != nil) {
-//            self.updateSimpleForecastData(parameters: parameters)
-            print("Location not nil")
-        }
-        else {
-  //          self.updateSimpleForecastData(parameters: nil)
-            print("Location nil")
-        }
- */
-        self.updateBARTData(station: currentStation, parameters: nil)
+        self.updateBARTData(station: currentStation, direction: currentDirection, parameters: nil)
         refreshControl.endRefreshing()
-        
     }
 
 
-    /*
-    func setParameters() -> [String:String]? {
-        // when currentLocation is nil, this barfs
-        var parameters: [String:String]?
-        if (self.currentLocation?.coordinate.latitude) != nil {
-            parameters = [
-                "latitude": String(self.currentLocation.coordinate.latitude),
-                "longitude": String(self.currentLocation.coordinate.longitude)
-            ]
-        }
-        return parameters
-    }
- */
-    
 }
 
 

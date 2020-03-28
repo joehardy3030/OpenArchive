@@ -11,7 +11,7 @@ import UIKit
 class BARTModal: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
 
     var delegate: ModalDelegate?
-    var newStation = BARTStation(abbreviation: "ECPL", direction: "n")
+    var newStation = BARTStationCodable(address: nil, city: nil, zipcode: nil, abbr: nil, name: nil, gtfs_latitude: nil, gtfs_longitude: nil)
 
     @IBOutlet var stationPicker: UIPickerView!
     
@@ -22,10 +22,10 @@ class BARTModal: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate 
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.white
         // Create save button
-        let saveButton = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: Selector(("handleSave")))
+        let saveButton = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(self.handleSave))
        // saveButton.tintColor = UIColor.commonTextColor()
         // Create cancel button
-        let cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: Selector(("handleCancel")))
+        let cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(self.handleCancel))
        // cancelButton.tintColor = UIColor.commonTextColor()
         // Add the buttons to the navigation bar
         let topViewController = self.navigationController!.topViewController
@@ -99,7 +99,7 @@ class BARTModal: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate 
     @objc func handleSave() {
         print("Doing save things")
         if let delegate = self.delegate {
-            delegate.changeStation(station: newStation)
+            delegate.changeStation(station: newStation, direction: "s")
         }
         self.dismiss(animated: true, completion: nil)
     }
@@ -117,7 +117,7 @@ class BARTModal: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate 
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        newStation.abbreviation = stationPickerData[row]
+        newStation = BARTAPI.findStationWithAbbr(abbr: stationPickerData[row])
     }
 
     

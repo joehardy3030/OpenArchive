@@ -18,10 +18,5 @@ class BARTCell: UITableViewCell {
     
     
     override func awakeFromNib() {
-        //super.awakeFromNib()
-        //numCarsLabel.text = "hello world"
-        //highTempLabel.adjustsFontForContentSizeCategory = true
-       // lowTempLabel.adjustsFontForContentSizeCategory = true
-        //iconLabel.adjustsFontForContentSizeCategory = true
     }
 }

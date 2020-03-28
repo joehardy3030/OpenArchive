@@ -10,7 +10,6 @@ import UIKit
 import CoreLocation
 import CoreData
 
-//let carquinezNotificationKey = "com.carquinez.notificationKey"
 extension Notification.Name {
     static let alocation = Notification.Name("location")
 }
@@ -41,7 +40,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     
     func locationManager(_ manager: CLLocationManager,
                          didUpdateLocations locations: [CLLocation]){
-        //let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = self.persistentContainer.viewContext
         let entity = NSEntityDescription.entity(forEntityName: "LastLocation", in: context)
         let lastLocation = NSManagedObject(entity: entity!, insertInto: context)

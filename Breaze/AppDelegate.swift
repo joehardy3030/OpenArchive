@@ -31,13 +31,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         if CLLocationManager.locationServicesEnabled() {
             self.locationManager.requestLocation()
         }
-        /*
-        if CLLocationManager.locationServicesEnabled() {
-            //self.locationManager.delegate = self
-            self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
-            self.locationManager.startUpdatingLocation()
-        }
-        */
         return true
     }
 

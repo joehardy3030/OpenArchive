@@ -39,7 +39,7 @@ class BARTViewController: UITableViewController, CLLocationManagerDelegate, Moda
         if CLLocationManager.locationServicesEnabled() {
             locationManager.delegate = self
             locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
-            locationManager.requestLocation()
+            locationManager.startUpdatingLocation()
         }
         else {
             self.currentStation = BARTAPI.findStationWithAbbr(abbr: "DELN")
@@ -58,6 +58,7 @@ class BARTViewController: UITableViewController, CLLocationManagerDelegate, Moda
         let station = BARTAPI.findClosestStation(currentLocation: locValue)
         self.currentStation = station
         self.updateBARTData(station: self.currentStation, direction: self.currentDirection, parameters: nil)
+        locationManager.stopUpdatingLocation()
         setNavTitle()
     }
     

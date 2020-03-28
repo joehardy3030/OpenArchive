@@ -19,6 +19,7 @@ class BARTViewController: UITableViewController, CLLocationManagerDelegate, Moda
     
     let locationManager =  CLLocationManager()
     var refresher: UIRefreshControl!
+    let utils = Utils()
     var store = BARTStore()
     var BARTReadingArray = [BARTReading]()
     var currentStation = BARTStationCodable(address: nil, city: nil, zipcode: nil, abbr: nil, name: nil, gtfs_latitude: nil, gtfs_longitude: nil)
@@ -31,6 +32,10 @@ class BARTViewController: UITableViewController, CLLocationManagerDelegate, Moda
         refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)
         refresher.tintColor = UIColor.gray
         self.refreshControl = refresher
+        self.handleLocationGetEtd()
+    }
+    
+    func handleLocationGetEtd() {
         if CLLocationManager.locationServicesEnabled() {
             locationManager.delegate = self
             locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters

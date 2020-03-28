@@ -67,13 +67,13 @@ struct BARTAPI {
         
         for stn in station {
             let (_, jsonStn) = stn
-            let bartStn = BARTStationCodable(address: jsonStn["abbr"].string,
-                                             city: jsonStn["city"].string,
-                                             zipcode: jsonStn["zipcode"].int,
-                                             abbr: jsonStn["abbr"].string,
-                                             name: jsonStn["name"].string,
-                                             gtfs_latitude: jsonStn["gtfs_latitude"].double,
-                                             gtfs_longitude: jsonStn["gtfs_longitude"].double)
+            let bartStn = BARTStationCodable(address: jsonStn["abbr"].stringValue,
+                                             city: jsonStn["city"].stringValue,
+                                             zipcode: jsonStn["zipcode"].intValue,
+                                             abbr: jsonStn["abbr"].stringValue,
+                                             name: jsonStn["name"].stringValue,
+                                             gtfs_latitude: jsonStn["gtfs_latitude"].doubleValue,
+                                             gtfs_longitude: jsonStn["gtfs_longitude"].doubleValue)
             
             bartStns.append(bartStn)
         }
@@ -92,14 +92,20 @@ struct BARTAPI {
     static func findClosestStation(currentLocation: CLLocation) -> BARTStationCodable {
         var dists = [Double]()
         let stns = readBARTstnsJSON()
+        let defaultStn = BARTStationCodable(address: nil, city: nil, zipcode: nil, abbr: "PLZA", name: nil, gtfs_latitude: nil, gtfs_longitude: nil)
         
         for stn in stns {
-            let dist = currentLocation.distance(from: currentLocation)
-            print(stn.abbr as Any)
-            print(dist)
+            guard let lat = stn.gtfs_latitude, let lon = stn.gtfs_longitude else { return defaultStn }
+            let stnLoc = CLLocation(latitude: lat, longitude: lon)
+            let dist = stnLoc.distance(from: currentLocation)
+            dists.append(dist)
         }
-        return BARTStationCodable(address: nil, city: nil, zipcode: nil, abbr: nil, name: nil, gtfs_latitude: nil, gtfs_longitude: nil)
+        let minDist = dists.min()
+        let minDistIndex = dists.indices.filter { dists[$0] == minDist }
+        
+        return stns[minDistIndex[0]]
     }
+    
     // Take the data from the BART API and return a data BARTResult (part of BARTStore)
     // that has a single instance for each line
     static func BARTForecast(fromJSON data: Data) -> BARTResult {

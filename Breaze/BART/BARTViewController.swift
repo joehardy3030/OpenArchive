@@ -17,12 +17,10 @@ protocol ModalDelegate {
 
 class BARTViewController: UITableViewController, CLLocationManagerDelegate, ModalDelegate {
     
-   // let appDelegate = UIApplication.shared.delegate as! AppDelegate
     let locationManager =  CLLocationManager()
     var refresher: UIRefreshControl!
     var store = BARTStore()
     var BARTReadingArray = [BARTReading]()
-    //var BARTStations = [BARTStationCodable]()
     var currentStation = BARTStationCodable(address: nil, city: nil, zipcode: nil, abbr: nil, name: nil, gtfs_latitude: nil, gtfs_longitude: nil)
     var currentDirection = "s"
     @IBOutlet var inOutControl: UISegmentedControl!
@@ -41,10 +39,8 @@ class BARTViewController: UITableViewController, CLLocationManagerDelegate, Moda
         else {
             self.currentStation = BARTAPI.findStationWithAbbr(abbr: "DELN")
             self.updateBARTData(station: self.currentStation, direction: self.currentDirection, parameters: nil)
+            setNavTitle()
         }
-        self.currentStation = BARTAPI.findStationWithAbbr(abbr: "DELN")
-        setNavTitle()
-        self.updateBARTData(station: self.currentStation, direction: self.currentDirection, parameters: nil)
     }
     
     func locationManager(_ manager: CLLocationManager,
@@ -54,8 +50,10 @@ class BARTViewController: UITableViewController, CLLocationManagerDelegate, Moda
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let locValue: CLLocation = manager.location else { return }
+        let station = BARTAPI.findClosestStation(currentLocation: locValue)
+        self.currentStation = station
         self.updateBARTData(station: self.currentStation, direction: self.currentDirection, parameters: nil)
-        print("location = \(locValue.coordinate.latitude) \(locValue.coordinate.longitude)")
+        setNavTitle()
     }
     
     override func viewWillAppear(_ animated: Bool) {

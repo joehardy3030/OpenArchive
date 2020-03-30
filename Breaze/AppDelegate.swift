@@ -9,6 +9,7 @@
 import UIKit
 import CoreLocation
 import CoreData
+import UserNotifications
 
 extension Notification.Name {
     static let alocation = Notification.Name("location")
@@ -18,18 +19,20 @@ extension Notification.Name {
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    var locationManager: CLLocationManager!
     var currentLocation: CLLocation!
+    let locationManager = CLLocationManager()
+    let center = UNUserNotificationCenter.current()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
-        self.locationManager = CLLocationManager()
         self.locationManager.delegate = self
         self.locationManager.requestAlwaysAuthorization()
         if CLLocationManager.locationServicesEnabled() {
             self.locationManager.requestLocation()
         }
+        center.requestAuthorization(options: [.alert, .sound]) { granted, error in }
+
         return true
     }
 

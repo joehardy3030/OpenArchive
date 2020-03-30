@@ -50,7 +50,7 @@ class BARTViewController: UITableViewController, CLLocationManagerDelegate, Moda
     
     func locationManager(_ manager: CLLocationManager,
                          didFailWithError error: Error) {
-        print("error")
+        print("location error")
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -58,8 +58,8 @@ class BARTViewController: UITableViewController, CLLocationManagerDelegate, Moda
         let station = BARTAPI.findClosestStation(currentLocation: locValue)
         self.currentStation = station
         self.updateBARTData(station: self.currentStation, direction: self.currentDirection, parameters: nil)
-        locationManager.stopUpdatingLocation()
         setNavTitle()
+        locationManager.stopUpdatingLocation()
     }
     
     override func viewWillAppear(_ animated: Bool) {

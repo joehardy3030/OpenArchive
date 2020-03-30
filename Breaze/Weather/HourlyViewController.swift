@@ -12,13 +12,12 @@ import CoreData
 
 class HourlyViewController: UIViewController, UITableViewDataSource, UITableViewDelegate  {
     
-    let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var utils = Utils()
     var openWeather = OpenWeatherAPI()
     var weatherArray = [WeatherModel]()
     var city: CityModel?
-    var refresher: UIRefreshControl!
-    var currentLocation: CLLocation!
+    let refresher = UIRefreshControl()
+    let locationManager = CLLocationManager()
     
     @IBOutlet var locationLabel: UILabel!
     @IBOutlet weak var HourlyForecastTable: UITableView!
@@ -26,36 +25,37 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
         self.HourlyForecastTable.dataSource = self;
-        
-        refresher = UIRefreshControl()
         self.HourlyForecastTable.addSubview(self.refresher)
-        refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)
-        refresher.tintColor = UIColor.gray
+        self.refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)
+        self.refresher.tintColor = UIColor.gray
 
         NotificationCenter.default.addObserver(self, selector: #selector(receivedLocationNotification(notification:)), name: .alocation, object: nil)
-        self.currentLocation = appDelegate.currentLocation
+        if CLLocationManager.locationServicesEnabled() {
+             self.locationManager.delegate = self
+             self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+             self.locationManager.startUpdatingLocation()
+         }
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        let location = utils.fetchLastLocation()
-        if (location.latitude != nil) {
-            let parameters = [
-                "latitude": location.latitude!,
-                "longitude": location.longitude!
-            ]
-            self.updateOpenWeatherHourly(parameters: parameters)
-        }
-        else {
-            self.updateOpenWeatherHourly(parameters: nil)
-        }
+        updateOpenWeatherHourly()
     }
     
     @objc func receivedLocationNotification(notification: NSNotification){
         print("received notification")
     }
 
-    func updateOpenWeatherHourly(parameters: [String:String]?) {
+    func updateOpenWeatherHourly() {
+        var parameters: [String:String]?
+        let location = utils.fetchLastLocation()
+        
+        if (location.latitude != nil) {
+            parameters = [
+                "latitude": location.latitude!,
+                "longitude": location.longitude!
+            ]
+        }
         let url = openWeather.buildURL(queryType: .hourly, parameters: parameters)
         openWeather.getHourly(url: url) {
             (weatherModelArray: [WeatherModel]?, city: CityModel?) -> Void in
@@ -122,31 +122,21 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
-        // Do some reloading of data and update the table view's data source
-        // Fetch more objects from a web service, for example...
-
-        var parameters: [String:String]?
-        parameters = setParameters()
-        if (parameters != nil) {
-            self.updateOpenWeatherHourly(parameters: parameters)
-            print("Location not nil")
-        }
-        else {
-            self.updateOpenWeatherHourly(parameters: nil)
-            print("Location nil")
-        }
+        updateOpenWeatherHourly()
         refreshControl.endRefreshing()
     }
 
-    func setParameters() -> [String:String]? {
-        var parameters: [String:String]?
-        if (self.currentLocation?.coordinate.latitude) != nil {
-            parameters = [
-                "latitude": String(self.currentLocation.coordinate.latitude),
-                "longitude": String(self.currentLocation.coordinate.longitude)
-            ]
-        }
-        return parameters
-    }
+}
 
+extension HourlyViewController: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager,
+                         didFailWithError error: Error) {
+        print("error")
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let locValue: CLLocation = manager.location else { return }
+        print(locValue)
+        self.locationManager.stopUpdatingLocation()
+    }
 }

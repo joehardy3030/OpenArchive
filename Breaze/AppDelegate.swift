@@ -22,6 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var currentLocation: CLLocation!
     let locationManager = CLLocationManager()
     let center = UNUserNotificationCenter.current()
+    static let geoCoder = CLGeocoder()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -29,7 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.locationManager.delegate = self
         self.locationManager.requestAlwaysAuthorization()
         if CLLocationManager.locationServicesEnabled() {
-            self.locationManager.requestLocation()
+            self.locationManager.startMonitoringVisits()
         }
         center.requestAuthorization(options: [.alert, .sound]) { granted, error in }
 
@@ -121,11 +122,31 @@ extension AppDelegate: CLLocationManagerDelegate {
         let clLocation = CLLocation(latitude: visit.coordinate.latitude, longitude: visit.coordinate.longitude)
         
         // Get location description
+        AppDelegate.geoCoder.reverseGeocodeLocation(clLocation) { placemarks, _ in
+          if let place = placemarks?.first {
+            let description = "\(place)"
+            self.newVisitReceived(visit, description: description)
+          }
+        }
     }
     
     func newVisitReceived(_ visit: CLVisit, description: String) {
         let location = Location(visit: visit, descriptionString: description)
         
-        // Save location to disk
+        // 1
+        let content = UNMutableNotificationContent()
+        content.title = "New Journal entry 📌"
+        content.body = location.description
+        content.sound = .default
+
+        // 2
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+        let request = UNNotificationRequest(identifier: location.dateString, content: content, trigger: trigger)
+
+        // 3
+        center.add(request, withCompletionHandler: nil)
+
+        // Save location to disk        
+
     }
 }

@@ -13,18 +13,12 @@ import CoreData
 class WeatherViewController: UITableViewController { //, CLLocationManagerDelegate  {
     
     @IBOutlet var locationLabel: UILabel!
-    var locationManager: CLLocationManager!
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var currentLocation: CLLocation!
     var refresher: UIRefreshControl!
-    // https://www.hackingwithswift.com/read/22/2/requesting-location-core-location
     var utils = Utils()
     var openWeather = OpenWeatherAPI()
     var weatherArray = [WeatherModel]()
-    let appDelegate = UIApplication.shared.delegate as! AppDelegate
-    struct lastLocation {
-        var latitude: String?
-        var longitude: String?
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,8 +26,7 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         tableView.addSubview(refresher)
         refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)
         refresher.tintColor = UIColor.gray
-        var location = lastLocation()
-        location = fetchLastLocation()
+        let location = utils.fetchLastLocation()
         if (location.latitude != nil) {
             let parameters = [
                 "latitude": location.latitude!,
@@ -68,27 +61,6 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
             print(self.currentLocation?.coordinate.longitude as Any)
         }
 
-    }
-    
-    func fetchLastLocation() -> lastLocation {
-      //  self.currentLocation = appDelegate.currentLocation
-
-        var location = lastLocation()
-        let context = appDelegate.persistentContainer.viewContext
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "LastLocation")  
-        request.returnsObjectsAsFaults = false
-        do {
-            let result = try context.fetch(request)
-            for data in result as! [NSManagedObject] {
-                print(data.value(forKey: "longitude") as! String)
-                location.longitude = data.value(forKey: "longitude") as? String
-                location.latitude = data.value(forKey: "latitude") as? String
-            }
-            
-        } catch {
-            print("Failed")
-        }
-        return location
     }
 
     func updateOpenWeatherCurrent(parameters: [String:String]?) {

@@ -12,10 +12,9 @@ import CoreData
 
 class SmogViewController: UITableViewController {
 
-    var locationManager: CLLocationManager!
-    var currentLocation: CLLocation!
+   // var locationManager: CLLocationManager!
+  //  var currentLocation: CLLocation!
     var refresher: UIRefreshControl!
-    let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var store = SmogStore()
     var smogArray = [SmogDay]()
     var utils = Utils()
@@ -25,8 +24,6 @@ class SmogViewController: UITableViewController {
         
         // Pull the smog forecast data when loading the tab
         // and display it asychronously when the data arrives
-   
-//        NotificationCenter.default.addObserver(self, selector: #selector(receivedLocationNotification(notification:)), name: .alocation, object: nil)
         refresher = UIRefreshControl()
         self.tableView.addSubview(self.refresher)
         refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)

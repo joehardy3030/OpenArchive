@@ -98,6 +98,14 @@ class HourlyViewController: BreazeViewController, UITableViewDataSource, UITable
         return cell
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let indexPath = HourlyForecastTable.indexPathForSelectedRow else { return }
+        if let target = segue.destination as? HourlyDetailViewController {
+            let weatherCellData = self.weatherArray[indexPath.row]
+            target.hourForecast = weatherCellData
+        }
+    }
+    
     @objc override func handleRefresh(_ refreshControl: UIRefreshControl) {
         self.updateOpenWeatherHourly()
         refreshControl.endRefreshing()

@@ -43,7 +43,7 @@ class HourlyDetailViewController: UIViewController {
         }
  
         if let temp = forecast.temp {
-            tempLabel.text = "Temp: " + String(format:"%.0f", temp) + " F"
+            tempLabel.text = "Temp: " + String(format:"%.1f", temp) + " F"
         }
         
         if let avehumidity = forecast.avehumidity {

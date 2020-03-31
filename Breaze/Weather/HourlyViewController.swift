@@ -77,7 +77,7 @@ class HourlyViewController: BreazeViewController, UITableViewDataSource, UITable
         if let utcTime = weatherCellData.dt {
             let dateFormatter = DateFormatter()
             let date = Date(timeIntervalSince1970: Double(utcTime) )
-            dateFormatter.dateFormat = "MMM dd HH:mm"
+            dateFormatter.dateFormat = "MMM dd, h:mm a"
             let localDate = dateFormatter.string(from: date)
             cell.timeLabel?.text = localDate
         }
@@ -88,7 +88,7 @@ class HourlyViewController: BreazeViewController, UITableViewDataSource, UITable
         }
         if let wind_speed = weatherCellData.wind_speed {
 
-            if let wind_dir = utils.windDirName(num: weatherCellData.wind_dir) {
+            if let wind_dir = Utils.windDirName(num: weatherCellData.wind_dir) {
                 cell.windSpeedLabel?.text = wind_dir + " " + String(format:"%.0f", wind_speed) + " MPH"
             }
             else {

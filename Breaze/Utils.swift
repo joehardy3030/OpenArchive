@@ -149,7 +149,7 @@ class Utils {
         }
     }
 
-    func windDirName(num: Double?) -> String? {
+    static func windDirName(num: Double?) -> String? {
         if let num = num {
             switch num {
             case 0..<45:

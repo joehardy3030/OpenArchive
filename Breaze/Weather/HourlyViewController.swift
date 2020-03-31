@@ -138,5 +138,6 @@ extension HourlyViewController: CLLocationManagerDelegate {
         guard let locValue: CLLocation = manager.location else { return }
         print(locValue)
         self.locationManager.stopUpdatingLocation()
+        //updateOpenWeatherHourly()
     }
 }

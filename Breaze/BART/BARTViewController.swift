@@ -168,8 +168,7 @@ extension BARTViewController: ModalDelegate {
 
 extension BARTViewController: CLLocationManagerDelegate {
     
-    func locationManager(_ manager: CLLocationManager,
-                         didFailWithError error: Error) {
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("location error")
         self.currentStation = BARTAPI.findStationWithAbbr(abbr: "PLZA")
         updateStationData()

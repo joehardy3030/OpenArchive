@@ -10,40 +10,21 @@ import UIKit
 import CoreLocation
 import CoreData
 
-class HourlyViewController: UIViewController, UITableViewDataSource, UITableViewDelegate  {
-    
-    var utils = Utils()
-    var openWeather = OpenWeatherAPI()
-    var weatherArray = [WeatherModel]()
-    var city: CityModel?
-    let refresher = UIRefreshControl()
-    let locationManager = CLLocationManager()
+class HourlyViewController: BreazeViewController, UITableViewDataSource, UITableViewDelegate {
     
     @IBOutlet var locationLabel: UILabel!
     @IBOutlet weak var HourlyForecastTable: UITableView!
-       
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.HourlyForecastTable.dataSource = self;
         self.HourlyForecastTable.addSubview(self.refresher)
-        self.refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)
-        self.refresher.tintColor = UIColor.gray
-
-        NotificationCenter.default.addObserver(self, selector: #selector(receivedLocationNotification(notification:)), name: .alocation, object: nil)
-        if CLLocationManager.locationServicesEnabled() {
-             self.locationManager.delegate = self
-             self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
-             self.locationManager.startUpdatingLocation()
-         }
+        self.HourlyForecastTable.dataSource = self;
+        self.locationManager.startUpdatingLocation()
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         updateOpenWeatherHourly()
-    }
-    
-    @objc func receivedLocationNotification(notification: NSNotification){
-        print("received notification")
     }
 
     func updateOpenWeatherHourly() {
@@ -69,11 +50,7 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
             }
         }
     }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-    }
-    
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.weatherArray.count
     }
@@ -121,20 +98,16 @@ class HourlyViewController: UIViewController, UITableViewDataSource, UITableView
         return cell
     }
     
-    @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
-        updateOpenWeatherHourly()
+    @objc override func handleRefresh(_ refreshControl: UIRefreshControl) {
+        self.updateOpenWeatherHourly()
         refreshControl.endRefreshing()
     }
 
 }
 
-extension HourlyViewController: CLLocationManagerDelegate {
-    func locationManager(_ manager: CLLocationManager,
-                         didFailWithError error: Error) {
-        print("error")
-    }
+extension HourlyViewController {
     
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    override func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let locValue: CLLocation = manager.location else { return }
         print(locValue)
         self.locationManager.stopUpdatingLocation()

@@ -12,7 +12,7 @@
         <scene sceneID="re0-fr-pA4">
             <objects>
                 <tableViewController title="Weather View" id="gcX-n8-h88" customClass="WeatherViewController" customModule="Breaze" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="96" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="u6W-Ow-ypS">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="96" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="u6W-Ow-ypS">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -92,7 +92,7 @@
         <scene sceneID="qb1-pf-8pd">
             <objects>
                 <tableViewController id="ADa-Jb-JmE" userLabel="Smog View" customClass="SmogViewController" customModule="Breaze" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="100" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="SgM-Ri-ivR">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="100" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="SgM-Ri-ivR">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -178,7 +178,7 @@
         <scene sceneID="zwA-g3-o4t">
             <objects>
                 <tableViewController id="GwB-Wm-UvN" userLabel="BART View" customClass="BARTViewController" customModule="Breaze" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="80" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="o8f-sm-lTY">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="80" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="o8f-sm-lTY">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -438,13 +438,13 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="PvP-UD-IsE">
-                                <rect key="frame" x="20" y="52" width="355" height="266"/>
+                                <rect key="frame" x="20" y="52" width="355" height="163"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="OWi-f4-7sY">
-                                        <rect key="frame" x="0.0" y="0.0" width="355" height="47"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="355" height="26"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Time" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xeb-Ag-eLm">
-                                                <rect key="frame" x="0.0" y="0.0" width="355" height="47"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="355" height="26"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
@@ -452,25 +452,25 @@
                                         </subviews>
                                     </stackView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="253" text="Temp" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dfg-6I-xW0">
-                                        <rect key="frame" x="0.0" y="55" width="355" height="46.5"/>
+                                        <rect key="frame" x="0.0" y="34" width="355" height="26.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="Conditions" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jhR-DQ-sTb">
-                                        <rect key="frame" x="0.0" y="109.5" width="355" height="47"/>
+                                        <rect key="frame" x="0.0" y="68.5" width="355" height="26"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="254" verticalHuggingPriority="254" text="Wind" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h3X-X9-eIf">
-                                        <rect key="frame" x="0.0" y="164.5" width="355" height="46.5"/>
+                                        <rect key="frame" x="0.0" y="102.5" width="355" height="26.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Humidity" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vVm-li-oBf">
-                                        <rect key="frame" x="0.0" y="219" width="355" height="47"/>
+                                        <rect key="frame" x="0.0" y="137" width="355" height="26"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -493,7 +493,7 @@
                             <constraint firstItem="Pop-G5-EBH" firstAttribute="trailing" secondItem="PvP-UD-IsE" secondAttribute="trailing" id="MqU-Y0-HwF"/>
                             <constraint firstItem="PvP-UD-IsE" firstAttribute="leading" secondItem="rjw-lP-6zW" secondAttribute="leading" constant="20" id="Nce-85-XrR"/>
                             <constraint firstItem="PvP-UD-IsE" firstAttribute="top" secondItem="Pop-G5-EBH" secondAttribute="top" constant="8" id="bkc-CB-LKC"/>
-                            <constraint firstItem="Pop-G5-EBH" firstAttribute="bottom" secondItem="PvP-UD-IsE" secondAttribute="bottom" constant="300" id="f1f-3O-phN"/>
+                            <constraint firstItem="Pop-G5-EBH" firstAttribute="bottom" secondItem="PvP-UD-IsE" secondAttribute="bottom" multiplier="2.5" constant="80" id="f1f-3O-phN"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="Pop-G5-EBH"/>
                     </view>

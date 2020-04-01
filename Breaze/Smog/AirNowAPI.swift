@@ -95,11 +95,12 @@ struct AirNowAPI {
                 }
                 else {
                     siteNames.append(smogReading.siteName)
-                    let smogDay = smogForecastDay()
-                    smogDay?.siteName = smogReading.siteName
-                    smogDaySwitch(smogReading: smogReading, smogDay: smogDay!)
+                    //let smogDay = smogForecastDay()
+                    let smogDay = SmogDay(SO2: nil, NO2: nil, ozone: nil, PM25: nil, siteName: nil)
+                    smogDay.siteName = smogReading.siteName
+                    smogDaySwitch(smogReading: smogReading, smogDay: smogDay)
 
-                    finalSmogDays.append(smogDay!)
+                    finalSmogDays.append(smogDay)
                 }
             }
          /*   for smogDay in finalSmogDays {

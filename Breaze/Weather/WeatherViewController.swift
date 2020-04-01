@@ -120,16 +120,15 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         // Fetch more objects from a web service, for example...
 
         var parameters: [String:String]?
-        parameters = setParameters()
-        if (parameters != nil) {
-            self.updateOpenWeatherCurrent(parameters: parameters)
-            print("Location not nil")
+        let location = utils.fetchLastLocation()
+        
+        if (location.latitude != nil) {
+            parameters = [
+                "latitude": location.latitude!,
+                "longitude": location.longitude!
+            ]
         }
-        else {
-            self.updateOpenWeatherCurrent(parameters: nil)
-            print("Location nil")
-        }
-    
+        self.updateOpenWeatherCurrent(parameters: parameters)
         refreshControl.endRefreshing()
     }
     

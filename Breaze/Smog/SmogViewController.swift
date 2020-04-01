@@ -29,7 +29,6 @@ class SmogViewController: UITableViewController {
         refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)
         refresher.tintColor = UIColor.gray
         self.updateSmogForecast()
-        // Do any additional setup after loading the view, typically from a nib.
     }
     
     func updateSmogForecast() {

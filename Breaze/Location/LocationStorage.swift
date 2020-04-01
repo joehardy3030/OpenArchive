@@ -19,7 +19,24 @@ class LocationsStorage {
         let fileManager = FileManager.default
         documentsURL = try! fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
         self.fileManager = fileManager
-        self.locations = []
+        let jsonDecoder = JSONDecoder()
+
+        // 1
+        let locationFilesURLs = try! fileManager
+          .contentsOfDirectory(at: documentsURL, includingPropertiesForKeys: nil)
+        locations = locationFilesURLs.compactMap { url -> Location? in
+          // 2
+          guard !url.absoluteString.contains(".DS_Store") else {
+            return nil
+          }
+          // 3
+          guard let data = try? Data(contentsOf: url) else {
+            return nil
+          }
+          // 4
+          return try? jsonDecoder.decode(Location.self, from: data)
+          // 5
+          }.sorted(by: { $0.date < $1.date })
     }
     
     func saveLocationOnDisk(_ location: Location) {
@@ -38,5 +55,15 @@ class LocationsStorage {
 
       // 5
       locations.append(location)
+    }
+    
+    func saveCLLocationToDisk(_ clLocation: CLLocation) {
+      let currentDate = Date()
+      AppDelegate.geoCoder.reverseGeocodeLocation(clLocation) { placemarks, _ in
+        if let place = placemarks?.first {
+          let location = Location(clLocation.coordinate, date: currentDate, descriptionString: "\(place)")
+          self.saveLocationOnDisk(location)
+        }
+      }
     }
 }

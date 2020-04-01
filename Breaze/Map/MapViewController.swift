@@ -15,13 +15,20 @@ class MapViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        mapView.userTrackingMode = .follow
         // Do any additional setup after loading the view.
     }
     
-    @IBAction func addItemPressed(_ sender: Any) {
-    
+
+    @IBAction func addItem(_ sender: Any) {
+        guard let currentLocation = mapView.userLocation.location else {
+            print("can't set current location")
+            return
+        }
+        LocationsStorage.shared.saveCLLocationToDisk(currentLocation)
+        print(currentLocation.coordinate)
+        print("pressed")
     }
-
-
+    
+    
 }

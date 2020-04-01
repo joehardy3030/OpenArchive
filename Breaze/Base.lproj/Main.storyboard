@@ -526,7 +526,7 @@
                         <segue destination="As3-A3-L2b" kind="relationship" relationship="viewControllers" id="u7Y-xg-7CH"/>
                         <segue destination="6we-c3-N3D" kind="relationship" relationship="viewControllers" id="MSn-GF-NCM"/>
                         <segue destination="sMi-aR-XhM" kind="relationship" relationship="viewControllers" id="Lwu-7b-POs"/>
-                        <segue destination="sJc-P9-hFZ" kind="relationship" relationship="viewControllers" id="2gY-N8-s5p"/>
+                        <segue destination="iI0-Lt-mB7" kind="relationship" relationship="viewControllers" id="ohq-lg-yvb"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HuB-VB-40B" sceneMemberID="firstResponder"/>
@@ -593,7 +593,6 @@
         <!--Map-->
         <scene sceneID="YUC-5o-GY2">
             <objects>
-                <exit id="Hks-04-rHB" userLabel="Exit" sceneMemberID="exit"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cXy-hx-PTb" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <viewController id="vEP-Jm-XYp" customClass="MapViewController" customModule="Breaze" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Qqa-p8-w9Q">
@@ -614,9 +613,9 @@
                         <viewLayoutGuide key="safeArea" id="nhV-XR-7BV"/>
                     </view>
                     <navigationItem key="navigationItem" title="Map" id="VsH-ar-OeV">
-                        <barButtonItem key="rightBarButtonItem" title="Item" image="plus" catalog="system" id="2uy-KD-GGk">
+                        <barButtonItem key="rightBarButtonItem" image="plus" catalog="system" id="2uy-KD-GGk">
                             <connections>
-                                <action selector="addItemPressed:" destination="Hks-04-rHB" id="0C9-Sw-ZKL"/>
+                                <action selector="addItem:" destination="vEP-Jm-XYp" id="QbR-OW-2ov"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -627,39 +626,68 @@
             </objects>
             <point key="canvasLocation" x="1600.8" y="2067.6161919040483"/>
         </scene>
-        <!--List-->
-        <scene sceneID="PGr-p0-O8A">
+        <!--Places-->
+        <scene sceneID="f6C-5O-5be">
             <objects>
-                <navigationController id="sJc-P9-hFZ" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="List" image="pencil.and.ellipsis.rectangle" catalog="system" id="f2v-hb-QNu"/>
+                <tableViewController id="lD9-nv-Ww5" customClass="PlacesTableViewController" customModule="Breaze" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="RUY-Je-GMk">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="PlaceCell" textLabel="Vhi-aR-7Us" detailTextLabel="zuy-qm-7VT" style="IBUITableViewCellStyleSubtitle" id="2rJ-fn-6Km">
+                                <rect key="frame" x="0.0" y="28" width="375" height="55.5"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="2rJ-fn-6Km" id="pZv-nc-MaW">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="55.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Vhi-aR-7Us">
+                                            <rect key="frame" x="16" y="10" width="33.5" height="20.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Detail" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="zuy-qm-7VT">
+                                            <rect key="frame" x="16" y="31.5" width="33" height="14.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="lD9-nv-Ww5" id="bN5-dZ-dic"/>
+                            <outlet property="delegate" destination="lD9-nv-Ww5" id="DR3-5Q-v4c"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Places" id="Nrm-2I-Hqt"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="XCF-9Y-1uk" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1601" y="2741"/>
+        </scene>
+        <!--Places-->
+        <scene sceneID="ukF-eC-vCi">
+            <objects>
+                <navigationController id="iI0-Lt-mB7" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Places" image="list.dash" catalog="system" id="TdP-I9-arc"/>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="udE-7R-hy6">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="IAB-Ei-vl0">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
-                        <segue destination="G2b-k4-EjK" kind="relationship" relationship="rootViewController" id="z95-Mn-ced"/>
+                        <segue destination="lD9-nv-Ww5" kind="relationship" relationship="rootViewController" id="dOb-Ge-eSr"/>
                     </connections>
                 </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Nvv-ue-rQE" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ssl-Fd-Khj" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="863" y="2740"/>
-        </scene>
-        <!--View Controller-->
-        <scene sceneID="beT-nz-Jpv">
-            <objects>
-                <viewController id="G2b-k4-EjK" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="aVv-nj-58e">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                        <viewLayoutGuide key="safeArea" id="1ZN-Yg-omL"/>
-                    </view>
-                    <navigationItem key="navigationItem" id="1ql-4K-xVs"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="jyH-GM-Ua1" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1596" y="2744"/>
+            <point key="canvasLocation" x="884" y="2740"/>
         </scene>
         <!--Map-->
         <scene sceneID="qYD-cg-pza">
@@ -682,8 +710,8 @@
     </scenes>
     <resources>
         <image name="bart_icon" width="28" height="23"/>
+        <image name="list.dash" catalog="system" width="128" height="85"/>
         <image name="map" catalog="system" width="128" height="113"/>
-        <image name="pencil.and.ellipsis.rectangle" catalog="system" width="128" height="81"/>
         <image name="plus" catalog="system" width="128" height="113"/>
         <image name="rain" width="47" height="39"/>
         <image name="system-map-weekday" width="1000" height="803"/>

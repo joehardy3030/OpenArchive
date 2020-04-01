@@ -95,24 +95,13 @@ struct AirNowAPI {
                 }
                 else {
                     siteNames.append(smogReading.siteName)
-                    //let smogDay = smogForecastDay()
                     let smogDay = SmogDay(SO2: nil, NO2: nil, ozone: nil, PM25: nil, siteName: nil)
                     smogDay.siteName = smogReading.siteName
                     smogDaySwitch(smogReading: smogReading, smogDay: smogDay)
-
                     finalSmogDays.append(smogDay)
                 }
             }
-         /*   for smogDay in finalSmogDays {
-                print("siteName \(smogDay.siteName)")
-                print("NO2 \(smogDay.NO2)")
-                print("SO2 \(smogDay.SO2)")
-                print("Ozone \(smogDay.ozone)")
-                print("PM2.5 \(smogDay.PM25)")
-            }
-        */
             return .success(finalSmogDays)
-            //return .success(finalSmogForecast)
         }
         catch let error {
             return .failure(error)
@@ -128,26 +117,11 @@ struct AirNowAPI {
             else {
                 return nil
         }
-      //  print(json)
         return SmogReading(parameter: parameter,
                         AQI: AQI,
                         siteName: siteName)
     }
     
-    private static func smogForecastDay() -> SmogDay? {
-        let SO2 = -1
-        let NO2 = -1
-        let ozone = -1
-        let PM25 = -1
-        let siteName = "siteName"
-        //print(parameter)
-        return SmogDay(SO2: SO2,
-                       NO2: NO2,
-                       ozone: ozone,
-                       PM25: PM25,
-                       siteName: siteName)
-    }
-
     private static func smogDaySwitch(smogReading: SmogReading, smogDay: SmogDay) {
         switch smogReading.parameter {
         case "SO2":

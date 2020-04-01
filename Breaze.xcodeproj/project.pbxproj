@@ -25,6 +25,8 @@
 		797EDBEC242D3D6C00584D3B /* BARTStationCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797EDBEB242D3D6C00584D3B /* BARTStationCodable.swift */; };
 		79929FD1243194D9004D7C6C /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79929FD0243194D9004D7C6C /* Location.swift */; };
 		79929FD32432E6BA004D7C6C /* BreazeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79929FD22432E6BA004D7C6C /* BreazeViewController.swift */; };
+		79929FD524351A03004D7C6C /* LocationStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79929FD424351A03004D7C6C /* LocationStorage.swift */; };
+		79929FD8243521DE004D7C6C /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79929FD7243521DE004D7C6C /* MapViewController.swift */; };
 		799C3C902345582F00D9341E /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C3C8F2345582F00D9341E /* HealthKit.framework */; };
 		79F4ECC423668CBE000BA3BB /* CityModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F4ECC323668CBE000BA3BB /* CityModel.swift */; };
 		79F8DC592363E3E400E5A1AA /* OpenWeatherAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F8DC582363E3E400E5A1AA /* OpenWeatherAPI.swift */; };
@@ -94,6 +96,8 @@
 		797EDBEB242D3D6C00584D3B /* BARTStationCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BARTStationCodable.swift; sourceTree = "<group>"; };
 		79929FD0243194D9004D7C6C /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		79929FD22432E6BA004D7C6C /* BreazeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreazeViewController.swift; sourceTree = "<group>"; };
+		79929FD424351A03004D7C6C /* LocationStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationStorage.swift; sourceTree = "<group>"; };
+		79929FD7243521DE004D7C6C /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		799C3C8E2345582E00D9341E /* Breaze.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Breaze.entitlements; sourceTree = "<group>"; };
 		799C3C8F2345582F00D9341E /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
 		79F4ECC323668CBE000BA3BB /* CityModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityModel.swift; sourceTree = "<group>"; };
@@ -177,8 +181,17 @@
 			isa = PBXGroup;
 			children = (
 				79929FD0243194D9004D7C6C /* Location.swift */,
+				79929FD424351A03004D7C6C /* LocationStorage.swift */,
 			);
 			path = Location;
+			sourceTree = "<group>";
+		};
+		79929FD6243521A0004D7C6C /* Map */ = {
+			isa = PBXGroup;
+			children = (
+				79929FD7243521DE004D7C6C /* MapViewController.swift */,
+			);
+			path = Map;
 			sourceTree = "<group>";
 		};
 		79F4ECC523668EEA000BA3BB /* Wunderground */ = {
@@ -268,10 +281,11 @@
 				79718BA720E5E02B0072DC22 /* LastLocation+CoreDataProperties.swift */,
 				79718BA620E5E02B0072DC22 /* LastLocation+CoreDataClass.swift */,
 				791CE1C020B252F100299F76 /* Utils.swift */,
-				D84F92CF203A856C00DD3855 /* Weather */,
-				D84F92D0203A85C600DD3855 /* Smog */,
-				79929FCF243194AC004D7C6C /* Location */,
 				794E5240220D3C3000C99092 /* BART */,
+				D84F92D0203A85C600DD3855 /* Smog */,
+				D84F92CF203A856C00DD3855 /* Weather */,
+				79929FD6243521A0004D7C6C /* Map */,
+				79929FCF243194AC004D7C6C /* Location */,
 				D85A4EF72022D0B600E480FB /* Assets.xcassets */,
 				D85A4EFC2022D0B600E480FB /* Info.plist */,
 			);
@@ -551,9 +565,11 @@
 				D84F92CE203A7E7800DD3855 /* SmogCell.swift in Sources */,
 				D84F92D2203A872200DD3855 /* WeatherCell.swift in Sources */,
 				793614D722113F3C006671C4 /* BARTReading.swift in Sources */,
+				79929FD8243521DE004D7C6C /* MapViewController.swift in Sources */,
 				D8715B9B2029216800BC13AA /* HourlyForecastHour.swift in Sources */,
 				791CE1C120B252F100299F76 /* Utils.swift in Sources */,
 				D85A4EEF2022D0B600E480FB /* AppDelegate.swift in Sources */,
+				79929FD524351A03004D7C6C /* LocationStorage.swift in Sources */,
 				793614D3220FEDF3006671C4 /* BARTStore.swift in Sources */,
 				797EDBEC242D3D6C00584D3B /* BARTStationCodable.swift in Sources */,
 				794E5242220D3C5F00C99092 /* BARTCell.swift in Sources */,

@@ -120,7 +120,7 @@ extension AppDelegate: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didVisit visit: CLVisit) {
         // create CLLocation from the coordinates of CLVisit
         let clLocation = CLLocation(latitude: visit.coordinate.latitude, longitude: visit.coordinate.longitude)
-        
+
         // Get location description
         AppDelegate.geoCoder.reverseGeocodeLocation(clLocation) { placemarks, _ in
           if let place = placemarks?.first {
@@ -128,11 +128,13 @@ extension AppDelegate: CLLocationManagerDelegate {
             self.newVisitReceived(visit, description: description)
           }
         }
+
     }
     
     func newVisitReceived(_ visit: CLVisit, description: String) {
         let location = Location(visit: visit, descriptionString: description)
-        
+        LocationsStorage.shared.saveLocationOnDisk(location)
+
         // 1
         let content = UNMutableNotificationContent()
         content.title = "New Journal entry 📌"

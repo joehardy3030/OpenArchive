@@ -36,7 +36,7 @@ class LocationsStorage {
             // 4
             return try? jsonDecoder.decode(Location.self, from: data)
             // 5
-        }.sorted(by: { $0.date < $1.date })
+        }.sorted(by: { $0.date > $1.date })
     }
     
     func saveLocationOnDisk(_ location: Location) {

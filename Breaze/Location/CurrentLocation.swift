@@ -24,6 +24,7 @@ class CurrentLocation {
     func locationNotification(location: CLLocation?) {
         if let location = location {
             NotificationCenter.default.post(name: .newCurrentLocation, object: self, userInfo: ["location": location])
+           // LocationsStorage.shared.saveCLLocationToDisk(location)
         }
     }
     

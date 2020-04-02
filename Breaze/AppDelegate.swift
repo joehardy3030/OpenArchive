@@ -96,13 +96,19 @@ extension AppDelegate: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager,
                          didUpdateLocations locations: [CLLocation]){
-    
+        let cl = CurrentLocation()
+        self.locationManager.stopUpdatingLocation()
+        guard let location = manager.location else { return }
+        self.currentLocation = location
+        cl.locationNotification(location: location)
+        print("App delegate updated location")
     }
     
     func locationManager(_ manager: CLLocationManager, didVisit visit: CLVisit) {
         // create CLLocation from the coordinates of CLVisit
         let clLocation = CLLocation(latitude: visit.coordinate.latitude, longitude: visit.coordinate.longitude)
-
+        self.currentLocation = clLocation
+        
         // Get location description
         AppDelegate.geoCoder.reverseGeocodeLocation(clLocation) { placemarks, _ in
           if let place = placemarks?.first {

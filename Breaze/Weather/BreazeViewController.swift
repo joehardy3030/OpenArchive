@@ -23,11 +23,15 @@ class BreazeViewController: UIViewController  {
         super.viewDidLoad()
         self.refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)
         self.refresher.tintColor = UIColor.gray
-        NotificationCenter.default.addObserver(
-             self,
-             selector: #selector(newLocationAdded(_:)),
-             name: .newLocationSaved,
-             object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(newLocationAdded(_:)),
+                                               name: .newLocationSaved,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(newCurrentLocation(_:)),
+                                               name: .newCurrentLocation,
+                                               object: nil)
+
         if CLLocationManager.locationServicesEnabled() {
              self.locationManager.delegate = self
              self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
@@ -39,6 +43,10 @@ class BreazeViewController: UIViewController  {
     }
     
     @objc func newLocationAdded(_ notification: Notification) {
+      // 3
+     }
+
+    @objc func newCurrentLocation(_ notification: Notification) {
       // 3
      }
 

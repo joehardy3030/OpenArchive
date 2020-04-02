@@ -10,17 +10,17 @@ import UIKit
 
 class SmogDay: NSObject {
     
-    var SO2: Int
-    var NO2: Int
-    var ozone: Int
-    var PM25: Int
-    var siteName: String
+    var SO2: Int?
+    var NO2: Int?
+    var ozone: Int?
+    var PM25: Int?
+    var siteName: String?
     
-    init(SO2: Int,
-         NO2: Int,
-         ozone: Int,
-         PM25: Int,
-         siteName: String) {
+    init(SO2: Int?,
+         NO2: Int?,
+         ozone: Int?,
+         PM25: Int?,
+         siteName: String?) {
         self.SO2 = SO2
         self.NO2 = NO2
         self.ozone = ozone

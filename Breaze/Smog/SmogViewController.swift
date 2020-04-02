@@ -29,7 +29,6 @@ class SmogViewController: UITableViewController {
         refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)
         refresher.tintColor = UIColor.gray
         self.updateSmogForecast()
-        // Do any additional setup after loading the view, typically from a nib.
     }
     
     func updateSmogForecast() {
@@ -86,17 +85,40 @@ class SmogViewController: UITableViewController {
         // will appear in the tableview
         let smogReading = self.smogArray[indexPath.row]
         
-        cell.siteNameLabel?.text = smogReading.siteName
+        if let siteName = smogReading.siteName {
+            cell.siteNameLabel?.text = siteName
+        }
+        else {
+            cell.siteNameLabel?.text = "n/a"
+            cell.siteNameLabel?.textColor = .gray
+        }
 
-        cell.PM25Label?.text = String(smogReading.PM25)
-        cell.PM25Label?.textColor = getTextColor(AQI: smogReading.PM25)
-        
-        cell.ozoneLabel?.text = String(smogReading.ozone)
-        cell.ozoneLabel?.textColor = getTextColor(AQI: smogReading.ozone)
- //       cell.SO2Label?.text = String(smogReading.SO2)
-        
-        cell.NO2Label?.text = String(smogReading.NO2)
-        cell.NO2Label?.textColor = getTextColor(AQI: smogReading.NO2)
+        if let pm25 = smogReading.PM25 {
+            cell.PM25Label?.text = String(pm25)
+            cell.PM25Label?.textColor = getTextColor(AQI: pm25)
+        }
+        else {
+            cell.PM25Label?.text = "n/a"
+            cell.PM25Label?.textColor = .gray
+        }
+
+        if let ozone = smogReading.ozone {
+            cell.ozoneLabel?.text = String(ozone)
+            cell.ozoneLabel?.textColor = getTextColor(AQI: ozone)
+        }
+        else {
+            cell.ozoneLabel?.text = "n/a"
+            cell.ozoneLabel?.textColor = .gray
+        }
+ 
+        if let NO2 = smogReading.NO2 {
+            cell.NO2Label?.text = String(NO2)
+            cell.NO2Label?.textColor = getTextColor(AQI: NO2)
+        }
+        else {
+            cell.NO2Label?.text = "n/a"
+            cell.NO2Label?.textColor = .gray
+        }
 
         return cell
     }

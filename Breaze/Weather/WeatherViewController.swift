@@ -15,17 +15,16 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
     @IBOutlet var locationLabel: UILabel!
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var currentLocation: CLLocation!
-    var refresher: UIRefreshControl!
+    let refresher = UIRefreshControl()
     var utils = Utils()
     var openWeather = OpenWeatherAPI()
     var weatherArray = [WeatherModel]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        refresher = UIRefreshControl()
-        tableView.addSubview(refresher)
-        refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)
-        refresher.tintColor = UIColor.gray
+        tableView.addSubview(self.refresher)
+        self.refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)
+        self.refresher.tintColor = UIColor.gray
         let location = utils.fetchLastLocation()
         if (location.latitude != nil) {
             let parameters = [
@@ -121,16 +120,15 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         // Fetch more objects from a web service, for example...
 
         var parameters: [String:String]?
-        parameters = setParameters()
-        if (parameters != nil) {
-            self.updateOpenWeatherCurrent(parameters: parameters)
-            print("Location not nil")
+        let location = utils.fetchLastLocation()
+        
+        if (location.latitude != nil) {
+            parameters = [
+                "latitude": location.latitude!,
+                "longitude": location.longitude!
+            ]
         }
-        else {
-            self.updateOpenWeatherCurrent(parameters: nil)
-            print("Location nil")
-        }
-    
+        self.updateOpenWeatherCurrent(parameters: parameters)
         refreshControl.endRefreshing()
     }
     

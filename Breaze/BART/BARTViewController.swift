@@ -15,51 +15,30 @@ protocol ModalDelegate {
     func changeStation(station: BARTStationCodable, direction: String)
 }
 
-class BARTViewController: UITableViewController, CLLocationManagerDelegate, ModalDelegate {
+enum BARTDirection: String {
+    case north = "n"
+    case south = "s"
+}
+
+class BARTViewController: UITableViewController  { //CLLocationManagerDelegate { //, ModalDelegate {
     
     let locationManager =  CLLocationManager()
-    var refresher: UIRefreshControl!
+    var refresher = UIRefreshControl()
     let utils = Utils()
     var store = BARTStore()
     var BARTReadingArray = [BARTReading]()
     var currentStation = BARTStationCodable(address: nil, city: nil, zipcode: nil, abbr: nil, name: nil, gtfs_latitude: nil, gtfs_longitude: nil)
-    var currentDirection = "s"
+    var currentDirection = BARTDirection.south
     @IBOutlet var inOutControl: UISegmentedControl!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let refresher = UIRefreshControl()
-        refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)
-        refresher.tintColor = UIColor.gray
+        self.refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)
+        self.refresher.tintColor = UIColor.gray
         self.refreshControl = refresher
+        self.locationManager.delegate = self
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
         self.handleLocationGetEtd()
-    }
-    
-    func handleLocationGetEtd() {
-        if CLLocationManager.locationServicesEnabled() {
-            locationManager.delegate = self
-            locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
-            locationManager.startUpdatingLocation()
-        }
-        else {
-            self.currentStation = BARTAPI.findStationWithAbbr(abbr: "DELN")
-            self.updateBARTData(station: self.currentStation, direction: self.currentDirection, parameters: nil)
-            setNavTitle()
-        }
-    }
-    
-    func locationManager(_ manager: CLLocationManager,
-                         didFailWithError error: Error) {
-        print("error")
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let locValue: CLLocation = manager.location else { return }
-        let station = BARTAPI.findClosestStation(currentLocation: locValue)
-        self.currentStation = station
-        self.updateBARTData(station: self.currentStation, direction: self.currentDirection, parameters: nil)
-        locationManager.stopUpdatingLocation()
-        setNavTitle()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -71,31 +50,32 @@ class BARTViewController: UITableViewController, CLLocationManagerDelegate, Moda
         // Dispose of any resources that can be recreated.
     }
     
+    func handleLocationGetEtd() {
+        if CLLocationManager.locationServicesEnabled() {
+            self.locationManager.startUpdatingLocation()
+        }
+        else {
+            self.currentStation = BARTAPI.findStationWithAbbr(abbr: "BERK")
+            updateStationData()
+        }
+    }
+
+    func updateStationData() {
+        self.updateBARTData(station: self.currentStation, direction: self.currentDirection, parameters: nil)
+        setNavTitle()
+    }
+    
     @IBAction func SettingsButton(_ sender: UIBarButtonItem) {
-        print("Settings")
-        //let modalViewController = BARTModal()
         let modalViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "BARTModal") as! BARTModal
 
         let navigationController = UINavigationController(rootViewController: modalViewController)
         modalViewController.delegate = self
         self.present(navigationController, animated: true, completion: nil)
-        //self.present(modalViewController, animated: true, completion: nil)
     }
 
-    func changeStation(station: BARTStationCodable, direction: String) {
-        // This function is executed when returning from the station selection modal
-        self.currentStation = station
-        setDirection()
-        print(self.currentStation.abbr as Any)
-        setNavTitle()
-        self.updateBARTData(station: currentStation, direction: direction, parameters: nil)
-    }
-    
     @IBAction func inOutChanged(_ sender: Any) {
-        // this function is executed when the UISegmentedControl is toggled
-        //setNavTitle()
         setDirection()
-        self.updateBARTData(station: currentStation, direction: currentDirection, parameters: nil)
+        updateStationData()
     }
     
     func setNavTitle() {
@@ -106,18 +86,18 @@ class BARTViewController: UITableViewController, CLLocationManagerDelegate, Moda
         switch inOutControl.selectedSegmentIndex
         {
         case 0:
-            self.currentDirection = "s"
+            self.currentDirection = .south
         case 1:
-            self.currentDirection = "n"
+            self.currentDirection = .north
         default:
             break
         }
     }
     
-    func updateBARTData(station: BARTStationCodable, direction: String, parameters: [String:String]?) {
+    func updateBARTData(station: BARTStationCodable, direction: BARTDirection, parameters: [String:String]?) {
         store.fetchBARTResult(location: parameters,
                               station: station,
-                              direction: direction){
+                              direction: direction.rawValue){
             (BARTResult) -> Void in
             switch BARTResult {
             case let .success(finalBARTReading):
@@ -169,16 +149,37 @@ class BARTViewController: UITableViewController, CLLocationManagerDelegate, Moda
         }
         return lineColor
     }
-
     
     @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
-    
-        self.updateBARTData(station: currentStation, direction: currentDirection, parameters: nil)
+        updateStationData()
         refreshControl.endRefreshing()
     }
 
-
 }
 
+extension BARTViewController: ModalDelegate {
+    func changeStation(station: BARTStationCodable, direction: String) {
+        // This function is executed when returning from the station selection modal
+        self.currentStation = station
+        setDirection()
+        updateStationData()
+    }
+}
 
-
+extension BARTViewController: CLLocationManagerDelegate {
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("location error")
+        self.currentStation = BARTAPI.findStationWithAbbr(abbr: "PLZA")
+        updateStationData()
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        self.locationManager.stopUpdatingLocation()
+        guard let locValue: CLLocation = manager.location else { return }
+        let station = BARTAPI.findClosestStation(currentLocation: locValue)
+        self.currentStation = station
+        updateStationData()
+    }
+    
+}

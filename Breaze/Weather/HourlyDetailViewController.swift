@@ -20,20 +20,34 @@ class HourlyDetailViewController: UIViewController {
     @IBOutlet var MSLPLabel: UILabel!
     @IBOutlet var humidityLabel: UILabel!
     
-    var hourlyForecastHour: HourlyForecastHour!
-    var utils = Utils()
-    
+    var hourForecast: WeatherModel?
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        guard let forecast = hourForecast else { return }
         
-        timeLabel.text = "Time: " + hourlyForecastHour.civil
-        conditionsLabel.text = "Conditions: " + utils.switchConditionsText(icon: hourlyForecastHour.icon)
-        tempLabel.text = "Temperature: " + hourlyForecastHour.temp + " F"
-        humidityLabel.text = "Humidity: " + hourlyForecastHour.humidity + "%"
-        windLabel.text = "Wind: " + hourlyForecastHour.dir + " " + hourlyForecastHour.wspd + " MPH"
-        UVILabel.text = "UVI: " + hourlyForecastHour.uvi
-        feelslikeLabel.text = "Feels like: " + hourlyForecastHour.feelslike + " F"
-        dewpointLabel.text = "Dewpoint: " + hourlyForecastHour.dewpoint + " F"
-        MSLPLabel.text = "MSLP: " + hourlyForecastHour.mslp + " inHg"
+        if let utcTime = forecast.dt {
+            let dateFormatter = DateFormatter()
+            let date = Date(timeIntervalSince1970: Double(utcTime) )
+            dateFormatter.dateFormat = "MMM dd, h:mm a"
+            let localDate = dateFormatter.string(from: date)
+            timeLabel.text = "Time: " + localDate
+        }
+        
+        if let conditions = forecast.conditions {
+            conditionsLabel.text = "Conditions: " + conditions
+        }
+
+        if let wind_dir = Utils.windDirName(num: forecast.wind_dir), let wind_speed = forecast.wind_speed {
+            windLabel.text = "Wind: " + wind_dir + " " + String(format:"%.0f", wind_speed) + "MPH"
+        }
+ 
+        if let temp = forecast.temp {
+            tempLabel.text = "Temp: " + String(format:"%.1f", temp) + " F"
+        }
+        
+        if let avehumidity = forecast.avehumidity {
+            humidityLabel.text = "Humidity: " + String(format:"%.0f", avehumidity) + "%"
+        }
     }
 }

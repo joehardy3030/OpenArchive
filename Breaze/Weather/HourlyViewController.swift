@@ -14,29 +14,64 @@ class HourlyViewController: BreazeViewController, UITableViewDataSource, UITable
     
     @IBOutlet var locationLabel: UILabel!
     @IBOutlet weak var HourlyForecastTable: UITableView!
+//    let appDelegate = UIApplication.shared.delegate as! AppDelegate
 
     override func viewDidLoad() {
         super.viewDidLoad()
         self.HourlyForecastTable.addSubview(self.refresher)
-        self.HourlyForecastTable.dataSource = self;
-        self.locationManager.startUpdatingLocation()
+        self.HourlyForecastTable.dataSource = self
+        updateWeather()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        updateOpenWeatherHourly()
+    }
+
+    func updateWeather() {
+        if CLLocationManager.locationServicesEnabled() {
+            CurrentLocation.shared.updateLocation()
+        }
+        else {
+            updateOpenWeatherHourly()
+        }
+    }
+    
+    @objc override func newLocationAdded(_ notification: Notification) {
+      // 3
+        print("received notification of new location")
+      //tableView.reloadData()
+    }
+    
+    @objc override func newCurrentLocation(_ notification: Notification) {
+      // 3
+        print("received notification of new current location")
+        if let loc = notification.userInfo {
+            if let location = loc["location"] as? CLLocation {
+                print(location.coordinate)
+                updateOpenWeatherHourly(location: location)
+            }
+        }
+    }
+    
+    func updateOpenWeatherHourly(location: CLLocation) {
+        let parameters = [
+            "latitude": String(Double(location.coordinate.latitude)),
+            "longitude": String(Double(location.coordinate.longitude)),
+        ]
+        buildURLUpdateWeather(parameters: parameters)
     }
 
     func updateOpenWeatherHourly() {
         var parameters: [String:String]?
-        let location = utils.fetchLastLocation()
-        
-        if (location.latitude != nil) {
-            parameters = [
-                "latitude": location.latitude!,
-                "longitude": location.longitude!
-            ]
-        }
+        guard let location = LocationsStorage.shared.locations.last else { return }
+        parameters = [
+            "latitude": String(location.latitude),
+            "longitude": String(location.longitude)
+        ]
+        buildURLUpdateWeather(parameters: parameters)
+    }
+    
+    func buildURLUpdateWeather(parameters: [String:String]?) {
         let url = openWeather.buildURL(queryType: .hourly, parameters: parameters)
         openWeather.getHourly(url: url) {
             (weatherModelArray: [WeatherModel]?, city: CityModel?) -> Void in
@@ -107,18 +142,29 @@ class HourlyViewController: BreazeViewController, UITableViewDataSource, UITable
     }
     
     @objc override func handleRefresh(_ refreshControl: UIRefreshControl) {
-        self.updateOpenWeatherHourly()
+        //self.updateOpenWeatherHourly()
+        updateWeather()
         refreshControl.endRefreshing()
     }
 
 }
 
+/*
 extension HourlyViewController {
     
     override func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        self.locationManager.stopUpdatingLocation()
         guard let locValue: CLLocation = manager.location else { return }
         print(locValue)
-        self.locationManager.stopUpdatingLocation()
-        //updateOpenWeatherHourly()
+        updateOpenWeatherHourly(location: locValue)
     }
+    
+    override func locationManager(_ manager: CLLocationManager,
+                                  didFailWithError error: Error) {
+        self.locationManager.stopUpdatingLocation()
+        print("Hourly View controller location error")
+        updateOpenWeatherHourly()
+    }
+    
 }
+*/

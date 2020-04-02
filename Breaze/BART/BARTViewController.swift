@@ -9,7 +9,6 @@
 import UIKit
 import CoreLocation
 import CoreData
-//import Alamofire
 
 protocol ModalDelegate {
     func changeStation(station: BARTStationCodable, direction: String)
@@ -20,14 +19,14 @@ enum BARTDirection: String {
     case south = "s"
 }
 
-class BARTViewController: UITableViewController  { //CLLocationManagerDelegate { //, ModalDelegate {
+class BARTViewController: UITableViewController  {
     
     let locationManager =  CLLocationManager()
     var refresher = UIRefreshControl()
     let utils = Utils()
     var store = BARTStore()
     var BARTReadingArray = [BARTReading]()
-    var currentStation = BARTStationCodable(address: nil, city: nil, zipcode: nil, abbr: nil, name: nil, gtfs_latitude: nil, gtfs_longitude: nil)
+    var currentStation = BARTStationCodable()
     var currentDirection = BARTDirection.south
     @IBOutlet var inOutControl: UISegmentedControl!
     
@@ -47,7 +46,6 @@ class BARTViewController: UITableViewController  { //CLLocationManagerDelegate {
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     func handleLocationGetEtd() {
@@ -170,14 +168,20 @@ extension BARTViewController: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("location error")
-        self.currentStation = BARTAPI.findStationWithAbbr(abbr: "PLZA")
+        self.locationManager.stopUpdatingLocation()
+        if let location = LocationsStorage.shared.locations.last {
+            self.currentStation = BARTAPI.findClosestStation(currentLocation: location.clLocation)
+        }
+        else {
+            self.currentStation = BARTAPI.findStationWithAbbr(abbr: "PLZA")
+        }
         updateStationData()
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         self.locationManager.stopUpdatingLocation()
-        guard let locValue: CLLocation = manager.location else { return }
-        let station = BARTAPI.findClosestStation(currentLocation: locValue)
+        guard let location: CLLocation = manager.location else { return }
+        let station = BARTAPI.findClosestStation(currentLocation: location)
         self.currentStation = station
         updateStationData()
     }

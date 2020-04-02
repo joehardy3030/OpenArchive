@@ -12,8 +12,7 @@ import CoreData
 
 class SmogViewController: UITableViewController {
 
-   // var locationManager: CLLocationManager!
-  //  var currentLocation: CLLocation!
+    var locationManager = CLLocationManager()
     var refresher: UIRefreshControl!
     var store = SmogStore()
     var smogArray = [SmogDay]()
@@ -21,9 +20,6 @@ class SmogViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Pull the smog forecast data when loading the tab
-        // and display it asychronously when the data arrives
         refresher = UIRefreshControl()
         self.tableView.addSubview(self.refresher)
         refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)
@@ -32,23 +28,14 @@ class SmogViewController: UITableViewController {
     }
     
     func updateSmogForecast() {
-        let lastLoc = utils.fetchLastLocation()
-           print(lastLoc)
-           
-           var location = [
-               "latitude": "37.785834",
-               "longitude": "-122.406417"
-           ]
-           if (lastLoc.latitude != nil) {
-               location = [
-                   "latitude": lastLoc.latitude!,
-                   "longitude": lastLoc.longitude!
-               ]
-           }
-           else {
-               print("lastLoc is nil")
-           }
-        store.fetchSmogForecast(location: location)
+        var parameters: [String:String]?
+        guard let location = LocationsStorage.shared.locations.last else { return }
+        parameters = [
+            "latitude": String(location.latitude),
+            "longitude": String(location.longitude)
+        ]
+        
+        store.fetchSmogForecast(location: parameters)
          {
              (SmogForecastResult) -> Void in
              
@@ -62,6 +49,29 @@ class SmogViewController: UITableViewController {
                  print("Error fetching simple forecast: \(error)")
              }
          }
+    }
+    
+    func updateSmogForecast(location: CLLocation) {
+        var parameters: [String:String]?
+        parameters = [
+            "latitude": String(location.coordinate.latitude),
+            "longitude": String(location.coordinate.longitude)
+        ]
+        
+        store.fetchSmogForecast(location: parameters)
+        {
+            (SmogForecastResult) -> Void in
+            
+            switch SmogForecastResult {
+            case let .success(smogForecast):
+                self.smogArray = smogForecast
+                DispatchQueue.main.async{
+                    self.tableView.reloadData()
+                }
+            case let .failure(error):
+                print("Error fetching simple forecast: \(error)")
+            }
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -152,3 +162,19 @@ class SmogViewController: UITableViewController {
 
 }
 
+extension SmogViewController: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("location error")
+        self.locationManager.stopUpdatingLocation()
+        if let location = LocationsStorage.shared.locations.last {
+            self.updateSmogForecast(location: location.clLocation)
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        self.locationManager.stopUpdatingLocation()
+        if let location: CLLocation = manager.location {
+            self.updateSmogForecast(location: location)
+        }
+    }
+}

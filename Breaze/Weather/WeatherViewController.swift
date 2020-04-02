@@ -13,8 +13,9 @@ import CoreData
 class WeatherViewController: UITableViewController { //, CLLocationManagerDelegate  {
     
     @IBOutlet var locationLabel: UILabel!
-    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    //let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var currentLocation: CLLocation!
+    let locationManager = CLLocationManager()
     let refresher = UIRefreshControl()
     var utils = Utils()
     var openWeather = OpenWeatherAPI()
@@ -25,19 +26,14 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         tableView.addSubview(self.refresher)
         self.refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)
         self.refresher.tintColor = UIColor.gray
-        let location = utils.fetchLastLocation()
-        if (location.latitude != nil) {
-            let parameters = [
-                "latitude": location.latitude!,
-                "longitude": location.longitude!
-            ]
-            self.updateOpenWeatherCurrent(parameters: parameters)
+        self.locationManager.delegate = self
+        if CLLocationManager.locationServicesEnabled() {
+            self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+            self.locationManager.startUpdatingLocation()
         }
         else {
-            self.updateOpenWeatherCurrent(parameters: nil)
+            self.updateOpenWeatherCurrent()
         }
-        NotificationCenter.default.addObserver(self, selector: #selector(receivedLocationNotification(notification:)), name: .alocation, object: nil)
-
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -47,22 +43,28 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
+
+    func updateOpenWeatherCurrent(location: CLLocation) {
+         let parameters = [
+             "latitude": String(Double(location.coordinate.latitude)),
+             "longitude": String(Double(location.coordinate.longitude)),
+         ]
+        print(parameters)
+         buildURLUpdateWeather(parameters: parameters)
+     }
+
+     func updateOpenWeatherCurrent() {
+         var parameters: [String:String]?
+         guard let location = LocationsStorage.shared.locations.last else { return }
+         parameters = [
+             "latitude": String(location.latitude),
+             "longitude": String(location.longitude)
+         ]
+         buildURLUpdateWeather(parameters: parameters)
+     }
     
-    @objc func receivedLocationNotification(notification: NSNotification){
-        print("received notification")
-        var parameters: [String:String]?
-        self.currentLocation = appDelegate.currentLocation
-
-        DispatchQueue.main.async{
-            parameters = self.setParameters()
-            self.updateOpenWeatherCurrent(parameters: parameters)
-            print(self.currentLocation?.coordinate.latitude as Any)
-            print(self.currentLocation?.coordinate.longitude as Any)
-        }
-
-    }
-
-    func updateOpenWeatherCurrent(parameters: [String:String]?) {
+    func buildURLUpdateWeather(parameters: [String:String]?) {
+        
         let url = openWeather.buildURL(queryType: .current, parameters: parameters)
         openWeather.getCurrent(url: url) {
             (weatherModel: WeatherModel?, city: String?) -> Void in
@@ -118,30 +120,27 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
     @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
         // Do some reloading of data and update the table view's data source
         // Fetch more objects from a web service, for example...
-
-        var parameters: [String:String]?
-        let location = utils.fetchLastLocation()
         
-        if (location.latitude != nil) {
-            parameters = [
-                "latitude": location.latitude!,
-                "longitude": location.longitude!
-            ]
-        }
-        self.updateOpenWeatherCurrent(parameters: parameters)
+        self.updateOpenWeatherCurrent()
         refreshControl.endRefreshing()
     }
     
-    func setParameters() -> [String:String]? {
-        // when currentLocation is nil, this barfs
-        var parameters: [String:String]?
-        if (self.currentLocation?.coordinate.latitude) != nil {
-            parameters = [
-                "latitude": String(self.currentLocation.coordinate.latitude),
-                "longitude": String(self.currentLocation.coordinate.longitude)
-            ]
-        }
-        return parameters
+}
+
+extension WeatherViewController: CLLocationManagerDelegate {
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        self.locationManager.stopUpdatingLocation()
+        guard let locValue: CLLocation = manager.location else { return }
+        print(locValue)
+        updateOpenWeatherCurrent(location: locValue)
+    }
+    
+    func locationManager(_ manager: CLLocationManager,
+                                  didFailWithError error: Error) {
+        self.locationManager.stopUpdatingLocation()
+        print("Current weather controller location error")
+        updateOpenWeatherCurrent()
     }
     
 }

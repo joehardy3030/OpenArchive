@@ -17,6 +17,16 @@ class BARTStationCodable: Codable {
     let gtfs_latitude: Double?
     let gtfs_longitude: Double?
     
+    init() {
+        self.address = nil
+        self.city = nil
+        self.zipcode = nil
+        self.abbr = nil
+        self.name = nil
+        self.gtfs_latitude = nil
+        self.gtfs_longitude = nil
+    }
+    
     init(address: String?,
          city: String?,
          zipcode: Int?,

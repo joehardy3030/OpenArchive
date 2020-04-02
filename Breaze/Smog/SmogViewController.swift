@@ -13,7 +13,6 @@ import CoreData
 class SmogViewController: UITableViewController {
 
     var locationManager = CLLocationManager()
-    //var currentLocation: CLLocation!
     var refresher: UIRefreshControl!
     var store = SmogStore()
     var smogArray = [SmogDay]()

@@ -9,7 +9,6 @@
 import UIKit
 import CoreLocation
 import CoreData
-//import Alamofire
 
 protocol ModalDelegate {
     func changeStation(station: BARTStationCodable, direction: String)
@@ -47,7 +46,6 @@ class BARTViewController: UITableViewController  {
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     func handleLocationGetEtd() {

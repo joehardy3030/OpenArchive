@@ -11,10 +11,6 @@ import CoreLocation
 import CoreData
 import UserNotifications
 
-extension Notification.Name {
-    static let alocation = Notification.Name("location")
-}
-
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -39,11 +35,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-        self.saveContext()
+      //  self.saveContext()
     }
     
     // MARK: - Core Data stack
-    
+    /*
     lazy var persistentContainer: NSPersistentContainer = {
         /*
          The persistent container for the application. This implementation
@@ -86,7 +82,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
     }
-
+    */
 }
 
 
@@ -100,21 +96,7 @@ extension AppDelegate: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager,
                          didUpdateLocations locations: [CLLocation]){
-        let context = self.persistentContainer.viewContext
-        let entity = NSEntityDescription.entity(forEntityName: "LastLocation", in: context)
-        let lastLocation = NSManagedObject(entity: entity!, insertInto: context)
-        
-        self.currentLocation = locations.last
-        lastLocation.setValue(String(self.currentLocation.coordinate.latitude), forKey: "latitude")
-        lastLocation.setValue(String(self.currentLocation.coordinate.longitude), forKey: "longitude")
-        lastLocation.setValue(Date(), forKey: "dateSaved")
-        
-        DispatchQueue.main.async{
-            NotificationCenter.default.post(name: .alocation, object: nil)
-            print("location Updated")
-            self.saveContext()
-        }
-        
+    
     }
     
     func locationManager(_ manager: CLLocationManager, didVisit visit: CLVisit) {

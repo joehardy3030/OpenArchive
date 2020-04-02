@@ -139,7 +139,7 @@ extension WeatherViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager,
                                   didFailWithError error: Error) {
         self.locationManager.stopUpdatingLocation()
-        print("Hourly View controller location error")
+        print("Current weather controller location error")
         updateOpenWeatherCurrent()
     }
     

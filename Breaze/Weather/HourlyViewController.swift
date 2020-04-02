@@ -19,7 +19,7 @@ class HourlyViewController: BreazeViewController, UITableViewDataSource, UITable
         super.viewDidLoad()
         self.HourlyForecastTable.addSubview(self.refresher)
         self.HourlyForecastTable.dataSource = self
-        
+ 
         if CLLocationManager.locationServicesEnabled() {
             self.locationManager.startUpdatingLocation()
         }
@@ -32,6 +32,12 @@ class HourlyViewController: BreazeViewController, UITableViewDataSource, UITable
         super.viewWillAppear(animated)
     }
 
+    @objc override func newLocationAdded(_ notification: Notification) {
+      // 3
+        print("received notification of new location")
+      //tableView.reloadData()
+    }
+    
     func updateOpenWeatherHourly(location: CLLocation) {
         let parameters = [
             "latitude": String(Double(location.coordinate.latitude)),

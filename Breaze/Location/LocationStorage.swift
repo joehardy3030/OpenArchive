@@ -40,21 +40,23 @@ class LocationsStorage {
     }
     
     func saveLocationOnDisk(_ location: Location) {
-      // 1
-      let encoder = JSONEncoder()
-      let timestamp = location.date.timeIntervalSince1970
-
-      // 2
-      let fileURL = documentsURL.appendingPathComponent("\(timestamp)")
-
-      // 3
-      let data = try! encoder.encode(location)
-
-      // 4
-      try! data.write(to: fileURL)
-
-      // 5
-      locations.append(location)
+        // 1
+        let encoder = JSONEncoder()
+        let timestamp = location.date.timeIntervalSince1970
+        
+        // 2
+        let fileURL = documentsURL.appendingPathComponent("\(timestamp)")
+        
+        // 3
+        let data = try! encoder.encode(location)
+        
+        // 4
+        try! data.write(to: fileURL)
+        
+        // 5
+        locations.append(location)
+        
+        NotificationCenter.default.post(name: .newLocationSaved, object: self, userInfo: ["location": location])
     }
     
     func saveCLLocationToDisk(_ clLocation: CLLocation) {
@@ -66,4 +68,8 @@ class LocationsStorage {
         }
       }
     }
+}
+
+extension Notification.Name {
+  static let newLocationSaved = Notification.Name("newLocationSaved")
 }

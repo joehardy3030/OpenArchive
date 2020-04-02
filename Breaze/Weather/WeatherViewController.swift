@@ -26,8 +26,8 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
         tableView.addSubview(self.refresher)
         self.refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)
         self.refresher.tintColor = UIColor.gray
+        self.locationManager.delegate = self
         if CLLocationManager.locationServicesEnabled() {
-            self.locationManager.delegate = self
             self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
             self.locationManager.startUpdatingLocation()
         }
@@ -134,14 +134,15 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
 extension WeatherViewController: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        self.locationManager.stopUpdatingLocation()
         guard let locValue: CLLocation = manager.location else { return }
         print(locValue)
-        self.locationManager.stopUpdatingLocation()
         updateOpenWeatherCurrent(location: locValue)
     }
     
     func locationManager(_ manager: CLLocationManager,
                                   didFailWithError error: Error) {
+        self.locationManager.stopUpdatingLocation()
         print("Hourly View controller location error")
         updateOpenWeatherCurrent()
     }

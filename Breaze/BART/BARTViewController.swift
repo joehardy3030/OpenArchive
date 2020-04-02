@@ -20,7 +20,7 @@ enum BARTDirection: String {
     case south = "s"
 }
 
-class BARTViewController: UITableViewController  { 
+class BARTViewController: UITableViewController  {
     
     let locationManager =  CLLocationManager()
     var refresher = UIRefreshControl()
@@ -170,6 +170,7 @@ extension BARTViewController: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("location error")
+        self.locationManager.stopUpdatingLocation()
         self.currentStation = BARTAPI.findStationWithAbbr(abbr: "PLZA")
         updateStationData()
     }

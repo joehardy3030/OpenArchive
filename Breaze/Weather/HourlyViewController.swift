@@ -134,14 +134,15 @@ class HourlyViewController: BreazeViewController, UITableViewDataSource, UITable
 extension HourlyViewController {
     
     override func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        self.locationManager.stopUpdatingLocation()
         guard let locValue: CLLocation = manager.location else { return }
         print(locValue)
-        self.locationManager.stopUpdatingLocation()
         updateOpenWeatherHourly(location: locValue)
     }
     
     override func locationManager(_ manager: CLLocationManager,
                                   didFailWithError error: Error) {
+        self.locationManager.stopUpdatingLocation()
         print("Hourly View controller location error")
         updateOpenWeatherHourly()
     }

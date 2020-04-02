@@ -18,17 +18,31 @@ class HourlyViewController: BreazeViewController, UITableViewDataSource, UITable
     override func viewDidLoad() {
         super.viewDidLoad()
         self.HourlyForecastTable.addSubview(self.refresher)
-        self.HourlyForecastTable.dataSource = self;
-        self.locationManager.startUpdatingLocation()
+        self.HourlyForecastTable.dataSource = self
+        
+        if CLLocationManager.locationServicesEnabled() {
+            self.locationManager.startUpdatingLocation()
+        }
+        else {
+            self.updateOpenWeatherHourly()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        updateOpenWeatherHourly()
+    }
+
+    func updateOpenWeatherHourly(location: CLLocation) {
+        let parameters = [
+            "latitude": String(Double(location.coordinate.latitude)),
+            "longitude": String(Double(location.coordinate.longitude)),
+        ]
+        buildURLUpdateWeather(parameters: parameters)
     }
 
     func updateOpenWeatherHourly() {
         var parameters: [String:String]?
+        
         let location = utils.fetchLastLocation()
         
         if (location.latitude != nil) {
@@ -37,6 +51,10 @@ class HourlyViewController: BreazeViewController, UITableViewDataSource, UITable
                 "longitude": location.longitude!
             ]
         }
+        buildURLUpdateWeather(parameters: parameters)
+    }
+    
+    func buildURLUpdateWeather(parameters: [String:String]?) {
         let url = openWeather.buildURL(queryType: .hourly, parameters: parameters)
         openWeather.getHourly(url: url) {
             (weatherModelArray: [WeatherModel]?, city: CityModel?) -> Void in
@@ -119,6 +137,13 @@ extension HourlyViewController {
         guard let locValue: CLLocation = manager.location else { return }
         print(locValue)
         self.locationManager.stopUpdatingLocation()
-        //updateOpenWeatherHourly()
+        updateOpenWeatherHourly(location: locValue)
     }
+    
+    override func locationManager(_ manager: CLLocationManager,
+                                  didFailWithError error: Error) {
+        print("Hourly View controller location error")
+        updateOpenWeatherHourly()
+    }
+    
 }

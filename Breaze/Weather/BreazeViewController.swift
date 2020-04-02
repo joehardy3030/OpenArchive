@@ -47,11 +47,10 @@ class BreazeViewController: UIViewController  {
 extension BreazeViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager,
                          didFailWithError error: Error) {
-        print("error")
+        print("Breaze controller location error")
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         self.locationManager.stopUpdatingLocation()
-        //updateOpenWeatherHourly()
     }
 }

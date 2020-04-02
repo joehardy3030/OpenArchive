@@ -20,14 +20,14 @@ enum BARTDirection: String {
     case south = "s"
 }
 
-class BARTViewController: UITableViewController  { //CLLocationManagerDelegate { //, ModalDelegate {
+class BARTViewController: UITableViewController  { 
     
     let locationManager =  CLLocationManager()
     var refresher = UIRefreshControl()
     let utils = Utils()
     var store = BARTStore()
     var BARTReadingArray = [BARTReading]()
-    var currentStation = BARTStationCodable(address: nil, city: nil, zipcode: nil, abbr: nil, name: nil, gtfs_latitude: nil, gtfs_longitude: nil)
+    var currentStation = BARTStationCodable()
     var currentDirection = BARTDirection.south
     @IBOutlet var inOutControl: UISegmentedControl!
     

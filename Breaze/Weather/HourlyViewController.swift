@@ -20,19 +20,22 @@ class HourlyViewController: BreazeViewController, UITableViewDataSource, UITable
         super.viewDidLoad()
         self.HourlyForecastTable.addSubview(self.refresher)
         self.HourlyForecastTable.dataSource = self
-        if CLLocationManager.locationServicesEnabled() {
-       //     self.locationManager.startUpdatingLocation()
-        }
-        else {
-            self.updateOpenWeatherHourly()
-        }
-        CurrentLocation.shared.updateLocation()
+        updateWeather()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
 
+    func updateWeather() {
+        if CLLocationManager.locationServicesEnabled() {
+            CurrentLocation.shared.updateLocation()
+        }
+        else {
+            updateOpenWeatherHourly()
+        }
+    }
+    
     @objc override func newLocationAdded(_ notification: Notification) {
       // 3
         print("received notification of new location")
@@ -48,7 +51,6 @@ class HourlyViewController: BreazeViewController, UITableViewDataSource, UITable
                 updateOpenWeatherHourly(location: location)
             }
         }
-      //tableView.reloadData()
     }
     
     func updateOpenWeatherHourly(location: CLLocation) {
@@ -140,12 +142,14 @@ class HourlyViewController: BreazeViewController, UITableViewDataSource, UITable
     }
     
     @objc override func handleRefresh(_ refreshControl: UIRefreshControl) {
-        self.updateOpenWeatherHourly()
+        //self.updateOpenWeatherHourly()
+        updateWeather()
         refreshControl.endRefreshing()
     }
 
 }
 
+/*
 extension HourlyViewController {
     
     override func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -163,3 +167,4 @@ extension HourlyViewController {
     }
     
 }
+*/

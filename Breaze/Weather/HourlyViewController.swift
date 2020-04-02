@@ -42,15 +42,11 @@ class HourlyViewController: BreazeViewController, UITableViewDataSource, UITable
 
     func updateOpenWeatherHourly() {
         var parameters: [String:String]?
-        
-        let location = utils.fetchLastLocation()
-        
-        if (location.latitude != nil) {
-            parameters = [
-                "latitude": location.latitude!,
-                "longitude": location.longitude!
-            ]
-        }
+        guard let location = LocationsStorage.shared.locations.last else { return }
+        parameters = [
+            "latitude": String(location.latitude),
+            "longitude": String(location.longitude)
+        ]
         buildURLUpdateWeather(parameters: parameters)
     }
     

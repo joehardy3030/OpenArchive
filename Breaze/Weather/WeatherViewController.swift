@@ -13,7 +13,7 @@ import CoreData
 class WeatherViewController: UITableViewController { //, CLLocationManagerDelegate  {
     
     @IBOutlet var locationLabel: UILabel!
-    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    //let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var currentLocation: CLLocation!
     let locationManager = CLLocationManager()
     let refresher = UIRefreshControl()
@@ -55,15 +55,11 @@ class WeatherViewController: UITableViewController { //, CLLocationManagerDelega
 
      func updateOpenWeatherCurrent() {
          var parameters: [String:String]?
-         
-         let location = utils.fetchLastLocation()
-         
-         if (location.latitude != nil) {
-             parameters = [
-                 "latitude": location.latitude!,
-                 "longitude": location.longitude!
-             ]
-         }
+         guard let location = LocationsStorage.shared.locations.last else { return }
+         parameters = [
+             "latitude": String(location.latitude),
+             "longitude": String(location.longitude)
+         ]
          buildURLUpdateWeather(parameters: parameters)
      }
     

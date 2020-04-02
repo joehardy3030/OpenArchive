@@ -171,14 +171,19 @@ extension BARTViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("location error")
         self.locationManager.stopUpdatingLocation()
-        self.currentStation = BARTAPI.findStationWithAbbr(abbr: "PLZA")
+        if let location = LocationsStorage.shared.locations.last {
+            self.currentStation = BARTAPI.findClosestStation(currentLocation: location.clLocation)
+        }
+        else {
+            self.currentStation = BARTAPI.findStationWithAbbr(abbr: "PLZA")
+        }
         updateStationData()
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         self.locationManager.stopUpdatingLocation()
-        guard let locValue: CLLocation = manager.location else { return }
-        let station = BARTAPI.findClosestStation(currentLocation: locValue)
+        guard let location: CLLocation = manager.location else { return }
+        let station = BARTAPI.findClosestStation(currentLocation: location)
         self.currentStation = station
         updateStationData()
     }

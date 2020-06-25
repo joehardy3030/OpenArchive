@@ -24,6 +24,7 @@
 		7972654620E3368E00578419 /* Weather.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 7972654420E3368E00578419 /* Weather.xcdatamodeld */; };
 		797EDBEA242D146600584D3B /* stns.json in Resources */ = {isa = PBXBuildFile; fileRef = 797EDBE9242D146500584D3B /* stns.json */; };
 		797EDBEC242D3D6C00584D3B /* BARTStationCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797EDBEB242D3D6C00584D3B /* BARTStationCodable.swift */; };
+		7984F98D24A4565400989DB8 /* ArchiveViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7984F98C24A4565400989DB8 /* ArchiveViewController.swift */; };
 		79929FD1243194D9004D7C6C /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79929FD0243194D9004D7C6C /* Location.swift */; };
 		79929FD32432E6BA004D7C6C /* BreazeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79929FD22432E6BA004D7C6C /* BreazeViewController.swift */; };
 		79929FD524351A03004D7C6C /* LocationStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79929FD424351A03004D7C6C /* LocationStorage.swift */; };
@@ -97,6 +98,7 @@
 		7972654520E3368E00578419 /* Weather.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Weather.xcdatamodel; sourceTree = "<group>"; };
 		797EDBE9242D146500584D3B /* stns.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = stns.json; sourceTree = "<group>"; };
 		797EDBEB242D3D6C00584D3B /* BARTStationCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BARTStationCodable.swift; sourceTree = "<group>"; };
+		7984F98C24A4565400989DB8 /* ArchiveViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ArchiveViewController.swift; path = Breaze/Archive/ArchiveViewController.swift; sourceTree = "<group>"; };
 		79929FD0243194D9004D7C6C /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		79929FD22432E6BA004D7C6C /* BreazeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreazeViewController.swift; sourceTree = "<group>"; };
 		79929FD424351A03004D7C6C /* LocationStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationStorage.swift; sourceTree = "<group>"; };
@@ -179,6 +181,15 @@
 				793614D0220E884E006671C4 /* BARTViewController.swift */,
 			);
 			path = BART;
+			sourceTree = "<group>";
+		};
+		7984F98924A4556400989DB8 /* Archive */ = {
+			isa = PBXGroup;
+			children = (
+				7984F98C24A4565400989DB8 /* ArchiveViewController.swift */,
+			);
+			name = Archive;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		79929FCF243194AC004D7C6C /* Location */ = {
@@ -294,6 +305,7 @@
 				79718BA720E5E02B0072DC22 /* LastLocation+CoreDataProperties.swift */,
 				79718BA620E5E02B0072DC22 /* LastLocation+CoreDataClass.swift */,
 				791CE1C020B252F100299F76 /* Utils.swift */,
+				7984F98924A4556400989DB8 /* Archive */,
 				794E5240220D3C3000C99092 /* BART */,
 				D84F92CF203A856C00DD3855 /* Weather */,
 				D84F92D0203A85C600DD3855 /* Smog */,
@@ -583,6 +595,7 @@
 				79929FD8243521DE004D7C6C /* MapViewController.swift in Sources */,
 				D8715B9B2029216800BC13AA /* HourlyForecastHour.swift in Sources */,
 				791CE1C120B252F100299F76 /* Utils.swift in Sources */,
+				7984F98D24A4565400989DB8 /* ArchiveViewController.swift in Sources */,
 				D85A4EEF2022D0B600E480FB /* AppDelegate.swift in Sources */,
 				79929FDE24354786004D7C6C /* PlacesTableViewController.swift in Sources */,
 				79929FD524351A03004D7C6C /* LocationStorage.swift in Sources */,

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="49e-Tb-3d3">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="49e-Tb-3d3">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -510,6 +510,40 @@
             </objects>
             <point key="canvasLocation" x="2309.5999999999999" y="53.523238380809602"/>
         </scene>
+        <!--View Controller-->
+        <scene sceneID="oIa-jC-jFa">
+            <objects>
+                <viewController id="YOU-tF-JeL" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="HVK-US-i4J">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="p6k-qE-USp"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="Jsn-Qd-mBX"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="xZN-oD-UBq" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1233" y="178"/>
+        </scene>
+        <!--Archive-->
+        <scene sceneID="DC5-L9-xIP">
+            <objects>
+                <navigationController id="iDX-jC-6by" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Archive" image="play.rectangle" catalog="system" id="9Qz-YH-r7u" userLabel="Archive"/>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="uD0-eY-9eM">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="YOU-tF-JeL" kind="relationship" relationship="rootViewController" id="hZn-MK-ZjY"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="vbw-ES-e8l" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-2001" y="178"/>
+        </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="yl2-sM-qoP">
             <objects>
@@ -527,11 +561,12 @@
                         <segue destination="2bO-0c-8PH" kind="relationship" relationship="viewControllers" id="lzU-1b-eKA"/>
                         <segue destination="sMi-aR-XhM" kind="relationship" relationship="viewControllers" id="Lwu-7b-POs"/>
                         <segue destination="iI0-Lt-mB7" kind="relationship" relationship="viewControllers" id="ohq-lg-yvb"/>
+                        <segue destination="iDX-jC-6by" kind="relationship" relationship="viewControllers" id="axA-5o-iN7"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HuB-VB-40B" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-194" y="168"/>
+            <point key="canvasLocation" x="-177" y="178"/>
         </scene>
         <!--Weather Tab-->
         <scene sceneID="5fX-LB-sWl">
@@ -713,6 +748,7 @@
         <image name="fog" width="47" height="31"/>
         <image name="list.dash" catalog="system" width="128" height="85"/>
         <image name="map" catalog="system" width="128" height="113"/>
+        <image name="play.rectangle" catalog="system" width="128" height="93"/>
         <image name="plus" catalog="system" width="128" height="113"/>
         <image name="rain" width="47" height="39"/>
         <image name="system-map-weekday" width="1000" height="803"/>

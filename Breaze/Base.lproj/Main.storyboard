@@ -510,10 +510,10 @@
             </objects>
             <point key="canvasLocation" x="2309.5999999999999" y="53.523238380809602"/>
         </scene>
-        <!--View Controller-->
+        <!--Archive View Controller-->
         <scene sceneID="oIa-jC-jFa">
             <objects>
-                <viewController id="YOU-tF-JeL" sceneMemberID="viewController">
+                <viewController id="YOU-tF-JeL" customClass="ArchiveViewController" customModule="Breaze" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="HVK-US-i4J">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

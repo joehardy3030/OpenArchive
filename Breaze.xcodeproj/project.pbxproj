@@ -25,6 +25,7 @@
 		797EDBEA242D146600584D3B /* stns.json in Resources */ = {isa = PBXBuildFile; fileRef = 797EDBE9242D146500584D3B /* stns.json */; };
 		797EDBEC242D3D6C00584D3B /* BARTStationCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797EDBEB242D3D6C00584D3B /* BARTStationCodable.swift */; };
 		7984F98D24A4565400989DB8 /* ArchiveViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7984F98C24A4565400989DB8 /* ArchiveViewController.swift */; };
+		7984F98F24A56EFD00989DB8 /* ArchiveAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7984F98E24A56EFD00989DB8 /* ArchiveAPI.swift */; };
 		79929FD1243194D9004D7C6C /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79929FD0243194D9004D7C6C /* Location.swift */; };
 		79929FD32432E6BA004D7C6C /* BreazeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79929FD22432E6BA004D7C6C /* BreazeViewController.swift */; };
 		79929FD524351A03004D7C6C /* LocationStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79929FD424351A03004D7C6C /* LocationStorage.swift */; };
@@ -99,6 +100,7 @@
 		797EDBE9242D146500584D3B /* stns.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = stns.json; sourceTree = "<group>"; };
 		797EDBEB242D3D6C00584D3B /* BARTStationCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BARTStationCodable.swift; sourceTree = "<group>"; };
 		7984F98C24A4565400989DB8 /* ArchiveViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ArchiveViewController.swift; path = Breaze/Archive/ArchiveViewController.swift; sourceTree = "<group>"; };
+		7984F98E24A56EFD00989DB8 /* ArchiveAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ArchiveAPI.swift; path = Breaze/Archive/ArchiveAPI.swift; sourceTree = "<group>"; };
 		79929FD0243194D9004D7C6C /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		79929FD22432E6BA004D7C6C /* BreazeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreazeViewController.swift; sourceTree = "<group>"; };
 		79929FD424351A03004D7C6C /* LocationStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationStorage.swift; sourceTree = "<group>"; };
@@ -187,6 +189,7 @@
 			isa = PBXGroup;
 			children = (
 				7984F98C24A4565400989DB8 /* ArchiveViewController.swift */,
+				7984F98E24A56EFD00989DB8 /* ArchiveAPI.swift */,
 			);
 			name = Archive;
 			path = ..;
@@ -585,6 +588,7 @@
 				794EC1BA243673B500D3CDEF /* CurrentLocation.swift in Sources */,
 				791CE1BF20B2364E00299F76 /* HourlyDetailViewController.swift in Sources */,
 				D85A4EF32022D0B600E480FB /* SmogViewController.swift in Sources */,
+				7984F98F24A56EFD00989DB8 /* ArchiveAPI.swift in Sources */,
 				7915AFD1209FF46600625E43 /* HourlyForecastCell.swift in Sources */,
 				791864A0226D62670082D497 /* BARTStation.swift in Sources */,
 				D8E1BCD22055E74E00DB12E9 /* SmogDay.swift in Sources */,

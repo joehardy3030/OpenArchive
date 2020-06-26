@@ -10,21 +10,34 @@ import UIKit
 
 class ArchiveViewController: UIViewController {
 
+    var archiveAPI = ArchiveAPI()
+    var identifier = "gd1990-03-30.sbd.barbella.8366.sbeok.shnf"
+    var filename = "gd90-03-30d1t01multi.mp3"
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        self.getFile()
         // Do any additional setup after loading the view.
     }
     
+    //identifier=gd1990-03-30.sbd.barbella.8366.sbeok.shnf
+     //filename=gd90-03-30d1t01multi.mp3
+     
+    func getFile() {
+        let url = archiveAPI.buildURL(queryType: .openDownload,
+                                      identifier: identifier,
+                                      filename: filename)
+        print(url)
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+        archiveAPI.getAIFile(url: url) {
+            (response: Any?) -> Void in
+            
+            DispatchQueue.main.async{
+                if let r = response {
+                    debugPrint(r as Any)
+                }
+            }
+        }
     }
-    */
-
 }
+    

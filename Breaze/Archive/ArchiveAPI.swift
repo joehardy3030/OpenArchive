@@ -55,13 +55,39 @@ class ArchiveAPI: NSObject {
         }
     }
     
-    func getAIFile(url: String, completion: @escaping (Any?) -> Void) {
-        Alamofire.request(url).response { response in
+    func getIARequest(url: String, completion: @escaping (Any?) -> Void) {
+        Alamofire.request(url).responseData { response in
             //debugPrint(response)
             //let weatherModel = self.deserializeCurrent(fromJSON: json)
             completion(response)
         }
     }
+    
+    func getIADownload(url: String, completion: @escaping (Any?) -> Void) {
+        debugPrint("Download")
+        Alamofire.download(url).responseData { response in
+            debugPrint(response as Any)
+            if let data = response.value {
+                completion(data)
+                //self.imageView.image = UIImage(data: data)
+            }
+        }
+
+    }
+/*
+    let destination: DownloadRequest.destination = { _, _ in
+        let documentsURL = FileManager.default.urls(for: .picturesDirectory, in: .userDomainMask)[0]
+        let fileURL = documentsURL.appendingPathComponent("image.png")
+        return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
+    }
+
+    Alamofire.download("https://httpbin.org/image/png", to: self.destination).response { response in
+        debugPrint(response)
+        if response.error == nil, let imagePath = response.fileURL?.path {
+            let image = UIImage(contentsOfFile: imagePath)
+        }
+    }
+*/
 }
     
     

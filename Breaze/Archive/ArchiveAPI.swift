@@ -64,12 +64,11 @@ class ArchiveAPI: NSObject {
     }
     
     func getIADownload(url: String, completion: @escaping (Any?) -> Void) {
-        debugPrint("Download")
-        Alamofire.download(url).responseData { response in
-            debugPrint(response as Any)
-            if let data = response.value {
-                completion(data)
-                //self.imageView.image = UIImage(data: data)
+        //https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#downloading-data-to-a-file
+        let destination = DownloadRequest.suggestedDownloadDestination(for: .documentDirectory)
+        debugPrint(destination)
+        Alamofire.download(url, to: destination).responseData { response in
+            completion(response)
             }
         }
 
@@ -88,7 +87,7 @@ class ArchiveAPI: NSObject {
         }
     }
 */
-}
+
     
     
 

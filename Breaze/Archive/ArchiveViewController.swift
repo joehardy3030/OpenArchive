@@ -8,11 +8,12 @@
 
 import UIKit
 
-class ArchiveViewController: UIViewController {
+class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     var archiveAPI = ArchiveAPI()
     var identifier = "gd1990-03-30.sbd.barbella.8366.sbeok.shnf"
     var filename = "gd90-03-30d1t01multi.mp3"
+    var destinationURL = "/Users/joe/Library/Developer/CoreSimulator/Devices/9DBDA650-9DB3-401B-B7F5-C7CDE007BD4D/data/Containers/Data/Application/49ECF6F6-1B36-4279-B5F4-233581D95EC1/Documents/gd90-03-30d1t01multi.mp3"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,6 +57,14 @@ class ArchiveViewController: UIViewController {
                 }
             }
         }
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 0
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        return UITableViewCell()
     }
 
 }

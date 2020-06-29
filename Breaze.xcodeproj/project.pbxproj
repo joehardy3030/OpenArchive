@@ -55,6 +55,7 @@
 		D8715B9D202FB70300BC13AA /* SmogStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8715B9C202FB70300BC13AA /* SmogStore.swift */; };
 		D8721E65202919140025348F /* SimpleForecastDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8721E64202919140025348F /* SimpleForecastDay.swift */; };
 		D884508E2026B18500C5379C /* WeatherStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D884508D2026B18500C5379C /* WeatherStore.swift */; };
+		D8A5324C24A9AFF2002379CF /* ArchiveCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A5324B24A9AFF2002379CF /* ArchiveCell.swift */; };
 		D8E1BCD22055E74E00DB12E9 /* SmogDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E1BCD12055E74E00DB12E9 /* SmogDay.swift */; };
 /* End PBXBuildFile section */
 
@@ -137,6 +138,7 @@
 		D8715B9C202FB70300BC13AA /* SmogStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmogStore.swift; sourceTree = "<group>"; };
 		D8721E64202919140025348F /* SimpleForecastDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleForecastDay.swift; sourceTree = "<group>"; };
 		D884508D2026B18500C5379C /* WeatherStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherStore.swift; sourceTree = "<group>"; };
+		D8A5324B24A9AFF2002379CF /* ArchiveCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ArchiveCell.swift; path = Breaze/Archive/ArchiveCell.swift; sourceTree = "<group>"; };
 		D8E1BCD12055E74E00DB12E9 /* SmogDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmogDay.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -190,6 +192,7 @@
 			children = (
 				7984F98C24A4565400989DB8 /* ArchiveViewController.swift */,
 				7984F98E24A56EFD00989DB8 /* ArchiveAPI.swift */,
+				D8A5324B24A9AFF2002379CF /* ArchiveCell.swift */,
 			);
 			name = Archive;
 			path = ..;
@@ -619,6 +622,7 @@
 				D85A4EF12022D0B600E480FB /* WeatherViewController.swift in Sources */,
 				79718BA820E5E02B0072DC22 /* LastLocation+CoreDataClass.swift in Sources */,
 				D8721E65202919140025348F /* SimpleForecastDay.swift in Sources */,
+				D8A5324C24A9AFF2002379CF /* ArchiveCell.swift in Sources */,
 				793614D1220E884E006671C4 /* BARTViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

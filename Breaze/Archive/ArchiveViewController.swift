@@ -60,11 +60,16 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
+        return 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return UITableViewCell()
+        //return UITableViewCell()
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ArchiveCell", for: indexPath) as! ArchiveCell
+        //let BARTCellData = self.BARTReadingArray[indexPath.row]
+         
+        cell.titleLabel?.text = "1970"
+        return cell
     }
 
 }

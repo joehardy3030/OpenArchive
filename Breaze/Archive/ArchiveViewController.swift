@@ -13,7 +13,8 @@ import AVFoundation
 class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var yearTableView: UITableView!
-    var player: AVAudioPlayer?
+    var avAudioPlayer: AVAudioPlayer?
+    var avPlayer: AVPlayer?
     let utils = Utils()
     var archiveAPI = ArchiveAPI()
     var identifier = "gd1990-03-30.sbd.barbella.8366.sbeok.shnf"
@@ -29,7 +30,9 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     @IBAction func playTrack(_ sender: Any) {
-        
+        var url = utils.getDocumentsDirectory()
+        url.appendPathComponent(filename)
+        playAudioFileController(url: url)
     }
     //identifier=gd1990-03-30.sbd.barbella.8366.sbeok.shnf
      //filename=gd90-03-30d1t01multi.mp3
@@ -86,24 +89,27 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
         var url = utils.getDocumentsDirectory()
         url.appendPathComponent(filename)
         playAudioFile(url: url)
-        print(url)
     }
         
     func playAudioFile(url: URL) {
         do {
-            self.player = try AVAudioPlayer(contentsOf: url)
-            self.player?.play()
+            self.avAudioPlayer = try AVAudioPlayer(contentsOf: url)
+            self.avAudioPlayer?.play()
         }
         catch {
             print("nope")
         }
-        //bombSoundEffect = try AVAudioPlayer(contentsOf: url)
-        //bombSoundEffect?.play()
-       // let playerViewController = AVPlayerViewController()
-       // playerViewController.player = self.player
-       // self.present(playerViewController, animated: true) {
-       //     self.player.play()
-       // }
+    }
+    
+    func playAudioFileController(url: URL) {
+        self.avPlayer = AVPlayer(url: url)
+        let playerViewController = AVPlayerViewController()
+        playerViewController.player = self.avPlayer
+        self.present(playerViewController, animated: true) {
+            if let avp = self.avPlayer {
+                avp.play()
+            }
+        }
     }
     
 }

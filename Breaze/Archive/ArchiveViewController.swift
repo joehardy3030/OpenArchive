@@ -7,21 +7,30 @@
 //
 
 import UIKit
+import AVKit
+import AVFoundation
 
 class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
+    @IBOutlet weak var yearTableView: UITableView!
+    var player: AVAudioPlayer?
+    let utils = Utils()
     var archiveAPI = ArchiveAPI()
     var identifier = "gd1990-03-30.sbd.barbella.8366.sbeok.shnf"
     var filename = "gd90-03-30d1t01multi.mp3"
-    var destinationURL = "/Users/joe/Library/Developer/CoreSimulator/Devices/9DBDA650-9DB3-401B-B7F5-C7CDE007BD4D/data/Containers/Data/Application/49ECF6F6-1B36-4279-B5F4-233581D95EC1/Documents/gd90-03-30d1t01multi.mp3"
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.yearTableView.delegate = self
+        self.yearTableView.dataSource = self
         //self.getIARequest()
         self.getIADownload()
         // Do any additional setup after loading the view.
     }
     
+    @IBAction func playTrack(_ sender: Any) {
+        
+    }
     //identifier=gd1990-03-30.sbd.barbella.8366.sbeok.shnf
      //filename=gd90-03-30d1t01multi.mp3
      
@@ -65,12 +74,37 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         //return UITableViewCell()
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ArchiveCell", for: indexPath) as! ArchiveCell
+        let cell = yearTableView.dequeueReusableCell(withIdentifier: "ArchiveCell", for: indexPath) as! ArchiveCell
         //let BARTCellData = self.BARTReadingArray[indexPath.row]
          
         cell.titleLabel?.text = "1970"
         return cell
     }
-
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        //if let cell = yearTableView.cellForRow(at: indexPath as IndexPath) {
+        var url = utils.getDocumentsDirectory()
+        url.appendPathComponent(filename)
+        playAudioFile(url: url)
+        print(url)
+    }
+        
+    func playAudioFile(url: URL) {
+        do {
+            self.player = try AVAudioPlayer(contentsOf: url)
+            self.player?.play()
+        }
+        catch {
+            print("nope")
+        }
+        //bombSoundEffect = try AVAudioPlayer(contentsOf: url)
+        //bombSoundEffect?.play()
+       // let playerViewController = AVPlayerViewController()
+       // playerViewController.player = self.player
+       // self.present(playerViewController, animated: true) {
+       //     self.player.play()
+       // }
+    }
+    
 }
     

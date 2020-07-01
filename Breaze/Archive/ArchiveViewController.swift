@@ -36,7 +36,8 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     //identifier=gd1990-03-30.sbd.barbella.8366.sbeok.shnf
      //filename=gd90-03-30d1t01multi.mp3
-     
+    
+    // https://www.raywenderlich.com/6620276-sqlite-with-swift-tutorial-getting-started
     func getIARequest() {
         let url = archiveAPI.buildURL(queryType: .openDownload,
                                       identifier: identifier,

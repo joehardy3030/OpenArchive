@@ -1,0 +1,12 @@
+{
+  "data" : [
+    {
+      "filename" : "meta_gd_trim.csv",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

@@ -39,6 +39,7 @@
 		CBC5228E1B6761BEF185B8AD /* Pods_Breaze.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A700AD3051D76CBB67400BC /* Pods_Breaze.framework */; };
 		D51C53AE71B1FA9965B4E724 /* Pods_BreazeUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A926AF80C0D08EF375C20D5 /* Pods_BreazeUITests.framework */; };
 		D8357A9720240BAD005657DF /* WundergroundAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8357A9620240BAD005657DF /* WundergroundAPI.swift */; };
+		D84E42C724AEB88300868993 /* meta_gd_trim.csv in Resources */ = {isa = PBXBuildFile; fileRef = D84E42C624AEB88200868993 /* meta_gd_trim.csv */; };
 		D84F92CA2033F1A100DD3855 /* AirNowAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84F92C92033F1A100DD3855 /* AirNowAPI.swift */; };
 		D84F92CC2037E08C00DD3855 /* SmogReading.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84F92CB2037E08C00DD3855 /* SmogReading.swift */; };
 		D84F92CE203A7E7800DD3855 /* SmogCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84F92CD203A7E7800DD3855 /* SmogCell.swift */; };
@@ -116,6 +117,7 @@
 		BC1F0E4AA282D7B36ED40FA4 /* Pods_BreazeTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BreazeTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCE8FC1545CF717B71C529A8 /* Pods-BreazeUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BreazeUITests.debug.xcconfig"; path = "Target Support Files/Pods-BreazeUITests/Pods-BreazeUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		D8357A9620240BAD005657DF /* WundergroundAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WundergroundAPI.swift; sourceTree = "<group>"; };
+		D84E42C624AEB88200868993 /* meta_gd_trim.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = meta_gd_trim.csv; path = Assets.xcassets/meta_gd_trim.dataset/meta_gd_trim.csv; sourceTree = "<group>"; };
 		D84F92C92033F1A100DD3855 /* AirNowAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirNowAPI.swift; sourceTree = "<group>"; };
 		D84F92CB2037E08C00DD3855 /* SmogReading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmogReading.swift; sourceTree = "<group>"; };
 		D84F92CD203A7E7800DD3855 /* SmogCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmogCell.swift; sourceTree = "<group>"; };
@@ -319,6 +321,7 @@
 				79929FDA243524AF004D7C6C /* List */,
 				79929FCF243194AC004D7C6C /* Location */,
 				D85A4EF72022D0B600E480FB /* Assets.xcassets */,
+				D84E42C624AEB88200868993 /* meta_gd_trim.csv */,
 				D85A4EFC2022D0B600E480FB /* Info.plist */,
 			);
 			path = Breaze;
@@ -468,6 +471,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				797EDBEA242D146600584D3B /* stns.json in Resources */,
+				D84E42C724AEB88300868993 /* meta_gd_trim.csv in Resources */,
 				D85A4EFB2022D0B600E480FB /* LaunchScreen.storyboard in Resources */,
 				D85A4EF82022D0B600E480FB /* Assets.xcassets in Resources */,
 				D85A4EF62022D0B600E480FB /* Main.storyboard in Resources */,

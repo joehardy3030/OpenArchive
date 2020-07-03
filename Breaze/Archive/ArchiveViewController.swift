@@ -17,6 +17,7 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
     var avPlayer: AVPlayer?
     let utils = Utils()
     var archiveAPI = ArchiveAPI()
+    var yearArray: [Int] = []
     var identifier = "gd1990-03-30.sbd.barbella.8366.sbeok.shnf"
     var filename = "gd90-03-30d1t01multi.mp3"
 
@@ -24,8 +25,11 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
         super.viewDidLoad()
         self.yearTableView.delegate = self
         self.yearTableView.dataSource = self
-        //self.getIARequest()
-        self.getIADownload()
+        // self.getIARequest()
+        // self.getIADownload()
+       //
+        self.yearArray += 1965...1995
+        archiveAPI.readCSV()
         // Do any additional setup after loading the view.
     }
     
@@ -34,6 +38,7 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
         url.appendPathComponent(filename)
         playAudioFileController(url: url)
     }
+
     //identifier=gd1990-03-30.sbd.barbella.8366.sbeok.shnf
      //filename=gd90-03-30d1t01multi.mp3
     
@@ -73,15 +78,14 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        return self.yearArray.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         //return UITableViewCell()
         let cell = yearTableView.dequeueReusableCell(withIdentifier: "ArchiveCell", for: indexPath) as! ArchiveCell
-        //let BARTCellData = self.BARTReadingArray[indexPath.row]
-         
-        cell.titleLabel?.text = "1970"
+        let year = self.yearArray[indexPath.row]
+        cell.titleLabel?.text = String(year)
         return cell
     }
     

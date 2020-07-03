@@ -69,10 +69,37 @@ class ArchiveAPI: NSObject {
         debugPrint(destination)
         Alamofire.download(url, to: destination).responseData { response in
             completion(response)
-            }
+        }
+    }
+    
+    func readCSV() {
+        guard let csvPath = Bundle.main.path(forResource: "meta_gd_trim", ofType: "csv") 
+        //guard let csvPath = Bundle.main.url(forResource: "meta_gd_trim", withExtension: "csv")
+            else {
+            print("nope")
+            return
+            
         }
 
+        //        guard let csvPath = Bundle.main.path(forResource: "mostlycloudy", ofType: "png") else { return }
+
+        print("before do")
+
+        do {
+            let csvData = try String(contentsOfFile: csvPath, encoding: String.Encoding.utf8)
+            //let csv = csvData.csvRows()
+            print("before loop")
+            //for row in csvData {
+             //   print(csvData)
+           //5 }
+        } catch{
+            print(error)
+        }
+ 
     }
+
+}
+
 /*
     let destination: DownloadRequest.destination = { _, _ in
         let documentsURL = FileManager.default.urls(for: .picturesDirectory, in: .userDomainMask)[0]

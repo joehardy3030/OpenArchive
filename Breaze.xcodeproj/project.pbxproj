@@ -39,6 +39,8 @@
 		CBC5228E1B6761BEF185B8AD /* Pods_Breaze.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A700AD3051D76CBB67400BC /* Pods_Breaze.framework */; };
 		D51C53AE71B1FA9965B4E724 /* Pods_BreazeUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A926AF80C0D08EF375C20D5 /* Pods_BreazeUITests.framework */; };
 		D8357A9720240BAD005657DF /* WundergroundAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8357A9620240BAD005657DF /* WundergroundAPI.swift */; };
+		D8449A6824AEF3C200F113F4 /* MonthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8449A6724AEF3C200F113F4 /* MonthViewController.swift */; };
+		D8449A6A24AEF57600F113F4 /* MonthTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8449A6924AEF57600F113F4 /* MonthTableViewCell.swift */; };
 		D84E42C724AEB88300868993 /* meta_gd_trim.csv in Resources */ = {isa = PBXBuildFile; fileRef = D84E42C624AEB88200868993 /* meta_gd_trim.csv */; };
 		D84F92CA2033F1A100DD3855 /* AirNowAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84F92C92033F1A100DD3855 /* AirNowAPI.swift */; };
 		D84F92CC2037E08C00DD3855 /* SmogReading.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84F92CB2037E08C00DD3855 /* SmogReading.swift */; };
@@ -117,6 +119,8 @@
 		BC1F0E4AA282D7B36ED40FA4 /* Pods_BreazeTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BreazeTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCE8FC1545CF717B71C529A8 /* Pods-BreazeUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BreazeUITests.debug.xcconfig"; path = "Target Support Files/Pods-BreazeUITests/Pods-BreazeUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		D8357A9620240BAD005657DF /* WundergroundAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WundergroundAPI.swift; sourceTree = "<group>"; };
+		D8449A6724AEF3C200F113F4 /* MonthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MonthViewController.swift; path = Breaze/Archive/MonthViewController.swift; sourceTree = "<group>"; };
+		D8449A6924AEF57600F113F4 /* MonthTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MonthTableViewCell.swift; path = Breaze/Archive/MonthTableViewCell.swift; sourceTree = "<group>"; };
 		D84E42C624AEB88200868993 /* meta_gd_trim.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = meta_gd_trim.csv; path = Assets.xcassets/meta_gd_trim.dataset/meta_gd_trim.csv; sourceTree = "<group>"; };
 		D84F92C92033F1A100DD3855 /* AirNowAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirNowAPI.swift; sourceTree = "<group>"; };
 		D84F92CB2037E08C00DD3855 /* SmogReading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmogReading.swift; sourceTree = "<group>"; };
@@ -192,9 +196,11 @@
 		7984F98924A4556400989DB8 /* Archive */ = {
 			isa = PBXGroup;
 			children = (
-				7984F98C24A4565400989DB8 /* ArchiveViewController.swift */,
 				7984F98E24A56EFD00989DB8 /* ArchiveAPI.swift */,
+				7984F98C24A4565400989DB8 /* ArchiveViewController.swift */,
 				D8A5324B24A9AFF2002379CF /* ArchiveCell.swift */,
+				D8449A6724AEF3C200F113F4 /* MonthViewController.swift */,
+				D8449A6924AEF57600F113F4 /* MonthTableViewCell.swift */,
 			);
 			name = Archive;
 			path = ..;
@@ -592,6 +598,7 @@
 				79F8DC5B2364DBDA00E5A1AA /* WeatherModel.swift in Sources */,
 				79929FD1243194D9004D7C6C /* Location.swift in Sources */,
 				D8715B9D202FB70300BC13AA /* SmogStore.swift in Sources */,
+				D8449A6824AEF3C200F113F4 /* MonthViewController.swift in Sources */,
 				794EC1BA243673B500D3CDEF /* CurrentLocation.swift in Sources */,
 				791CE1BF20B2364E00299F76 /* HourlyDetailViewController.swift in Sources */,
 				D85A4EF32022D0B600E480FB /* SmogViewController.swift in Sources */,
@@ -615,6 +622,7 @@
 				794E5242220D3C5F00C99092 /* BARTCell.swift in Sources */,
 				7971A1C920A29B7F009438F7 /* HourlyViewController.swift in Sources */,
 				D84F92CA2033F1A100DD3855 /* AirNowAPI.swift in Sources */,
+				D8449A6A24AEF57600F113F4 /* MonthTableViewCell.swift in Sources */,
 				79929FD32432E6BA004D7C6C /* BreazeViewController.swift in Sources */,
 				D84F92CC2037E08C00DD3855 /* SmogReading.swift in Sources */,
 				79F4ECC423668CBE000BA3BB /* CityModel.swift in Sources */,

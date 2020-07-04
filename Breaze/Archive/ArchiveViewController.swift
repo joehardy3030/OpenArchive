@@ -10,7 +10,7 @@ import UIKit
 import AVKit
 import AVFoundation
 
-class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, AVAudioPlayerDelegate {
 
     @IBOutlet weak var yearTableView: UITableView!
     var avAudioPlayer: AVAudioPlayer?
@@ -19,17 +19,17 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
     var archiveAPI = ArchiveAPI()
     var years: [Int] = []
     var identifier = "gd1990-03-30.sbd.barbella.8366.sbeok.shnf"
-    var filename = "gd90-03-30d1t01multi.mp3"
+    var filename = "gd90-03-30d1t03multi.mp3"
 
     override func viewDidLoad() {
         super.viewDidLoad()
         self.yearTableView.delegate = self
         self.yearTableView.dataSource = self
         // self.getIARequest()
-        // self.getIADownload()
+        self.getIADownload()
        //
         self.years += 1965...1995
-        archiveAPI.readCSV()
+        //archiveAPI.readCSV()
         // Do any additional setup after loading the view.
     }
     //identifier=gd1990-03-30.sbd.barbella.8366.sbeok.shnf
@@ -84,10 +84,11 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
         //if let cell = yearTableView.cellForRow(at: indexPath as IndexPath) {
         var url = utils.getDocumentsDirectory()
         url.appendPathComponent(filename)
-        playAudioFile(url: url)
+        //playAudioFile(url: url)
+        playAudioFileController(url: url)
     }
     
-    
+    /*
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let indexPath = yearTableView.indexPathForSelectedRow else { return }
         if let target = segue.destination as? MonthViewController {
@@ -95,11 +96,15 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
             target.year = year
         }
     }
-    
+    */
     
     func playAudioFile(url: URL) {
         do {
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
+            try AVAudioSession.sharedInstance().setActive(true)
+            print(url)
             self.avAudioPlayer = try AVAudioPlayer(contentsOf: url)
+            self.avAudioPlayer?.delegate = self
             self.avAudioPlayer?.play()
         }
         catch {
@@ -107,16 +112,25 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
     }
     
-    func playAudioFileController(url: URL) {
-        self.avPlayer = AVPlayer(url: url)
-        //         playAudioFileController(url: url)
-
-        let playerViewController = AVPlayerViewController()
-        playerViewController.player = self.avPlayer
-        self.present(playerViewController, animated: true) {
-            if let avp = self.avPlayer {
-                avp.play()
+    func playAudioFileController(url: URL)
+    {
+        do {
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
+            try AVAudioSession.sharedInstance().setActive(true)
+            
+            self.avPlayer = AVPlayer(url: url)
+            //         playAudioFileController(url: url)
+            
+            let playerViewController = AVPlayerViewController()
+            playerViewController.player = self.avPlayer
+            self.present(playerViewController, animated: true) {
+                if let avp = self.avPlayer {
+                    avp.play()
+                }
             }
+        }
+        catch{
+            print("nope")
         }
     }
     

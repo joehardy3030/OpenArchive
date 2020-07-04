@@ -84,8 +84,8 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
         //if let cell = yearTableView.cellForRow(at: indexPath as IndexPath) {
         var url = utils.getDocumentsDirectory()
         url.appendPathComponent(filename)
-        //playAudioFile(url: url)
-        playAudioFileController(url: url)
+        playAudioFile(url: url)
+        //playAudioFileController(url: url)
     }
     
     /*
@@ -100,7 +100,7 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func playAudioFile(url: URL) {
         do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback, options: AVAudioSession.CategoryOptions.mixWithOthers)
             try AVAudioSession.sharedInstance().setActive(true)
             print(url)
             self.avAudioPlayer = try AVAudioPlayer(contentsOf: url)
@@ -115,7 +115,7 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
     func playAudioFileController(url: URL)
     {
         do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback, options: AVAudioSession.CategoryOptions.mixWithOthers)
             try AVAudioSession.sharedInstance().setActive(true)
             
             self.avPlayer = AVPlayer(url: url)

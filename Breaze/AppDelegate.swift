@@ -10,6 +10,7 @@ import UIKit
 import CoreLocation
 import CoreData
 import UserNotifications
+import ARKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

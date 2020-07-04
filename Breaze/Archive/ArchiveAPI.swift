@@ -29,31 +29,26 @@ class ArchiveAPI: NSObject {
     //    var longitude: String?
     // }
     
-    func buildURL(queryType: iaQueryType,
-                  identifier: String,
+    func downloadURL(identifier: String,
                   filename: String?) -> String {
                         
-        switch queryType {
-        case .openDownload:
-            var url = baseURLString
-            url += "download/"
-            url += identifier
-            if let f = filename {
-                url += "/"
-                url += f
-            }
-            return url
-        case .session:
-            var url = baseURLString
-            url += "download/"
-            url += identifier
-            if let f = filename {
-                url += "/"
-                url += f
-            }
-            return url
+        var url = baseURLString
+        url += "download/"
+        url += identifier
+        if let f = filename {
+            url += "/"
+            url += f
         }
+        return url
     }
+    
+    func searchURL(identifier: String,
+                  searchParams: [String:String]?) -> String {
+                        
+        var url = baseURLString
+        return url
+    }
+    
     
     func getIARequest(url: String, completion: @escaping (Any?) -> Void) {
         Alamofire.request(url).responseData { response in

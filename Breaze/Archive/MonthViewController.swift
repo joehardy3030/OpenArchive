@@ -12,6 +12,7 @@ class MonthViewController: UIViewController, UITableViewDataSource, UITableViewD
 
     @IBOutlet weak var monthTableView: UITableView!
     var months: [String] = []
+    var year: Int?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,9 +42,21 @@ class MonthViewController: UIViewController, UITableViewDataSource, UITableViewD
         let cell = monthTableView.dequeueReusableCell(withIdentifier: "MonthCell", for: indexPath) as! MonthTableViewCell
         let month = self.months[indexPath.row]
         cell.monthLabel?.text = month
+        if let year = self.year {
+            cell.monthLabel?.text = month + " " + String(year)
+        }
         return cell
     }
     
+    /*
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let indexPath = monthTableView.indexPathForSelectedRow else { return }
+        if let target = segue.destination as? HourlyDetailViewController {
+            let weatherCellData = self.weatherArray[indexPath.row]
+            target.hourForecast = weatherCellData
+        }
+    }
+    */
 
 
     /*

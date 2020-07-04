@@ -17,7 +17,7 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
     var avPlayer: AVPlayer?
     let utils = Utils()
     var archiveAPI = ArchiveAPI()
-    var yearArray: [Int] = []
+    var years: [Int] = []
     var identifier = "gd1990-03-30.sbd.barbella.8366.sbeok.shnf"
     var filename = "gd90-03-30d1t01multi.mp3"
 
@@ -28,24 +28,16 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
         // self.getIARequest()
         // self.getIADownload()
        //
-        self.yearArray += 1965...1995
+        self.years += 1965...1995
         archiveAPI.readCSV()
         // Do any additional setup after loading the view.
     }
-    
-    @IBAction func playTrack(_ sender: Any) {
-        var url = utils.getDocumentsDirectory()
-        url.appendPathComponent(filename)
-        playAudioFileController(url: url)
-    }
-
     //identifier=gd1990-03-30.sbd.barbella.8366.sbeok.shnf
      //filename=gd90-03-30d1t01multi.mp3
     
     // https://www.raywenderlich.com/6620276-sqlite-with-swift-tutorial-getting-started
     func getIARequest() {
-        let url = archiveAPI.buildURL(queryType: .openDownload,
-                                      identifier: identifier,
+        let url = archiveAPI.downloadURL(identifier: identifier,
                                       filename: filename)
         print(url)
 
@@ -61,8 +53,7 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func getIADownload() {
-        let url = archiveAPI.buildURL(queryType: .openDownload,
-                                      identifier: identifier,
+        let url = archiveAPI.downloadURL(identifier: identifier,
                                       filename: filename)
         print(url)
 
@@ -78,13 +69,13 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.yearArray.count
+        return self.years.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         //return UITableViewCell()
         let cell = yearTableView.dequeueReusableCell(withIdentifier: "ArchiveCell", for: indexPath) as! ArchiveCell
-        let year = self.yearArray[indexPath.row]
+        let year = self.years[indexPath.row]
         cell.titleLabel?.text = String(year)
         return cell
     }
@@ -95,7 +86,17 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
         url.appendPathComponent(filename)
         playAudioFile(url: url)
     }
-        
+    
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let indexPath = yearTableView.indexPathForSelectedRow else { return }
+        if let target = segue.destination as? MonthViewController {
+            let year = self.years[indexPath.row]
+            target.year = year
+        }
+    }
+    
+    
     func playAudioFile(url: URL) {
         do {
             self.avAudioPlayer = try AVAudioPlayer(contentsOf: url)
@@ -108,6 +109,8 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func playAudioFileController(url: URL) {
         self.avPlayer = AVPlayer(url: url)
+        //         playAudioFileController(url: url)
+
         let playerViewController = AVPlayerViewController()
         playerViewController.player = self.avPlayer
         self.present(playerViewController, animated: true) {

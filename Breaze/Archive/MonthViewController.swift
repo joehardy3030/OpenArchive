@@ -48,15 +48,27 @@ class MonthViewController: UIViewController, UITableViewDataSource, UITableViewD
         return cell
     }
     
-    /*
+    
+    
+    func getDateRange(year: Int, month: Int) -> String {
+        
+        return "1987-03-31"
+    }
+    
+    // Search in date range
+    //https://archive.org/services/search/v1/scrape?q=collection%3A%28GratefulDead%29%20AND%20date%3A%5B1987-03-01%20TO%201987-03-31%5D
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let indexPath = monthTableView.indexPathForSelectedRow else { return }
-        if let target = segue.destination as? HourlyDetailViewController {
-            let weatherCellData = self.weatherArray[indexPath.row]
-            target.hourForecast = weatherCellData
+        if let target = segue.destination as? ShowsListViewController {
+            let m = indexPath.row + 1
+            target.month = m
+            if let y = self.year {
+                target.year = y
+            }
         }
     }
-    */
+    
 
 
     /*

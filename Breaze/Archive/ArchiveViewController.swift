@@ -26,7 +26,7 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
         self.yearTableView.delegate = self
         self.yearTableView.dataSource = self
         // self.getIARequest()
-        self.getIADownload()
+        //self.getIADownload()
        //
         self.years += 1965...1995
         //archiveAPI.readCSV()
@@ -84,11 +84,11 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
         //if let cell = yearTableView.cellForRow(at: indexPath as IndexPath) {
         var url = utils.getDocumentsDirectory()
         url.appendPathComponent(filename)
-        playAudioFile(url: url)
+        //playAudioFile(url: url)
         //playAudioFileController(url: url)
     }
     
-    /*
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let indexPath = yearTableView.indexPathForSelectedRow else { return }
         if let target = segue.destination as? MonthViewController {
@@ -96,7 +96,7 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
             target.year = year
         }
     }
-    */
+    
     
     func playAudioFile(url: URL) {
         do {

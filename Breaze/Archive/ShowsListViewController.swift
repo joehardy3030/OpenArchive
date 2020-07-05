@@ -17,6 +17,7 @@ class ShowsListViewController: UIViewController, UITableViewDelegate, UITableVie
     var month: Int?
     var archiveAPI = ArchiveAPI()
     var identifiers: [String]?
+   // var selectedIdentifier: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,20 +65,25 @@ class ShowsListViewController: UIViewController, UITableViewDelegate, UITableVie
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = showListTableView.dequeueReusableCell(withIdentifier: "ShowListCell", for: indexPath) as! ShowsListTableViewCell
-      /*  if let y = self.year {
-            if let m = self.month {
-                cell.identifierLabel.text = String(y) + "-" + String(m)
-            }
-        }
-        */
+
         if let ids = self.identifiers {
+            //self.selectedIdentifier = ids[indexPath.row]
             cell.identifierLabel.text = ids[indexPath.row]
         }
         else {
             cell.identifierLabel.text = "No shows"
         }
-        return cell
         
+        return cell
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let indexPath = showListTableView.indexPathForSelectedRow else { return }
+        guard let ids = self.identifiers else { return }
+        if let target = segue.destination as? ShowViewController {
+            target.identifier = ids[indexPath.row]
+        }
+    }
+
     
 }

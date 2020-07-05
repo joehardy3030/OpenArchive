@@ -9,21 +9,37 @@
 import UIKit
 
 class ShowViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-
+    
+    @IBOutlet weak var showTableView: UITableView!
+    var identifier: String?
+    
     override func viewDidLoad() {
-        super.viewDidLoad()
 
+        super.viewDidLoad()
+        self.showTableView.delegate = self
+        self.showTableView.dataSource = self
         // Do any additional setup after loading the view.
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
+        return 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return UITableViewCell()
+        let cell = showTableView.dequeueReusableCell(withIdentifier: "ShowCell", for: indexPath) as! ShowTableViewCell
+        
+        if let id = self.identifier {
+            cell.songLabel.text = id
+        }
+        else {
+            cell.songLabel.text = "No song"
+        }
+        
+        return cell
+        
+        //        return UITableViewCell()
     }
-/*
+    /*
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let indexPath = monthTableView.indexPathForSelectedRow else { return }
         if let target = segue.destination as? ShowsListViewController {

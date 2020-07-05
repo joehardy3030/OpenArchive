@@ -56,6 +56,7 @@ class MonthViewController: UIViewController, UITableViewDataSource, UITableViewD
             if let y = self.year {
                 target.year = y
             }
+            target.resetMonth()
         }
     }
     

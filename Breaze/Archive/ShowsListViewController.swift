@@ -26,6 +26,10 @@ class ShowsListViewController: UIViewController, UITableViewDelegate, UITableVie
         // Do any additional setup after loading the view.
     }
     
+    func viewWillAppear() {
+        self.getIADateRange()
+    }
+    
     func getIADateRange() {
         guard let year = self.year, let month = self.month else { return }
         let url = archiveAPI.dateRangeURL(year: year, month: month)
@@ -42,16 +46,10 @@ class ShowsListViewController: UIViewController, UITableViewDelegate, UITableVie
             }
         }
     }
-    /*
-    func deserializeResponse(response: Any) -> [String: Any] {
-        
-        
-        if let value = response.value as? [String: Any] {
-               print(value)
-        }
-        return JSON()
+
+    func resetMonth() {
+        self.getIADateRange()
     }
-    */
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         self.numShows
@@ -68,14 +66,4 @@ class ShowsListViewController: UIViewController, UITableViewDelegate, UITableVie
         
     }
     
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

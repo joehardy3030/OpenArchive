@@ -48,6 +48,8 @@
 		D84F92D2203A872200DD3855 /* WeatherCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84F92D1203A872200DD3855 /* WeatherCell.swift */; };
 		D852C3C724B1219400029EB9 /* ShowsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D852C3C624B1219400029EB9 /* ShowsListViewController.swift */; };
 		D852C3C924B121E000029EB9 /* ShowsListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D852C3C824B121E000029EB9 /* ShowsListTableViewCell.swift */; };
+		D852C3CB24B1AA1C00029EB9 /* ShowViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D852C3CA24B1AA1C00029EB9 /* ShowViewController.swift */; };
+		D852C3CD24B1AA5100029EB9 /* ShowTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D852C3CC24B1AA5100029EB9 /* ShowTableViewCell.swift */; };
 		D85A4EEF2022D0B600E480FB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A4EEE2022D0B600E480FB /* AppDelegate.swift */; };
 		D85A4EF12022D0B600E480FB /* WeatherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A4EF02022D0B600E480FB /* WeatherViewController.swift */; };
 		D85A4EF32022D0B600E480FB /* SmogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A4EF22022D0B600E480FB /* SmogViewController.swift */; };
@@ -130,6 +132,8 @@
 		D84F92D1203A872200DD3855 /* WeatherCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherCell.swift; sourceTree = "<group>"; };
 		D852C3C624B1219400029EB9 /* ShowsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShowsListViewController.swift; path = Breaze/Archive/ShowsListViewController.swift; sourceTree = "<group>"; };
 		D852C3C824B121E000029EB9 /* ShowsListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShowsListTableViewCell.swift; path = Breaze/Archive/ShowsListTableViewCell.swift; sourceTree = "<group>"; };
+		D852C3CA24B1AA1C00029EB9 /* ShowViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShowViewController.swift; path = Breaze/Archive/ShowViewController.swift; sourceTree = "<group>"; };
+		D852C3CC24B1AA5100029EB9 /* ShowTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowTableViewCell.swift; sourceTree = "<group>"; };
 		D85A4EEB2022D0B500E480FB /* Breaze.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Breaze.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D85A4EEE2022D0B600E480FB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D85A4EF02022D0B600E480FB /* WeatherViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherViewController.swift; sourceTree = "<group>"; };
@@ -207,6 +211,8 @@
 				D8449A6924AEF57600F113F4 /* MonthTableViewCell.swift */,
 				D852C3C624B1219400029EB9 /* ShowsListViewController.swift */,
 				D852C3C824B121E000029EB9 /* ShowsListTableViewCell.swift */,
+				D852C3CA24B1AA1C00029EB9 /* ShowViewController.swift */,
+				D852C3CC24B1AA5100029EB9 /* ShowTableViewCell.swift */,
 			);
 			name = Archive;
 			path = ..;
@@ -605,6 +611,7 @@
 				79929FD1243194D9004D7C6C /* Location.swift in Sources */,
 				D8715B9D202FB70300BC13AA /* SmogStore.swift in Sources */,
 				D8449A6824AEF3C200F113F4 /* MonthViewController.swift in Sources */,
+				D852C3CB24B1AA1C00029EB9 /* ShowViewController.swift in Sources */,
 				794EC1BA243673B500D3CDEF /* CurrentLocation.swift in Sources */,
 				D852C3C924B121E000029EB9 /* ShowsListTableViewCell.swift in Sources */,
 				791CE1BF20B2364E00299F76 /* HourlyDetailViewController.swift in Sources */,
@@ -637,6 +644,7 @@
 				D8357A9720240BAD005657DF /* WundergroundAPI.swift in Sources */,
 				791864A222711D930082D497 /* BARTModal.swift in Sources */,
 				79718BA920E5E02B0072DC22 /* LastLocation+CoreDataProperties.swift in Sources */,
+				D852C3CD24B1AA5100029EB9 /* ShowTableViewCell.swift in Sources */,
 				793614D5221116D9006671C4 /* BARTAPI.swift in Sources */,
 				79F8DC592363E3E400E5A1AA /* OpenWeatherAPI.swift in Sources */,
 				D85A4EF12022D0B600E480FB /* WeatherViewController.swift in Sources */,

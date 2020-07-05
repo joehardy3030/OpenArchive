@@ -76,7 +76,7 @@ class ArchiveAPI: NSObject {
         return url
     }
     
-    func getIARequest(url: String, completion: @escaping (String) -> Void) {
+    func getIARequest(url: String, completion: @escaping ([String]?) -> Void) {
         Alamofire.request(url).responseJSON { response in
             //debugPrint(response)
             //let weatherModel = self.deserializeCurrent(fromJSON: json)
@@ -88,11 +88,11 @@ class ArchiveAPI: NSObject {
                 for i in items {
                     if let id_string = i.1["identifier"].string {
                         itemArray.append(id_string)
-                        print(id_string)
+                      //  print(id_string)
                     }
                     // print(i.1["identifier"])
                 }
-                completion("items")
+                completion(itemArray)
               }
         }
     }

@@ -22,13 +22,13 @@ class ShowsListViewController: UIViewController, UITableViewDelegate, UITableVie
         super.viewDidLoad()
         self.showListTableView.delegate = self
         self.showListTableView.dataSource = self
-        self.getIADateRange()
+       // self.getIADateRange()
         // Do any additional setup after loading the view.
     }
     
-    func viewWillAppear() {
-        self.getIADateRange()
-    }
+   // func viewWillAppear() {
+    //    self.getIADateRange()
+   // }
     
     func getIADateRange() {
         guard let year = self.year, let month = self.month else { return }
@@ -37,11 +37,12 @@ class ShowsListViewController: UIViewController, UITableViewDelegate, UITableVie
         print(url)
 
         archiveAPI.getIARequest(url: url) {
-            (response: String?) -> Void in
+            (response: [String]?) -> Void in
             
             DispatchQueue.main.async{
                 if let r = response {
-                    print(r)
+                    self.identifiers = r
+                    print(self.identifiers)
                 }
             }
         }

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftyJSON
 
 class ShowsListViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
@@ -14,13 +15,43 @@ class ShowsListViewController: UIViewController, UITableViewDelegate, UITableVie
     var numShows: Int = 1
     var year: Int?
     var month: Int?
-        
+    var archiveAPI = ArchiveAPI()
+    var identifiers: [String]?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.showListTableView.delegate = self
         self.showListTableView.dataSource = self
+        self.getIADateRange()
         // Do any additional setup after loading the view.
     }
+    
+    func getIADateRange() {
+        guard let year = self.year, let month = self.month else { return }
+        let url = archiveAPI.dateRangeURL(year: year, month: month)
+        
+        print(url)
+
+        archiveAPI.getIARequest(url: url) {
+            (response: String?) -> Void in
+            
+            DispatchQueue.main.async{
+                if let r = response {
+                    print(r)
+                }
+            }
+        }
+    }
+    /*
+    func deserializeResponse(response: Any) -> [String: Any] {
+        
+        
+        if let value = response.value as? [String: Any] {
+               print(value)
+        }
+        return JSON()
+    }
+    */
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         self.numShows

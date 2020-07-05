@@ -83,11 +83,69 @@ class ArchiveAPI: NSObject {
             //let weatherModel = self.deserializeCurrent(fromJSON: json)
             if let json = response.result.value {
                 let j = JSON(json)
-                print(j)
-                let showMetadataModel = ShowMetadataModel(metadata: nil, files: nil)
+               // print(j)
+                let showMetadataModel = self.deserializeMetadataModel(json: j)
+               //print(showMetadataModel.files_count as Any)
                 completion(showMetadataModel)
               }
         }
+    }
+    
+    func deserializeMetadataModel(json: JSON) -> ShowMetadataModel {
+        let files_count = json["files_count"].int
+        let created = json["created"].int
+        let item_size = json["item_size"].int
+        let dir = json["dir"].string
+        let md = json["metadata"]
+        let metadata = deserializeMetadata(json: md)
+        let fl = json["files"]
+        let files = deserializeFiles(json:fl)
+        //print(metadata.date as Any)
+        //ShowMetadataModel(metadata: nil, files: nil)
+        return ShowMetadataModel(metadata: metadata, files: files, files_count: files_count, created: created, item_size: item_size, dir: dir)
+    }
+    func deserializeFiles(json: JSON) -> [ShowFile] {
+        var fileArray = [ShowFile]()
+        for f in json {
+            let name = f.1["name"].string
+            let source = f.1["source"].string
+            let creator = f.1["creator"].string
+            let title = f.1["title"].string
+            let track = f.1["track"].string
+            let album = f.1["album"].string
+            let bitrate = f.1["bitrate"].string
+            let length = f.1["length"].string
+            let format = f.1["format"].string
+            let original = f.1["orginal"].string
+            let mtime = f.1["mtime"].string
+            let size = f.1["size"].string
+            let md5 = f.1["md5"].string
+            let crc32 = f.1["crc32"].string
+            let sha1 = f.1["sha1"].string
+            
+            let sf = ShowFile(name: name, source: source, creator: creator, title: title, track: track, album: album, bitrate: bitrate, length: length, format: format, original: original, mtime: mtime, size: size, md5: md5, crc32: crc32, sha1: sha1)
+            fileArray.append(sf)
+        }
+            //print(json)
+        return fileArray
+    }
+    
+    func deserializeMetadata(json: JSON) -> ShowMetadata {
+        //print(json)
+        let identifier = json["identifier"].string
+        let title = json["title"].string
+        let creator = json["creator"].string
+        let mediatype = json["mediatype"].string
+        let collection = json["collection"].string
+        let type = json["type"].string
+        let description = json["description"].string
+        let date = json["date"].string
+        let year = json["year"].string
+        let venue = json["venue"].string
+        let transferer = json["transferer"].string
+        let source = json["source"].string
+        
+        return ShowMetadata(identifier: identifier, title: title, creator: creator, mediatype: mediatype, collection: collection, type: type, description: description, date: date, year: year, venue: venue, transferer: transferer, source: source)
     }
     
     func getIARequestItems(url: String, completion: @escaping ([String]?) -> Void) {

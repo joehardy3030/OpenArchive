@@ -31,7 +31,7 @@ struct ShowMetadata: Codable {
     let title: String?
     let creator: String?
     let mediatype: String?
-    let collection: [String]?
+    let collection: String?
     let type: String?
     let description: String?
     let date: String?
@@ -42,6 +42,10 @@ struct ShowMetadata: Codable {
 }
 
 struct ShowMetadataModel: Codable {
-    let metadata: [ShowMetadata]?
+    let metadata: ShowMetadata?
     let files: [ShowFile]?
+    let files_count: Int?
+    let created: Int?
+    let item_size: Int?
+    let dir: String?
 }

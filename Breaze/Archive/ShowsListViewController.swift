@@ -12,7 +12,7 @@ import SwiftyJSON
 class ShowsListViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var showListTableView: UITableView!
-    var numShows: Int = 1
+   // var numShows: Int = 1
     var year: Int?
     var month: Int?
     var archiveAPI = ArchiveAPI()
@@ -42,7 +42,8 @@ class ShowsListViewController: UIViewController, UITableViewDelegate, UITableVie
             DispatchQueue.main.async{
                 if let r = response {
                     self.identifiers = r
-                    print(self.identifiers)
+                    self.showListTableView.reloadData()
+                    //print(self.identifiers)
                 }
             }
         }
@@ -53,15 +54,27 @@ class ShowsListViewController: UIViewController, UITableViewDelegate, UITableVie
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        self.numShows
+        if let ids = self.identifiers {
+            return ids.count
+        }
+        else {
+            return 0
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = showListTableView.dequeueReusableCell(withIdentifier: "ShowListCell", for: indexPath) as! ShowsListTableViewCell
-        if let y = self.year {
+      /*  if let y = self.year {
             if let m = self.month {
                 cell.identifierLabel.text = String(y) + "-" + String(m)
             }
+        }
+        */
+        if let ids = self.identifiers {
+            cell.identifierLabel.text = ids[indexPath.row]
+        }
+        else {
+            cell.identifierLabel.text = "No shows"
         }
         return cell
         

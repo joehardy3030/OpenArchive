@@ -41,7 +41,7 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
                                       filename: filename)
         print(url)
 
-        archiveAPI.getIARequest(url: url) {
+        archiveAPI.getIARequestItems(url: url) {
             (response: Any?) -> Void in
             
             DispatchQueue.main.async{

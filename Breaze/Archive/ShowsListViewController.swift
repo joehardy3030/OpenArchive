@@ -37,7 +37,7 @@ class ShowsListViewController: UIViewController, UITableViewDelegate, UITableVie
         
         print(url)
 
-        archiveAPI.getIARequest(url: url) {
+        archiveAPI.getIARequestItems(url: url) {
             (response: [String]?) -> Void in
             
             DispatchQueue.main.async{

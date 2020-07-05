@@ -12,15 +12,35 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     @IBOutlet weak var showTableView: UITableView!
     var identifier: String?
+    let archiveAPI = ArchiveAPI()
     
     override func viewDidLoad() {
 
         super.viewDidLoad()
         self.showTableView.delegate = self
         self.showTableView.dataSource = self
+        self.getIAGetShowMetadata()
         // Do any additional setup after loading the view.
     }
     
+    func getIAGetShowMetadata() {
+        
+        guard let id = self.identifier else { return }
+        let url = archiveAPI.metadataURL(identifier: id)
+        
+        print(url)
+
+        archiveAPI.getIARequestMetadata(url: url) {
+            (response: ShowMetadataModel) -> Void in
+            
+            DispatchQueue.main.async{
+                let r = response
+                print(r)
+            }
+        }
+    }
+
+        
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 1
     }

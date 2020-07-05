@@ -46,6 +46,7 @@
 		D84F92CC2037E08C00DD3855 /* SmogReading.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84F92CB2037E08C00DD3855 /* SmogReading.swift */; };
 		D84F92CE203A7E7800DD3855 /* SmogCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84F92CD203A7E7800DD3855 /* SmogCell.swift */; };
 		D84F92D2203A872200DD3855 /* WeatherCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84F92D1203A872200DD3855 /* WeatherCell.swift */; };
+		D850B8FD24B26EAC00E3DC6B /* ShowMetadataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D850B8FC24B26EAC00E3DC6B /* ShowMetadataModel.swift */; };
 		D852C3C724B1219400029EB9 /* ShowsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D852C3C624B1219400029EB9 /* ShowsListViewController.swift */; };
 		D852C3C924B121E000029EB9 /* ShowsListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D852C3C824B121E000029EB9 /* ShowsListTableViewCell.swift */; };
 		D852C3CB24B1AA1C00029EB9 /* ShowViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D852C3CA24B1AA1C00029EB9 /* ShowViewController.swift */; };
@@ -130,6 +131,7 @@
 		D84F92CB2037E08C00DD3855 /* SmogReading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmogReading.swift; sourceTree = "<group>"; };
 		D84F92CD203A7E7800DD3855 /* SmogCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmogCell.swift; sourceTree = "<group>"; };
 		D84F92D1203A872200DD3855 /* WeatherCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherCell.swift; sourceTree = "<group>"; };
+		D850B8FC24B26EAC00E3DC6B /* ShowMetadataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShowMetadataModel.swift; path = Breaze/Archive/ShowMetadataModel.swift; sourceTree = "<group>"; };
 		D852C3C624B1219400029EB9 /* ShowsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShowsListViewController.swift; path = Breaze/Archive/ShowsListViewController.swift; sourceTree = "<group>"; };
 		D852C3C824B121E000029EB9 /* ShowsListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShowsListTableViewCell.swift; path = Breaze/Archive/ShowsListTableViewCell.swift; sourceTree = "<group>"; };
 		D852C3CA24B1AA1C00029EB9 /* ShowViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShowViewController.swift; path = Breaze/Archive/ShowViewController.swift; sourceTree = "<group>"; };
@@ -213,6 +215,7 @@
 				D852C3C824B121E000029EB9 /* ShowsListTableViewCell.swift */,
 				D852C3CA24B1AA1C00029EB9 /* ShowViewController.swift */,
 				D852C3CC24B1AA5100029EB9 /* ShowTableViewCell.swift */,
+				D850B8FC24B26EAC00E3DC6B /* ShowMetadataModel.swift */,
 			);
 			name = Archive;
 			path = ..;
@@ -646,6 +649,7 @@
 				79718BA920E5E02B0072DC22 /* LastLocation+CoreDataProperties.swift in Sources */,
 				D852C3CD24B1AA5100029EB9 /* ShowTableViewCell.swift in Sources */,
 				793614D5221116D9006671C4 /* BARTAPI.swift in Sources */,
+				D850B8FD24B26EAC00E3DC6B /* ShowMetadataModel.swift in Sources */,
 				79F8DC592363E3E400E5A1AA /* OpenWeatherAPI.swift in Sources */,
 				D85A4EF12022D0B600E480FB /* WeatherViewController.swift in Sources */,
 				79718BA820E5E02B0072DC22 /* LastLocation+CoreDataClass.swift in Sources */,

@@ -17,21 +17,22 @@ enum iaQueryType {
 
 class ArchiveAPI: NSObject {
 
-    //https://archive.org/download/<identifier>/<filename>
-    //identifier=gd1990-03-30.sbd.barbella.8366.sbeok.shnf
-    //filename=gd90-03-30d1t01multi.mp3
     
-    //let utils = Utils()
-    // let apiKey = "263e9f27a9c219e9d7db30993b91c33b"
     let baseURLString = "https://archive.org/"
-    //struct lastLocation {
-    //    var latitude: String?
-    //    var longitude: String?
-    // }
+    
+    func metadataURL(identifier: String) -> String {
+        var url = baseURLString
+        url += "metadata/"
+        url += identifier
+        return url
+    }
     
     func downloadURL(identifier: String,
-                  filename: String?) -> String {
-                        
+                     filename: String?) -> String {
+        //https://archive.org/download/<identifier>/<filename>
+        //identifier=gd1990-03-30.sbd.barbella.8366.sbeok.shnf
+        //filename=gd90-03-30d1t01multi.mp3
+        
         var url = baseURLString
         url += "download/"
         url += identifier
@@ -76,7 +77,20 @@ class ArchiveAPI: NSObject {
         return url
     }
     
-    func getIARequest(url: String, completion: @escaping ([String]?) -> Void) {
+    func getIARequestMetadata(url: String, completion: @escaping (ShowMetadataModel) -> Void) {
+        Alamofire.request(url).responseJSON { response in
+            //debugPrint(response)
+            //let weatherModel = self.deserializeCurrent(fromJSON: json)
+            if let json = response.result.value {
+                let j = JSON(json)
+                print(j)
+                let showMetadataModel = ShowMetadataModel(metadata: nil, files: nil)
+                completion(showMetadataModel)
+              }
+        }
+    }
+    
+    func getIARequestItems(url: String, completion: @escaping ([String]?) -> Void) {
         Alamofire.request(url).responseJSON { response in
             //debugPrint(response)
             //let weatherModel = self.deserializeCurrent(fromJSON: json)
@@ -88,24 +102,13 @@ class ArchiveAPI: NSObject {
                 for i in items {
                     if let id_string = i.1["identifier"].string {
                         itemArray.append(id_string)
-                      //  print(id_string)
                     }
-                    // print(i.1["identifier"])
                 }
                 completion(itemArray)
               }
         }
     }
-    /*
-    Alamofire.request(.POST, url, parameters:params)
-    .responseJSON { request, response, result in
-        debugPrint(result)
 
-        if let value = result.value as? [String: AnyObject] {
-           print(value)
-        }
-    }
-    */
     func getIADownload(url: String, completion: @escaping (Any?) -> Void) {
         //https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#downloading-data-to-a-file
         let destination = DownloadRequest.suggestedDownloadDestination(for: .documentDirectory)

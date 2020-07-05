@@ -13,6 +13,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     @IBOutlet weak var showTableView: UITableView!
     var identifier: String?
     let archiveAPI = ArchiveAPI()
+    var showMetadata: ShowMetadataModel!
     
     override func viewDidLoad() {
 
@@ -33,16 +34,23 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
         archiveAPI.getIARequestMetadata(url: url) {
             (response: ShowMetadataModel) -> Void in
             
+            self.showMetadata = response
             DispatchQueue.main.async{
-                let r = response
-                print(r)
+                self.showTableView.reloadData()
+                print(self.showMetadata.files_count as Any)
             }
         }
     }
 
         
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        if let _ = self.showMetadata {
+            if let count = self.showMetadata.files_count {
+                return count
+            }
+            else { return 0 }
+        }
+        else { return 0 }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

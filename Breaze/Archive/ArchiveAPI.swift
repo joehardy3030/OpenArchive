@@ -43,13 +43,6 @@ class ArchiveAPI: NSObject {
         return url
     }
     
-    func searchURL(identifier: String,
-                  searchParams: [String:String]?) -> String {
-                        
-        var url = baseURLString
-        return url
-    }
-    
     func dateRangeURL(year: Int, month: Int) -> String {
         let andString = "%20AND%20"
         let dateString = "date%3A%5B"
@@ -79,13 +72,9 @@ class ArchiveAPI: NSObject {
     
     func getIARequestMetadata(url: String, completion: @escaping (ShowMetadataModel) -> Void) {
         Alamofire.request(url).responseJSON { response in
-            //debugPrint(response)
-            //let weatherModel = self.deserializeCurrent(fromJSON: json)
             if let json = response.result.value {
                 let j = JSON(json)
-               // print(j)
                 let showMetadataModel = self.deserializeMetadataModel(json: j)
-               //print(showMetadataModel.files_count as Any)
                 completion(showMetadataModel)
               }
         }
@@ -100,10 +89,9 @@ class ArchiveAPI: NSObject {
         let metadata = deserializeMetadata(json: md)
         let fl = json["files"]
         let files = deserializeFiles(json:fl)
-        //print(metadata.date as Any)
-        //ShowMetadataModel(metadata: nil, files: nil)
         return ShowMetadataModel(metadata: metadata, files: files, files_count: files_count, created: created, item_size: item_size, dir: dir)
     }
+    
     func deserializeFiles(json: JSON) -> [ShowFile] {
         var fileArray = [ShowFile]()
         for f in json {
@@ -126,12 +114,11 @@ class ArchiveAPI: NSObject {
             let sf = ShowFile(name: name, source: source, creator: creator, title: title, track: track, album: album, bitrate: bitrate, length: length, format: format, original: original, mtime: mtime, size: size, md5: md5, crc32: crc32, sha1: sha1)
             fileArray.append(sf)
         }
-            //print(json)
         return fileArray
     }
     
     func deserializeMetadata(json: JSON) -> ShowMetadata {
-        //print(json)
+
         let identifier = json["identifier"].string
         let title = json["title"].string
         let creator = json["creator"].string
@@ -150,8 +137,7 @@ class ArchiveAPI: NSObject {
     
     func getIARequestItems(url: String, completion: @escaping ([String]?) -> Void) {
         Alamofire.request(url).responseJSON { response in
-            //debugPrint(response)
-            //let weatherModel = self.deserializeCurrent(fromJSON: json)
+
             if let json = response.result.value {
                 let j = JSON(json)
                 let items = j["items"]
@@ -177,29 +163,16 @@ class ArchiveAPI: NSObject {
     }
     
     func readCSV() {
-        guard let csvPath = Bundle.main.path(forResource: "meta_gd_trim", ofType: "csv") 
-        //guard let csvPath = Bundle.main.url(forResource: "meta_gd_trim", withExtension: "csv")
-            else {
-            print("nope")
-            return
-            
-        }
-
-        //        guard let csvPath = Bundle.main.path(forResource: "mostlycloudy", ofType: "png") else { return }
-
-        print("before do")
-
+        guard let csvPath = Bundle.main.path(forResource: "meta_gd_trim", ofType: "csv")
+            else { return }
+        
         do {
             let csvData = try String(contentsOfFile: csvPath, encoding: String.Encoding.utf8)
-            //let csv = csvData.csvRows()
-            print("before loop")
-            //for row in csvData {
-             //   print(csvData)
-           //5 }
-        } catch{
+        }
+        catch {
             print(error)
         }
- 
+        
     }
 
 }

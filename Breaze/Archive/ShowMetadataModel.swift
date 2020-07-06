@@ -54,5 +54,5 @@ struct ShowMP3: Codable {
     let identifier: String?
     let name: String?
     let track: String?
-    var location: String?	
+    var destination: URL?	
 }

@@ -56,25 +56,26 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
         for f in self.mp3Array {
             let url = archiveAPI.downloadURL(identifier: self.identifier, filename: f.name)
             archiveAPI.getIADownload(url: url) {
-                (response: Any?) -> Void in
-                
+                (response: URL?) -> Void in
                 DispatchQueue.main.async{
-                    print(response as Any)
+                    self.setDestination(destination: response, name: f.name)
+                    self.showTableView.reloadData()
+                }
+            }
+        }
+    }
+    
+    func setDestination(destination: URL?, name: String?) {
+        if let d = destination {
+            for i in 0...(self.mp3Array.count - 1) {
+                if self.mp3Array[i].name == name {
+                    self.mp3Array[i].destination = d
                 }
             }
         }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-       /*
-        if let _ = self.showMetadata {
-            if let count = self.showMetadata.files_count {
-                return count
-            }
-            else { return 0 }
-        }
-        else { return 0 }
-    */
         return self.mp3Array.count
     }
     
@@ -88,6 +89,14 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
         else {
             cell.songLabel.text = "no song"
         }
+        
+        if let destination = self.mp3Array[indexPath.row].destination {
+            cell.accessoryType = .checkmark
+        }
+        else {
+            cell.accessoryType = .none
+        }
+
         
         return cell
         

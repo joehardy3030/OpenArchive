@@ -13,10 +13,10 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     @IBOutlet weak var showTableView: UITableView!
     var identifier: String?
     let archiveAPI = ArchiveAPI()
+    let avPlayer = AudioPlayerArchive()
     var mp3Array = [ShowMP3]()
     var showMetadata: ShowMetadataModel!
-    
-    
+
     override func viewDidLoad() {
 
         super.viewDidLoad()
@@ -75,13 +75,20 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
     
+    /*
+    self.present(playerViewController, animated: true) {
+          if let avp = self.avPlayer {
+              avp.play()
+          }
+      }
+    */
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.mp3Array.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = showTableView.dequeueReusableCell(withIdentifier: "ShowCell", for: indexPath) as! ShowTableViewCell
-        
         
         if let name = self.mp3Array[indexPath.row].name {
             cell.songLabel.text = name
@@ -90,17 +97,37 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
             cell.songLabel.text = "no song"
         }
         
-        if let destination = self.mp3Array[indexPath.row].destination {
+        if let _ = self.mp3Array[indexPath.row].destination {
             cell.accessoryType = .checkmark
         }
         else {
             cell.accessoryType = .none
         }
 
-        
         return cell
-        
     }
-
+    
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        //if let cell = yearTableView.cellForRow(at: indexPath as IndexPath) {
+        if let url = self.mp3Array[indexPath.row].destination {
+            if let player = self.avPlayer.avPlayer {
+                if player.rate > 0.0 {
+                    player.pause()
+                }
+            }
+            else {
+                self.avPlayer.playAudioFile(url: url)
+            }
+            //    self.avPlayer.pause()
+            //}
+           // else{
+//                self.avPlayer.playAudioFile(url: url)
+           // }
+        }
+        
+        //playAudioFile(url: url)
+        //playAudioFileController(url: url)
+    }
 
 }

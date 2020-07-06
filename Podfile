@@ -8,6 +8,7 @@ target 'Breaze' do
   # Pods for Breaze
   pod 'Alamofire'
   pod 'SwiftyJSON'
+  pod 'Signals'
 
   target 'BreazeTests' do
     inherit! :search_paths

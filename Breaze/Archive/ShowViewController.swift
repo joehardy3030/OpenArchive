@@ -69,14 +69,6 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = showTableView.dequeueReusableCell(withIdentifier: "ShowCell", for: indexPath) as! ShowTableViewCell
         
-        /*
-        if let name = self.showMetadata.files?[indexPath.row].name {
-            cell.songLabel.text = name
-        }
-        else {
-            cell.songLabel.text = "No song"
-        }
-        */
         
         if let name = self.mp3Array[indexPath.row].name {
             cell.songLabel.text = name

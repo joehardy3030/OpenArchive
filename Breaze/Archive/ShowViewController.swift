@@ -43,7 +43,6 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
                         print(showMP3)
                         self.mp3Array.append(showMP3)
                     }
-
                 }
             }
             DispatchQueue.main.async{
@@ -55,6 +54,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
 
         
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+       /*
         if let _ = self.showMetadata {
             if let count = self.showMetadata.files_count {
                 return count
@@ -62,16 +62,27 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
             else { return 0 }
         }
         else { return 0 }
+    */
+        return self.mp3Array.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = showTableView.dequeueReusableCell(withIdentifier: "ShowCell", for: indexPath) as! ShowTableViewCell
         
+        /*
         if let name = self.showMetadata.files?[indexPath.row].name {
             cell.songLabel.text = name
         }
         else {
             cell.songLabel.text = "No song"
+        }
+        */
+        
+        if let name = self.mp3Array[indexPath.row].name {
+            cell.songLabel.text = name
+        }
+        else {
+            cell.songLabel.text = "no song"
         }
         
         return cell

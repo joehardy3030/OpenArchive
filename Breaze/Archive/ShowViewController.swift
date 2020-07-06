@@ -22,16 +22,14 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
         super.viewDidLoad()
         self.showTableView.delegate = self
         self.showTableView.dataSource = self
-        self.getIAGetShowMetadata()
+        self.getIAGetShow()
     }
     
-    func getIAGetShowMetadata() {
+    func getIAGetShow() {
         
         guard let id = self.identifier else { return }
         let url = archiveAPI.metadataURL(identifier: id)
-        
-        print(url)
-
+    
         archiveAPI.getIARequestMetadata(url: url) {
             (response: ShowMetadataModel) -> Void in
             
@@ -40,19 +38,33 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
                 for f in files {
                     if (f.format?.contains("MP3"))! {
                         let showMP3 = ShowMP3(identifier: self.identifier, name: f.name, track: f.track)
-                        print(showMP3)
                         self.mp3Array.append(showMP3)
                     }
                 }
             }
+            
+            self.downloadShow()
+            
             DispatchQueue.main.async{
                 self.showTableView.reloadData()
                 print(self.showMetadata.files_count as Any)
             }
         }
     }
-
-        
+    
+    func downloadShow() {
+        for f in self.mp3Array {
+            let url = archiveAPI.downloadURL(identifier: self.identifier, filename: f.name)
+            archiveAPI.getIADownload(url: url) {
+                (response: Any?) -> Void in
+                
+                DispatchQueue.main.async{
+                    print(response as Any)
+                }
+            }
+        }
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
        /*
         if let _ = self.showMetadata {

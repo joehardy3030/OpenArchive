@@ -27,7 +27,7 @@ class ArchiveAPI: NSObject {
         return url
     }
     
-    func downloadURL(identifier: String,
+    func downloadURL(identifier: String?,
                      filename: String?) -> String {
         //https://archive.org/download/<identifier>/<filename>
         //identifier=gd1990-03-30.sbd.barbella.8366.sbeok.shnf
@@ -35,7 +35,9 @@ class ArchiveAPI: NSObject {
         
         var url = baseURLString
         url += "download/"
-        url += identifier
+        if let id = identifier {
+            url += id
+        }
         if let f = filename {
             url += "/"
             url += f
@@ -158,8 +160,12 @@ class ArchiveAPI: NSObject {
         //https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#downloading-data-to-a-file
         let destination = DownloadRequest.suggestedDownloadDestination(for: .documentDirectory)
         debugPrint(destination)
-        Alamofire.download(url, to: destination).responseData { response in
-            completion(response)
+        Alamofire.download(url, to: destination)
+                 .downloadProgress { (progress) in
+                        print((String)(progress.fractionCompleted*100)+"%")
+                  }
+                 .responseData { response in
+                                  completion(response)
         }
     }
     

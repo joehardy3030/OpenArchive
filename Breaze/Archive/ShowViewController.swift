@@ -13,7 +13,9 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     @IBOutlet weak var showTableView: UITableView!
     var identifier: String?
     let archiveAPI = ArchiveAPI()
+    var mp3Array = [ShowMP3]()
     var showMetadata: ShowMetadataModel!
+    
     
     override func viewDidLoad() {
 
@@ -21,7 +23,6 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
         self.showTableView.delegate = self
         self.showTableView.dataSource = self
         self.getIAGetShowMetadata()
-        // Do any additional setup after loading the view.
     }
     
     func getIAGetShowMetadata() {
@@ -35,6 +36,16 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
             (response: ShowMetadataModel) -> Void in
             
             self.showMetadata = response
+            if let files = self.showMetadata?.files {
+                for f in files {
+                    if (f.format?.contains("MP3"))! {
+                        let showMP3 = ShowMP3(identifier: self.identifier, name: f.name, track: f.track)
+                        print(showMP3)
+                        self.mp3Array.append(showMP3)
+                    }
+
+                }
+            }
             DispatchQueue.main.async{
                 self.showTableView.reloadData()
                 print(self.showMetadata.files_count as Any)
@@ -56,8 +67,8 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = showTableView.dequeueReusableCell(withIdentifier: "ShowCell", for: indexPath) as! ShowTableViewCell
         
-        if let id = self.identifier {
-            cell.songLabel.text = id
+        if let name = self.showMetadata.files?[indexPath.row].name {
+            cell.songLabel.text = name
         }
         else {
             cell.songLabel.text = "No song"
@@ -65,30 +76,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         return cell
         
-        //        return UITableViewCell()
     }
-    /*
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard let indexPath = monthTableView.indexPathForSelectedRow else { return }
-        if let target = segue.destination as? ShowsListViewController {
-            let m = indexPath.row + 1
-            target.month = m
-            if let y = self.year {
-                target.year = y
-            }
-            target.resetMonth()
-        }
-    }
-*/
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

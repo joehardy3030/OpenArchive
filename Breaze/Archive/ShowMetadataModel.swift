@@ -49,3 +49,9 @@ struct ShowMetadataModel: Codable {
     let item_size: Int?
     let dir: String?
 }
+
+struct ShowMP3: Codable {
+    let identifier: String?
+    let name: String?
+    let track: String?
+}

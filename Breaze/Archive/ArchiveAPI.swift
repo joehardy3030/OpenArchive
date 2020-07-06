@@ -95,6 +95,7 @@ class ArchiveAPI: NSObject {
     func deserializeFiles(json: JSON) -> [ShowFile] {
         var fileArray = [ShowFile]()
         for f in json {
+            //print(f.1)
             let name = f.1["name"].string
             let source = f.1["source"].string
             let creator = f.1["creator"].string

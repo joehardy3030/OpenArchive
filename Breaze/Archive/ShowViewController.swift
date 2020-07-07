@@ -58,7 +58,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
             archiveAPI.getIADownload(url: url) {
                 (response: URL?) -> Void in
                 DispatchQueue.main.async{
-                    self.setDestination(destination: response, name: f.name)
+                    self.setDownloadComplete(destination: response, name: f.name)
                     if let url = response {
                         self.avPlayer.prepareToPlay(url: url)
                         //self.avPlayer.playerItems.append(item!)
@@ -69,13 +69,19 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
     
-    func setDestination(destination: URL?, name: String?) {
+    func setDownloadComplete(destination: URL?, name: String?) {
+        var counter = 0
         if let d = destination {
             for i in 0...(self.mp3Array.count - 1) {
                 if self.mp3Array[i].name == name {
                     self.mp3Array[i].destination = d
-                    return 
                 }
+                if self.mp3Array[i].destination != nil {
+                    counter += 1
+                }
+            }
+            if self.mp3Array.count == counter {
+                self.avPlayer.loadQueuePlayer()
             }
         }
     }

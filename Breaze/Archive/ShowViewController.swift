@@ -116,15 +116,15 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
         //if let cell = yearTableView.cellForRow(at: indexPath as IndexPath) {
         
         if let url = self.mp3Array[indexPath.row].destination {
-            if let player = self.avPlayer.player {
+            if let player = self.avPlayer.playerQueue {
                 if player.rate > 0.0 {
                     player.pause()
                 }
             }
             else {
-                //self.avPlayer.loadQueuePlayer()
-                //self.avPlayer.playerQueue.play()
-                self.avPlayer.playAudioFile(url: url)
+                self.avPlayer.loadQueuePlayer()
+             //   self.avPlayer.playerQueue.play()
+               // self.avPlayer.playAudioFile(url: url)
             }
             //    self.avPlayer.pause()
             //}

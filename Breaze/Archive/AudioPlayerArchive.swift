@@ -21,7 +21,7 @@ class AudioPlayerArchive: NSObject {
     var asset: AVAsset!
     var player: AVPlayer!
     var playerItem: AVPlayerItem!
-    var playerItems: [AVPlayerItem]!
+    var playerItems = [AVPlayerItem]()
 
     // Key-value observing context
     private var playerItemContext = 0
@@ -78,15 +78,18 @@ class AudioPlayerArchive: NSObject {
                                forKeyPath: #keyPath(AVPlayerItem.status),
                                options: [.old, .new],
                                context: &playerItemContext)
-        //print(item)
-        // playerItems.append(item)
+        print(item)
+        playerItems.append(item)
         // Associate the player item with the player
 //        player = AVPlayer(playerItem: item)
  //       playerQueue = AVQueuePlayer(items: [item])
     }
     
     func loadQueuePlayer() {
+        print("Load ")
         playerQueue = AVQueuePlayer(items: playerItems)
+        playAudioQueue()
+        print(playerQueue.items())
     }
     
     override func observeValue(forKeyPath keyPath: String?,
@@ -114,6 +117,8 @@ class AudioPlayerArchive: NSObject {
             // Switch over status value
             switch status {
             case .readyToPlay:
+                //self.loadQueuePlayer()
+               // self.playerQueue.play()
                 print("ready to play")
             case .failed:
                 print("item failed")
@@ -138,6 +143,17 @@ class AudioPlayerArchive: NSObject {
             print(url)
             self.avAudioPlayer = try AVAudioPlayer(contentsOf: url)
             self.avAudioPlayer?.play()
+        }
+        catch {
+            print("nope")
+        }
+    }
+    
+    func playAudioQueue() {
+        do {
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback, options: AVAudioSession.CategoryOptions.mixWithOthers)
+            try AVAudioSession.sharedInstance().setActive(true)
+            self.playerQueue.play()
         }
         catch {
             print("nope")

@@ -59,6 +59,10 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
                 (response: URL?) -> Void in
                 DispatchQueue.main.async{
                     self.setDestination(destination: response, name: f.name)
+                    if let url = response {
+                        self.avPlayer.prepareToPlay(url: url)
+                        //self.avPlayer.playerItems.append(item!)
+                    }
                     self.showTableView.reloadData()
                 }
             }
@@ -110,13 +114,16 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //if let cell = yearTableView.cellForRow(at: indexPath as IndexPath) {
+        
         if let url = self.mp3Array[indexPath.row].destination {
-            if let player = self.avPlayer.avPlayer {
+            if let player = self.avPlayer.player {
                 if player.rate > 0.0 {
                     player.pause()
                 }
             }
             else {
+                //self.avPlayer.loadQueuePlayer()
+                //self.avPlayer.playerQueue.play()
                 self.avPlayer.playAudioFile(url: url)
             }
             //    self.avPlayer.pause()

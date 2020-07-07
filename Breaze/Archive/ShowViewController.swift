@@ -74,6 +74,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
             for i in 0...(self.mp3Array.count - 1) {
                 if self.mp3Array[i].name == name {
                     self.mp3Array[i].destination = d
+                    return 
                 }
             }
         }
@@ -122,7 +123,8 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
                 }
             }
             else {
-                self.avPlayer.loadQueuePlayer()
+             //   self.avPlayer.playAudioQueue()
+                  self.avPlayer.loadQueuePlayer()
              //   self.avPlayer.playerQueue.play()
                // self.avPlayer.playAudioFile(url: url)
             }

@@ -31,6 +31,17 @@ class AudioPlayerArchive: NSObject {
         "hasProtectedContent"
     ]
     
+    override init() {
+        do {
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback, options: AVAudioSession.CategoryOptions.mixWithOthers)
+            try AVAudioSession.sharedInstance().setActive(true)
+        }
+        catch {
+            print("nope")
+        }
+        super.init()
+    }
+
     /*
     var asset: AVURLAsset? {
         didSet {
@@ -117,24 +128,17 @@ class AudioPlayerArchive: NSObject {
             // Switch over status value
             switch status {
             case .readyToPlay:
-                //self.loadQueuePlayer()
-               // self.playerQueue.play()
                 print("ready to play")
             case .failed:
                 print("item failed")
             case .unknown:
                 print("status unknown")
+            @unknown default:
+                fatalError()
             }
         }
     }
     
-    func loadQueue(url: URL) {
-        let avAsset = AVAsset(url: url)
-        let assetKeys = ["playable"]
-        var playerItem = AVPlayerItem(asset: avAsset, automaticallyLoadedAssetKeys: assetKeys)
-        var playerQueue = AVQueuePlayer(items: [playerItem])
-        playerQueue.play()
-    }
     
     func playAudioFile(url: URL) {
         do {
@@ -150,7 +154,7 @@ class AudioPlayerArchive: NSObject {
     }
     
     func playAudioQueue() {
-        do {
+/*        do {
             try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback, options: AVAudioSession.CategoryOptions.mixWithOthers)
             try AVAudioSession.sharedInstance().setActive(true)
             self.playerQueue.play()
@@ -158,6 +162,9 @@ class AudioPlayerArchive: NSObject {
         catch {
             print("nope")
         }
+ */
+        self.playerQueue.play()
+
     }
     
     func playAudioFileController(url: URL)

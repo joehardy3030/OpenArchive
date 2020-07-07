@@ -22,6 +22,7 @@ class AudioPlayerArchive: NSObject {
     var player: AVPlayer!
     var playerItem: AVPlayerItem!
     var playerItems = [AVPlayerItem]()
+    var mp3Array = [ShowMP3]()
 
     // Key-value observing context
     private var playerItemContext = 0
@@ -96,8 +97,15 @@ class AudioPlayerArchive: NSObject {
  //       playerQueue = AVQueuePlayer(items: [item])
     }
     
-    func loadQueuePlayer() {
+    func loadQueuePlayer(tracks: [ShowMP3]) {
         print("Load ")
+        
+        // images.sorted(by: { $0.fileID > $1.fileID })
+
+        for track in tracks {
+            guard let d = track.destination else { return }
+            prepareToPlay(url: d)
+        }
         playerQueue = AVQueuePlayer(items: playerItems)
         playAudioQueue()
         print(playerQueue.items())

@@ -37,7 +37,8 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
             if let files = self.showMetadata?.files {
                 for f in files {
                     if (f.format?.contains("MP3"))! {
-                        let showMP3 = ShowMP3(identifier: self.identifier, name: f.name, track: f.track)
+                        print(f.format)
+                        let showMP3 = ShowMP3(identifier: self.identifier, name: f.name, title: f.title, track: f.track)
                         self.mp3Array.append(showMP3)
                     }
                 }
@@ -59,10 +60,11 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
                 (response: URL?) -> Void in
                 DispatchQueue.main.async{
                     self.setDownloadComplete(destination: response, name: f.name)
-                    if let url = response {
-                        self.avPlayer.prepareToPlay(url: url)
+                    print(response)
+                   // if let url = response {
+                   //     self.avPlayer.prepareToPlay(url: url)
                         //self.avPlayer.playerItems.append(item!)
-                    }
+                   // }
                     self.showTableView.reloadData()
                 }
             }
@@ -81,7 +83,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
                 }
             }
             if self.mp3Array.count == counter {
-                self.avPlayer.loadQueuePlayer()
+                self.avPlayer.loadQueuePlayer(tracks: self.mp3Array)
             }
         }
     }
@@ -101,8 +103,8 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = showTableView.dequeueReusableCell(withIdentifier: "ShowCell", for: indexPath) as! ShowTableViewCell
         
-        if let name = self.mp3Array[indexPath.row].name {
-            cell.songLabel.text = name
+        if let title = self.mp3Array[indexPath.row].title, let track = self.mp3Array[indexPath.row].track {
+            cell.songLabel.text = track + " " + title
         }
         else {
             cell.songLabel.text = "no song"
@@ -130,7 +132,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
             }
             else {
              //   self.avPlayer.playAudioQueue()
-                  self.avPlayer.loadQueuePlayer()
+                self.avPlayer.playerQueue.play()
              //   self.avPlayer.playerQueue.play()
                // self.avPlayer.playAudioFile(url: url)
             }

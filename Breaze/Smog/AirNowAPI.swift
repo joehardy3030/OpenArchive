@@ -42,6 +42,7 @@ struct AirNowAPI {
                 "BBOX=" + bBox! + and_sign + "dataType=" + dataType + and_sign + "format=" + format +
                 and_sign + "verbose=" + verbose + and_sign + "API_KEY=" + apiKey
         }
+        print(components)
         return URL(string: components)!
     }
     

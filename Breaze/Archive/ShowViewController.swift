@@ -86,6 +86,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
             }
             if self.mp3Array.count == counter {
                 self.avPlayer.loadQueuePlayer(tracks: self.mp3Array)
+                self.present(avPlayer.playerViewController, animated: true)
             }
         }
     }

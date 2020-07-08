@@ -23,6 +23,7 @@ class AudioPlayerArchive: NSObject {
     var playerItem: AVPlayerItem!
     var playerItems = [AVPlayerItem]()
     var mp3Array = [ShowMP3]()
+    let playerViewController = AVPlayerViewController()
 
     // Key-value observing context
     private var playerItemContext = 0
@@ -95,7 +96,12 @@ class AudioPlayerArchive: NSObject {
         */
         print(item)
         playerItems.append(item)
-
+        /*
+        playerItems[playerItems.count-1].addObserver(self,
+                               forKeyPath: #keyPath(AVPlayerItem.status),
+                               options: [.old, .new],
+                               context: &playerItemContext)
+        */
     }
     
     func loadQueuePlayer(tracks: [ShowMP3]) {
@@ -108,8 +114,10 @@ class AudioPlayerArchive: NSObject {
             prepareToPlay(url: d)
         }
         playerQueue = AVQueuePlayer(items: playerItems)
-        play()
+        //play()
         print(playerQueue.items())
+        
+        playerViewController.player = self.playerQueue
     }
     
     /*
@@ -150,35 +158,23 @@ class AudioPlayerArchive: NSObject {
     }
     */
     
+    
+    
     func playAudioFile(url: URL) {
         do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback, options: AVAudioSession.CategoryOptions.mixWithOthers)
-            try AVAudioSession.sharedInstance().setActive(true)
-            print(url)
             self.avAudioPlayer = try AVAudioPlayer(contentsOf: url)
             self.avAudioPlayer?.play()
         }
         catch {
-            print("nope")
+            print("DOH!")
         }
     }
     
     func playAudioFileController(url: URL)
     {
-        do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback, options: AVAudioSession.CategoryOptions.mixWithOthers)
-            try AVAudioSession.sharedInstance().setActive(true)
-            
-            self.avPlayer = AVPlayer(url: url)
-            //         playAudioFileController(url: url)
-            
-            let playerViewController = AVPlayerViewController()
-            playerViewController.player = self.avPlayer
-  
-        }
-        catch{
-            print("nope")
-        }
+        self.avPlayer = AVPlayer(url: url)
+        let playerViewController = AVPlayerViewController()
+        playerViewController.player = self.avPlayer
     }
     
 }

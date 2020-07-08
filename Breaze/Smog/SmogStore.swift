@@ -31,10 +31,11 @@ class SmogStore {
         
         let url = AirNowAPI.localSmogURL(location: location)
         let request = URLRequest(url: url)
+        print(url)
         let task = session.dataTask(with: request) { (data, response, error) -> Void in
             let result = self.processSmogForecastResult(data: data, error: error)
             completion(result)
-          //  print(result)
+            print(result)
         }
         task.resume()
      }

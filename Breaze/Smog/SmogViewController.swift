@@ -20,21 +20,32 @@ class SmogViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("view load")
         refresher = UIRefreshControl()
         self.tableView.addSubview(self.refresher)
         refresher.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControl.Event.valueChanged)
         refresher.tintColor = UIColor.gray
-        self.updateSmogForecast()
+        self.locationManager.delegate = self
+        if CLLocationManager.locationServicesEnabled() {
+            self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+            self.locationManager.startUpdatingLocation()
+        }
+        else {
+            self.updateSmogForecast()
+        }
+
     }
     
     func updateSmogForecast() {
         var parameters: [String:String]?
+        print("before loc")
         guard let location = LocationsStorage.shared.locations.last else { return }
+        print(location)
         parameters = [
             "latitude": String(location.latitude),
             "longitude": String(location.longitude)
         ]
-        
+        print(parameters as Any)
         store.fetchSmogForecast(location: parameters)
          {
              (SmogForecastResult) -> Void in
@@ -156,7 +167,13 @@ class SmogViewController: UITableViewController {
     @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
         // Do some reloading of data and update the table view's data source
         // Fetch more objects from a web service, for example...
-        self.updateSmogForecast()
+        if CLLocationManager.locationServicesEnabled() {
+            self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+            self.locationManager.startUpdatingLocation()
+        }
+        else {
+            self.updateSmogForecast()
+        }
         refreshControl.endRefreshing()
     }
 

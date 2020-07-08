@@ -13,6 +13,7 @@ class MonthViewController: UIViewController, UITableViewDataSource, UITableViewD
     @IBOutlet weak var monthTableView: UITableView!
     var months: [String] = []
     var year: Int?
+    let utils = Utils()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,6 +32,7 @@ class MonthViewController: UIViewController, UITableViewDataSource, UITableViewD
                   "Oct",
                   "Nov",
                   "Dec"]
+        utils.getMemory()
         // Do any additional setup after loading the view.
     }
     

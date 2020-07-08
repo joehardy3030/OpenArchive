@@ -16,6 +16,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     let avPlayer = AudioPlayerArchive()
     var mp3Array = [ShowMP3]()
     var showMetadata: ShowMetadataModel!
+    let utils = Utils()
 
     override func viewDidLoad() {
 
@@ -23,6 +24,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
         self.showTableView.delegate = self
         self.showTableView.dataSource = self
         self.getIAGetShow()
+        utils.getMemory()
     }
     
     func getIAGetShow() {
@@ -37,7 +39,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
             if let files = self.showMetadata?.files {
                 for f in files {
                     if (f.format?.contains("MP3"))! {
-                        print(f.format)
+                        print(f.format as Any)
                         let showMP3 = ShowMP3(identifier: self.identifier, name: f.name, title: f.title, track: f.track)
                         self.mp3Array.append(showMP3)
                     }
@@ -124,6 +126,13 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //if let cell = yearTableView.cellForRow(at: indexPath as IndexPath) {
         
+        if self.avPlayer.playerQueue.rate > 0.0 {
+            self.avPlayer.pause()
+        }
+        else {
+            self.avPlayer.play()
+        }
+        /*
         if let url = self.mp3Array[indexPath.row].destination {
             if let player = self.avPlayer.playerQueue {
                 if player.rate > 0.0 {
@@ -142,7 +151,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
 //                self.avPlayer.playAudioFile(url: url)
            // }
         }
-        
+        */
         //playAudioFile(url: url)
         //playAudioFileController(url: url)
     }

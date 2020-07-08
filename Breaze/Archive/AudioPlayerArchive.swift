@@ -68,11 +68,11 @@ class AudioPlayerArchive: NSObject {
      // Later You Can Remove Observer
 
     func pause() {
-        self.avAudioPlayer?.pause()
+        self.playerQueue?.pause()
     }
 
-    func resume() {
-        self.avAudioPlayer?.play()
+    func play() {
+        self.playerQueue?.play()
     }
 
     func prepareToPlay(url: URL) {
@@ -86,15 +86,16 @@ class AudioPlayerArchive: NSObject {
                                   automaticallyLoadedAssetKeys: assetKeys)
         
         // Register as an observer of the player item's status property
+       /*
         item.addObserver(self,
                                forKeyPath: #keyPath(AVPlayerItem.status),
                                options: [.old, .new],
                                context: &playerItemContext)
+        
+        */
         print(item)
         playerItems.append(item)
-        // Associate the player item with the player
-//        player = AVPlayer(playerItem: item)
- //       playerQueue = AVQueuePlayer(items: [item])
+
     }
     
     func loadQueuePlayer(tracks: [ShowMP3]) {
@@ -107,10 +108,11 @@ class AudioPlayerArchive: NSObject {
             prepareToPlay(url: d)
         }
         playerQueue = AVQueuePlayer(items: playerItems)
-        playAudioQueue()
+        play()
         print(playerQueue.items())
     }
     
+    /*
     override func observeValue(forKeyPath keyPath: String?,
                                of object: Any?,
                                change: [NSKeyValueChangeKey : Any]?,
@@ -146,7 +148,7 @@ class AudioPlayerArchive: NSObject {
             }
         }
     }
-    
+    */
     
     func playAudioFile(url: URL) {
         do {
@@ -159,20 +161,6 @@ class AudioPlayerArchive: NSObject {
         catch {
             print("nope")
         }
-    }
-    
-    func playAudioQueue() {
-/*        do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback, options: AVAudioSession.CategoryOptions.mixWithOthers)
-            try AVAudioSession.sharedInstance().setActive(true)
-            self.playerQueue.play()
-        }
-        catch {
-            print("nope")
-        }
- */
-        self.playerQueue.play()
-
     }
     
     func playAudioFileController(url: URL)

@@ -17,12 +17,14 @@ class ShowsListViewController: UIViewController, UITableViewDelegate, UITableVie
     var month: Int?
     var archiveAPI = ArchiveAPI()
     var identifiers: [String]?
+    let utils = Utils()
    // var selectedIdentifier: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.showListTableView.delegate = self
         self.showListTableView.dataSource = self
+        utils.getMemory()
        // self.getIADateRange()
         // Do any additional setup after loading the view.
     }

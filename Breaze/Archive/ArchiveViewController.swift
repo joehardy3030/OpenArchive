@@ -29,9 +29,11 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
         //self.getIADownload()
        //
         self.years += 1965...1995
+        utils.getMemory()
         //archiveAPI.readCSV()
         // Do any additional setup after loading the view.
     }
+    
     //identifier=gd1990-03-30.sbd.barbella.8366.sbeok.shnf
      //filename=gd90-03-30d1t01multi.mp3
     

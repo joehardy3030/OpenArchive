@@ -24,6 +24,7 @@ class AudioPlayerArchive: NSObject {
     var playerItems = [AVPlayerItem]()
     var mp3Array = [ShowMP3]()
     let playerViewController = AVPlayerViewController()
+  //  var audioQueueStatusObserver: NSKeyValueObservation?
 
     // Key-value observing context
     private var playerItemContext = 0
@@ -42,6 +43,7 @@ class AudioPlayerArchive: NSObject {
             print("nope")
         }
         super.init()
+        // self.setupRateObserver()
     }
 
     /*
@@ -117,9 +119,23 @@ class AudioPlayerArchive: NSObject {
         //play()
         print(playerQueue.items())
         
-        playerViewController.player = self.playerQueue
+        //playerViewController.player = self.playerQueue
     }
     
+    /*
+    func setObservers() {
+    // listening for current item status change
+        self.audioQueueStatusObserver = self.playerQueue?.currentItem?.observe(\.status, options:  [.new, .old], changeHandler: {
+            (playerItem, change) in
+            if playerItem.status == .readyToPlay {
+                print("current item status is ready")
+            }
+            else {
+                print(playerItem.status)
+            }
+        })
+    }
+    */
     /*
     override func observeValue(forKeyPath keyPath: String?,
                                of object: Any?,
@@ -176,5 +192,6 @@ class AudioPlayerArchive: NSObject {
         let playerViewController = AVPlayerViewController()
         playerViewController.player = self.avPlayer
     }
+    
     
 }

@@ -19,7 +19,7 @@ class ArchiveAPI: NSObject {
 
     
     let baseURLString = "https://archive.org/"
-    
+
     func metadataURL(identifier: String) -> String {
         var url = baseURLString
         url += "metadata/"

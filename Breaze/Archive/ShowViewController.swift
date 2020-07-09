@@ -7,9 +7,14 @@
 //
 
 import UIKit
+import AVKit
+import AVFoundation
 
 class ShowViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
+    @IBOutlet weak var reverseButton: UIImageView!
+    @IBOutlet weak var playPauseButton: UIImageView!
+    @IBOutlet weak var forwardButton: UIImageView!
     @IBOutlet weak var showTableView: UITableView!
     var identifier: String?
     let archiveAPI = ArchiveAPI()
@@ -17,6 +22,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     var mp3Array = [ShowMP3]()
     var showMetadata: ShowMetadataModel!
     let utils = Utils()
+    let playerViewController = AVPlayerViewController()
 
     override func viewDidLoad() {
 
@@ -25,6 +31,19 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
         self.showTableView.dataSource = self
         self.getIAGetShow()
         utils.getMemory()
+    }
+    
+    @IBAction func clickPlayButton(_ sender: Any) {
+        playPause()
+    }
+    
+    func playPause() {
+        if self.avPlayer.playerQueue.rate > 0.0 {
+            self.avPlayer.pause()
+        }
+        else {
+            self.avPlayer.play()
+        }
     }
     
     func getIAGetShow() {
@@ -86,11 +105,14 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
             }
             if self.mp3Array.count == counter {
                 self.avPlayer.loadQueuePlayer(tracks: self.mp3Array)
-                self.present(avPlayer.playerViewController, animated: true)
+                self.avPlayer.play()
+               // self.present(avPlayer.playerViewController, animated: true)
             }
         }
     }
     
+    
+
     /*
     self.present(playerViewController, animated: true) {
           if let avp = self.avPlayer {
@@ -126,13 +148,8 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //if let cell = yearTableView.cellForRow(at: indexPath as IndexPath) {
+        self.playPause()
         
-        if self.avPlayer.playerQueue.rate > 0.0 {
-            self.avPlayer.pause()
-        }
-        else {
-            self.avPlayer.play()
-        }
         /*
         if let url = self.mp3Array[indexPath.row].destination {
             if let player = self.avPlayer.playerQueue {

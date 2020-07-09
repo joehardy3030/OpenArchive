@@ -45,14 +45,14 @@ class ArchiveAPI: NSObject {
         return url
     }
     
-    func dateRangeURL(year: Int, month: Int) -> String {
+    func dateRangeURL(year: Int, month: Int, fields: [String:String]?) -> String {
         let andString = "%20AND%20"
         let dateString = "date%3A%5B"
         let toString = "%20TO%20"
         var url = baseURLString
         var monthString: String
         
-        
+        // fields=date,venue,transferrer&
         url += "services/search/v1/scrape?q=collection%3A%28GratefulDead%29"
         url += andString
         url += dateString

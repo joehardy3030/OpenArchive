@@ -786,6 +786,12 @@
                                     <action selector="clickPlayButton:" destination="0wg-q7-zkq" eventType="touchUpInside" id="ui7-rL-Gqh"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Nw4-h1-yJK">
+                                <rect key="frame" x="239.5" y="567" width="46" height="30"/>
+                                <connections>
+                                    <action selector="clickForwardButton:" destination="0wg-q7-zkq" eventType="touchUpInside" id="o6i-DN-Yoh"/>
+                                </connections>
+                            </button>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="backward" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="pbe-D2-JR7">
                                 <rect key="frame" x="92.5" y="564" width="40" height="35.5"/>
                                 <constraints>
@@ -796,6 +802,7 @@
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
+                            <constraint firstItem="Nw4-h1-yJK" firstAttribute="baseline" secondItem="qxJ-mr-o6w" secondAttribute="firstBaseline" id="1Ow-of-BPb"/>
                             <constraint firstItem="uWE-h0-Xs9" firstAttribute="leading" secondItem="pbe-D2-JR7" secondAttribute="trailing" constant="35" id="72R-hD-84J"/>
                             <constraint firstItem="Urq-B5-chz" firstAttribute="top" secondItem="uWE-h0-Xs9" secondAttribute="top" id="Ano-jq-aaS"/>
                             <constraint firstItem="Urq-B5-chz" firstAttribute="bottom" secondItem="uWE-h0-Xs9" secondAttribute="bottom" id="GGC-3B-0AP"/>
@@ -806,11 +813,16 @@
                             <constraint firstItem="qxJ-mr-o6w" firstAttribute="centerY" secondItem="uWE-h0-Xs9" secondAttribute="centerY" id="P5r-wQ-nzU"/>
                             <constraint firstItem="qxJ-mr-o6w" firstAttribute="leading" secondItem="uWE-h0-Xs9" secondAttribute="trailing" constant="35" id="PRq-nz-Frv"/>
                             <constraint firstItem="uMI-up-Xte" firstAttribute="leading" secondItem="Tle-F3-vmG" secondAttribute="leading" id="Pni-hE-2GO"/>
+                            <constraint firstItem="Nw4-h1-yJK" firstAttribute="height" secondItem="qxJ-mr-o6w" secondAttribute="height" multiplier="0.75" id="SQg-Xh-g7L"/>
                             <constraint firstItem="Urq-B5-chz" firstAttribute="leading" secondItem="uWE-h0-Xs9" secondAttribute="leading" id="STg-hS-C4E"/>
+                            <constraint firstItem="Nw4-h1-yJK" firstAttribute="centerY" secondItem="qxJ-mr-o6w" secondAttribute="centerY" id="Wpj-Hh-JFf"/>
                             <constraint firstItem="pbe-D2-JR7" firstAttribute="centerY" secondItem="uWE-h0-Xs9" secondAttribute="centerY" id="YJP-Z6-bne"/>
+                            <constraint firstItem="Nw4-h1-yJK" firstAttribute="centerX" secondItem="qxJ-mr-o6w" secondAttribute="centerX" id="ZZQ-W4-0U7"/>
                             <constraint firstItem="uMI-up-Xte" firstAttribute="trailing" secondItem="EcL-9l-r4I" secondAttribute="trailing" id="dGT-ki-ScX"/>
                             <constraint firstItem="uMI-up-Xte" firstAttribute="leading" secondItem="EcL-9l-r4I" secondAttribute="leading" id="e73-jH-VSh"/>
+                            <constraint firstItem="Nw4-h1-yJK" firstAttribute="width" secondItem="qxJ-mr-o6w" secondAttribute="width" multiplier="1.15" id="gZr-ny-PQX"/>
                             <constraint firstItem="uMI-up-Xte" firstAttribute="top" secondItem="EcL-9l-r4I" secondAttribute="bottom" id="oVU-8D-hgU"/>
+                            <constraint firstItem="Nw4-h1-yJK" firstAttribute="firstBaseline" secondItem="qxJ-mr-o6w" secondAttribute="firstBaseline" id="osi-Rd-bce"/>
                             <constraint firstItem="D8P-Zs-ANE" firstAttribute="bottom" secondItem="uWE-h0-Xs9" secondAttribute="bottom" constant="16" id="teG-vG-ml4"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="D8P-Zs-ANE"/>

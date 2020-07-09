@@ -36,6 +36,9 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     @IBAction func clickPlayButton(_ sender: Any) {
         playPause()
     }
+    @IBAction func clickForwardButton(_ sender: Any) {
+        self.avPlayer.playerQueue.advanceToNextItem()
+    }
     
     func playPause() {
         if self.avPlayer.playerQueue.rate > 0.0 {

@@ -45,15 +45,17 @@ class ArchiveAPI: NSObject {
         return url
     }
     
-    func dateRangeURL(year: Int, month: Int, fields: [String:String]?) -> String {
+    func dateRangeURL(year: Int, month: Int) -> String {
         let andString = "%20AND%20"
         let dateString = "date%3A%5B"
         let toString = "%20TO%20"
         var url = baseURLString
         var monthString: String
-        
+                
         // fields=date,venue,transferrer&
-        url += "services/search/v1/scrape?q=collection%3A%28GratefulDead%29"
+        url += "services/search/v1/scrape?"
+        url += "fields=date,venue,transferer&"
+        url += "q=collection%3A%28GratefulDead%29"
         url += andString
         url += dateString
         if month <= 9 {
@@ -145,10 +147,23 @@ class ArchiveAPI: NSObject {
                 let j = JSON(json)
                 let items = j["items"]
                 var itemArray = [String]()
+                var showMetadata = [ShowMetadata]()
                 
                 for i in items {
+                    var showMD = ShowMetadata()
                     if let id_string = i.1["identifier"].string {
                         itemArray.append(id_string)
+                        print(id_string)
+                        showMD.identifier = id_string
+                    }
+                    if let venue_string = i.1["venue"].string {
+                        print(venue_string as Any)
+                    }
+                    if let date_string = i.1["date"].string {
+                        print(date_string as Any)
+                    }
+                    if let transferer_string = i.1["transferer"].string {
+                        print(transferer_string as Any)
                     }
                 }
                 completion(itemArray)

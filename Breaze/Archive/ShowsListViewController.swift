@@ -35,7 +35,7 @@ class ShowsListViewController: UIViewController, UITableViewDelegate, UITableVie
     
     func getIADateRange() {
         guard let year = self.year, let month = self.month else { return }
-        let url = archiveAPI.dateRangeURL(year: year, month: month, fields: nil)
+        let url = archiveAPI.dateRangeURL(year: year, month: month)
         
         print(url)
 

@@ -9,45 +9,45 @@
 import UIKit
 
 struct ShowFile: Codable {
-    let name: String?
-    let source: String?
-    let creator: String?
-    let title: String?
-    let track: String?
-    let album: String?
-    let bitrate: String?
-    let length: String?
-    let format: String?
-    let original: String?
-    let mtime: String?
-    let size: String?
-    let md5: String?
-    let crc32: String?
-    let sha1: String?
+    var name: String?
+    var source: String?
+    var creator: String?
+    var title: String?
+    var track: String?
+    var album: String?
+    var bitrate: String?
+    var length: String?
+    var format: String?
+    var original: String?
+    var mtime: String?
+    var size: String?
+    var md5: String?
+    var crc32: String?
+    var sha1: String?
 }
 
 struct ShowMetadata: Codable {
-    let identifier: String?
-    let title: String?
-    let creator: String?
-    let mediatype: String?
-    let collection: String?
-    let type: String?
-    let description: String?
-    let date: String?
-    let year: String?
-    let venue: String?
-    let transferer: String?
-    let source: String?
+    var identifier: String?
+    var title: String?
+    var creator: String?
+    var mediatype: String?
+    var collection: String?
+    var type: String?
+    var description: String?
+    var date: String?
+    var year: String?
+    var venue: String?
+    var transferer: String?
+    var source: String?
 }
 
 struct ShowMetadataModel: Codable {
-    let metadata: ShowMetadata?
-    let files: [ShowFile]?
-    let files_count: Int?
-    let created: Int?
-    let item_size: Int?
-    let dir: String?
+    var metadata: ShowMetadata?
+    var files: [ShowFile]?
+    var files_count: Int?
+    var created: Int?
+    var item_size: Int?
+    var dir: String?
 }
 
 struct ShowMP3: Codable {

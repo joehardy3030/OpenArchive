@@ -151,30 +151,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //if let cell = yearTableView.cellForRow(at: indexPath as IndexPath) {
-        self.playPause()
-        
-        /*
-        if let url = self.mp3Array[indexPath.row].destination {
-            if let player = self.avPlayer.playerQueue {
-                if player.rate > 0.0 {
-                    player.pause()
-                }
-            }
-            else {
-             //   self.avPlayer.playAudioQueue()
-                self.avPlayer.playerQueue.play()
-             //   self.avPlayer.playerQueue.play()
-               // self.avPlayer.playAudioFile(url: url)
-            }
-            //    self.avPlayer.pause()
-            //}
-           // else{
-//                self.avPlayer.playAudioFile(url: url)
-           // }
-        }
-        */
-        //playAudioFile(url: url)
-        //playAudioFileController(url: url)
+        self.playPause()        
     }
 
 }

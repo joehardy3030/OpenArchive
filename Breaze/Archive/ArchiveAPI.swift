@@ -140,14 +140,14 @@ class ArchiveAPI: NSObject {
         return ShowMetadata(identifier: identifier, title: title, creator: creator, mediatype: mediatype, collection: collection, type: type, description: description, date: date, year: year, venue: venue, transferer: transferer, source: source)
     }
     
-    func getIARequestItems(url: String, completion: @escaping ([String]?) -> Void) {
+    func getIARequestItems(url: String, completion: @escaping ([ShowMetadata]?) -> Void) {
         Alamofire.request(url).responseJSON { response in
 
             if let json = response.result.value {
                 let j = JSON(json)
                 let items = j["items"]
                 var itemArray = [String]()
-                var showMetadata = [ShowMetadata]()
+                var showMetadatas = [ShowMetadata]()
                 
                 for i in items {
                     var showMD = ShowMetadata()
@@ -158,15 +158,19 @@ class ArchiveAPI: NSObject {
                     }
                     if let venue_string = i.1["venue"].string {
                         print(venue_string as Any)
+                        showMD.venue = venue_string
                     }
                     if let date_string = i.1["date"].string {
                         print(date_string as Any)
+                        showMD.date = date_string
                     }
                     if let transferer_string = i.1["transferer"].string {
                         print(transferer_string as Any)
+                        showMD.transferer = transferer_string
                     }
+                    showMetadatas.append(showMD)
                 }
-                completion(itemArray)
+                completion(showMetadatas)
               }
         }
     }

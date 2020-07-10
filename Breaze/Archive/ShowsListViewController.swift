@@ -17,6 +17,7 @@ class ShowsListViewController: UIViewController, UITableViewDelegate, UITableVie
     var month: Int?
     var archiveAPI = ArchiveAPI()
     var identifiers: [String]?
+    var showMetadatas: [ShowMetadata]?
     let utils = Utils()
    // var selectedIdentifier: String?
     
@@ -40,13 +41,13 @@ class ShowsListViewController: UIViewController, UITableViewDelegate, UITableVie
         print(url)
 
         archiveAPI.getIARequestItems(url: url) {
-            (response: [String]?) -> Void in
+            (response: [ShowMetadata]?) -> Void in
             
             DispatchQueue.main.async{
                 if let r = response {
-                    self.identifiers = r
+                    self.showMetadatas = r
                     self.showListTableView.reloadData()
-                    //print(self.identifiers)
+                   // print(self.showMetadatas)
                 }
             }
         }
@@ -86,8 +87,8 @@ class ShowsListViewController: UIViewController, UITableViewDelegate, UITableVie
     */
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let ids = self.identifiers {
-            return ids.count
+        if let showMDs = self.showMetadatas {
+            return showMDs.count
         }
         else {
             return 0
@@ -97,9 +98,9 @@ class ShowsListViewController: UIViewController, UITableViewDelegate, UITableVie
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = showListTableView.dequeueReusableCell(withIdentifier: "ShowListCell", for: indexPath) as! ShowsListTableViewCell
 
-        if let ids = self.identifiers {
+        if let showMDs = self.showMetadatas {
             //self.selectedIdentifier = ids[indexPath.row]
-            cell.identifierLabel.text = ids[indexPath.row]
+            cell.identifierLabel.text = showMDs[indexPath.row].identifier
         }
         else {
             cell.identifierLabel.text = "No shows"

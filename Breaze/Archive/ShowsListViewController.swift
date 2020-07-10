@@ -25,6 +25,7 @@ class ShowsListViewController: UIViewController, UITableViewDelegate, UITableVie
         super.viewDidLoad()
         self.showListTableView.delegate = self
         self.showListTableView.dataSource = self
+        self.showListTableView.rowHeight = 100.0
         utils.getMemory()
        // self.getIADateRange()
         // Do any additional setup after loading the view.
@@ -100,7 +101,10 @@ class ShowsListViewController: UIViewController, UITableViewDelegate, UITableVie
 
         if let showMDs = self.showMetadatas {
             //self.selectedIdentifier = ids[indexPath.row]
-            cell.identifierLabel.text = showMDs[indexPath.row].identifier
+            //cell.identifierLabel.text = showMDs[indexPath.row].identifier
+            cell.dateLabel.text = utils.getDateFromDateTimeString(datetime: showMDs[indexPath.row].date)
+            cell.venueLabel.text = showMDs[indexPath.row].venue
+            cell.transfererLabel.text = showMDs[indexPath.row].transferer
         }
         else {
             cell.identifierLabel.text = "No shows"

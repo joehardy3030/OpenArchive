@@ -11,6 +11,10 @@ import UIKit
 class ShowsListTableViewCell: UITableViewCell {
 
     @IBOutlet weak var identifierLabel: UILabel!
+    @IBOutlet weak var dateLabel: UILabel!
+    @IBOutlet weak var venueLabel: UILabel!
+    @IBOutlet weak var transfererLabel: UILabel!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

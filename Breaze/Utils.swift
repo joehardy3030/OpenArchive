@@ -150,6 +150,26 @@ class Utils {
         else { return 0 }
     }
     
+    func getDateFromDateTimeString(datetime: String?) -> String? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        dateFormatter.locale = Locale.init(identifier: "en_US")
+        
+        if let d = datetime {
+            if let dateObj = dateFormatter.date(from: d) {
+           // print(dateObj as Any)
+            dateFormatter.dateFormat = "MM-dd-yyyy"
+            let newDate = dateFormatter.string(from: dateObj)
+            return newDate
+            }
+            else {
+                return "" as String?
+            }
+        }
+        
+        return "" as String?
+    }
+    
     func getDocumentsDirectory() -> URL {
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         let documentsDirectory = paths[0]

@@ -54,7 +54,7 @@ class ArchiveAPI: NSObject {
                 
         // fields=date,venue,transferrer&
         url += "services/search/v1/scrape?"
-        url += "fields=date,venue,transferer&"
+        url += "fields=date,venue,transferer,source&"
         url += "q=collection%3A%28GratefulDead%29"
         url += andString
         url += dateString
@@ -168,6 +168,11 @@ class ArchiveAPI: NSObject {
                         print(transferer_string as Any)
                         showMD.transferer = transferer_string
                     }
+                    if let source_string = i.1["source"].string {
+                        print(source_string as Any)
+                        showMD.source = source_string
+                    }
+
                     showMetadatas.append(showMD)
                 }
                 completion(showMetadatas)

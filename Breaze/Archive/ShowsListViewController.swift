@@ -25,7 +25,7 @@ class ShowsListViewController: UIViewController, UITableViewDelegate, UITableVie
         super.viewDidLoad()
         self.showListTableView.delegate = self
         self.showListTableView.dataSource = self
-        self.showListTableView.rowHeight = 100.0
+        self.showListTableView.rowHeight = 135.0
         utils.getMemory()
        // self.getIADateRange()
         // Do any additional setup after loading the view.
@@ -47,6 +47,9 @@ class ShowsListViewController: UIViewController, UITableViewDelegate, UITableVie
             DispatchQueue.main.async{
                 if let r = response {
                     self.showMetadatas = r
+                    if let s = self.showMetadatas {
+                        self.showMetadatas = s.sorted(by: { $0.date! < $1.date! })
+                    }
                     self.showListTableView.reloadData()
                    // print(self.showMetadatas)
                 }
@@ -105,9 +108,11 @@ class ShowsListViewController: UIViewController, UITableViewDelegate, UITableVie
             cell.dateLabel.text = utils.getDateFromDateTimeString(datetime: showMDs[indexPath.row].date)
             cell.venueLabel.text = showMDs[indexPath.row].venue
             cell.transfererLabel.text = showMDs[indexPath.row].transferer
+            cell.sourceLabel.text = showMDs[indexPath.row].source
+
         }
         else {
-            cell.identifierLabel.text = "No shows"
+            cell.venueLabel.text = "No show"
         }
         
         return cell

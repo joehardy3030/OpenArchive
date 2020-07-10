@@ -120,9 +120,9 @@ class ShowsListViewController: UIViewController, UITableViewDelegate, UITableVie
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let indexPath = showListTableView.indexPathForSelectedRow else { return }
-        guard let ids = self.identifiers else { return }
-        if let target = segue.destination as? ShowViewController {
-            target.identifier = ids[indexPath.row]
+        //guard let ids = self.identifiers else { return }
+        if let target = segue.destination as? ShowViewController, let showMDs = self.showMetadatas {
+            target.identifier = showMDs[indexPath.row].identifier
         }
     }
 

@@ -138,6 +138,16 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
         if keyPath == "currentItem.loadedTimeRanges" {
             isPlaying = true
             print(isPlaying)
+            if let duration = self.avPlayer.playerQueue.currentItem?.duration {
+                let seconds = CMTimeGetSeconds(duration)
+                if seconds > 0 && seconds < 100000000.0 {
+                    let secondsText =  Int(seconds) % 60
+                    //let minutesText = Int(seconds) / 60
+                    let minutesText = String(format: "%02d", Int(seconds) / 60)
+                    audioLengthLabel.text = "\(minutesText):\(secondsText)"
+                    print(secondsText)
+                }
+            }
         }
 
     }

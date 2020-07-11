@@ -26,13 +26,15 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     var showMetadata: ShowMetadataModel!
     let utils = Utils()
     let playerViewController = AVPlayerViewController()
-
+    var isPlaying = false
+    var kvContext = 0x0
+    
     override func viewDidLoad() {
 
         super.viewDidLoad()
         self.showTableView.delegate = self
         self.showTableView.dataSource = self
-        
+        setupPlayer()
         getIAGetShow()
         utils.getMemory()
     }
@@ -42,6 +44,10 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     @IBAction func clickForwardButton(_ sender: Any) {
         self.avPlayer.playerQueue.advanceToNextItem()
+    }
+    
+    func setupPlayer() {
+        
     }
     
     func playPause() {
@@ -122,12 +128,19 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
             if self.mp3Array.count == counter {
                 self.avPlayer.loadQueuePlayer(tracks: self.mp3Array)
                 self.avPlayer.play()
+                self.avPlayer.playerQueue.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
                // self.present(avPlayer.playerViewController, animated: true)
             }
         }
     }
-    
-    
+ 
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == "currentItem.loadedTimeRanges" {
+            isPlaying = true
+            print(isPlaying)
+        }
+
+    }
 
     /*
     self.present(playerViewController, animated: true) {

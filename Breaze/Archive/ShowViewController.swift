@@ -27,7 +27,6 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     let utils = Utils()
     let playerViewController = AVPlayerViewController()
     var isPlaying = false
-    var kvContext = 0x0
     
     override func viewDidLoad() {
 
@@ -47,7 +46,11 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func setupPlayer() {
-        
+        audioLengthSlider.addTarget(self, action: #selector(handleSliderChange), for: .valueChanged)
+    }
+    
+    @objc func handleSliderChange() {
+        print(audioLengthSlider.value)
     }
     
     func playPause() {

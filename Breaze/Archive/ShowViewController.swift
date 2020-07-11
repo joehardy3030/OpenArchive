@@ -12,6 +12,9 @@ import AVFoundation
 
 class ShowViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
+    @IBOutlet weak var currentTimeLabel: UILabel!
+    @IBOutlet weak var audioLengthSlider: UISlider!
+    @IBOutlet weak var audioLengthLabel: UILabel!
     @IBOutlet weak var reverseButton: UIImageView!
     @IBOutlet weak var playPauseButton: UIImageView!
     @IBOutlet weak var forwardButton: UIImageView!
@@ -29,7 +32,8 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
         super.viewDidLoad()
         self.showTableView.delegate = self
         self.showTableView.dataSource = self
-        self.getIAGetShow()
+        
+        getIAGetShow()
         utils.getMemory()
     }
     
@@ -48,6 +52,15 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
             self.avPlayer.play()
         }
     }
+    
+    /*
+    let audioLengthLabel: UILabel = {
+        let label = UILabel()
+        label.text = "00:00"
+        label.textColor = .white
+        return label
+    }()
+    */
     
     func getIAGetShow() {
         

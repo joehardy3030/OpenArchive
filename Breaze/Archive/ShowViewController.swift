@@ -46,6 +46,10 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func setupPlayer() {
+        currentTimeLabel.translatesAutoresizingMaskIntoConstraints = false
+        audioLengthLabel.translatesAutoresizingMaskIntoConstraints = false
+        audioLengthSlider.translatesAutoresizingMaskIntoConstraints = false
+        audioLengthSlider.value = 0.0
         audioLengthSlider.addTarget(self, action: #selector(handleSliderChange), for: .valueChanged)
     }
     
@@ -152,13 +156,10 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
                     let minutesString = String(format: "%02d", Int(seconds) / 60)
                     self.currentTimeLabel.text = ("\(minutesString):\(secondsString)")
                     if let duration = self.avPlayer.playerQueue.currentItem?.duration {
-                        let totalSeconds = CMTimeGetSeconds(duration)    
+                        let totalSeconds = CMTimeGetSeconds(duration)
                         self.audioLengthSlider.value = Float(seconds/totalSeconds)
                     }
-                    print(seconds)
                 }
-                
-               // self.present(avPlayer.playerViewController, animated: true)
             }
         }
     }
@@ -166,19 +167,15 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "currentItem.loadedTimeRanges" {
             isPlaying = true
-            print(isPlaying)
             if let duration = self.avPlayer.playerQueue.currentItem?.duration {
                 let seconds = CMTimeGetSeconds(duration)
                 if seconds > 0 && seconds < 100000000.0 {
-                    let secondsText =  Int(seconds) % 60
-                    //let minutesText = Int(seconds) / 60
+                    let secondsText =  String(format: "%02d", Int(seconds) % 60)
                     let minutesText = String(format: "%02d", Int(seconds) / 60)
                     audioLengthLabel.text = "\(minutesText):\(secondsText)"
-                    print(secondsText)
                 }
             }
         }
-
     }
 
     /*

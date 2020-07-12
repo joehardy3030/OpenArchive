@@ -151,6 +151,10 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
                     let secondsString = String(format: "%02d", Int(seconds) % 60)
                     let minutesString = String(format: "%02d", Int(seconds) / 60)
                     self.currentTimeLabel.text = ("\(minutesString):\(secondsString)")
+                    if let duration = self.avPlayer.playerQueue.currentItem?.duration {
+                        let totalSeconds = CMTimeGetSeconds(duration)    
+                        self.audioLengthSlider.value = Float(seconds/totalSeconds)
+                    }
                     print(seconds)
                 }
                 

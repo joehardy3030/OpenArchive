@@ -52,7 +52,6 @@ class ArchiveAPI: NSObject {
         var url = baseURLString
         var monthString: String
                 
-        // fields=date,venue,transferrer&
         url += "services/search/v1/scrape?"
         url += "fields=date,venue,transferer,source&"
         url += "q=collection%3A%28GratefulDead%29"
@@ -208,20 +207,6 @@ class ArchiveAPI: NSObject {
 
 }
 
-/*
-    let destination: DownloadRequest.destination = { _, _ in
-        let documentsURL = FileManager.default.urls(for: .picturesDirectory, in: .userDomainMask)[0]
-        let fileURL = documentsURL.appendingPathComponent("image.png")
-        return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
-    }
-
-    Alamofire.download("https://httpbin.org/image/png", to: self.destination).response { response in
-        debugPrint(response)
-        if response.error == nil, let imagePath = response.fileURL?.path {
-            let image = UIImage(contentsOfFile: imagePath)
-        }
-    }
-*/
 
     
     

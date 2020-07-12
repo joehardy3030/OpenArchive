@@ -25,23 +25,15 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
         super.viewDidLoad()
         self.yearTableView.delegate = self
         self.yearTableView.dataSource = self
-        // self.getIARequest()
-        //self.getIADownload()
-       //
         self.years += 1965...1995
-        utils.getMemory()
-        //archiveAPI.readCSV()
-        // Do any additional setup after loading the view.
+        //utils.getMemory()
     }
-    
-    //identifier=gd1990-03-30.sbd.barbella.8366.sbeok.shnf
-     //filename=gd90-03-30d1t01multi.mp3
     
     // https://www.raywenderlich.com/6620276-sqlite-with-swift-tutorial-getting-started
     func getIARequest() {
         let url = archiveAPI.downloadURL(identifier: identifier,
                                       filename: filename)
-        print(url)
+        print("Download items \(url)")
 
         archiveAPI.getIARequestItems(url: url) {
             (response: Any?) -> Void in
@@ -57,7 +49,7 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
     func getIADownload() {
         let url = archiveAPI.downloadURL(identifier: identifier,
                                       filename: filename)
-        print(url)
+        print("Download from \(url)")
 
         archiveAPI.getIADownload(url: url) {
             (response: Any?) -> Void in
@@ -75,7 +67,6 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        //return UITableViewCell()
         let cell = yearTableView.dequeueReusableCell(withIdentifier: "ArchiveCell", for: indexPath) as! ArchiveCell
         let year = self.years[indexPath.row]
         cell.titleLabel?.text = String(year)
@@ -83,11 +74,8 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //if let cell = yearTableView.cellForRow(at: indexPath as IndexPath) {
         var url = utils.getDocumentsDirectory()
         url.appendPathComponent(filename)
-        //playAudioFile(url: url)
-        //playAudioFileController(url: url)
     }
     
     
@@ -104,7 +92,7 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
         do {
             try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback, options: AVAudioSession.CategoryOptions.mixWithOthers)
             try AVAudioSession.sharedInstance().setActive(true)
-            print(url)
+            print("Play \(url)")
             self.avAudioPlayer = try AVAudioPlayer(contentsOf: url)
             self.avAudioPlayer?.delegate = self
             self.avAudioPlayer?.play()
@@ -120,9 +108,7 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
             try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback, options: AVAudioSession.CategoryOptions.mixWithOthers)
             try AVAudioSession.sharedInstance().setActive(true)
             
-            self.avPlayer = AVPlayer(url: url)
-            //         playAudioFileController(url: url)
-            
+            self.avPlayer = AVPlayer(url: url)            
             let playerViewController = AVPlayerViewController()
             playerViewController.player = self.avPlayer
             self.present(playerViewController, animated: true) {

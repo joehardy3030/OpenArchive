@@ -25,7 +25,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     var mp3Array = [ShowMP3]()
     var showMetadata: ShowMetadataModel!
     let utils = Utils()
-    let playerViewController = AVPlayerViewController()
+    //let playerViewController = AVPlayerViewController()
     var isPlaying = false
     
     override func viewDidLoad() {
@@ -176,21 +176,13 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     func getCurrentTrackIndex() -> Int {
         guard let ci = self.avPlayer.playerQueue.currentItem else { return 0 }
         let destinationURL = ci.asset.value(forKey: "URL") as? URL
-        print("destination url \(String(describing: destinationURL))")
         for i in 0...(mp3Array.count - 1) {
             if mp3Array[i].destination == destinationURL {
-                    print("current track \(i)")
+                return i
                 }
         }
         return 0
     }
-    /*
-    self.present(playerViewController, animated: true) {
-          if let avp = self.avPlayer {
-              avp.play()
-          }
-      }
-    */
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.mp3Array.count
@@ -218,6 +210,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        // start playing that track and reload the queue
         //if let cell = yearTableView.cellForRow(at: indexPath as IndexPath) {
      //   self.playPause()
     }

@@ -68,20 +68,13 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     func playPause() {
         if self.avPlayer.playerQueue.rate > 0.0 {
             self.avPlayer.pause()
+            self.isPlaying = false
         }
         else {
             self.avPlayer.play()
+            self.isPlaying = true
         }
     }
-    
-    /*
-    let audioLengthLabel: UILabel = {
-        let label = UILabel()
-        label.text = "00:00"
-        label.textColor = .white
-        return label
-    }()
-    */
     
     func getIAGetShow() {
         
@@ -117,13 +110,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
             archiveAPI.getIADownload(url: url) {
                 (response: URL?) -> Void in
                 DispatchQueue.main.async{
-                   // print("\(self.identifier)\\\(f.name)")
                     self.setDownloadComplete(destination: response, name: f.name)
-                    print(response)
-                   // if let url = response {
-                   //     self.avPlayer.prepareToPlay(url: url)
-                        //self.avPlayer.playerItems.append(item!)
-                   // }
                     self.showTableView.reloadData()
                 }
             }
@@ -142,24 +129,28 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
                 }
             }
             if self.mp3Array.count == counter {
-                self.avPlayer.loadQueuePlayer(tracks: self.mp3Array)
-                self.avPlayer.play()
-                self.avPlayer.playerQueue.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
-                
-                //track player progress
-                let interval = CMTime(value: 1, timescale: 2)
-                
-                self.avPlayer.playerQueue.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { (progressTime) in
-                    
-                    let seconds = CMTimeGetSeconds(progressTime)
-                    let secondsString = String(format: "%02d", Int(seconds) % 60)
-                    let minutesString = String(format: "%02d", Int(seconds) / 60)
-                    self.currentTimeLabel.text = ("\(minutesString):\(secondsString)")
-                    if let duration = self.avPlayer.playerQueue.currentItem?.duration {
-                        let totalSeconds = CMTimeGetSeconds(duration)
-                        self.audioLengthSlider.value = Float(seconds/totalSeconds)
-                    }
-                }
+                loadAndPlay()
+            }
+        }
+    }
+    
+    func loadAndPlay() {
+        self.avPlayer.loadQueuePlayer(tracks: self.mp3Array)
+        self.avPlayer.play()
+        self.avPlayer.playerQueue.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
+        
+        //track player progress
+        let interval = CMTime(value: 1, timescale: 2)
+        
+        self.avPlayer.playerQueue.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { (progressTime) in
+            
+            let seconds = CMTimeGetSeconds(progressTime)
+            let secondsString = String(format: "%02d", Int(seconds) % 60)
+            let minutesString = String(format: "%02d", Int(seconds) / 60)
+            self.currentTimeLabel.text = ("\(minutesString):\(secondsString)")
+            if let duration = self.avPlayer.playerQueue.currentItem?.duration {
+                let totalSeconds = CMTimeGetSeconds(duration)
+                self.audioLengthSlider.value = Float(seconds/totalSeconds)
             }
         }
     }
@@ -169,23 +160,30 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
             isPlaying = true
             if let ci = self.avPlayer.playerQueue.currentItem {
                 let duration = ci.duration
-            //if let duration = self.avPlayer.playerQueue.currentItem?.duration {
                 let seconds = CMTimeGetSeconds(duration)
                 if seconds > 0 && seconds < 100000000.0 {
                     let secondsText =  String(format: "%02d", Int(seconds) % 60)
                     let minutesText = String(format: "%02d", Int(seconds) / 60)
                     audioLengthLabel.text = "\(minutesText):\(secondsText)"
                 }
-                print("current item \(String(describing: ci.asset.value(forKey: "URL")))")
-                let row = 4
+                let row = getCurrentTrackIndex()
                 let indexPath = IndexPath(row: row, section: 0)
                 self.showTableView.selectRow(at: indexPath, animated: true, scrollPosition: UITableView.ScrollPosition.middle)
             }
         }
-            //}
-            
     }
 
+    func getCurrentTrackIndex() -> Int {
+        guard let ci = self.avPlayer.playerQueue.currentItem else { return 0 }
+        let destinationURL = ci.asset.value(forKey: "URL") as? URL
+        print("destination url \(String(describing: destinationURL))")
+        for i in 0...(mp3Array.count - 1) {
+            if mp3Array[i].destination == destinationURL {
+                    print("current track \(i)")
+                }
+        }
+        return 0
+    }
     /*
     self.present(playerViewController, animated: true) {
           if let avp = self.avPlayer {

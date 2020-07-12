@@ -50,7 +50,15 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     @objc func handleSliderChange() {
-        print(audioLengthSlider.value)
+        //print(audioLengthSlider.value)
+        if let duration = self.avPlayer.playerQueue.currentItem?.duration {
+            let totalSeconds = CMTimeGetSeconds(duration)
+            let value = Float64(audioLengthSlider.value) * totalSeconds
+            let seekTime = CMTime(value: Int64(value), timescale: 1)
+            self.avPlayer.playerQueue.seek(to: seekTime, completionHandler: { (completedSeek) in
+                
+            })
+        }
     }
     
     func playPause() {
@@ -105,6 +113,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
             archiveAPI.getIADownload(url: url) {
                 (response: URL?) -> Void in
                 DispatchQueue.main.async{
+                   // print("\(self.identifier)\\\(f.name)")
                     self.setDownloadComplete(destination: response, name: f.name)
                     print(response)
                    // if let url = response {
@@ -132,6 +141,19 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
                 self.avPlayer.loadQueuePlayer(tracks: self.mp3Array)
                 self.avPlayer.play()
                 self.avPlayer.playerQueue.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
+                
+                //track player progress
+                let interval = CMTime(value: 1, timescale: 2)
+                
+                self.avPlayer.playerQueue.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { (progressTime) in
+                    
+                    let seconds = CMTimeGetSeconds(progressTime)
+                    let secondsString = String(format: "%02d", Int(seconds) % 60)
+                    let minutesString = String(format: "%02d", Int(seconds) / 60)
+                    self.currentTimeLabel.text = ("\(minutesString):\(secondsString)")
+                    print(seconds)
+                }
+                
                // self.present(avPlayer.playerViewController, animated: true)
             }
         }

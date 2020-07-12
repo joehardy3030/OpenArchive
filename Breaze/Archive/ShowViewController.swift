@@ -167,15 +167,23 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "currentItem.loadedTimeRanges" {
             isPlaying = true
-            if let duration = self.avPlayer.playerQueue.currentItem?.duration {
+            if let ci = self.avPlayer.playerQueue.currentItem {
+                let duration = ci.duration
+            //if let duration = self.avPlayer.playerQueue.currentItem?.duration {
                 let seconds = CMTimeGetSeconds(duration)
                 if seconds > 0 && seconds < 100000000.0 {
                     let secondsText =  String(format: "%02d", Int(seconds) % 60)
                     let minutesText = String(format: "%02d", Int(seconds) / 60)
                     audioLengthLabel.text = "\(minutesText):\(secondsText)"
                 }
+                print("current item \(ci)")
+                let row = 4
+                let indexPath = IndexPath(row: row, section: 0)
+                self.showTableView.selectRow(at: indexPath, animated: true, scrollPosition: UITableView.ScrollPosition.middle)
             }
         }
+            //}
+            
     }
 
     /*
@@ -213,7 +221,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //if let cell = yearTableView.cellForRow(at: indexPath as IndexPath) {
-        self.playPause()        
+     //   self.playPause()
     }
 
 }

@@ -176,7 +176,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
                     let minutesText = String(format: "%02d", Int(seconds) / 60)
                     audioLengthLabel.text = "\(minutesText):\(secondsText)"
                 }
-                print("current item \(ci)")
+                print("current item \(String(describing: ci.asset.value(forKey: "URL")))")
                 let row = 4
                 let indexPath = IndexPath(row: row, section: 0)
                 self.showTableView.selectRow(at: indexPath, animated: true, scrollPosition: UITableView.ScrollPosition.middle)

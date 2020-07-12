@@ -156,11 +156,13 @@ class Utils {
         dateFormatter.locale = Locale.init(identifier: "en_US")
         
         if let d = datetime {
-            if let dateObj = dateFormatter.date(from: d) {
-           // print(dateObj as Any)
-            dateFormatter.dateFormat = "MM-dd-yyyy"
-            let newDate = dateFormatter.string(from: dateObj)
-            return newDate
+            if var dateObj = dateFormatter.date(from: d) {
+                var dayComponent  = DateComponents()
+                dayComponent.day = 1 // For removing one day (yesterday): -1
+                dateObj = Calendar.current.date(byAdding: dayComponent, to: dateObj)!
+                dateFormatter.dateFormat = "MM-dd-yyyy"
+                let newDate = dateFormatter.string(from: dateObj)
+                return newDate
             }
             else {
                 return "" as String?

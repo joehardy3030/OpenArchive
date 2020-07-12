@@ -10,25 +10,9 @@ import UIKit
 import AVKit
 
 class AudioPlayerArchive: NSObject {
-    var avAudioPlayer: AVAudioPlayer?
-    var avPlayer: AVPlayer?
-    var rateObserver: NSKeyValueObservation?
-    var audioItem: AVPlayerItem!
     var playerQueue: AVQueuePlayer!
-    let assetQueue = DispatchQueue(label: "randomQueue", qos: .utility)
-    let group = DispatchGroup()
-    var urlAsset: AVURLAsset?
-    var asset: AVAsset!
-    var player: AVPlayer!
-    var playerItem: AVPlayerItem!
     var playerItems = [AVPlayerItem]()
     var mp3Array = [ShowMP3]()
-    let playerViewController = AVPlayerViewController()
-  //  var audioQueueStatusObserver: NSKeyValueObservation?
-
-    // Key-value observing context
-    private var playerItemContext = 0
-
     let requiredAssetKeys = [
         "playable",
         "hasProtectedContent"
@@ -43,155 +27,38 @@ class AudioPlayerArchive: NSObject {
             print("nope")
         }
         super.init()
-        // self.setupRateObserver()
-    }
-
-    /*
-    var asset: AVURLAsset? {
-        didSet {
-            guard let newAsset = asset else {
-                return
-            }
-            asynchronouslyLoadURLAsset(newAsset, appendDirectly: false)
-        }
-    }
-    */
-    
-    func setupRateObserver() {
-        self.rateObserver = self.avAudioPlayer?.observe(\.rate, options:  [.new, .old], changeHandler: { (player, change) in
-            if player.rate == 1  {
-                print("Playing")
-            }
-            else {
-                print("Stop")
-             }
-        })
-        // self.rateObserver?.invalidate()
-    }
-     // Later You Can Remove Observer
-
-    func pause() {
-        self.playerQueue?.pause()
     }
 
     func play() {
         self.playerQueue?.play()
     }
 
+    func pause() {
+        self.playerQueue?.pause()
+    }
+
     func prepareToPlay(url: URL) {
-        // Create asset to be played
         let asset = AVAsset(url: url)
-        
         let assetKeys = ["playable"]
-        // Create a new AVPlayerItem with the asset and an
-        // array of asset keys to be automatically loaded
-        let item = AVPlayerItem(asset: asset,
-                                  automaticallyLoadedAssetKeys: assetKeys)
-        
-        // Register as an observer of the player item's status property
-       /*
-        item.addObserver(self,
-                               forKeyPath: #keyPath(AVPlayerItem.status),
-                               options: [.old, .new],
-                               context: &playerItemContext)
-        
-        */
-        print(item)
+        let item = AVPlayerItem(asset: asset, automaticallyLoadedAssetKeys: assetKeys)
         playerItems.append(item)
-        /*
-        playerItems[playerItems.count-1].addObserver(self,
-                               forKeyPath: #keyPath(AVPlayerItem.status),
-                               options: [.old, .new],
-                               context: &playerItemContext)
-        */
     }
     
     func loadQueuePlayer(tracks: [ShowMP3]) {
-        print("Load ")
-        
-        // images.sorted(by: { $0.fileID > $1.fileID })
-
         for track in tracks {
             guard let d = track.destination else { return }
             prepareToPlay(url: d)
         }
         playerQueue = AVQueuePlayer(items: playerItems)
-        //play()
-        print(playerQueue.items())
-        
-        //playerViewController.player = self.playerQueue
     }
     
     /*
-    func setObservers() {
-    // listening for current item status change
-        self.audioQueueStatusObserver = self.playerQueue?.currentItem?.observe(\.status, options:  [.new, .old], changeHandler: {
-            (playerItem, change) in
-            if playerItem.status == .readyToPlay {
-                print("current item status is ready")
-            }
-            else {
-                print(playerItem.status)
-            }
-        })
-    }
-    */
-    /*
-    override func observeValue(forKeyPath keyPath: String?,
-                               of object: Any?,
-                               change: [NSKeyValueChangeKey : Any]?,
-                               context: UnsafeMutableRawPointer?) {
-
-        // Only handle observations for the playerItemContext
-        guard context == &playerItemContext else {
-            super.observeValue(forKeyPath: keyPath,
-                               of: object,
-                               change: change,
-                               context: context)
-            return
-        }
-
-        if keyPath == #keyPath(AVPlayerItem.status) {
-            let status: AVPlayerItem.Status
-            if let statusNumber = change?[.newKey] as? NSNumber {
-                status = AVPlayerItem.Status(rawValue: statusNumber.intValue)!
-            } else {
-                status = .unknown
-            }
-
-            // Switch over status value
-            switch status {
-            case .readyToPlay:
-                print("ready to play")
-            case .failed:
-                print("item failed")
-            case .unknown:
-                print("status unknown")
-            @unknown default:
-                fatalError()
-            }
-        }
-    }
-    */
-    
-    
-    
-    func playAudioFile(url: URL) {
-        do {
-            self.avAudioPlayer = try AVAudioPlayer(contentsOf: url)
-            self.avAudioPlayer?.play()
-        }
-        catch {
-            print("DOH!")
-        }
-    }
-    
     func playAudioFileController(url: URL)
     {
         self.avPlayer = AVPlayer(url: url)
         let playerViewController = AVPlayerViewController()
         playerViewController.player = self.avPlayer
     }
-    
+    */
     
 }

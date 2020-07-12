@@ -20,12 +20,12 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     @IBOutlet weak var forwardButton: UIImageView!
     @IBOutlet weak var showTableView: UITableView!
     var identifier: String?
+    var showDate: String?
     let archiveAPI = ArchiveAPI()
     let avPlayer = AudioPlayerArchive()
     var mp3Array = [ShowMP3]()
     var showMetadata: ShowMetadataModel!
     let utils = Utils()
-    //let playerViewController = AVPlayerViewController()
     var isPlaying = false
     
     override func viewDidLoad() {
@@ -35,7 +35,8 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
         self.showTableView.dataSource = self
         setupPlayer()
         getIAGetShow()
-        utils.getMemory()
+        //utils.getMemory()
+        self.navigationItem.title = utils.getDateFromDateTimeString(datetime: showDate)
     }
     
     @IBAction func clickPlayButton(_ sender: Any) {
@@ -54,7 +55,6 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     @objc func handleSliderChange() {
-        //print(audioLengthSlider.value)
         if let duration = self.avPlayer.playerQueue.currentItem?.duration {
             let totalSeconds = CMTimeGetSeconds(duration)
             let value = Float64(audioLengthSlider.value) * totalSeconds
@@ -88,7 +88,6 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
             if let files = self.showMetadata?.files {
                 for f in files {
                     if (f.format?.contains("MP3"))! {
-                        print(f.format as Any)
                         let showMP3 = ShowMP3(identifier: self.identifier, name: f.name, title: f.title, track: f.track)
                         self.mp3Array.append(showMP3)
                     }
@@ -99,7 +98,6 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
             
             DispatchQueue.main.async{
                 self.showTableView.reloadData()
-                print(self.showMetadata.files_count as Any)
             }
         }
     }

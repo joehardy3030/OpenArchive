@@ -30,8 +30,6 @@ class ArchiveAPI: NSObject {
     func downloadURL(identifier: String?,
                      filename: String?) -> String {
         //https://archive.org/download/<identifier>/<filename>
-        //identifier=gd1990-03-30.sbd.barbella.8366.sbeok.shnf
-        //filename=gd90-03-30d1t01multi.mp3
         
         var url = baseURLString
         url += "download/"
@@ -46,6 +44,9 @@ class ArchiveAPI: NSObject {
     }
     
     func dateRangeURL(year: Int, month: Int) -> String {
+        // Search in date range
+        //https://archive.org/services/search/v1/scrape?q=collection%3A%28GratefulDead%29%20AND%20date%3A%5B1987-03-01%20TO%201987-03-31%5D
+
         let andString = "%20AND%20"
         let dateString = "date%3A%5B"
         let toString = "%20TO%20"
@@ -67,8 +68,6 @@ class ArchiveAPI: NSObject {
         url += toString
         url += String(year) + "-" + monthString + "-31"
         url += "%5D"
-        // Search in date range
-        //https://archive.org/services/search/v1/scrape?q=collection%3A%28GratefulDead%29%20AND%20date%3A%5B1987-03-01%20TO%201987-03-31%5D
         
         return url
     }
@@ -98,7 +97,6 @@ class ArchiveAPI: NSObject {
     func deserializeFiles(json: JSON) -> [ShowFile] {
         var fileArray = [ShowFile]()
         for f in json {
-            //print(f.1)
             let name = f.1["name"].string
             let source = f.1["source"].string
             let creator = f.1["creator"].string
@@ -152,23 +150,18 @@ class ArchiveAPI: NSObject {
                     var showMD = ShowMetadata()
                     if let id_string = i.1["identifier"].string {
                         itemArray.append(id_string)
-                        print(id_string)
                         showMD.identifier = id_string
                     }
                     if let venue_string = i.1["venue"].string {
-                        print(venue_string as Any)
                         showMD.venue = venue_string
                     }
                     if let date_string = i.1["date"].string {
-                        print(date_string as Any)
                         showMD.date = date_string
                     }
                     if let transferer_string = i.1["transferer"].string {
-                        print(transferer_string as Any)
                         showMD.transferer = transferer_string
                     }
                     if let source_string = i.1["source"].string {
-                        print(source_string as Any)
                         showMD.source = source_string
                     }
 
@@ -191,20 +184,6 @@ class ArchiveAPI: NSObject {
                                  completion(response.destinationURL)
         }
     }
-    
-    func readCSV() {
-        guard let csvPath = Bundle.main.path(forResource: "meta_gd_trim", ofType: "csv")
-            else { return }
-        
-        do {
-            let csvData = try String(contentsOfFile: csvPath, encoding: String.Encoding.utf8)
-        }
-        catch {
-            print(error)
-        }
-        
-    }
-
 }
 
 

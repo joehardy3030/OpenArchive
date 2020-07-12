@@ -80,6 +80,7 @@ class ShowsListViewController: UIViewController, UITableViewDelegate, UITableVie
         guard let indexPath = showListTableView.indexPathForSelectedRow else { return }
         if let target = segue.destination as? ShowViewController, let showMDs = self.showMetadatas {
             target.identifier = showMDs[indexPath.row].identifier
+            target.showDate = showMDs[indexPath.row].date
         }
     }
 

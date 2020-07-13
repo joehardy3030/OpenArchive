@@ -10,6 +10,8 @@ import UIKit
 import AVKit
 import AVFoundation
 
+// ...
+
 class ShowViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     @IBOutlet weak var currentTimeLabel: UILabel!
@@ -27,7 +29,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     var showMetadata: ShowMetadataModel!
     let utils = Utils()
     var isPlaying = false
-    
+
     override func viewDidLoad() {
 
         super.viewDidLoad()
@@ -52,6 +54,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
         audioLengthSlider.translatesAutoresizingMaskIntoConstraints = false
         audioLengthSlider.value = 0.0
         audioLengthSlider.addTarget(self, action: #selector(handleSliderChange), for: .valueChanged)
+
     }
     
     @objc func handleSliderChange() {
@@ -135,8 +138,8 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     func loadAndPlay() {
         self.avPlayer.loadQueuePlayer(tracks: self.mp3Array)
         self.avPlayer.play()
+        self.avPlayer.setupNotificationView()
         self.avPlayer.playerQueue.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
-        
         //track player progress
         let interval = CMTime(value: 1, timescale: 2)
         

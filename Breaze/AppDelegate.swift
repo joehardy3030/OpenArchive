@@ -30,7 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.locationManager.startMonitoringVisits()
         }
         center.requestAuthorization(options: [.alert, .sound]) { granted, error in }
-
+       // UIApplication.shared.beginReceivingRemoteControlEvents()
         return true
     }
 

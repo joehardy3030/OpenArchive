@@ -11,6 +11,7 @@ import CoreLocation
 import CoreData
 import UserNotifications
 import ARKit
+import Firebase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -30,6 +31,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.locationManager.startMonitoringVisits()
         }
         center.requestAuthorization(options: [.alert, .sound]) { granted, error in }
+        FirebaseApp.configure()
        // UIApplication.shared.beginReceivingRemoteControlEvents()
         return true
     }

@@ -98,10 +98,11 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
             }
             
             self.downloadShow()
-            
+            /*
             DispatchQueue.main.async{
                 self.showTableView.reloadData()
             }
+            */
         }
     }
     

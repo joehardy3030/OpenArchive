@@ -38,7 +38,16 @@ class Utils {
         return location
     }
    */
-
+    func getUUID() -> String {
+        if let uuid = UIDevice.current.identifierForVendor?.uuidString {
+            print(uuid)
+            return uuid
+        }
+        else {
+            return ""
+        }
+    }
+    
     func switchConditionsText(icon: String) -> String {
         var conditions: String
         switch icon {

@@ -13,14 +13,16 @@ import AVFoundation
 class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, AVAudioPlayerDelegate {
 
     @IBOutlet weak var yearTableView: UITableView!
-    var avAudioPlayer: AVAudioPlayer?
-    var avPlayer: AVPlayer?
+  //  var avAudioPlayer: AVAudioPlayer?
+  //  var avPlayer: AVPlayer?
     let utils = Utils()
+    let sqlite = SQLiteManager()
     var archiveAPI = ArchiveAPI()
     var years: [Int] = []
     var identifier = "gd1990-03-30.sbd.barbella.8366.sbeok.shnf"
     var filename = "gd90-03-30d1t03multi.mp3"
-
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.yearTableView.delegate = self
@@ -87,10 +89,10 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
     }
     
-    
+    /*
     func playAudioFile(url: URL) {
         do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback, options: AVAudioSession.CategoryOptions.mixWithOthers)
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
             try AVAudioSession.sharedInstance().setActive(true)
             print("Play \(url)")
             self.avAudioPlayer = try AVAudioPlayer(contentsOf: url)
@@ -105,7 +107,7 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
     func playAudioFileController(url: URL)
     {
         do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback, options: AVAudioSession.CategoryOptions.mixWithOthers)
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
             try AVAudioSession.sharedInstance().setActive(true)
             
             self.avPlayer = AVPlayer(url: url)            
@@ -121,6 +123,7 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
             print("nope")
         }
     }
+    */
     
 }
     

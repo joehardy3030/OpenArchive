@@ -9,6 +9,7 @@
 import UIKit
 import AVKit
 import MediaPlayer
+import SQLite3
 
 class AudioPlayerArchive: NSObject {
     var playerQueue: AVQueuePlayer!

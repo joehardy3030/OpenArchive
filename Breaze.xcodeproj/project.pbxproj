@@ -21,7 +21,6 @@
 		D84D6E2A24BFE5780022A058 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D84D6E2924BFE5780022A058 /* GoogleService-Info.plist */; };
 		D84D6E2B24BFE5780022A058 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D84D6E2924BFE5780022A058 /* GoogleService-Info.plist */; };
 		D84D6E2C24BFE5780022A058 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D84D6E2924BFE5780022A058 /* GoogleService-Info.plist */; };
-		D84E42C724AEB88300868993 /* meta_gd_trim.csv in Resources */ = {isa = PBXBuildFile; fileRef = D84E42C624AEB88200868993 /* meta_gd_trim.csv */; };
 		D850B8FD24B26EAC00E3DC6B /* ShowMetadataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D850B8FC24B26EAC00E3DC6B /* ShowMetadataModel.swift */; };
 		D850B8FF24B2BA7400E3DC6B /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D850B8FE24B2BA7400E3DC6B /* AudioPlayer.swift */; };
 		D852C3C724B1219400029EB9 /* ShowsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D852C3C624B1219400029EB9 /* ShowsListViewController.swift */; };
@@ -75,7 +74,6 @@
 		D8449A6924AEF57600F113F4 /* MonthTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MonthTableViewCell.swift; path = Breaze/Archive/MonthTableViewCell.swift; sourceTree = "<group>"; };
 		D84D6E2724BEB5140022A058 /* NetworkUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NetworkUtility.swift; path = Breaze/Archive/NetworkUtility.swift; sourceTree = "<group>"; };
 		D84D6E2924BFE5780022A058 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
-		D84E42C624AEB88200868993 /* meta_gd_trim.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = meta_gd_trim.csv; path = Assets.xcassets/meta_gd_trim.dataset/meta_gd_trim.csv; sourceTree = "<group>"; };
 		D850B8FC24B26EAC00E3DC6B /* ShowMetadataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShowMetadataModel.swift; path = Breaze/Archive/ShowMetadataModel.swift; sourceTree = "<group>"; };
 		D850B8FE24B2BA7400E3DC6B /* AudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AudioPlayer.swift; path = Breaze/Archive/AudioPlayer.swift; sourceTree = "<group>"; };
 		D852C3C624B1219400029EB9 /* ShowsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShowsListViewController.swift; path = Breaze/Archive/ShowsListViewController.swift; sourceTree = "<group>"; };
@@ -195,7 +193,6 @@
 				791CE1C020B252F100299F76 /* Utils.swift */,
 				7984F98924A4556400989DB8 /* Archive */,
 				D85A4EF72022D0B600E480FB /* Assets.xcassets */,
-				D84E42C624AEB88200868993 /* meta_gd_trim.csv */,
 				D85A4EFC2022D0B600E480FB /* Info.plist */,
 			);
 			path = Breaze;
@@ -345,7 +342,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D84E42C724AEB88300868993 /* meta_gd_trim.csv in Resources */,
 				D85A4EFB2022D0B600E480FB /* LaunchScreen.storyboard in Resources */,
 				D85A4EF82022D0B600E480FB /* Assets.xcassets in Resources */,
 				D85A4EF62022D0B600E480FB /* Main.storyboard in Resources */,

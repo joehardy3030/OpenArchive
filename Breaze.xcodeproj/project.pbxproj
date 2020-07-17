@@ -7,38 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7915AFD1209FF46600625E43 /* HourlyForecastCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7915AFD0209FF46600625E43 /* HourlyForecastCell.swift */; };
-		791864A0226D62670082D497 /* BARTStation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7918649F226D62670082D497 /* BARTStation.swift */; };
-		791864A222711D930082D497 /* BARTModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791864A122711D930082D497 /* BARTModal.swift */; };
-		791CE1BF20B2364E00299F76 /* HourlyDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791CE1BE20B2364E00299F76 /* HourlyDetailViewController.swift */; };
 		791CE1C120B252F100299F76 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791CE1C020B252F100299F76 /* Utils.swift */; };
-		793614D1220E884E006671C4 /* BARTViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793614D0220E884E006671C4 /* BARTViewController.swift */; };
-		793614D3220FEDF3006671C4 /* BARTStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793614D2220FEDF3006671C4 /* BARTStore.swift */; };
-		793614D5221116D9006671C4 /* BARTAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793614D4221116D9006671C4 /* BARTAPI.swift */; };
-		793614D722113F3C006671C4 /* BARTReading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793614D622113F3C006671C4 /* BARTReading.swift */; };
-		794E5242220D3C5F00C99092 /* BARTCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794E5241220D3C5F00C99092 /* BARTCell.swift */; };
-		794EC1BA243673B500D3CDEF /* CurrentLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794EC1B9243673B500D3CDEF /* CurrentLocation.swift */; };
-		79718BA820E5E02B0072DC22 /* LastLocation+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79718BA620E5E02B0072DC22 /* LastLocation+CoreDataClass.swift */; };
-		79718BA920E5E02B0072DC22 /* LastLocation+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79718BA720E5E02B0072DC22 /* LastLocation+CoreDataProperties.swift */; };
-		7971A1C920A29B7F009438F7 /* HourlyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7971A1C820A29B7F009438F7 /* HourlyViewController.swift */; };
-		7972654620E3368E00578419 /* Weather.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 7972654420E3368E00578419 /* Weather.xcdatamodeld */; };
-		797EDBEA242D146600584D3B /* stns.json in Resources */ = {isa = PBXBuildFile; fileRef = 797EDBE9242D146500584D3B /* stns.json */; };
-		797EDBEC242D3D6C00584D3B /* BARTStationCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797EDBEB242D3D6C00584D3B /* BARTStationCodable.swift */; };
 		7984F98D24A4565400989DB8 /* ArchiveViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7984F98C24A4565400989DB8 /* ArchiveViewController.swift */; };
 		7984F98F24A56EFD00989DB8 /* ArchiveAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7984F98E24A56EFD00989DB8 /* ArchiveAPI.swift */; };
-		79929FD1243194D9004D7C6C /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79929FD0243194D9004D7C6C /* Location.swift */; };
-		79929FD32432E6BA004D7C6C /* BreazeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79929FD22432E6BA004D7C6C /* BreazeViewController.swift */; };
-		79929FD524351A03004D7C6C /* LocationStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79929FD424351A03004D7C6C /* LocationStorage.swift */; };
-		79929FD8243521DE004D7C6C /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79929FD7243521DE004D7C6C /* MapViewController.swift */; };
-		79929FDE24354786004D7C6C /* PlacesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79929FDD24354786004D7C6C /* PlacesTableViewController.swift */; };
 		799C3C902345582F00D9341E /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C3C8F2345582F00D9341E /* HealthKit.framework */; };
-		79F4ECC423668CBE000BA3BB /* CityModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F4ECC323668CBE000BA3BB /* CityModel.swift */; };
-		79F8DC592363E3E400E5A1AA /* OpenWeatherAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F8DC582363E3E400E5A1AA /* OpenWeatherAPI.swift */; };
-		79F8DC5B2364DBDA00E5A1AA /* WeatherModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F8DC5A2364DBDA00E5A1AA /* WeatherModel.swift */; };
 		C1A86AE7CB901E9AE4559733 /* Pods_BreazeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC1F0E4AA282D7B36ED40FA4 /* Pods_BreazeTests.framework */; };
 		CBC5228E1B6761BEF185B8AD /* Pods_Breaze.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A700AD3051D76CBB67400BC /* Pods_Breaze.framework */; };
 		D51C53AE71B1FA9965B4E724 /* Pods_BreazeUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A926AF80C0D08EF375C20D5 /* Pods_BreazeUITests.framework */; };
-		D8357A9720240BAD005657DF /* WundergroundAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8357A9620240BAD005657DF /* WundergroundAPI.swift */; };
 		D843EBDD24B3B10300C128A5 /* AudioPlayerArchive.swift in Sources */ = {isa = PBXBuildFile; fileRef = D843EBDC24B3B10300C128A5 /* AudioPlayerArchive.swift */; };
 		D8449A6824AEF3C200F113F4 /* MonthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8449A6724AEF3C200F113F4 /* MonthViewController.swift */; };
 		D8449A6A24AEF57600F113F4 /* MonthTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8449A6924AEF57600F113F4 /* MonthTableViewCell.swift */; };
@@ -47,10 +22,6 @@
 		D84D6E2B24BFE5780022A058 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D84D6E2924BFE5780022A058 /* GoogleService-Info.plist */; };
 		D84D6E2C24BFE5780022A058 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D84D6E2924BFE5780022A058 /* GoogleService-Info.plist */; };
 		D84E42C724AEB88300868993 /* meta_gd_trim.csv in Resources */ = {isa = PBXBuildFile; fileRef = D84E42C624AEB88200868993 /* meta_gd_trim.csv */; };
-		D84F92CA2033F1A100DD3855 /* AirNowAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84F92C92033F1A100DD3855 /* AirNowAPI.swift */; };
-		D84F92CC2037E08C00DD3855 /* SmogReading.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84F92CB2037E08C00DD3855 /* SmogReading.swift */; };
-		D84F92CE203A7E7800DD3855 /* SmogCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84F92CD203A7E7800DD3855 /* SmogCell.swift */; };
-		D84F92D2203A872200DD3855 /* WeatherCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84F92D1203A872200DD3855 /* WeatherCell.swift */; };
 		D850B8FD24B26EAC00E3DC6B /* ShowMetadataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D850B8FC24B26EAC00E3DC6B /* ShowMetadataModel.swift */; };
 		D850B8FF24B2BA7400E3DC6B /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D850B8FE24B2BA7400E3DC6B /* AudioPlayer.swift */; };
 		D852C3C724B1219400029EB9 /* ShowsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D852C3C624B1219400029EB9 /* ShowsListViewController.swift */; };
@@ -58,19 +29,12 @@
 		D852C3CB24B1AA1C00029EB9 /* ShowViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D852C3CA24B1AA1C00029EB9 /* ShowViewController.swift */; };
 		D852C3CD24B1AA5100029EB9 /* ShowTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D852C3CC24B1AA5100029EB9 /* ShowTableViewCell.swift */; };
 		D85A4EEF2022D0B600E480FB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A4EEE2022D0B600E480FB /* AppDelegate.swift */; };
-		D85A4EF12022D0B600E480FB /* WeatherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A4EF02022D0B600E480FB /* WeatherViewController.swift */; };
-		D85A4EF32022D0B600E480FB /* SmogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A4EF22022D0B600E480FB /* SmogViewController.swift */; };
 		D85A4EF62022D0B600E480FB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D85A4EF42022D0B600E480FB /* Main.storyboard */; };
 		D85A4EF82022D0B600E480FB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D85A4EF72022D0B600E480FB /* Assets.xcassets */; };
 		D85A4EFB2022D0B600E480FB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D85A4EF92022D0B600E480FB /* LaunchScreen.storyboard */; };
 		D85A4F062022D0B600E480FB /* BreazeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A4F052022D0B600E480FB /* BreazeTests.swift */; };
 		D85A4F112022D0B600E480FB /* BreazeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A4F102022D0B600E480FB /* BreazeUITests.swift */; };
-		D8715B9B2029216800BC13AA /* HourlyForecastHour.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8715B9A2029216800BC13AA /* HourlyForecastHour.swift */; };
-		D8715B9D202FB70300BC13AA /* SmogStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8715B9C202FB70300BC13AA /* SmogStore.swift */; };
-		D8721E65202919140025348F /* SimpleForecastDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8721E64202919140025348F /* SimpleForecastDay.swift */; };
-		D884508E2026B18500C5379C /* WeatherStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D884508D2026B18500C5379C /* WeatherStore.swift */; };
 		D8A5324C24A9AFF2002379CF /* ArchiveCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A5324B24A9AFF2002379CF /* ArchiveCell.swift */; };
-		D8E1BCD22055E74E00DB12E9 /* SmogDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E1BCD12055E74E00DB12E9 /* SmogDay.swift */; };
 		D8F3BBC224BD4F1800C75D8C /* SQLiteManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F3BBC124BD4F1800C75D8C /* SQLiteManager.swift */; };
 /* End PBXBuildFile section */
 
@@ -98,49 +62,20 @@
 		4A700AD3051D76CBB67400BC /* Pods_Breaze.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Breaze.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D96B2C7509FC4CCF930BABF /* Pods-Breaze.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Breaze.release.xcconfig"; path = "Target Support Files/Pods-Breaze/Pods-Breaze.release.xcconfig"; sourceTree = "<group>"; };
 		6A926AF80C0D08EF375C20D5 /* Pods_BreazeUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BreazeUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		7915AFD0209FF46600625E43 /* HourlyForecastCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyForecastCell.swift; sourceTree = "<group>"; };
-		7918649F226D62670082D497 /* BARTStation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BARTStation.swift; sourceTree = "<group>"; };
-		791864A122711D930082D497 /* BARTModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BARTModal.swift; sourceTree = "<group>"; };
-		791CE1BE20B2364E00299F76 /* HourlyDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyDetailViewController.swift; sourceTree = "<group>"; };
 		791CE1C020B252F100299F76 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
-		793614D0220E884E006671C4 /* BARTViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BARTViewController.swift; path = Breaze/BART/BARTViewController.swift; sourceTree = SOURCE_ROOT; };
-		793614D2220FEDF3006671C4 /* BARTStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BARTStore.swift; sourceTree = "<group>"; };
-		793614D4221116D9006671C4 /* BARTAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BARTAPI.swift; sourceTree = "<group>"; };
-		793614D622113F3C006671C4 /* BARTReading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BARTReading.swift; sourceTree = "<group>"; };
-		794E5241220D3C5F00C99092 /* BARTCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BARTCell.swift; sourceTree = "<group>"; };
-		794EC1B9243673B500D3CDEF /* CurrentLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentLocation.swift; sourceTree = "<group>"; };
-		79718BA620E5E02B0072DC22 /* LastLocation+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LastLocation+CoreDataClass.swift"; sourceTree = "<group>"; };
-		79718BA720E5E02B0072DC22 /* LastLocation+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LastLocation+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		7971A1C820A29B7F009438F7 /* HourlyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyViewController.swift; sourceTree = "<group>"; };
-		7972654520E3368E00578419 /* Weather.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Weather.xcdatamodel; sourceTree = "<group>"; };
-		797EDBE9242D146500584D3B /* stns.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = stns.json; sourceTree = "<group>"; };
-		797EDBEB242D3D6C00584D3B /* BARTStationCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BARTStationCodable.swift; sourceTree = "<group>"; };
 		7984F98C24A4565400989DB8 /* ArchiveViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ArchiveViewController.swift; path = Breaze/Archive/ArchiveViewController.swift; sourceTree = "<group>"; };
 		7984F98E24A56EFD00989DB8 /* ArchiveAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ArchiveAPI.swift; path = Breaze/Archive/ArchiveAPI.swift; sourceTree = "<group>"; };
-		79929FD0243194D9004D7C6C /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
-		79929FD22432E6BA004D7C6C /* BreazeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreazeViewController.swift; sourceTree = "<group>"; };
-		79929FD424351A03004D7C6C /* LocationStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationStorage.swift; sourceTree = "<group>"; };
-		79929FD7243521DE004D7C6C /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
-		79929FDD24354786004D7C6C /* PlacesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacesTableViewController.swift; sourceTree = "<group>"; };
 		799C3C8E2345582E00D9341E /* Breaze.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Breaze.entitlements; sourceTree = "<group>"; };
 		799C3C8F2345582F00D9341E /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
-		79F4ECC323668CBE000BA3BB /* CityModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityModel.swift; sourceTree = "<group>"; };
-		79F8DC582363E3E400E5A1AA /* OpenWeatherAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenWeatherAPI.swift; sourceTree = "<group>"; };
-		79F8DC5A2364DBDA00E5A1AA /* WeatherModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherModel.swift; sourceTree = "<group>"; };
 		9C04CF7422E0CBAEE4822157 /* Pods-BreazeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BreazeTests.debug.xcconfig"; path = "Target Support Files/Pods-BreazeTests/Pods-BreazeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BC1F0E4AA282D7B36ED40FA4 /* Pods_BreazeTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BreazeTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCE8FC1545CF717B71C529A8 /* Pods-BreazeUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BreazeUITests.debug.xcconfig"; path = "Target Support Files/Pods-BreazeUITests/Pods-BreazeUITests.debug.xcconfig"; sourceTree = "<group>"; };
-		D8357A9620240BAD005657DF /* WundergroundAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WundergroundAPI.swift; sourceTree = "<group>"; };
 		D843EBDC24B3B10300C128A5 /* AudioPlayerArchive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AudioPlayerArchive.swift; path = Breaze/Archive/AudioPlayerArchive.swift; sourceTree = "<group>"; };
 		D8449A6724AEF3C200F113F4 /* MonthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MonthViewController.swift; path = Breaze/Archive/MonthViewController.swift; sourceTree = "<group>"; };
 		D8449A6924AEF57600F113F4 /* MonthTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MonthTableViewCell.swift; path = Breaze/Archive/MonthTableViewCell.swift; sourceTree = "<group>"; };
 		D84D6E2724BEB5140022A058 /* NetworkUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NetworkUtility.swift; path = Breaze/Archive/NetworkUtility.swift; sourceTree = "<group>"; };
 		D84D6E2924BFE5780022A058 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D84E42C624AEB88200868993 /* meta_gd_trim.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = meta_gd_trim.csv; path = Assets.xcassets/meta_gd_trim.dataset/meta_gd_trim.csv; sourceTree = "<group>"; };
-		D84F92C92033F1A100DD3855 /* AirNowAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirNowAPI.swift; sourceTree = "<group>"; };
-		D84F92CB2037E08C00DD3855 /* SmogReading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmogReading.swift; sourceTree = "<group>"; };
-		D84F92CD203A7E7800DD3855 /* SmogCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmogCell.swift; sourceTree = "<group>"; };
-		D84F92D1203A872200DD3855 /* WeatherCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherCell.swift; sourceTree = "<group>"; };
 		D850B8FC24B26EAC00E3DC6B /* ShowMetadataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShowMetadataModel.swift; path = Breaze/Archive/ShowMetadataModel.swift; sourceTree = "<group>"; };
 		D850B8FE24B2BA7400E3DC6B /* AudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AudioPlayer.swift; path = Breaze/Archive/AudioPlayer.swift; sourceTree = "<group>"; };
 		D852C3C624B1219400029EB9 /* ShowsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShowsListViewController.swift; path = Breaze/Archive/ShowsListViewController.swift; sourceTree = "<group>"; };
@@ -149,8 +84,6 @@
 		D852C3CC24B1AA5100029EB9 /* ShowTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowTableViewCell.swift; sourceTree = "<group>"; };
 		D85A4EEB2022D0B500E480FB /* Breaze.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Breaze.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D85A4EEE2022D0B600E480FB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		D85A4EF02022D0B600E480FB /* WeatherViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherViewController.swift; sourceTree = "<group>"; };
-		D85A4EF22022D0B600E480FB /* SmogViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmogViewController.swift; sourceTree = "<group>"; };
 		D85A4EF52022D0B600E480FB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		D85A4EF72022D0B600E480FB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D85A4EFA2022D0B600E480FB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -161,12 +94,7 @@
 		D85A4F0C2022D0B600E480FB /* BreazeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BreazeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D85A4F102022D0B600E480FB /* BreazeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreazeUITests.swift; sourceTree = "<group>"; };
 		D85A4F122022D0B600E480FB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D8715B9A2029216800BC13AA /* HourlyForecastHour.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyForecastHour.swift; sourceTree = "<group>"; };
-		D8715B9C202FB70300BC13AA /* SmogStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmogStore.swift; sourceTree = "<group>"; };
-		D8721E64202919140025348F /* SimpleForecastDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleForecastDay.swift; sourceTree = "<group>"; };
-		D884508D2026B18500C5379C /* WeatherStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherStore.swift; sourceTree = "<group>"; };
 		D8A5324B24A9AFF2002379CF /* ArchiveCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ArchiveCell.swift; path = Breaze/Archive/ArchiveCell.swift; sourceTree = "<group>"; };
-		D8E1BCD12055E74E00DB12E9 /* SmogDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmogDay.swift; sourceTree = "<group>"; };
 		D8F3BBC124BD4F1800C75D8C /* SQLiteManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SQLiteManager.swift; path = Breaze/Archive/SQLiteManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -199,22 +127,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		794E5240220D3C3000C99092 /* BART */ = {
-			isa = PBXGroup;
-			children = (
-				797EDBE9242D146500584D3B /* stns.json */,
-				793614D622113F3C006671C4 /* BARTReading.swift */,
-				7918649F226D62670082D497 /* BARTStation.swift */,
-				797EDBEB242D3D6C00584D3B /* BARTStationCodable.swift */,
-				793614D4221116D9006671C4 /* BARTAPI.swift */,
-				793614D2220FEDF3006671C4 /* BARTStore.swift */,
-				791864A122711D930082D497 /* BARTModal.swift */,
-				794E5241220D3C5F00C99092 /* BARTCell.swift */,
-				793614D0220E884E006671C4 /* BARTViewController.swift */,
-			);
-			path = BART;
-			sourceTree = "<group>";
-		};
 		7984F98924A4556400989DB8 /* Archive */ = {
 			isa = PBXGroup;
 			children = (
@@ -237,43 +149,6 @@
 			path = ..;
 			sourceTree = "<group>";
 		};
-		79929FCF243194AC004D7C6C /* Location */ = {
-			isa = PBXGroup;
-			children = (
-				79929FD0243194D9004D7C6C /* Location.swift */,
-				79929FD424351A03004D7C6C /* LocationStorage.swift */,
-				794EC1B9243673B500D3CDEF /* CurrentLocation.swift */,
-			);
-			path = Location;
-			sourceTree = "<group>";
-		};
-		79929FD6243521A0004D7C6C /* Map */ = {
-			isa = PBXGroup;
-			children = (
-				79929FD7243521DE004D7C6C /* MapViewController.swift */,
-			);
-			path = Map;
-			sourceTree = "<group>";
-		};
-		79929FDA243524AF004D7C6C /* List */ = {
-			isa = PBXGroup;
-			children = (
-				79929FDD24354786004D7C6C /* PlacesTableViewController.swift */,
-			);
-			path = List;
-			sourceTree = "<group>";
-		};
-		79F4ECC523668EEA000BA3BB /* Wunderground */ = {
-			isa = PBXGroup;
-			children = (
-				D8357A9620240BAD005657DF /* WundergroundAPI.swift */,
-				D8715B9A2029216800BC13AA /* HourlyForecastHour.swift */,
-				D8721E64202919140025348F /* SimpleForecastDay.swift */,
-				D884508D2026B18500C5379C /* WeatherStore.swift */,
-			);
-			path = Wunderground;
-			sourceTree = "<group>";
-		};
 		8C539CAA670F9CFD521CA7FB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -285,36 +160,6 @@
 				1315CB8B613D6B0310848396 /* Pods-BreazeUITests.release.xcconfig */,
 			);
 			path = Pods;
-			sourceTree = "<group>";
-		};
-		D84F92CF203A856C00DD3855 /* Weather */ = {
-			isa = PBXGroup;
-			children = (
-				79929FD22432E6BA004D7C6C /* BreazeViewController.swift */,
-				D85A4EF02022D0B600E480FB /* WeatherViewController.swift */,
-				7971A1C820A29B7F009438F7 /* HourlyViewController.swift */,
-				791CE1BE20B2364E00299F76 /* HourlyDetailViewController.swift */,
-				D84F92D1203A872200DD3855 /* WeatherCell.swift */,
-				7915AFD0209FF46600625E43 /* HourlyForecastCell.swift */,
-				79F8DC582363E3E400E5A1AA /* OpenWeatherAPI.swift */,
-				79F8DC5A2364DBDA00E5A1AA /* WeatherModel.swift */,
-				79F4ECC323668CBE000BA3BB /* CityModel.swift */,
-				79F4ECC523668EEA000BA3BB /* Wunderground */,
-			);
-			path = Weather;
-			sourceTree = "<group>";
-		};
-		D84F92D0203A85C600DD3855 /* Smog */ = {
-			isa = PBXGroup;
-			children = (
-				D84F92C92033F1A100DD3855 /* AirNowAPI.swift */,
-				D8715B9C202FB70300BC13AA /* SmogStore.swift */,
-				D84F92CB2037E08C00DD3855 /* SmogReading.swift */,
-				D8E1BCD12055E74E00DB12E9 /* SmogDay.swift */,
-				D84F92CD203A7E7800DD3855 /* SmogCell.swift */,
-				D85A4EF22022D0B600E480FB /* SmogViewController.swift */,
-			);
-			path = Smog;
 			sourceTree = "<group>";
 		};
 		D85A4EE22022D0B500E480FB = {
@@ -347,17 +192,8 @@
 				D85A4EEE2022D0B600E480FB /* AppDelegate.swift */,
 				D85A4EF42022D0B600E480FB /* Main.storyboard */,
 				D85A4EF92022D0B600E480FB /* LaunchScreen.storyboard */,
-				7972654420E3368E00578419 /* Weather.xcdatamodeld */,
-				79718BA720E5E02B0072DC22 /* LastLocation+CoreDataProperties.swift */,
-				79718BA620E5E02B0072DC22 /* LastLocation+CoreDataClass.swift */,
 				791CE1C020B252F100299F76 /* Utils.swift */,
 				7984F98924A4556400989DB8 /* Archive */,
-				794E5240220D3C3000C99092 /* BART */,
-				D84F92CF203A856C00DD3855 /* Weather */,
-				D84F92D0203A85C600DD3855 /* Smog */,
-				79929FD6243521A0004D7C6C /* Map */,
-				79929FDA243524AF004D7C6C /* List */,
-				79929FCF243194AC004D7C6C /* Location */,
 				D85A4EF72022D0B600E480FB /* Assets.xcassets */,
 				D84E42C624AEB88200868993 /* meta_gd_trim.csv */,
 				D85A4EFC2022D0B600E480FB /* Info.plist */,
@@ -509,7 +345,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				797EDBEA242D146600584D3B /* stns.json in Resources */,
 				D84E42C724AEB88300868993 /* meta_gd_trim.csv in Resources */,
 				D85A4EFB2022D0B600E480FB /* LaunchScreen.storyboard in Resources */,
 				D85A4EF82022D0B600E480FB /* Assets.xcassets in Resources */,
@@ -696,57 +531,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D884508E2026B18500C5379C /* WeatherStore.swift in Sources */,
-				79F8DC5B2364DBDA00E5A1AA /* WeatherModel.swift in Sources */,
-				79929FD1243194D9004D7C6C /* Location.swift in Sources */,
 				D843EBDD24B3B10300C128A5 /* AudioPlayerArchive.swift in Sources */,
 				D84D6E2824BEB5140022A058 /* NetworkUtility.swift in Sources */,
-				D8715B9D202FB70300BC13AA /* SmogStore.swift in Sources */,
 				D8449A6824AEF3C200F113F4 /* MonthViewController.swift in Sources */,
 				D852C3CB24B1AA1C00029EB9 /* ShowViewController.swift in Sources */,
-				794EC1BA243673B500D3CDEF /* CurrentLocation.swift in Sources */,
 				D852C3C924B121E000029EB9 /* ShowsListTableViewCell.swift in Sources */,
-				791CE1BF20B2364E00299F76 /* HourlyDetailViewController.swift in Sources */,
-				D85A4EF32022D0B600E480FB /* SmogViewController.swift in Sources */,
 				7984F98F24A56EFD00989DB8 /* ArchiveAPI.swift in Sources */,
 				D850B8FF24B2BA7400E3DC6B /* AudioPlayer.swift in Sources */,
-				7915AFD1209FF46600625E43 /* HourlyForecastCell.swift in Sources */,
-				791864A0226D62670082D497 /* BARTStation.swift in Sources */,
-				D8E1BCD22055E74E00DB12E9 /* SmogDay.swift in Sources */,
-				7972654620E3368E00578419 /* Weather.xcdatamodeld in Sources */,
-				D84F92CE203A7E7800DD3855 /* SmogCell.swift in Sources */,
-				D84F92D2203A872200DD3855 /* WeatherCell.swift in Sources */,
-				793614D722113F3C006671C4 /* BARTReading.swift in Sources */,
-				79929FD8243521DE004D7C6C /* MapViewController.swift in Sources */,
-				D8715B9B2029216800BC13AA /* HourlyForecastHour.swift in Sources */,
 				791CE1C120B252F100299F76 /* Utils.swift in Sources */,
 				D852C3C724B1219400029EB9 /* ShowsListViewController.swift in Sources */,
 				7984F98D24A4565400989DB8 /* ArchiveViewController.swift in Sources */,
 				D85A4EEF2022D0B600E480FB /* AppDelegate.swift in Sources */,
-				79929FDE24354786004D7C6C /* PlacesTableViewController.swift in Sources */,
-				79929FD524351A03004D7C6C /* LocationStorage.swift in Sources */,
-				793614D3220FEDF3006671C4 /* BARTStore.swift in Sources */,
-				797EDBEC242D3D6C00584D3B /* BARTStationCodable.swift in Sources */,
-				794E5242220D3C5F00C99092 /* BARTCell.swift in Sources */,
-				7971A1C920A29B7F009438F7 /* HourlyViewController.swift in Sources */,
-				D84F92CA2033F1A100DD3855 /* AirNowAPI.swift in Sources */,
 				D8449A6A24AEF57600F113F4 /* MonthTableViewCell.swift in Sources */,
-				79929FD32432E6BA004D7C6C /* BreazeViewController.swift in Sources */,
-				D84F92CC2037E08C00DD3855 /* SmogReading.swift in Sources */,
-				79F4ECC423668CBE000BA3BB /* CityModel.swift in Sources */,
-				D8357A9720240BAD005657DF /* WundergroundAPI.swift in Sources */,
-				791864A222711D930082D497 /* BARTModal.swift in Sources */,
-				79718BA920E5E02B0072DC22 /* LastLocation+CoreDataProperties.swift in Sources */,
 				D852C3CD24B1AA5100029EB9 /* ShowTableViewCell.swift in Sources */,
-				793614D5221116D9006671C4 /* BARTAPI.swift in Sources */,
 				D850B8FD24B26EAC00E3DC6B /* ShowMetadataModel.swift in Sources */,
-				79F8DC592363E3E400E5A1AA /* OpenWeatherAPI.swift in Sources */,
-				D85A4EF12022D0B600E480FB /* WeatherViewController.swift in Sources */,
-				79718BA820E5E02B0072DC22 /* LastLocation+CoreDataClass.swift in Sources */,
-				D8721E65202919140025348F /* SimpleForecastDay.swift in Sources */,
 				D8F3BBC224BD4F1800C75D8C /* SQLiteManager.swift in Sources */,
 				D8A5324C24A9AFF2002379CF /* ArchiveCell.swift in Sources */,
-				793614D1220E884E006671C4 /* BARTViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1056,19 +856,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCVersionGroup section */
-		7972654420E3368E00578419 /* Weather.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				7972654520E3368E00578419 /* Weather.xcdatamodel */,
-			);
-			currentVersion = 7972654520E3368E00578419 /* Weather.xcdatamodel */;
-			path = Weather.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = D85A4EE32022D0B500E480FB /* Project object */;
 }

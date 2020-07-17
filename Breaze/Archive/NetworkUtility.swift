@@ -18,19 +18,75 @@ import PromiseKit
 class NetworkUtility: NSObject {
 
 //    static let defaultDateEncodingStrategy: DateEncodingStrategy = .iso8601
-
+    
     enum NetworkError: Error {
         case userNotAuthorized
         case notFullProfile
     }
+    
+    func getUUID() -> String {
+        if let uuid = UIDevice.current.identifierForVendor?.uuidString {
+            print(uuid)
+            return uuid
+        }
+        else {
+            return ""
+        }
+    }
 
-    private let auth: Auth
-
+    func addDownloadDataDoc(showMetadataModel: ShowMetadataModel?) -> String? {
+        let db = Firestore.firestore()
+        //var ref: DocumentReference? = nil
+        guard let s = showMetadataModel else { return "no data" }
+        guard let docID = showMetadataModel?.metadata?.identifier else { return "no id" }
+        
+        let uuid = getUUID()
+        //let doc = ["uuid" : uuid]
+        
+        let docData = try! FirestoreEncoder().encode(s)
+        //db.collection("downloads").document(uuid).setData(docData) { error in
+        db.collection(uuid).document("downloads").collection("shows").document(docID).setData(docData) { error in
+            if let error = error {
+                print("Error writing document: \(error)")
+            } else {
+                print("Document successfully written!")
+            }
+        }
+        
+        return docID
+    }
+    
+    func getDownloadDataDoc(identifier: String?) -> String? {
+        let db = Firestore.firestore()
+        //var ref: DocumentReference? = nil
+        //guard let s = showMetadataModel else { return "no data" }
+        guard let docID = identifier else { return "no id" }
+        
+        let uuid = getUUID()
+        //let doc = ["uuid" : uuid]
+        
+        db.collection(uuid).document("downloads").collection("shows").document(docID).getDocument { document, error in
+            if let document = document {
+                let model = try! FirestoreDecoder().decode(ShowMetadataModel.self, from: document.data()!)
+                print("Model: \(model)")
+            } else {
+                print("Document does not exist")
+            }
+        }
+        
+        return docID
+    }
+    
+    //let auth = Auth()
+    // private let auth: Auth
+    
+    /*
     init(auth: Auth) {
         self.auth = auth
         super.init()
     }
-
+    */
+    /*
     private func promiseFirUser() -> Promise<User> {
         if let user = self.auth.currentUser {
             return Promise.value(user)
@@ -46,7 +102,8 @@ class NetworkUtility: NSObject {
             return Promise(error: NetworkError.userNotAuthorized)
         }
     }
-
+    */
+    /*
     private func getUserUID() -> String {
         var userUID: String = "anonymous"
         if let user = self.auth.currentUser {
@@ -68,6 +125,7 @@ class NetworkUtility: NSObject {
         }
         try auth.signOut()
     }
+    */
 
     func addGoalFirebase(with dict: [String: Any]) -> String? {
         let db = Firestore.firestore()
@@ -100,7 +158,7 @@ class NetworkUtility: NSObject {
 
         doc["createdAt"] = FieldValue.serverTimestamp()
         doc["updatedAt"] = FieldValue.serverTimestamp()
-        doc["userUID"] = getUserUID()
+        doc["userUID"] = getUUID()
 
         ref = db.collection("heartRate").addDocument(data: doc)
         { err in
@@ -122,9 +180,9 @@ class NetworkUtility: NSObject {
         //https://upcog-e2a09.firebaseio.com/
         let ref: DatabaseReference = Database.database().reference()
 
-        let userUID = getUserUID()
+        let uuid = getUUID()
 
-        ref.child("heartRate").child(userUID).setValue(dict) {
+        ref.child("heartRate").child(uuid).setValue(dict) {
             (error: Error?, ref: DatabaseReference) in
             if let error = error {
               //  SOLogError("HR Data could not be saved: \(error).")

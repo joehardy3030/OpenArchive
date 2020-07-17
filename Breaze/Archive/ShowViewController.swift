@@ -10,8 +10,6 @@ import UIKit
 import AVKit
 import AVFoundation
 
-// ...
-
 class ShowViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     @IBOutlet weak var currentTimeLabel: UILabel!
@@ -28,6 +26,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     var mp3Array = [ShowMP3]()
     var showMetadata: ShowMetadataModel!
     let utils = Utils()
+    let network = NetworkUtility()
     var isPlaying = false
 
     override func viewDidLoad() {
@@ -119,7 +118,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
     
-    func setDownloadComplete(destination: URL?, name: String?) {
+    private func setDownloadComplete(destination: URL?, name: String?) {
         var counter = 0
         if let d = destination {
             for i in 0...(self.mp3Array.count - 1) {
@@ -132,6 +131,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
             }
             if self.mp3Array.count == counter {
                 loadAndPlay()
+                saveDownloadData()
             }
         }
     }
@@ -157,6 +157,12 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
  
+    private func saveDownloadData() {
+        let uuid = network.getUUID()
+        network.addDownloadDataDoc(showMetadataModel: showMetadata) 
+        print(uuid)
+    }
+    
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "currentItem.loadedTimeRanges" {
             isPlaying = true

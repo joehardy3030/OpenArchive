@@ -44,6 +44,7 @@ struct ShowMetadata: Codable {
 struct ShowMetadataModel: Codable {
     var metadata: ShowMetadata?
     var files: [ShowFile]?
+    var mp3Array: [ShowMP3]?
     var files_count: Int?
     var created: Int?
     var item_size: Int?

@@ -42,7 +42,6 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
         else {
             self.navigationItem.title = showDate
-            print(showDate)
             getDownloadedShow()
         }
     }
@@ -55,7 +54,10 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func getDownloadedShow() {
-        
+        if let mp3s = self.showMetadata.mp3Array {
+            self.mp3Array = mp3s
+            loadAndPlay()
+        }
     }
     
     func setupPlayer() {
@@ -142,6 +144,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
             }
             if self.mp3Array.count == counter {
                 loadAndPlay()
+                self.showMetadata.mp3Array = self.mp3Array
                 saveDownloadData()
             }
         }
@@ -169,9 +172,9 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
  
     private func saveDownloadData() {
-        let uuid = network.getUUID()
-        network.addDownloadDataDoc(showMetadataModel: showMetadata) 
-        print(uuid)
+        let _ = network.getUUID()
+        let _ = network.addDownloadDataDoc(showMetadataModel: showMetadata)
+        //print(uuid)
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {

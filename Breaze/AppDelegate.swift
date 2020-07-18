@@ -22,6 +22,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         center.requestAuthorization(options: [.alert, .sound]) { granted, error in }
+        do {
+              //options: AVAudioSession.CategoryOptions.mixWithOthers
+              try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
+              try AVAudioSession.sharedInstance().setActive(true)
+          }
+          catch {
+              print("nope")
+          }
         FirebaseApp.configure()
        // UIApplication.shared.beginReceivingRemoteControlEvents()
         return true

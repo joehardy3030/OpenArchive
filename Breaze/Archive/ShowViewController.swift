@@ -172,9 +172,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
  
     private func saveDownloadData() {
-       // let _ = network.getUUID()
         let _ = network.addDownloadDataDoc(showMetadataModel: showMetadata)
-        //print(uuid)
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {

@@ -23,20 +23,11 @@ class AudioPlayerArchive: NSObject {
     let commandCenter = MPRemoteCommandCenter.shared()
     
     override init() {
-        do {
-            //options: AVAudioSession.CategoryOptions.mixWithOthers
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
-            try AVAudioSession.sharedInstance().setActive(true)
-        }
-        catch {
-            print("nope")
-        }
         super.init()
         self.setupCommandCenter()
     }
     
     func setupCommandCenter() {
-        //UIApplication.shared.beginReceivingRemoteControlEvents()
         
         // Add a handler for the play command.
         commandCenter.playCommand.isEnabled = true
@@ -80,32 +71,6 @@ class AudioPlayerArchive: NSObject {
 
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
     }
-    /*
-    func updateNowPlayingInfoCenter(artwork: UIImage? = nil) {
-        guard let file = playerQueue.currentItem else {
-            MPNowPlayingInfoCenter.default().nowPlayingInfo = [String: AnyObject]()
-            return
-        }
-        /*
-        if let imageURL = file.album?.imageUrl, artwork == nil {
-            Haneke.Shared.imageCache.fetch(URL: imageURL, success: {image in
-                self.updateNowPlayingInfoCenter(image)
-            })
-            return
-        }
-    */
-        MPNowPlayingInfoCenter.default().nowPlayingInfo = [
-            //MPMediaItemPropertyTitle: file.title,
-           // MPMediaItemPropertyAlbumTitle: file.album?.title ?? "",
-            //MPMediaItemPropertyArtist: file.album?.artist?.name ?? "",
-            MPMediaItemPropertyPlaybackDuration: playerQueue.currentItem?.duration as Any
-            //MPNowPlayingInfoPropertyElapsedPlaybackTime: playerQueue.currentItem.progress
-        ]
-        if let artwork = artwork {
-            MPNowPlayingInfoCenter.default().nowPlayingInfo?[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(image: artwork)
-        }
-    }
-    */
     
     @objc func play() {
         self.playerQueue?.play()

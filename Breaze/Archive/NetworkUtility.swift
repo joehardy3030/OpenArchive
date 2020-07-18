@@ -65,7 +65,7 @@ class NetworkUtility: NSObject {
         let uuid = getUUID()
         //let doc = ["uuid" : uuid]
         
-        db.collection(uuid).document("downloads").collection("shows").document(docID).getDocument { document, error in
+        db.collection(uuid).document("downloads").collection("shows").document(docID).addSnapshotListener { document, error in
             if let document = document {
                 let model = try! FirestoreDecoder().decode(ShowMetadataModel.self, from: document.data()!)
                 print("Model: \(model)")
@@ -84,7 +84,7 @@ class NetworkUtility: NSObject {
         var shows: [ShowMetadataModel] = []
         print("called get all downloaded docs")
         let docRef = db.collection(uuid).document("downloads").collection("shows")
-        docRef.getDocuments { (querySnapshot, error) in
+        docRef.addSnapshotListener { (querySnapshot, error) in
             if let error = error {
                 print("Error getting documents: \(error)")
             } else {

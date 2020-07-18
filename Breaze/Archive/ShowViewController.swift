@@ -172,7 +172,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
  
     private func saveDownloadData() {
-        let _ = network.getUUID()
+       // let _ = network.getUUID()
         let _ = network.addDownloadDataDoc(showMetadataModel: showMetadata)
         //print(uuid)
     }

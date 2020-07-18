@@ -28,6 +28,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     let utils = Utils()
     let network = NetworkUtility()
     var isPlaying = false
+    var isDownloaded = false
 
     override func viewDidLoad() {
 
@@ -35,9 +36,15 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
         self.showTableView.delegate = self
         self.showTableView.dataSource = self
         setupPlayer()
-        getIAGetShow()
-        //utils.getMemory()
-        self.navigationItem.title = utils.getDateFromDateTimeString(datetime: showDate)
+        if !isDownloaded {
+            self.navigationItem.title = utils.getDateFromDateTimeString(datetime: showDate)
+            getIAGetShow()
+        }
+        else {
+            self.navigationItem.title = showDate
+            print(showDate)
+            getDownloadedShow()
+        }
     }
     
     @IBAction func clickPlayButton(_ sender: Any) {
@@ -45,6 +52,10 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     @IBAction func clickForwardButton(_ sender: Any) {
         self.avPlayer.playerQueue.advanceToNextItem()
+    }
+    
+    func getDownloadedShow() {
+        
     }
     
     func setupPlayer() {

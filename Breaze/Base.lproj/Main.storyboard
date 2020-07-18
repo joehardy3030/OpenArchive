@@ -426,10 +426,10 @@
             </objects>
             <point key="canvasLocation" x="782" y="627"/>
         </scene>
-        <!--DownloadedShows-->
+        <!--Downloads-->
         <scene sceneID="FK2-Zy-SjW">
             <objects>
-                <viewController storyboardIdentifier="DownloadsViewController" title="DownloadedShows" id="L2H-hS-mP8" customClass="DownloadsViewController" customModule="Breaze" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="DownloadsViewController" title="Downloads" id="L2H-hS-mP8" customClass="DownloadsViewController" customModule="Breaze" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="vTh-jx-vdV">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -491,6 +491,7 @@
                                             <outlet property="sourceLabel" destination="uLm-QH-mU0" id="fCX-c7-bdI"/>
                                             <outlet property="transfererLabel" destination="P7b-3F-7iK" id="1kh-6c-bPL"/>
                                             <outlet property="venueLabel" destination="dlA-jf-Wxn" id="hdb-aX-jrS"/>
+                                            <segue destination="0wg-q7-zkq" kind="show" id="cSD-75-dsX"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -505,16 +506,19 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="xav-1z-OSd"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Downloaded Shows" id="yO0-B5-zGs"/>
+                    <navigationItem key="navigationItem" title="Downloads" id="yO0-B5-zGs"/>
                     <connections>
                         <outlet property="showListTableView" destination="rqs-oj-kzh" id="UCe-9b-CYr"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="D5d-Vd-56u" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1549.5999999999999" y="626.53673163418296"/>
+            <point key="canvasLocation" x="1529" y="627"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="cSD-75-dsX"/>
+    </inferredMetricsTieBreakers>
     <resources>
         <image name="backward" catalog="system" width="128" height="79"/>
         <image name="forward" catalog="system" width="128" height="79"/>

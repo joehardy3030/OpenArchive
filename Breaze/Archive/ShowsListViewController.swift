@@ -81,6 +81,7 @@ class ShowsListViewController: UIViewController, UITableViewDelegate, UITableVie
         if let target = segue.destination as? ShowViewController, let showMDs = self.showMetadatas {
             target.identifier = showMDs[indexPath.row].identifier
             target.showDate = showMDs[indexPath.row].date
+            target.isDownloaded = false
         }
     }
 

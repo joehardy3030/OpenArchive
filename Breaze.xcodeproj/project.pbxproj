@@ -17,6 +17,7 @@
 		D843EBDD24B3B10300C128A5 /* AudioPlayerArchive.swift in Sources */ = {isa = PBXBuildFile; fileRef = D843EBDC24B3B10300C128A5 /* AudioPlayerArchive.swift */; };
 		D8449A6824AEF3C200F113F4 /* MonthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8449A6724AEF3C200F113F4 /* MonthViewController.swift */; };
 		D8449A6A24AEF57600F113F4 /* MonthTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8449A6924AEF57600F113F4 /* MonthTableViewCell.swift */; };
+		D84D2B8E24C2925A006C8175 /* DownloadsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84D2B8D24C2925A006C8175 /* DownloadsViewController.swift */; };
 		D84D6E2824BEB5140022A058 /* NetworkUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84D6E2724BEB5140022A058 /* NetworkUtility.swift */; };
 		D84D6E2A24BFE5780022A058 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D84D6E2924BFE5780022A058 /* GoogleService-Info.plist */; };
 		D84D6E2B24BFE5780022A058 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D84D6E2924BFE5780022A058 /* GoogleService-Info.plist */; };
@@ -72,6 +73,7 @@
 		D843EBDC24B3B10300C128A5 /* AudioPlayerArchive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AudioPlayerArchive.swift; path = Breaze/Archive/AudioPlayerArchive.swift; sourceTree = "<group>"; };
 		D8449A6724AEF3C200F113F4 /* MonthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MonthViewController.swift; path = Breaze/Archive/MonthViewController.swift; sourceTree = "<group>"; };
 		D8449A6924AEF57600F113F4 /* MonthTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MonthTableViewCell.swift; path = Breaze/Archive/MonthTableViewCell.swift; sourceTree = "<group>"; };
+		D84D2B8D24C2925A006C8175 /* DownloadsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DownloadsViewController.swift; path = Breaze/Archive/DownloadsViewController.swift; sourceTree = "<group>"; };
 		D84D6E2724BEB5140022A058 /* NetworkUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NetworkUtility.swift; path = Breaze/Archive/NetworkUtility.swift; sourceTree = "<group>"; };
 		D84D6E2924BFE5780022A058 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D850B8FC24B26EAC00E3DC6B /* ShowMetadataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShowMetadataModel.swift; path = Breaze/Archive/ShowMetadataModel.swift; sourceTree = "<group>"; };
@@ -140,6 +142,7 @@
 				D852C3CC24B1AA5100029EB9 /* ShowTableViewCell.swift */,
 				D850B8FC24B26EAC00E3DC6B /* ShowMetadataModel.swift */,
 				D84D6E2724BEB5140022A058 /* NetworkUtility.swift */,
+				D84D2B8D24C2925A006C8175 /* DownloadsViewController.swift */,
 				D8F3BBC124BD4F1800C75D8C /* SQLiteManager.swift */,
 				D850B8FE24B2BA7400E3DC6B /* AudioPlayer.swift */,
 			);
@@ -538,6 +541,7 @@
 				D852C3C724B1219400029EB9 /* ShowsListViewController.swift in Sources */,
 				7984F98D24A4565400989DB8 /* ArchiveViewController.swift in Sources */,
 				D85A4EEF2022D0B600E480FB /* AppDelegate.swift in Sources */,
+				D84D2B8E24C2925A006C8175 /* DownloadsViewController.swift in Sources */,
 				D8449A6A24AEF57600F113F4 /* MonthTableViewCell.swift in Sources */,
 				D852C3CD24B1AA5100029EB9 /* ShowTableViewCell.swift in Sources */,
 				D850B8FD24B26EAC00E3DC6B /* ShowMetadataModel.swift in Sources */,

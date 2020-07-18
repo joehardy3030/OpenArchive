@@ -24,7 +24,7 @@ class ShowsListViewController: UIViewController, UITableViewDelegate, UITableVie
         self.showListTableView.delegate = self
         self.showListTableView.dataSource = self
         self.showListTableView.rowHeight = 135.0
-        utils.getMemory()
+    //    utils.getMemory()
     }
         
     func getIADateRange() {

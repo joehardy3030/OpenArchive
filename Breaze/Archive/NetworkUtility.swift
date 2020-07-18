@@ -56,7 +56,7 @@ class NetworkUtility: NSObject {
         return docID
     }
     
-    func getDownloadDataDoc(identifier: String?) -> String? {
+    func getDownloadDoc(identifier: String?) -> String? {
         let db = Firestore.firestore()
         //var ref: DocumentReference? = nil
         //guard let s = showMetadataModel else { return "no data" }
@@ -77,6 +77,28 @@ class NetworkUtility: NSObject {
         return docID
     }
     
+    func getAllDownloadDocs() -> [ShowMetadataModel] {
+        let db = Firestore.firestore()
+        let uuid = getUUID()
+       // var show = ShowMetadataModel()
+        var shows: [ShowMetadataModel] = []
+        print("called get all downloaded docs")
+        let docRef = db.collection(uuid).document("downloads").collection("shows")
+        docRef.getDocuments { (querySnapshot, error) in
+            if let error = error {
+                print("Error getting documents: \(error)")
+            } else {
+                for document in querySnapshot!.documents {
+                    let show = try! FirestoreDecoder().decode(ShowMetadataModel.self, from: document.data())
+                    //show = self.deserializeGoalFirebase(with: document)
+                    //print("\(document.documentID) => \(document.data())")
+                    shows.append(show)
+                }
+            }
+        }
+        return shows
+    }
+
     //let auth = Auth()
     // private let auth: Auth
     

@@ -77,7 +77,7 @@ class NetworkUtility: NSObject {
         return docID
     }
     
-    func getAllDownloadDocs() -> [ShowMetadataModel] {
+    func getAllDownloadDocs(completion: @escaping ([ShowMetadataModel]?) -> Void) {
         let db = Firestore.firestore()
         let uuid = getUUID()
        // var show = ShowMetadataModel()
@@ -90,13 +90,12 @@ class NetworkUtility: NSObject {
             } else {
                 for document in querySnapshot!.documents {
                     let show = try! FirestoreDecoder().decode(ShowMetadataModel.self, from: document.data())
-                    //show = self.deserializeGoalFirebase(with: document)
                     //print("\(document.documentID) => \(document.data())")
                     shows.append(show)
                 }
+                completion(shows)
             }
         }
-        return shows
     }
 
     //let auth = Auth()

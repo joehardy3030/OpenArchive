@@ -12,6 +12,8 @@ class DownloadsViewController: UIViewController, UITableViewDelegate, UITableVie
 
     @IBOutlet weak var showListTableView: UITableView!
     let network = NetworkUtility()
+    let utils = Utils()
+    var shows: [ShowMetadataModel]?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,20 +24,48 @@ class DownloadsViewController: UIViewController, UITableViewDelegate, UITableVie
     }
     
     func getDownloadedShows() {
-        DispatchQueue.main.async{
-            let shows = self.network.getAllDownloadDocs()
-            print(shows)
+        network.getAllDownloadDocs() {
+            (response: [ShowMetadataModel]?) -> Void in
+            
+            DispatchQueue.main.async{
+                if let r = response {
+                    self.shows = r
+                    //if let s = self.shows {
+                    //    self.showMetadatas = s.sorted(by: { $0.date! < $1.date! })
+                    //}
+                    print(r)
+                    self.showListTableView.reloadData()
+                }
+            }
         }
-
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
+        if let s = self.shows {
+            return s.count
+        }
+        else {
+            return 0
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return ShowsListTableViewCell()
-    }
+        let cell = showListTableView.dequeueReusableCell(withIdentifier: "ShowListCell", for: indexPath) as! ShowsListTableViewCell
+
+        if let showMDs = self.shows {
+            //cell.dateLabel.text = utils.getDateFromDateTimeString(datetime: showMDs[indexPath.row].metadata?.date)
+            cell.dateLabel.text = showMDs[indexPath.row].metadata?.date
+            cell.venueLabel.text = showMDs[indexPath.row].metadata?.venue
+            cell.transfererLabel.text = showMDs[indexPath.row].metadata?.transferer
+            cell.sourceLabel.text = showMDs[indexPath.row].metadata?.source
+
+        }
+        else {
+            cell.venueLabel.text = "No show"
+        }
+        
+        return cell
+  }
     
 
 }

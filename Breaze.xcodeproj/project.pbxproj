@@ -82,7 +82,7 @@
 		D852C3C824B121E000029EB9 /* ShowsListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShowsListTableViewCell.swift; path = Breaze/Archive/ShowsListTableViewCell.swift; sourceTree = "<group>"; };
 		D852C3CA24B1AA1C00029EB9 /* ShowViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShowViewController.swift; path = Breaze/Archive/ShowViewController.swift; sourceTree = "<group>"; };
 		D852C3CC24B1AA5100029EB9 /* ShowTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowTableViewCell.swift; sourceTree = "<group>"; };
-		D85A4EEB2022D0B500E480FB /* Breaze.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Breaze.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D85A4EEB2022D0B500E480FB /* Chateau.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chateau.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D85A4EEE2022D0B600E480FB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D85A4EF52022D0B600E480FB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		D85A4EF72022D0B600E480FB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -178,7 +178,7 @@
 		D85A4EEC2022D0B500E480FB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D85A4EEB2022D0B500E480FB /* Breaze.app */,
+				D85A4EEB2022D0B500E480FB /* Chateau.app */,
 				D85A4F012022D0B600E480FB /* BreazeTests.xctest */,
 				D85A4F0C2022D0B600E480FB /* BreazeUITests.xctest */,
 			);
@@ -250,7 +250,7 @@
 			);
 			name = Breaze;
 			productName = Breaze;
-			productReference = D85A4EEB2022D0B500E480FB /* Breaze.app */;
+			productReference = D85A4EEB2022D0B500E480FB /* Chateau.app */;
 			productType = "com.apple.product-type.application";
 		};
 		D85A4F002022D0B600E480FB /* BreazeTests */ = {
@@ -722,8 +722,8 @@
 				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				INFOPLIST_FILE = Breaze/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.Carquinez.Breaze;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.carquinez.chateau;
+				PRODUCT_NAME = Chateau;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -739,8 +739,8 @@
 				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				INFOPLIST_FILE = Breaze/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.Carquinez.Breaze;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.carquinez.chateau;
+				PRODUCT_NAME = Chateau;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

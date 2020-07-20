@@ -35,6 +35,7 @@
 		D85A4F062022D0B600E480FB /* BreazeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A4F052022D0B600E480FB /* BreazeTests.swift */; };
 		D85A4F112022D0B600E480FB /* BreazeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A4F102022D0B600E480FB /* BreazeUITests.swift */; };
 		D8A5324C24A9AFF2002379CF /* ArchiveCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A5324B24A9AFF2002379CF /* ArchiveCell.swift */; };
+		D8B65F0024C54A5500F57355 /* DownloadPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B65EFF24C54A5500F57355 /* DownloadPlayerViewController.swift */; };
 		D8F3BBC224BD4F1800C75D8C /* SQLiteManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F3BBC124BD4F1800C75D8C /* SQLiteManager.swift */; };
 /* End PBXBuildFile section */
 
@@ -95,6 +96,7 @@
 		D85A4F102022D0B600E480FB /* BreazeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreazeUITests.swift; sourceTree = "<group>"; };
 		D85A4F122022D0B600E480FB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D8A5324B24A9AFF2002379CF /* ArchiveCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ArchiveCell.swift; path = Breaze/Archive/ArchiveCell.swift; sourceTree = "<group>"; };
+		D8B65EFF24C54A5500F57355 /* DownloadPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DownloadPlayerViewController.swift; path = Breaze/Archive/DownloadPlayerViewController.swift; sourceTree = "<group>"; };
 		D8F3BBC124BD4F1800C75D8C /* SQLiteManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SQLiteManager.swift; path = Breaze/Archive/SQLiteManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -145,6 +147,7 @@
 				D84D2B8D24C2925A006C8175 /* DownloadsViewController.swift */,
 				D8F3BBC124BD4F1800C75D8C /* SQLiteManager.swift */,
 				D850B8FE24B2BA7400E3DC6B /* AudioPlayer.swift */,
+				D8B65EFF24C54A5500F57355 /* DownloadPlayerViewController.swift */,
 			);
 			name = Archive;
 			path = ..;
@@ -541,6 +544,7 @@
 				D852C3C724B1219400029EB9 /* ShowsListViewController.swift in Sources */,
 				7984F98D24A4565400989DB8 /* ArchiveViewController.swift in Sources */,
 				D85A4EEF2022D0B600E480FB /* AppDelegate.swift in Sources */,
+				D8B65F0024C54A5500F57355 /* DownloadPlayerViewController.swift in Sources */,
 				D84D2B8E24C2925A006C8175 /* DownloadsViewController.swift in Sources */,
 				D8449A6A24AEF57600F113F4 /* MonthTableViewCell.swift in Sources */,
 				D852C3CD24B1AA5100029EB9 /* ShowTableViewCell.swift in Sources */,

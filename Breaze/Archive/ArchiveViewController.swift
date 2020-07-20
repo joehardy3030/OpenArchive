@@ -77,7 +77,7 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var url = utils.getDocumentsDirectory()
-        url.appendPathComponent(filename)
+        url?.appendPathComponent(filename)
     }
     
     

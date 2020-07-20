@@ -84,4 +84,6 @@ class ShowsListViewController: UIViewController, UITableViewDelegate, UITableVie
             target.isDownloaded = false
         }
     }
+    
+    
 }

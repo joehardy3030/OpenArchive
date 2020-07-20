@@ -67,6 +67,8 @@ class DownloadsViewController: UIViewController, UITableViewDelegate, UITableVie
         return cell
   }
     
+    
+    /*
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let indexPath = showListTableView.indexPathForSelectedRow else { return }
         if let target = segue.destination as? ShowViewController, let showMDs = self.shows {
@@ -79,6 +81,25 @@ class DownloadsViewController: UIViewController, UITableViewDelegate, UITableVie
             print("Nope")
         }
     }
+    */
     
+    
+    
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let indexPath = showListTableView.indexPathForSelectedRow else { return }
+        if let target = segue.destination as? DownloadPlayerViewController, let showMDs = self.shows {
+          //  print("selected show \(String(describing: showMDs[indexPath.row].metadata?.date))")
+            target.showMetadata = showMDs[indexPath.row]
+            target.showDate = showMDs[indexPath.row].metadata?.date
+            target.isDownloaded = true
+        }
+        else {
+            print("Nope")
+        }
+    }
+    
+    
+
 
 }

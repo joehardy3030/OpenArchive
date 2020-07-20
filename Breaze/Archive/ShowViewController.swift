@@ -151,7 +151,9 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func loadAndPlay() {
+        //self.avPlayer.removeAllItems()
         self.avPlayer.loadQueuePlayer(tracks: self.mp3Array)
+        print(avPlayer.playerItems)
         self.avPlayer.play()
         self.avPlayer.setupNotificationView()
         self.avPlayer.playerQueue.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)

@@ -14,11 +14,11 @@ class DownloadPlayerViewController: UIViewController {
     var identifier: String?
     var showDate: String?
     let archiveAPI = ArchiveAPI()
-    let avPlayer = AudioPlayerArchive()
-    var mp3Array = [ShowMP3]()
-    var showMetadata: ShowMetadataModel!
     let utils = Utils()
     let network = NetworkUtility()
+    var mp3Array = [ShowMP3]()
+    var showMetadata: ShowMetadataModel?
+    var avPlayer: AudioPlayerArchive?
     var isPlaying = false
     var isDownloaded = false
     var playerQueue: AVQueuePlayer!
@@ -31,8 +31,12 @@ class DownloadPlayerViewController: UIViewController {
         //self.showTableView.delegate = self
         // self.showTableView.dataSource = self
         //getAllTheMP3s()
-        playFromName(name: trackName)
-        playerQueue.play()
+        //self.navigationItem.title = showDate
+        //getDownloadedShow()
+        avPlayer = AudioPlayerArchive()
+        getDownloadedShow()
+        //playFromName(name: trackName)
+        //playerQueue.play()
     }
     
     func getAllTheMP3s() {
@@ -50,11 +54,43 @@ class DownloadPlayerViewController: UIViewController {
         }
     }
     
+    func getDownloadedShow() {
+         if let mp3s = self.showMetadata?.mp3Array {
+             self.mp3Array = mp3s
+             loadAndPlay()
+         }
+     }
+    
     func prepareToPlay(url: URL) {
         let asset = AVAsset(url: url)
         let assetKeys = ["playable"]
         let item = AVPlayerItem(asset: asset, automaticallyLoadedAssetKeys: assetKeys)
         playerItems.append(item)
+    }
+    
+    func loadAndPlay() {
+        //self.avPlayer.removeAllItems()
+        avPlayer?.loadQueuePlayer(tracks: self.mp3Array)
+        print(avPlayer?.playerItems as Any)
+        avPlayer?.play()
+        avPlayer?.setupNotificationView()
+      //  avPlayer?.playerQueue.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
+        //track player progress
+        /*
+        let interval = CMTime(value: 1, timescale: 2)
+        
+        avPlayer?.playerQueue.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { (progressTime) in
+            
+            let seconds = CMTimeGetSeconds(progressTime)
+            let secondsString = String(format: "%02d", Int(seconds) % 60)
+            let minutesString = String(format: "%02d", Int(seconds) / 60)
+            self.currentTimeLabel.text = ("\(minutesString):\(secondsString)")
+            if let duration = self.avPlayer.playerQueue.currentItem?.duration {
+                let totalSeconds = CMTimeGetSeconds(duration)
+                self.audioLengthSlider.value = Float(seconds/totalSeconds)
+            }
+        }
+        */
     }
     
     func trackURLfromName(name: String?) -> URL? {

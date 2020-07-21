@@ -9,7 +9,6 @@
 import UIKit
 import AVKit
 import MediaPlayer
-import SQLite3
 
 class AudioPlayerArchive: NSObject {
     var playerQueue: AVQueuePlayer!
@@ -21,6 +20,7 @@ class AudioPlayerArchive: NSObject {
     ]
     var nowPlayingInfo = [String : Any]()
     let commandCenter = MPRemoteCommandCenter.shared()
+    let utils = Utils()
     
     override init() {
         super.init()
@@ -80,6 +80,12 @@ class AudioPlayerArchive: NSObject {
         self.playerQueue?.pause()
     }
 
+    func trackURLfromName(name: String?) -> URL? {
+        guard let d = utils.getDocumentsDirectory(), let n = name else { return nil }
+        let url = d.appendingPathComponent(n)
+        return url
+    }
+
     func prepareToPlay(url: URL) {
         let asset = AVAsset(url: url)
         let assetKeys = ["playable"]
@@ -89,19 +95,11 @@ class AudioPlayerArchive: NSObject {
     
     func loadQueuePlayer(tracks: [ShowMP3]) {
         for track in tracks {
-            guard let d = track.destination else { return }
-            prepareToPlay(url: d)
+            guard let n = track.name else { return }
+            if let url = trackURLfromName(name: n) {
+                prepareToPlay(url: url)
+            }
         }
         playerQueue = AVQueuePlayer(items: playerItems)
     }
-    
-    /*
-    func playAudioFileController(url: URL)
-    {
-        self.avPlayer = AVPlayer(url: url)
-        let playerViewController = AVPlayerViewController()
-        playerViewController.player = self.avPlayer
-    }
-    */
-    
 }

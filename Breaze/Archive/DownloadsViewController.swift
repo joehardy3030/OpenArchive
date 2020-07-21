@@ -91,8 +91,8 @@ class DownloadsViewController: UIViewController, UITableViewDelegate, UITableVie
         if let target = segue.destination as? DownloadPlayerViewController, let showMDs = self.shows {
           //  print("selected show \(String(describing: showMDs[indexPath.row].metadata?.date))")
             target.showMetadata = showMDs[indexPath.row]
-            target.showDate = showMDs[indexPath.row].metadata?.date
-            target.isDownloaded = true
+          //  target.showDate = showMDs[indexPath.row].metadata?.date
+          //  target.isDownloaded = true
         }
         else {
             print("Nope")

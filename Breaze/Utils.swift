@@ -202,4 +202,18 @@ class Utils {
         print(mem_free)
         print(mem_used)
     }
+    
+    func getAllTheMP3s() {
+        let fileManager = FileManager.default
+        let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        do {
+            let fileURLs = try fileManager.contentsOfDirectory(at: documentsURL, includingPropertiesForKeys: nil)
+            for f in fileURLs {
+                print(f)
+            }
+        } catch {
+            print("Error while enumerating files \(documentsURL.path): \(error.localizedDescription)")
+        }
+    }
+
 }

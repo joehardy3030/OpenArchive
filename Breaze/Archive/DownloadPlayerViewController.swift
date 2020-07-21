@@ -16,7 +16,7 @@ class DownloadPlayerViewController: UIViewController {
     let archiveAPI = ArchiveAPI()
     let utils = Utils()
     let network = NetworkUtility()
-    var mp3Array = [ShowMP3]()
+   // var mp3Array = [ShowMP3]()
     var showMetadata: ShowMetadataModel?
     var avPlayer: AudioPlayerArchive?
     var isPlaying = false
@@ -56,8 +56,8 @@ class DownloadPlayerViewController: UIViewController {
     
     func getDownloadedShow() {
          if let mp3s = self.showMetadata?.mp3Array {
-             self.mp3Array = mp3s
-             loadAndPlay()
+             //self.mp3Array = mp3s
+            loadAndPlay(mp3Array: mp3s)
          }
      }
     
@@ -68,10 +68,10 @@ class DownloadPlayerViewController: UIViewController {
         playerItems.append(item)
     }
     
-    func loadAndPlay() {
-        //self.avPlayer.removeAllItems()
-        avPlayer?.loadQueuePlayer(tracks: self.mp3Array)
-        print(avPlayer?.playerItems as Any)
+    func loadAndPlay(mp3Array: [ShowMP3]) {
+        //avPlayer?.playerQueue.removeAllItems()
+        avPlayer?.loadQueuePlayer(tracks: mp3Array)
+      //  print(avPlayer?.playerItems as Any)
         avPlayer?.play()
         avPlayer?.setupNotificationView()
       //  avPlayer?.playerQueue.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)

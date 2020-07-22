@@ -8,22 +8,14 @@
 
 import UIKit
 
-struct ShowFile: Codable {
-    var name: String?
-    var source: String?
-    var creator: String?
-    var title: String?
-    var track: String?
-    var album: String?
-    var bitrate: String?
-    var length: String?
-    var format: String?
-    var original: String?
-    var mtime: String?
-    var size: String?
-    var md5: String?
-    var crc32: String?
-    var sha1: String?
+struct ShowMetadataModel: Codable {
+    var metadata: ShowMetadata?
+    var files: [ShowFile]?
+    var mp3Array: [ShowMP3]?
+    var files_count: Int?
+    var created: Int?
+    var item_size: Int?
+    var dir: String?
 }
 
 struct ShowMetadata: Codable {
@@ -41,14 +33,22 @@ struct ShowMetadata: Codable {
     var source: String?
 }
 
-struct ShowMetadataModel: Codable {
-    var metadata: ShowMetadata?
-    var files: [ShowFile]?
-    var mp3Array: [ShowMP3]?
-    var files_count: Int?
-    var created: Int?
-    var item_size: Int?
-    var dir: String?
+struct ShowFile: Codable {
+    var name: String?
+    var source: String?
+    var creator: String?
+    var title: String?
+    var track: String?
+    var album: String?
+    var bitrate: String?
+    var length: String?
+    var format: String?
+    var original: String?
+    var mtime: String?
+    var size: String?
+    var md5: String?
+    var crc32: String?
+    var sha1: String?
 }
 
 struct ShowMP3: Codable {

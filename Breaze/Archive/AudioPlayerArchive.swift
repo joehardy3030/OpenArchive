@@ -21,6 +21,7 @@ class AudioPlayerArchive: NSObject {
     var nowPlayingInfo = [String : Any]()
     let commandCenter = MPRemoteCommandCenter.shared()
     let utils = Utils()
+    var showModel: ShowMetadataModel?
     
     override init() {
         super.init()

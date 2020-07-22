@@ -11,42 +11,36 @@ import AVKit
 import AVFoundation
 
 class DownloadPlayerViewController: UIViewController {
-    //var identifier: String?
-    //var showDate: String?
     let archiveAPI = ArchiveAPI()
     let utils = Utils()
     let network = NetworkUtility()
-   // var mp3Array = [ShowMP3]()
-    var showMetadata: ShowMetadataModel?
-    var avPlayer: AudioPlayerArchive?
+    var showModel: ShowMetadataModel?
+    var player: AudioPlayerArchive?
     var isPlaying = false
-   // var isDownloaded = false
-    // var playerQueue: AVQueuePlayer!
-   // var playerItems = [AVPlayerItem]()
     
     override func viewDidLoad() {
         
         super.viewDidLoad()
         //self.showTableView.delegate = self
         // self.showTableView.dataSource = self
-        //self.navigationItem.title = showDate
-        avPlayer = AudioPlayerArchive()
+        navigationController?.delegate = self
+        if let m = showModel {
+            self.navigationItem.title = m.metadata?.date
+        }
+        player = AudioPlayerArchive()
         getDownloadedShow()
     }
     
     func getDownloadedShow() {
-         if let mp3s = self.showMetadata?.mp3Array {
-             //self.mp3Array = mp3s
+         if let mp3s = self.showModel?.mp3Array {
             loadAndPlay(mp3Array: mp3s)
          }
      }
     
     func loadAndPlay(mp3Array: [ShowMP3]) {
-        //avPlayer?.playerQueue.removeAllItems()
-        avPlayer?.loadQueuePlayer(tracks: mp3Array)
-      //  print(avPlayer?.playerItems as Any)
-        avPlayer?.play()
-        avPlayer?.setupNotificationView()
+        player?.loadQueuePlayer(tracks: mp3Array)
+        player?.play()
+        player?.setupNotificationView()
       //  avPlayer?.playerQueue.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
         //track player progress
         /*
@@ -71,6 +65,24 @@ class DownloadPlayerViewController: UIViewController {
         let url = d.appendingPathComponent(n)
         return url
     }
-
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let vc = segue.destination as? MiniPlayerViewController {
+            if let m = showModel {
+                vc.showModel = m
+            }
+        }
+    }
+        
+}
+
+
+extension DownloadPlayerViewController: UINavigationControllerDelegate {
+    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+        print("called this")
+        if let vc = viewController as? DownloadsViewController {
+            vc.player = self.player
+            print("Made it here")
+        }
+    }
 }

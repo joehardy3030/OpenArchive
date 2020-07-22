@@ -14,10 +14,15 @@ class MiniPlayerViewController: UIViewController {
     @IBOutlet weak var totalTimeLabel: UILabel!
     @IBOutlet weak var timeSlider: UISlider!
     @IBOutlet weak var songLabel: UILabel!
-    var avPlayer: AudioPlayerArchive?
+    var showModel: ShowMetadataModel?
+    var player: AudioPlayerArchive?
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        if let d = showModel?.metadata?.date {
+            songLabel.text = d
+        }
 
         // Do any additional setup after loading the view.
     }

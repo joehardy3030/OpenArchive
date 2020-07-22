@@ -14,6 +14,7 @@ class DownloadsViewController: UIViewController, UITableViewDelegate, UITableVie
     let network = NetworkUtility()
     let utils = Utils()
     var shows: [ShowMetadataModel]?
+    var player: AudioPlayerArchive?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,7 +54,6 @@ class DownloadsViewController: UIViewController, UITableViewDelegate, UITableVie
         let cell = showListTableView.dequeueReusableCell(withIdentifier: "ShowListCell", for: indexPath) as! ShowsListTableViewCell
 
         if let showMDs = self.shows {
-            //cell.dateLabel.text = utils.getDateFromDateTimeString(datetime: showMDs[indexPath.row].metadata?.date)
             cell.dateLabel.text = showMDs[indexPath.row].metadata?.date
             cell.venueLabel.text = showMDs[indexPath.row].metadata?.venue
             cell.transfererLabel.text = showMDs[indexPath.row].metadata?.transferer
@@ -65,34 +65,12 @@ class DownloadsViewController: UIViewController, UITableViewDelegate, UITableVie
         }
         
         return cell
-  }
-    
-    
-    /*
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard let indexPath = showListTableView.indexPathForSelectedRow else { return }
-        if let target = segue.destination as? ShowViewController, let showMDs = self.shows {
-          //  print("selected show \(String(describing: showMDs[indexPath.row].metadata?.date))")
-            target.showMetadata = showMDs[indexPath.row]
-            target.showDate = showMDs[indexPath.row].metadata?.date
-            target.isDownloaded = true
-        }
-        else {
-            print("Nope")
-        }
-    }
-    */
-    
-    
-    
+  }    
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let indexPath = showListTableView.indexPathForSelectedRow else { return }
         if let target = segue.destination as? DownloadPlayerViewController, let showMDs = self.shows {
-          //  print("selected show \(String(describing: showMDs[indexPath.row].metadata?.date))")
-            target.showMetadata = showMDs[indexPath.row]
-          //  target.showDate = showMDs[indexPath.row].metadata?.date
-          //  target.isDownloaded = true
+            target.showModel = showMDs[indexPath.row]
         }
         else {
             print("Nope")

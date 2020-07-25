@@ -89,6 +89,18 @@ class AudioPlayerArchive: NSObject {
         return url
     }
 
+    func trackNameFromURL(url: URL?) -> String? {
+        guard let d = utils.getDocumentsDirectory(), let u = url else { return nil }
+        let stringD = d.absoluteString
+        let lengthStringD = stringD.count
+        let stringU = u.absoluteString
+        let lengthStringU = stringU.count
+        let name = String(stringU.suffix(lengthStringU-lengthStringD))
+        //let last4 = String(a.suffix(4))
+        //let url = d.appendingPathComponent(n)
+        return name
+    }
+    
     func prepareToPlay(url: URL) {
         let asset = AVAsset(url: url)
         let assetKeys = ["playable"]
@@ -101,6 +113,7 @@ class AudioPlayerArchive: NSObject {
             guard let n = track.name else { return }
             if let url = trackURLfromName(name: n) {
                 prepareToPlay(url: url)
+                print(trackNameFromURL(url: url))
             }
         }
         

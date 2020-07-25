@@ -15,6 +15,8 @@ class MiniPlayerViewController: UIViewController {
     @IBOutlet weak var currentTimeLabel: UILabel!
     @IBOutlet weak var totalTimeLabel: UILabel!
     @IBOutlet weak var timeSlider: UISlider!
+    @IBOutlet weak var showLabel: UILabel!
+    @IBOutlet weak var venueLabel: UILabel!
     @IBOutlet weak var songLabel: UILabel!
     var player: AudioPlayerArchive?
     var isPlaying = false
@@ -30,6 +32,7 @@ class MiniPlayerViewController: UIViewController {
     }
     
     @IBAction func forwardButton(_ sender: Any) {
+        player?.playerQueue?.advanceToNextItem()
     }
     
     func newShow () {
@@ -99,8 +102,14 @@ class MiniPlayerViewController: UIViewController {
                 let row = getCurrentTrackIndex()
                 if (player?.showModel?.mp3Array?.count)! > 0 {
                     let songName = player?.showModel?.mp3Array?[row].title
-                    //let songName = player?.showModel?.mp3Array?[row].name
+                    print(row)
                     songLabel.text = songName
+                    showLabel.text = player?.showModel?.metadata?.date
+                    venueLabel.text = player?.showModel?.metadata?.venue
+                    /*if let d = player?.showModel?.metadata?.date, let v = player?.showModel?.metadata?.venue {
+                        showLabel.text = String(d + ", " + v)
+                    }
+                    */
                 }
                // let indexPath = IndexPath(row: row, section: 0)
                 //self.showTableView.selectRow(at: indexPath, animated: true, scrollPosition: UITableView.ScrollPosition.middle)

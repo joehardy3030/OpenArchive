@@ -14,6 +14,7 @@ class DownloadPlayerViewController: UIViewController {
     let archiveAPI = ArchiveAPI()
     let utils = Utils()
     let network = NetworkUtility()
+    var miniPlayer: MiniPlayerViewController?
     var showModel: ShowMetadataModel?
     var player: AudioPlayerArchive?
     var isPlaying = false
@@ -26,10 +27,13 @@ class DownloadPlayerViewController: UIViewController {
         if let m = player?.showModel {
             self.navigationItem.title = m.metadata?.date
         }
-        //getDownloadedShow()
+        //DispatchQueue.main.async{
+        //}
+     //   getDownloadedShow()
+     //   miniPlayer?.player = self.player
         navigationController?.delegate = self
     }
-    
+
     func getDownloadedShow() {
          if let mp3s = self.showModel?.mp3Array {
             player?.loadQueuePlayer(tracks: mp3s)
@@ -37,12 +41,12 @@ class DownloadPlayerViewController: UIViewController {
      }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let vc = segue.destination as? MiniPlayerViewController {
+        if let miniPlayer = segue.destination as? MiniPlayerViewController {
             player = AudioPlayerArchive()
             player?.showModel = self.showModel
             getDownloadedShow()
             if let p = player {
-                vc.player = p
+                miniPlayer.player = p
             }
         }
     }

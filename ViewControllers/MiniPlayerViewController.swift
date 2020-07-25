@@ -20,6 +20,17 @@ class MiniPlayerViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        newShow()
+        // Do any additional setup after loading the view.
+    }
+    
+    @IBAction func playButton(_ sender: Any) {
+    }
+    
+    @IBAction func forwardButton(_ sender: Any) {
+    }
+    
+    func newShow () {
         if let d = player?.showModel?.metadata?.date {
             songLabel.text = d
         }
@@ -29,13 +40,6 @@ class MiniPlayerViewController: UIViewController {
         setupSlider()
         player?.setupNotificationView()
         player?.play()
-        // Do any additional setup after loading the view.
-    }
-    
-    @IBAction func playButton(_ sender: Any) {
-    }
-    
-    @IBAction func forwardButton(_ sender: Any) {
     }
     
     @objc func handleSliderChange() {

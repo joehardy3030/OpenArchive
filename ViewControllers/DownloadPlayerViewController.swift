@@ -56,6 +56,7 @@ class DownloadPlayerViewController: ArchiveSuperViewController { //UIViewControl
 extension DownloadPlayerViewController: UINavigationControllerDelegate {
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
         print("called this")
+        //if let vc = viewController as? ArchiveSuperViewController {
         if let vc = viewController as? DownloadsViewController {
             vc.player = self.player
         }

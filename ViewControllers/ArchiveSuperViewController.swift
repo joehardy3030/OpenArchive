@@ -9,9 +9,7 @@
 import UIKit
 
 class ArchiveSuperViewController: UIViewController {
-    let archiveAPI = ArchiveAPI()
-    let utils = Utils()
-    let network = NetworkUtility()
+    var miniPlayer: MiniPlayerViewController?
     var showModel: ShowMetadataModel?
     var player: AudioPlayerArchive?
     var isPlaying = false
@@ -24,12 +22,12 @@ class ArchiveSuperViewController: UIViewController {
     
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let vc = segue.destination as? MiniPlayerViewController {
+        if let mp = segue.destination as? MiniPlayerViewController {
+            self.miniPlayer = mp
             player = AudioPlayerArchive()
             player?.showModel = self.showModel
-          //  getDownloadedShow()
             if let p = player {
-                vc.player = p
+                mp.player = p
             }
         }
     }

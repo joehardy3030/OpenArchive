@@ -10,14 +10,14 @@ import UIKit
 import AVKit
 import AVFoundation
 
-class DownloadPlayerViewController: UIViewController {
+class DownloadPlayerViewController: ArchiveSuperViewController { //UIViewController {
     let archiveAPI = ArchiveAPI()
     let utils = Utils()
     let network = NetworkUtility()
-    var miniPlayer: MiniPlayerViewController?
-    var showModel: ShowMetadataModel?
-    var player: AudioPlayerArchive?
-    var isPlaying = false
+  //  var miniPlayer: MiniPlayerViewController?
+   // var showModel: ShowMetadataModel?
+  //  var player: AudioPlayerArchive?
+  //  var isPlaying = false
     
     override func viewDidLoad() {
         
@@ -27,29 +27,29 @@ class DownloadPlayerViewController: UIViewController {
         if let m = player?.showModel {
             self.navigationItem.title = m.metadata?.date
         }
-        //DispatchQueue.main.async{
-        //}
-     //   getDownloadedShow()
-     //   miniPlayer?.player = self.player
+        getDownloadedShow()  // viewDidLoad is called after segue, so need to do this here
+        miniPlayer?.newShow() //
         navigationController?.delegate = self
     }
 
     func getDownloadedShow() {
          if let mp3s = self.showModel?.mp3Array {
             player?.loadQueuePlayer(tracks: mp3s)
+            //miniPlayer?.player = player
          }
      }
-    
+    /*
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let miniPlayer = segue.destination as? MiniPlayerViewController {
+        if let mp = segue.destination as? MiniPlayerViewController {
+            self.miniPlayer = mp
             player = AudioPlayerArchive()
             player?.showModel = self.showModel
-            getDownloadedShow()
             if let p = player {
-                miniPlayer.player = p
+                mp.player = p
             }
         }
     }
+    */
         
 }
 

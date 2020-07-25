@@ -11,6 +11,7 @@ import MediaPlayer
 
 class MiniPlayerViewController: UIViewController {
 
+    @IBOutlet weak var playButton: UIButton!
     @IBOutlet weak var currentTimeLabel: UILabel!
     @IBOutlet weak var totalTimeLabel: UILabel!
     @IBOutlet weak var timeSlider: UISlider!
@@ -25,6 +26,7 @@ class MiniPlayerViewController: UIViewController {
     }
     
     @IBAction func playButton(_ sender: Any) {
+        playPause()
     }
     
     @IBAction func forwardButton(_ sender: Any) {
@@ -32,16 +34,19 @@ class MiniPlayerViewController: UIViewController {
     
     func newShow () {
         /*
-        if let d = player?.showModel?.metadata?.date {
-            songLabel.text = d
-        }
-        */
+         if let d = player?.showModel?.metadata?.date {
+         songLabel.text = d
+         }
+         */
         if let _ = player?.playerQueue {
             setupTimer()
         }
         setupSlider()
         player?.setupNotificationView()
         player?.play()
+        if #available(iOS 13.0, *) {
+            playButton.setImage(UIImage(systemName: "pause"), for: .normal)
+        }
     }
     
     @objc func handleSliderChange() {
@@ -93,7 +98,8 @@ class MiniPlayerViewController: UIViewController {
                 }
                 let row = getCurrentTrackIndex()
                 if (player?.showModel?.mp3Array?.count)! > 0 {
-                    let songName = player?.showModel?.mp3Array?[row].name
+                    let songName = player?.showModel?.mp3Array?[row].title
+                    //let songName = player?.showModel?.mp3Array?[row].name
                     songLabel.text = songName
                 }
                // let indexPath = IndexPath(row: row, section: 0)
@@ -117,6 +123,27 @@ class MiniPlayerViewController: UIViewController {
         return 0
     }
 
+    func playPause() {
+        if player?.playerQueue?.rate ?? 0.0 > 0.0 {
+            player?.playerQueue?.pause()
+            if let _ = playButton {
+                if #available(iOS 13.0, *) {
+                    playButton.setImage(UIImage(systemName: "play"), for: .normal)
+                }
+            }
+            isPlaying = false
+        }
+        else {
+            player?.playerQueue?.play()
+            if let _ = playButton {
+                if #available(iOS 13.0, *) {
+                    playButton.setImage(UIImage(systemName: "pause"), for: .normal)
+                }
+            }
+            isPlaying = true
+        }
+    }
+    
     
     
     

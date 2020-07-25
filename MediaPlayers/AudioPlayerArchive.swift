@@ -82,7 +82,7 @@ class AudioPlayerArchive: NSObject {
     @objc func pause() {
         self.playerQueue?.pause()
     }
-
+    
     func trackURLfromName(name: String?) -> URL? {
         guard let d = utils.getDocumentsDirectory(), let n = name else { return nil }
         let url = d.appendingPathComponent(n)

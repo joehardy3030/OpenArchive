@@ -13,10 +13,7 @@ import AVFoundation
 class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, AVAudioPlayerDelegate {
 
     @IBOutlet weak var yearTableView: UITableView!
-  //  var avAudioPlayer: AVAudioPlayer?
-  //  var avPlayer: AVPlayer?
     let utils = Utils()
-    //let sqlite = SQLiteManager()
     var archiveAPI = ArchiveAPI()
     var years: [Int] = []
     var identifier = "gd1990-03-30.sbd.barbella.8366.sbeok.shnf"
@@ -28,10 +25,8 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
         self.yearTableView.delegate = self
         self.yearTableView.dataSource = self
         self.years += 1965...1995
-        //utils.getMemory()
     }
     
-    // https://www.raywenderlich.com/6620276-sqlite-with-swift-tutorial-getting-started
     func getIARequest() {
         let url = archiveAPI.downloadURL(identifier: identifier,
                                       filename: filename)
@@ -88,42 +83,5 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
             target.year = year
         }
     }
-    
-    /*
-    func playAudioFile(url: URL) {
-        do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
-            try AVAudioSession.sharedInstance().setActive(true)
-            print("Play \(url)")
-            self.avAudioPlayer = try AVAudioPlayer(contentsOf: url)
-            self.avAudioPlayer?.delegate = self
-            self.avAudioPlayer?.play()
-        }
-        catch {
-            print("nope")
-        }
-    }
-    
-    func playAudioFileController(url: URL)
-    {
-        do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
-            try AVAudioSession.sharedInstance().setActive(true)
-            
-            self.avPlayer = AVPlayer(url: url)            
-            let playerViewController = AVPlayerViewController()
-            playerViewController.player = self.avPlayer
-            self.present(playerViewController, animated: true) {
-                if let avp = self.avPlayer {
-                    avp.play()
-                }
-            }
-        }
-        catch{
-            print("nope")
-        }
-    }
-    */
-    
 }
     

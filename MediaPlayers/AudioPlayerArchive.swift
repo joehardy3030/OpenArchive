@@ -13,7 +13,7 @@ import MediaPlayer
 class AudioPlayerArchive: NSObject {
     var playerQueue: AVQueuePlayer?
     var playerItems = [AVPlayerItem]()
-    var mp3Array = [ShowMP3]()
+    //var mp3Array = [ShowMP3]()
     let requiredAssetKeys = [
         "playable",
         "hasProtectedContent"
@@ -104,11 +104,9 @@ class AudioPlayerArchive: NSObject {
             }
         }
         
-        if let p = playerQueue {
-            print("loaded player queue exists")
-        }
-        else {
+       // if let p = playerQueue {
+        //    p.removeAllItems()
+       // }
         playerQueue = AVQueuePlayer(items: playerItems)
-        }
     }
 }

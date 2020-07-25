@@ -92,8 +92,8 @@ class MiniPlayerViewController: UIViewController {
                     totalTimeLabel.text = "\(minutesText):\(secondsText)"
                 }
                 let row = getCurrentTrackIndex()
-                if (player?.mp3Array.count)! > 0 {
-                    let songName = player?.mp3Array[row].name
+                if (player?.showModel?.mp3Array?.count)! > 0 {
+                    let songName = player?.showModel?.mp3Array?[row].name
                     songLabel.text = songName
                 }
                // let indexPath = IndexPath(row: row, section: 0)
@@ -105,7 +105,7 @@ class MiniPlayerViewController: UIViewController {
     func getCurrentTrackIndex() -> Int {
         guard let ci = self.player?.playerQueue?.currentItem else { return 0 }
         let destinationURL = ci.asset.value(forKey: "URL") as? URL
-        if let mp3s = player?.mp3Array {
+        if let mp3s = player?.showModel?.mp3Array {
             if mp3s.count > 0 {
                 for i in 0...(mp3s.count - 1) {
                     if mp3s[i].destination == destinationURL {

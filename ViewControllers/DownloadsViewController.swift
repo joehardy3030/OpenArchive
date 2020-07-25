@@ -8,13 +8,13 @@
 
 import UIKit
 
-class DownloadsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var showListTableView: UITableView!
     let network = NetworkUtility()
     let utils = Utils()
     var shows: [ShowMetadataModel]?
-    var player: AudioPlayerArchive?
+ //   var player: AudioPlayerArchive?
     
     override func viewDidLoad() {
         super.viewDidLoad()

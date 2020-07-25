@@ -32,14 +32,14 @@ class ArchiveSuperViewController: UIViewController {
         }
     }
 
-    /*
-    // MARK: - Navigation
+}
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+
+extension ArchiveSuperViewController: UINavigationControllerDelegate {
+    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+        print("called this")
+        if let vc = viewController as? ArchiveSuperViewController {
+            vc.player = self.player
+        }
     }
-    */
-
 }

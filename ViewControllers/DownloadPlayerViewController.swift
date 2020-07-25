@@ -30,10 +30,12 @@ class DownloadPlayerViewController: ArchiveSuperViewController { //UIViewControl
         getDownloadedShow()  // viewDidLoad is called after segue, so need to do this here
         miniPlayer?.newShow() //
         navigationController?.delegate = self
+        print(navigationController?.viewControllers)
     }
+    
 
     func getDownloadedShow() {
-         if let mp3s = self.showModel?.mp3Array {
+        if let mp3s = self.player?.showModel?.mp3Array {
             player?.loadQueuePlayer(tracks: mp3s)
             //miniPlayer?.player = player
          }

@@ -31,9 +31,11 @@ class MiniPlayerViewController: UIViewController {
     }
     
     func newShow () {
+        /*
         if let d = player?.showModel?.metadata?.date {
             songLabel.text = d
         }
+        */
         if let _ = player?.playerQueue {
             setupTimer()
         }
@@ -89,7 +91,11 @@ class MiniPlayerViewController: UIViewController {
                     let minutesText = String(format: "%02d", Int(seconds) / 60)
                     totalTimeLabel.text = "\(minutesText):\(secondsText)"
                 }
-                //let row = getCurrentTrackIndex()
+                let row = getCurrentTrackIndex()
+                if (player?.mp3Array.count)! > 0 {
+                    let songName = player?.mp3Array[row].name
+                    songLabel.text = songName
+                }
                // let indexPath = IndexPath(row: row, section: 0)
                 //self.showTableView.selectRow(at: indexPath, animated: true, scrollPosition: UITableView.ScrollPosition.middle)
             }
@@ -100,10 +106,12 @@ class MiniPlayerViewController: UIViewController {
         guard let ci = self.player?.playerQueue?.currentItem else { return 0 }
         let destinationURL = ci.asset.value(forKey: "URL") as? URL
         if let mp3s = player?.mp3Array {
-            for i in 0...(mp3s.count - 1) {
-                if mp3s[i].destination == destinationURL {
-                    return i
-                    }
+            if mp3s.count > 0 {
+                for i in 0...(mp3s.count - 1) {
+                    if mp3s[i].destination == destinationURL {
+                        return i
+                        }
+                }
             }
         }
         return 0

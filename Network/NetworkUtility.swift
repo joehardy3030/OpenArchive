@@ -26,7 +26,7 @@ class NetworkUtility: NSObject {
     
     func getUUID() -> String {
         if let uuid = UIDevice.current.identifierForVendor?.uuidString {
-            print(uuid)
+            //self.present(vc, animated: true, completion: nil)print(uuid)
             return uuid
         }
         else {
@@ -68,7 +68,7 @@ class NetworkUtility: NSObject {
         db.collection(uuid).document("downloads").collection("shows").document(docID).addSnapshotListener { document, error in
             if let document = document {
                 let model = try! FirestoreDecoder().decode(ShowMetadataModel.self, from: document.data()!)
-                print("Model: \(model)")
+               // print("Model: \(model)")
             } else {
                 print("Document does not exist")
             }

@@ -22,6 +22,8 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
         self.showListTableView.dataSource = self
         self.showListTableView.rowHeight = 135.0
         self.getDownloadedShows()
+        print("view load")
+        player = AudioPlayerArchive()
     }
     
     func getDownloadedShows() {
@@ -34,7 +36,7 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
                     //if let s = self.shows {
                     //    self.showMetadatas = s.sorted(by: { $0.date! < $1.date! })
                     //}
-                    print(r)
+                   // print(r)
                     self.showListTableView.reloadData()
                 }
             }
@@ -70,14 +72,18 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let indexPath = showListTableView.indexPathForSelectedRow else { return }
         if let target = segue.destination as? DownloadPlayerViewController, let showMDs = self.shows {
-            target.showModel = showMDs[indexPath.row]
+            player?.showModel = showMDs[indexPath.row]
+            target.player = player
+            print("self player")
+            target.prevController = self
         }
         else {
             print("Nope")
         }
     }
     
+    //    self.present(s, animated: true)
+    // }
     
-
-
 }
+

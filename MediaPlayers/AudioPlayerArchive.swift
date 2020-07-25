@@ -70,7 +70,7 @@ class AudioPlayerArchive: NSObject {
              }
          }
         else { print("no image")}
-        print(nowPlayingInfo)
+       // print(nowPlayingInfo)
 
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
     }
@@ -103,6 +103,12 @@ class AudioPlayerArchive: NSObject {
                 prepareToPlay(url: url)
             }
         }
+        
+        if let p = playerQueue {
+            print("loaded player queue exists")
+        }
+        else {
         playerQueue = AVQueuePlayer(items: playerItems)
+        }
     }
 }

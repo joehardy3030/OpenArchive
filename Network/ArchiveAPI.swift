@@ -175,7 +175,7 @@ class ArchiveAPI: NSObject {
     func getIADownload(url: String, completion: @escaping (URL?) -> Void) {
         //https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#downloading-data-to-a-file
         let destination = DownloadRequest.suggestedDownloadDestination(for: .documentDirectory)
-        debugPrint(destination)
+        //debugPrint(destination)
         Alamofire.download(url, to: destination)
             // .downloadProgress { (progress) in
                //         print((String)(progress.fractionCompleted*100)+"%")

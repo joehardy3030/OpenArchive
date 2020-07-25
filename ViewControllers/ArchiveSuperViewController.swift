@@ -9,8 +9,9 @@
 import UIKit
 
 class ArchiveSuperViewController: UIViewController {
+    var prevController: ArchiveSuperViewController?
     var miniPlayer: MiniPlayerViewController?
-    var showModel: ShowMetadataModel?
+   // var showModel: ShowMetadataModel?
     var player: AudioPlayerArchive?
     var isPlaying = false
     
@@ -22,14 +23,22 @@ class ArchiveSuperViewController: UIViewController {
     
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let mp = segue.destination as? MiniPlayerViewController {
-            self.miniPlayer = mp
-            player = AudioPlayerArchive()
-            player?.showModel = self.showModel
-            if let p = player {
-                mp.player = p
+        
+        //if let p = prevController {
+        //    self.present(p, animated: true)
+        //}
+       // else {
+            if let mp = segue.destination as? MiniPlayerViewController {
+                self.miniPlayer = mp
+              //  if player == nil {
+              //      print("create player")
+              //      player = AudioPlayerArchive()
+               // }
+                if let p = player {
+                    mp.player = p
+                }
             }
-        }
+       // }
     }
 
 }
@@ -39,7 +48,13 @@ extension ArchiveSuperViewController: UINavigationControllerDelegate {
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
         print("called this")
         if let vc = viewController as? ArchiveSuperViewController {
-            vc.player = self.player
+            vc.prevController = self
         }
+       // }
+        //if let
+        // self.prevController =
+        //prevController?.player = self.player
+        //print(prevController?.player)
+                //dismiss(animated: true)
     }
 }

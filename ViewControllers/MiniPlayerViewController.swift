@@ -19,6 +19,7 @@ class MiniPlayerViewController: UIViewController {
     @IBOutlet weak var venueLabel: UILabel!
     @IBOutlet weak var songLabel: UILabel!
     var player: AudioPlayerArchive?
+    var currentTrackIndex = 0
     var isPlaying = false
     
     override func viewDidLoad() {
@@ -100,19 +101,13 @@ class MiniPlayerViewController: UIViewController {
                     totalTimeLabel.text = "\(minutesText):\(secondsText)"
                 }
                 let row = getCurrentTrackIndex()
+                currentTrackIndex = row
                 if (player?.showModel?.mp3Array?.count)! > 0 {
                     let songName = player?.showModel?.mp3Array?[row].title
-                    print(row)
                     songLabel.text = songName
                     showLabel.text = player?.showModel?.metadata?.date
                     venueLabel.text = player?.showModel?.metadata?.venue
-                    /*if let d = player?.showModel?.metadata?.date, let v = player?.showModel?.metadata?.venue {
-                        showLabel.text = String(d + ", " + v)
-                    }
-                    */
                 }
-               // let indexPath = IndexPath(row: row, section: 0)
-                //self.showTableView.selectRow(at: indexPath, animated: true, scrollPosition: UITableView.ScrollPosition.middle)
             }
         }
     }
@@ -120,10 +115,11 @@ class MiniPlayerViewController: UIViewController {
     func getCurrentTrackIndex() -> Int {
         guard let ci = self.player?.playerQueue?.currentItem else { return 0 }
         let destinationURL = ci.asset.value(forKey: "URL") as? URL
+        let name = player?.trackNameFromURL(url: destinationURL)
         if let mp3s = player?.showModel?.mp3Array {
             if mp3s.count > 0 {
                 for i in 0...(mp3s.count - 1) {
-                    if mp3s[i].destination == destinationURL {
+                    if mp3s[i].name == name {
                         return i
                         }
                 }

@@ -23,7 +23,9 @@ class MiniPlayerViewController: UIViewController {
         if let d = player?.showModel?.metadata?.date {
             songLabel.text = d
         }
-        setupTimer()
+        if let _ = player?.playerQueue {
+            setupTimer()
+        }
         setupSlider()
         player?.setupNotificationView()
         player?.play()
@@ -37,11 +39,11 @@ class MiniPlayerViewController: UIViewController {
     }
     
     @objc func handleSliderChange() {
-        if let duration = self.player?.playerQueue.currentItem?.duration {
+        if let duration = self.player?.playerQueue?.currentItem?.duration {
             let totalSeconds = CMTimeGetSeconds(duration)
             let value = Float64(timeSlider.value) * totalSeconds
             let seekTime = CMTime(value: Int64(value), timescale: 1)
-            self.player?.playerQueue.seek(to: seekTime, completionHandler: { (completedSeek) in
+            self.player?.playerQueue?.seek(to: seekTime, completionHandler: { (completedSeek) in
                 
             })
         }
@@ -53,17 +55,17 @@ class MiniPlayerViewController: UIViewController {
     }
     
     func setupTimer() {
-        player?.playerQueue.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
+        player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
           //track player progress
           let interval = CMTime(value: 1, timescale: 2)
           
-          player?.playerQueue.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { (progressTime) in
+          player?.playerQueue?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { (progressTime) in
               
               let seconds = CMTimeGetSeconds(progressTime)
               let secondsString = String(format: "%02d", Int(seconds) % 60)
               let minutesString = String(format: "%02d", Int(seconds) / 60)
               self.currentTimeLabel.text = ("\(minutesString):\(secondsString)")
-            if let duration = self.player?.playerQueue.currentItem?.duration {
+            if let duration = self.player?.playerQueue?.currentItem?.duration {
                   let totalSeconds = CMTimeGetSeconds(duration)
                   self.timeSlider.value = Float(seconds/totalSeconds)
               }
@@ -75,7 +77,7 @@ class MiniPlayerViewController: UIViewController {
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "currentItem.loadedTimeRanges" {
             isPlaying = true
-            if let ci = self.player?.playerQueue.currentItem {
+            if let ci = self.player?.playerQueue?.currentItem {
                 let duration = ci.duration
                 let seconds = CMTimeGetSeconds(duration)
                 if seconds > 0 && seconds < 100000000.0 {
@@ -91,7 +93,7 @@ class MiniPlayerViewController: UIViewController {
     }
 
     func getCurrentTrackIndex() -> Int {
-        guard let ci = self.player?.playerQueue.currentItem else { return 0 }
+        guard let ci = self.player?.playerQueue?.currentItem else { return 0 }
         let destinationURL = ci.asset.value(forKey: "URL") as? URL
         if let mp3s = player?.mp3Array {
             for i in 0...(mp3s.count - 1) {

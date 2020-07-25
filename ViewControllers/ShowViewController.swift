@@ -50,7 +50,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
         playPause()
     }
     @IBAction func clickForwardButton(_ sender: Any) {
-        self.avPlayer.playerQueue.advanceToNextItem()
+        self.avPlayer.playerQueue?.advanceToNextItem()
     }
     
     func getDownloadedShow() {
@@ -70,18 +70,18 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     @objc func handleSliderChange() {
-        if let duration = self.avPlayer.playerQueue.currentItem?.duration {
+        if let duration = self.avPlayer.playerQueue?.currentItem?.duration {
             let totalSeconds = CMTimeGetSeconds(duration)
             let value = Float64(audioLengthSlider.value) * totalSeconds
             let seekTime = CMTime(value: Int64(value), timescale: 1)
-            self.avPlayer.playerQueue.seek(to: seekTime, completionHandler: { (completedSeek) in
+            self.avPlayer.playerQueue?.seek(to: seekTime, completionHandler: { (completedSeek) in
                 
             })
         }
     }
     
     func playPause() {
-        if self.avPlayer.playerQueue.rate > 0.0 {
+        if self.avPlayer.playerQueue?.rate ?? 0.0 > 0.0 {
             self.avPlayer.pause()
             self.isPlaying = false
         }
@@ -156,17 +156,17 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
         print(avPlayer.playerItems)
         self.avPlayer.play()
         self.avPlayer.setupNotificationView()
-        self.avPlayer.playerQueue.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
+        self.avPlayer.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
         //track player progress
         let interval = CMTime(value: 1, timescale: 2)
         
-        self.avPlayer.playerQueue.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { (progressTime) in
+        self.avPlayer.playerQueue?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { (progressTime) in
             
             let seconds = CMTimeGetSeconds(progressTime)
             let secondsString = String(format: "%02d", Int(seconds) % 60)
             let minutesString = String(format: "%02d", Int(seconds) / 60)
             self.currentTimeLabel.text = ("\(minutesString):\(secondsString)")
-            if let duration = self.avPlayer.playerQueue.currentItem?.duration {
+            if let duration = self.avPlayer.playerQueue?.currentItem?.duration {
                 let totalSeconds = CMTimeGetSeconds(duration)
                 self.audioLengthSlider.value = Float(seconds/totalSeconds)
             }
@@ -180,7 +180,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "currentItem.loadedTimeRanges" {
             isPlaying = true
-            if let ci = self.avPlayer.playerQueue.currentItem {
+            if let ci = self.avPlayer.playerQueue?.currentItem {
                 let duration = ci.duration
                 let seconds = CMTimeGetSeconds(duration)
                 if seconds > 0 && seconds < 100000000.0 {
@@ -196,7 +196,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
 
     func getCurrentTrackIndex() -> Int {
-        guard let ci = self.avPlayer.playerQueue.currentItem else { return 0 }
+        guard let ci = self.avPlayer.playerQueue?.currentItem else { return 0 }
         let destinationURL = ci.asset.value(forKey: "URL") as? URL
         for i in 0...(mp3Array.count - 1) {
             if mp3Array[i].destination == destinationURL {

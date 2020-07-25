@@ -26,6 +26,7 @@ class DownloadPlayerViewController: UIViewController {
         if let m = player?.showModel {
             self.navigationItem.title = m.metadata?.date
         }
+        //getDownloadedShow()
         navigationController?.delegate = self
     }
     
@@ -48,13 +49,11 @@ class DownloadPlayerViewController: UIViewController {
         
 }
 
-
 extension DownloadPlayerViewController: UINavigationControllerDelegate {
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
         print("called this")
         if let vc = viewController as? DownloadsViewController {
             vc.player = self.player
-            print("Made it here")
         }
     }
 }

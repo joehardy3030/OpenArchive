@@ -11,7 +11,7 @@ import AVKit
 import MediaPlayer
 
 class AudioPlayerArchive: NSObject {
-    var playerQueue: AVQueuePlayer!
+    var playerQueue: AVQueuePlayer?
     var playerItems = [AVPlayerItem]()
     var mp3Array = [ShowMP3]()
     let requiredAssetKeys = [
@@ -33,8 +33,8 @@ class AudioPlayerArchive: NSObject {
         // Add a handler for the play command.
         commandCenter.playCommand.isEnabled = true
         commandCenter.playCommand.addTarget { [unowned self] event in
-            if self.playerQueue.rate == 0.0 {
-                self.playerQueue.play()
+            if self.playerQueue?.rate == 0.0 {
+                self.playerQueue?.play()
                 return .success
             }
             return .commandFailed
@@ -42,8 +42,8 @@ class AudioPlayerArchive: NSObject {
         
         commandCenter.pauseCommand.isEnabled = true
         commandCenter.pauseCommand.addTarget { [unowned self] event in
-            if self.playerQueue.rate > 0.0 {
-                self.playerQueue.pause()
+            if self.playerQueue?.rate ?? 0.0 > 0.0 {
+                self.playerQueue?.pause()
                 return .success
             }
             return .commandFailed
@@ -56,7 +56,9 @@ class AudioPlayerArchive: NSObject {
         nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = "Live"
         nowPlayingInfo[MPMediaItemPropertyArtist] = "Grateful Dead"
         nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = 100.0
-        nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = playerQueue.currentTime().seconds
+        if let seconds = playerQueue?.currentTime().seconds {
+            nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = seconds
+        }
       //  self.nowPlayingInfo[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(boundsSize: img.size, requestHandler: { (size) -> UIImage in
         //    return img
        // })

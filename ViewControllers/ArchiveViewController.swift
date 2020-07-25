@@ -16,7 +16,7 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
   //  var avAudioPlayer: AVAudioPlayer?
   //  var avPlayer: AVPlayer?
     let utils = Utils()
-    let sqlite = SQLiteManager()
+    //let sqlite = SQLiteManager()
     var archiveAPI = ArchiveAPI()
     var years: [Int] = []
     var identifier = "gd1990-03-30.sbd.barbella.8366.sbeok.shnf"

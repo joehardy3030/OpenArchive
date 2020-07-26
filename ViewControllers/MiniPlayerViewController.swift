@@ -52,13 +52,17 @@ class MiniPlayerViewController: UIViewController {
         player?.setupNotificationView()
         //player?.play()
         if #available(iOS 13.0, *) {
-            playButton.setImage(UIImage(systemName: "pause"), for: .normal)
+            if let pb = playButton {
+                pb.setImage(UIImage(systemName: "pause"), for: .normal)
+            }
+            
         }
     }
     
     func setupShowDetails() {
         let row = getCurrentTrackIndex()
         currentTrackIndex = row
+      //  print(player?.showModel?.metadata?.coverage)
         if let c = player?.showModel?.mp3Array?.count {
             if c > 0 {
                 let songName = player?.showModel?.mp3Array?[row].title
@@ -80,8 +84,10 @@ class MiniPlayerViewController: UIViewController {
     }
 
     func setupSlider() {
-        timeSlider.value = 0.0
-        timeSlider.addTarget(self, action: #selector(handleSliderChange), for: .valueChanged)
+        if let ts = timeSlider {
+            ts.value = 0.0
+            ts.addTarget(self, action: #selector(handleSliderChange), for: .valueChanged)
+        }
     }
     
     func setupTimer() {

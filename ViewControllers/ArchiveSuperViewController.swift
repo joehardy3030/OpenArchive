@@ -25,7 +25,7 @@ class ArchiveSuperViewController: UIViewController {
             if let mp = segue.destination as? MiniPlayerViewController {
                 self.miniPlayer = mp
                 if let p = player {
-                    mp.player = p
+                    mp.player = p // There needs to be a player already for this to work. Need to inject it.
                 }
             }
     }

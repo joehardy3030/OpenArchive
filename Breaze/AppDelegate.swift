@@ -31,7 +31,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
               print("nope")
           }
         FirebaseApp.configure()
-       // UIApplication.shared.beginReceivingRemoteControlEvents()
+        
+        // Dependency injection is fun! Remind me again what's so bad about singeltons?
+        if let tbc = window?.rootViewController as? UITabBarController {
+            if let rvc = tbc.viewControllers?[0] as? DownloadsNavigationController {
+                if let vc = rvc.topViewController as? DownloadsViewController {
+                    vc.player = AudioPlayerArchive()
+                }
+            }
+        }
+
         return true
     }
 

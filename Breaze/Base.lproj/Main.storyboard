@@ -343,8 +343,8 @@
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                     </tabBar>
                     <connections>
-                        <segue destination="iDX-jC-6by" kind="relationship" relationship="viewControllers" id="axA-5o-iN7"/>
                         <segue destination="qma-6q-Vhi" kind="relationship" relationship="viewControllers" id="bPN-Lw-dJo"/>
+                        <segue destination="iDX-jC-6by" kind="relationship" relationship="viewControllers" id="axA-5o-iN7"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HuB-VB-40B" sceneMemberID="firstResponder"/>
@@ -354,7 +354,7 @@
         <!--Downloads-->
         <scene sceneID="hye-VL-ux9">
             <objects>
-                <navigationController id="qma-6q-Vhi" sceneMemberID="viewController">
+                <navigationController id="qma-6q-Vhi" customClass="DownloadsNavigationController" customModule="Chateau" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Downloads" image="icloud.and.arrow.down" catalog="system" id="ybK-d2-me3"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="QSp-pe-Ack">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
@@ -377,7 +377,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="rqs-oj-kzh">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="498"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="ShowListCell" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ShowListCell" rowHeight="135" id="amB-TT-CtY" customClass="ShowsListTableViewCell" customModule="Chateau" customModuleProvider="target">
@@ -438,13 +438,25 @@
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
+                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gRA-dB-AXE">
+                                <rect key="frame" x="0.0" y="498" width="375" height="120"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="120" id="mZa-Q9-MX9"/>
+                                </constraints>
+                                <connections>
+                                    <segue destination="g4Z-ya-a08" kind="embed" id="JIO-oS-QCI"/>
+                                </connections>
+                            </containerView>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
+                            <constraint firstItem="xav-1z-OSd" firstAttribute="trailing" secondItem="gRA-dB-AXE" secondAttribute="trailing" id="0jV-qe-DAU"/>
+                            <constraint firstItem="xav-1z-OSd" firstAttribute="bottom" secondItem="gRA-dB-AXE" secondAttribute="bottom" id="BH5-km-gvD"/>
                             <constraint firstItem="rqs-oj-kzh" firstAttribute="trailing" secondItem="xav-1z-OSd" secondAttribute="trailing" id="G5f-Dv-LS5"/>
                             <constraint firstItem="rqs-oj-kzh" firstAttribute="top" secondItem="vTh-jx-vdV" secondAttribute="top" id="KsJ-JJ-6c6"/>
-                            <constraint firstAttribute="bottom" secondItem="rqs-oj-kzh" secondAttribute="bottom" id="lHR-YN-tPD"/>
+                            <constraint firstItem="gRA-dB-AXE" firstAttribute="leading" secondItem="xav-1z-OSd" secondAttribute="leading" id="T8x-hx-C33"/>
                             <constraint firstItem="rqs-oj-kzh" firstAttribute="leading" secondItem="xav-1z-OSd" secondAttribute="leading" id="lfc-5I-JGm"/>
+                            <constraint firstItem="gRA-dB-AXE" firstAttribute="top" secondItem="rqs-oj-kzh" secondAttribute="bottom" id="thY-hy-Y6S"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="xav-1z-OSd"/>
                     </view>
@@ -455,7 +467,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="D5d-Vd-56u" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1529" y="884"/>
+            <point key="canvasLocation" x="1528.8" y="883.80809595202402"/>
         </scene>
         <!--Download Player View Controller-->
         <scene sceneID="MYa-i1-8pv">
@@ -649,6 +661,9 @@
             <point key="canvasLocation" x="3184.8000000000002" y="881.5592203898052"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="JIO-oS-QCI"/>
+    </inferredMetricsTieBreakers>
     <resources>
         <image name="forward" catalog="system" width="128" height="79"/>
         <image name="icloud.and.arrow.down" catalog="system" width="128" height="112"/>

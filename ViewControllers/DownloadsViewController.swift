@@ -23,7 +23,22 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
         self.showListTableView.rowHeight = 135.0
         self.getDownloadedShows()
         print("view load")
-        player = AudioPlayerArchive()
+        //player = AudioPlayerArchive()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        /*
+        if let p = player, let mp = miniPlayer {
+            mp.player = p
+            print(p)
+            print("Player is being set")
+        }
+        print(player)
+        print(miniPlayer?.player)
+        //print(player?.showModel?.metadata?.coverage)
+        */
+        //miniPlayer?.setupShow()
+        //print("Will appear")
     }
     
     func getDownloadedShows() {

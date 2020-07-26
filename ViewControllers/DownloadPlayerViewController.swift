@@ -13,10 +13,11 @@ import AVFoundation
 class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
 
     //UIViewController {
+    @IBOutlet weak var playButton: UIButton!
     @IBOutlet weak var showDetailTableView: UITableView!
     let archiveAPI = ArchiveAPI()
-    let utils = Utils()
-    let network = NetworkUtility()
+  //  let utils = Utils()
+  //  let network = NetworkUtility()
     
     override func viewDidLoad() {
         
@@ -26,6 +27,7 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
         }
         self.showDetailTableView.delegate = self
         self.showDetailTableView.dataSource = self
+        playButton.setTitle("", for: .normal)
         // self.showListTableView.rowHeight = 135.0
         getDownloadedShow()  // viewDidLoad is called after segue, so need to do this here
         miniPlayer?.newShow()
@@ -33,6 +35,8 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
     }
     
 
+    @IBAction func playButtonPress(_ sender: Any) {
+    }
     func getDownloadedShow() {
         if let mp3s = self.player?.showModel?.mp3Array {
             if (player?.playerItems.count)! > 0 {

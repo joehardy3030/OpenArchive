@@ -24,6 +24,8 @@ class MiniPlayerViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.layer.borderWidth = 2
+        view.layer.borderColor = UIColor.gray.cgColor
         newShow()
         // Do any additional setup after loading the view.
     }

@@ -9,12 +9,14 @@
 import UIKit
 
 class ArchiveSuperViewController: UIViewController {
+    let network = NetworkUtility()
+    let utils = Utils()
     var prevController: ArchiveSuperViewController?
     var miniPlayer: MiniPlayerViewController?
    // var showModel: ShowMetadataModel?
     var player: AudioPlayerArchive?
     var isPlaying = false
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 

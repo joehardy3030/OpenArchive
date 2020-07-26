@@ -11,8 +11,8 @@ import UIKit
 class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var showListTableView: UITableView!
-    let network = NetworkUtility()
-    let utils = Utils()
+    //let network = NetworkUtility()
+    //let utils = Utils()
     var shows: [ShowMetadataModel]?
  //   var player: AudioPlayerArchive?
     

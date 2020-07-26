@@ -535,9 +535,12 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WCa-s9-UpW">
                                 <rect key="frame" x="172.5" y="63" width="30" height="30"/>
                                 <state key="normal" title="Play"/>
+                                <connections>
+                                    <action selector="playButtonPress:" destination="UKn-fe-95U" eventType="touchUpInside" id="Oz7-JL-gb2"/>
+                                </connections>
                             </button>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="3yS-7V-cXB">
-                                <rect key="frame" x="0.0" y="101" width="375" height="405"/>
+                                <rect key="frame" x="0.0" y="101" width="375" height="395"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="375" id="aeB-Xn-kJn"/>
@@ -566,11 +569,11 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="rOC-9z-yKM" firstAttribute="bottom" secondItem="Jd6-4E-Osf" secondAttribute="bottom" id="0dy-Uh-KqT"/>
+                            <constraint firstItem="Jd6-4E-Osf" firstAttribute="top" secondItem="3yS-7V-cXB" secondAttribute="bottom" constant="2" id="8Fe-2c-two"/>
                             <constraint firstItem="Jd6-4E-Osf" firstAttribute="leading" secondItem="rOC-9z-yKM" secondAttribute="leading" id="8XM-tZ-o16"/>
                             <constraint firstItem="3yS-7V-cXB" firstAttribute="top" secondItem="rOC-9z-yKM" secondAttribute="top" constant="57" id="9Il-Rz-A9x"/>
                             <constraint firstItem="3yS-7V-cXB" firstAttribute="leading" secondItem="Jd6-4E-Osf" secondAttribute="leading" id="K4K-39-jSt"/>
                             <constraint firstItem="3yS-7V-cXB" firstAttribute="top" secondItem="WCa-s9-UpW" secondAttribute="bottom" constant="8" symbolic="YES" id="Z7w-dJ-Pp7"/>
-                            <constraint firstItem="3yS-7V-cXB" firstAttribute="baseline" secondItem="Jd6-4E-Osf" secondAttribute="firstBaseline" constant="8" symbolType="layoutAnchor" id="nT2-HX-Dyc"/>
                             <constraint firstItem="rOC-9z-yKM" firstAttribute="trailing" secondItem="Jd6-4E-Osf" secondAttribute="trailing" id="qi5-hJ-DKr"/>
                             <constraint firstItem="3yS-7V-cXB" firstAttribute="centerX" secondItem="WCa-s9-UpW" secondAttribute="centerX" id="yzd-Su-ZsJ"/>
                         </constraints>
@@ -578,6 +581,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="hrw-sR-yAX"/>
                     <connections>
+                        <outlet property="playButton" destination="WCa-s9-UpW" id="MGG-BL-un4"/>
                         <outlet property="showDetailTableView" destination="3yS-7V-cXB" id="Tcl-5i-8eJ"/>
                     </connections>
                 </viewController>

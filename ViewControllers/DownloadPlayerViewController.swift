@@ -42,7 +42,7 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
          }
      }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5
+        return 6
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -54,10 +54,12 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
         case 1:
             cell.textLabel?.text = m.venue
         case 2:
-            cell.textLabel?.text = m.description
+            cell.textLabel?.text = m.coverage
         case 3:
-            cell.textLabel?.text = m.source
+            cell.textLabel?.text = m.description
         case 4:
+            cell.textLabel?.text = m.source
+        case 5:
             cell.textLabel?.text = m.transferer
         default:
             cell.textLabel?.text = ""

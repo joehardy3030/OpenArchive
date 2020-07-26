@@ -31,6 +31,7 @@ struct ShowMetadata: Codable {
     var venue: String?
     var transferer: String?
     var source: String?
+    var coverage: String?
 }
 
 struct ShowFile: Codable {

@@ -133,8 +133,9 @@ class ArchiveAPI: NSObject {
         let venue = json["venue"].string
         let transferer = json["transferer"].string
         let source = json["source"].string
+        let coverage = json["coverage"].string
         
-        return ShowMetadata(identifier: identifier, title: title, creator: creator, mediatype: mediatype, collection: collection, type: type, description: description, date: date, year: year, venue: venue, transferer: transferer, source: source)
+        return ShowMetadata(identifier: identifier, title: title, creator: creator, mediatype: mediatype, collection: collection, type: type, description: description, date: date, year: year, venue: venue, transferer: transferer, source: source, coverage: coverage)
     }
     
     func getIARequestItems(url: String, completion: @escaping ([ShowMetadata]?) -> Void) {

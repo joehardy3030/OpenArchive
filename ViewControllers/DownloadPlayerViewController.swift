@@ -12,12 +12,9 @@ import AVFoundation
 
 class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
 
-    //UIViewController {
     @IBOutlet weak var playButton: UIButton!
     @IBOutlet weak var showDetailTableView: UITableView!
     let archiveAPI = ArchiveAPI()
-  //  let utils = Utils()
-  //  let network = NetworkUtility()
     
     override func viewDidLoad() {
         
@@ -27,16 +24,30 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
         }
         self.showDetailTableView.delegate = self
         self.showDetailTableView.dataSource = self
-        playButton.setTitle("", for: .normal)
-        // self.showListTableView.rowHeight = 135.0
-        getDownloadedShow()  // viewDidLoad is called after segue, so need to do this here
-        miniPlayer?.newShow()
+//        getDownloadedShow()  // viewDidLoad is called after segue, so need to do this here
+  //      miniPlayer?.newShow()
         navigationController?.delegate = self
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        if player?.playerQueue?.rate ?? 0.0 > 0.0 {
+            playButton.isHidden = true
+//            setTitle("", for: .normal)
+        }
+        else {
+            playButton.isHidden = false
+            //playButton.setTitle("Play", for: .normal)
+            //print("set play")
+        }
 
-    @IBAction func playButtonPress(_ sender: Any) {
     }
+    
+    
+    @IBAction func playButtonPress(_ sender: Any) {
+        getDownloadedShow()  // viewDidLoad is called after segue, so need to do this here
+        miniPlayer?.newShow()
+    }
+    
     func getDownloadedShow() {
         if let mp3s = self.player?.showModel?.mp3Array {
             if (player?.playerItems.count)! > 0 {

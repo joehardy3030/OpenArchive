@@ -12,17 +12,10 @@ import AVFoundation
 
 class ShowViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    @IBOutlet weak var currentTimeLabel: UILabel!
-    @IBOutlet weak var audioLengthSlider: UISlider!
-    @IBOutlet weak var audioLengthLabel: UILabel!
-    @IBOutlet weak var reverseButton: UIImageView!
-    @IBOutlet weak var playPauseButton: UIImageView!
-    @IBOutlet weak var forwardButton: UIImageView!
     @IBOutlet weak var showTableView: UITableView!
     var identifier: String?
     var showDate: String?
     let archiveAPI = ArchiveAPI()
-    let avPlayer = AudioPlayerArchive()
     var mp3Array = [ShowMP3]()
     var showMetadata: ShowMetadataModel!
     let utils = Utils()
@@ -35,7 +28,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
         super.viewDidLoad()
         self.showTableView.delegate = self
         self.showTableView.dataSource = self
-        setupPlayer()
+
         if !isDownloaded {
             self.navigationItem.title = utils.getDateFromDateTimeString(datetime: showDate)
             getIAGetShow()
@@ -45,49 +38,10 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
             getDownloadedShow()
         }
     }
-    
-    @IBAction func clickPlayButton(_ sender: Any) {
-        playPause()
-    }
-    @IBAction func clickForwardButton(_ sender: Any) {
-        self.avPlayer.playerQueue?.advanceToNextItem()
-    }
-    
+
     func getDownloadedShow() {
         if let mp3s = self.showMetadata.mp3Array {
             self.mp3Array = mp3s
-            loadAndPlay()
-        }
-    }
-    
-    func setupPlayer() {
-        currentTimeLabel.translatesAutoresizingMaskIntoConstraints = false
-        audioLengthLabel.translatesAutoresizingMaskIntoConstraints = false
-        audioLengthSlider.translatesAutoresizingMaskIntoConstraints = false
-        audioLengthSlider.value = 0.0
-        audioLengthSlider.addTarget(self, action: #selector(handleSliderChange), for: .valueChanged)
-
-    }
-    
-    @objc func handleSliderChange() {
-        if let duration = self.avPlayer.playerQueue?.currentItem?.duration {
-            let totalSeconds = CMTimeGetSeconds(duration)
-            let value = Float64(audioLengthSlider.value) * totalSeconds
-            let seekTime = CMTime(value: Int64(value), timescale: 1)
-            self.avPlayer.playerQueue?.seek(to: seekTime, completionHandler: { (completedSeek) in
-                
-            })
-        }
-    }
-    
-    func playPause() {
-        if self.avPlayer.playerQueue?.rate ?? 0.0 > 0.0 {
-            self.avPlayer.pause()
-            self.isPlaying = false
-        }
-        else {
-            self.avPlayer.play()
-            self.isPlaying = true
         }
     }
     
@@ -143,69 +97,15 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
                 }
             }
             if self.mp3Array.count == counter {
-                loadAndPlay()
                 self.showMetadata.mp3Array = self.mp3Array
                 saveDownloadData()
             }
         }
     }
-    
-    func loadAndPlay() {
-        //self.avPlayer.removeAllItems()
-        self.avPlayer.loadQueuePlayer(tracks: self.mp3Array)
-        print(avPlayer.playerItems)
-        self.avPlayer.play()
-        self.avPlayer.setupNotificationView()
-        self.avPlayer.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
-        //track player progress
-        let interval = CMTime(value: 1, timescale: 2)
-        
-        self.avPlayer.playerQueue?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { (progressTime) in
-            
-            let seconds = CMTimeGetSeconds(progressTime)
-            let secondsString = String(format: "%02d", Int(seconds) % 60)
-            let minutesString = String(format: "%02d", Int(seconds) / 60)
-            self.currentTimeLabel.text = ("\(minutesString):\(secondsString)")
-            if let duration = self.avPlayer.playerQueue?.currentItem?.duration {
-                let totalSeconds = CMTimeGetSeconds(duration)
-                self.audioLengthSlider.value = Float(seconds/totalSeconds)
-            }
-        }
-    }
- 
-    private func saveDownloadData() {
+     private func saveDownloadData() {
         let _ = network.addDownloadDataDoc(showMetadataModel: showMetadata)
     }
-    
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if keyPath == "currentItem.loadedTimeRanges" {
-            isPlaying = true
-            if let ci = self.avPlayer.playerQueue?.currentItem {
-                let duration = ci.duration
-                let seconds = CMTimeGetSeconds(duration)
-                if seconds > 0 && seconds < 100000000.0 {
-                    let secondsText =  String(format: "%02d", Int(seconds) % 60)
-                    let minutesText = String(format: "%02d", Int(seconds) / 60)
-                    audioLengthLabel.text = "\(minutesText):\(secondsText)"
-                }
-                let row = getCurrentTrackIndex()
-                let indexPath = IndexPath(row: row, section: 0)
-                self.showTableView.selectRow(at: indexPath, animated: true, scrollPosition: UITableView.ScrollPosition.middle)
-            }
-        }
-    }
-
-    func getCurrentTrackIndex() -> Int {
-        guard let ci = self.avPlayer.playerQueue?.currentItem else { return 0 }
-        let destinationURL = ci.asset.value(forKey: "URL") as? URL
-        for i in 0...(mp3Array.count - 1) {
-            if mp3Array[i].destination == destinationURL {
-                return i
-                }
-        }
-        return 0
-    }
-    
+     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.mp3Array.count
     }

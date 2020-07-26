@@ -32,7 +32,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
 
         if !isDownloaded {
             self.navigationItem.title = utils.getDateFromDateTimeString(datetime: showDate)
-           // getIAGetShow()
+            getIAGetShow()
         }
         else {
             self.navigationItem.title = showDate
@@ -41,7 +41,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
 
     @IBAction func downloadShow(_ sender: Any) {
-        getIAGetShow()
+        downloadShow()
         availableLabel.text = "Downloading"
     }
     
@@ -69,12 +69,12 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
                 }
             }
             
-            self.downloadShow()
-            /*
+        //    self.downloadShow()
+            
             DispatchQueue.main.async{
                 self.showTableView.reloadData()
             }
-            */
+            
         }
     }
     

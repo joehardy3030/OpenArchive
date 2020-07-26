@@ -10,7 +10,10 @@ import UIKit
 import AVKit
 import AVFoundation
 
-class DownloadPlayerViewController: ArchiveSuperViewController { //UIViewController {
+class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
+
+    //UIViewController {
+    @IBOutlet weak var showDetailTableView: UITableView!
     let archiveAPI = ArchiveAPI()
     let utils = Utils()
     let network = NetworkUtility()
@@ -21,6 +24,9 @@ class DownloadPlayerViewController: ArchiveSuperViewController { //UIViewControl
         if let m = player?.showModel {
             self.navigationItem.title = m.metadata?.date
         }
+        self.showDetailTableView.delegate = self
+        self.showDetailTableView.dataSource = self
+        // self.showListTableView.rowHeight = 135.0
         getDownloadedShow()  // viewDidLoad is called after segue, so need to do this here
         miniPlayer?.newShow()
         navigationController?.delegate = self
@@ -35,5 +41,30 @@ class DownloadPlayerViewController: ArchiveSuperViewController { //UIViewControl
             player?.loadQueuePlayer(tracks: mp3s)
          }
      }
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 5
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = showDetailTableView.dequeueReusableCell(withIdentifier: "ShowDetailCell", for: indexPath) as! ShowDetailTableViewCell
+        guard let m = player?.showModel?.metadata else { return cell }
+        switch indexPath.row {
+        case 0:
+            cell.textLabel?.text = m.date
+        case 1:
+            cell.textLabel?.text = m.venue
+        case 2:
+            cell.textLabel?.text = m.description
+        case 3:
+            cell.textLabel?.text = m.source
+        case 4:
+            cell.textLabel?.text = m.transferer
+        default:
+            cell.textLabel?.text = ""
+        }
+        // if let showMDs = self.showMetadatas {
+
+        return cell
+    }
         
 }

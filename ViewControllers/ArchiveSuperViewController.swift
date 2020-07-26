@@ -18,12 +18,14 @@ class ArchiveSuperViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.delegate = self
     }
     
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
             if let mp = segue.destination as? MiniPlayerViewController {
                 self.miniPlayer = mp
+                print("Set the miniplayer")
                 if let p = player {
                     mp.player = p // There needs to be a player already for this to work. Need to inject it.
                 }
@@ -37,7 +39,8 @@ extension ArchiveSuperViewController: UINavigationControllerDelegate {
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
         print("called this")
         if let vc = viewController as? ArchiveSuperViewController {
-            vc.prevController = self
+            // vc.miniPlayer?.player = player
+            //  vc.prevController = self
         }
     }
 }

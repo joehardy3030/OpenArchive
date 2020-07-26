@@ -27,16 +27,20 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        /*
-        if let p = player, let mp = miniPlayer {
-            mp.player = p
+        if let p = player {
             print(p)
             print("Player is being set")
         }
-        print(player)
-        print(miniPlayer?.player)
+        
+        if let mp = miniPlayer {
+//            mp.player = p
+            print(mp)
+            print("miniplayer is being set")
+        }
+        //print(player)
+        //print(miniPlayer?.player)
         //print(player?.showModel?.metadata?.coverage)
-        */
+        
         //miniPlayer?.setupShow()
         //print("Will appear")
     }
@@ -85,18 +89,27 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
   }    
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+      if let mp = segue.destination as? MiniPlayerViewController {
+           self.miniPlayer = mp
+           print("Set the miniplayer")
+           if let p = player {
+               mp.player = p // There needs to be a player already for this to work. Need to inject it.
+           }
+       }
+        
         guard let indexPath = showListTableView.indexPathForSelectedRow else { return }
         if let target = segue.destination as? DownloadPlayerViewController, let showMDs = self.shows {
             target.showModel = showMDs[indexPath.row]
             target.player = player
-            print("self player")
+           // print("self player")
             target.prevController = self
         }
         else {
             print("Nope")
         }
+        
+
     }
-    
     //    self.present(s, animated: true)
     // }
     

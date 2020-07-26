@@ -12,6 +12,7 @@ import AVFoundation
 
 class ShowViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
+    @IBOutlet weak var availableLabel: UILabel!
     @IBOutlet weak var showTableView: UITableView!
     var identifier: String?
     var showDate: String?
@@ -31,14 +32,19 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
 
         if !isDownloaded {
             self.navigationItem.title = utils.getDateFromDateTimeString(datetime: showDate)
-            getIAGetShow()
+           // getIAGetShow()
         }
         else {
             self.navigationItem.title = showDate
-            getDownloadedShow()
+           // getDownloadedShow()
         }
     }
 
+    @IBAction func downloadShow(_ sender: Any) {
+        getIAGetShow()
+        availableLabel.text = "Downloading"
+    }
+    
     func getDownloadedShow() {
         if let mp3s = self.showMetadata.mp3Array {
             self.mp3Array = mp3s
@@ -101,7 +107,9 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
                 saveDownloadData()
             }
         }
+        availableLabel.text = "Downloaded"
     }
+    
      private func saveDownloadData() {
         let _ = network.addDownloadDataDoc(showMetadataModel: showMetadata)
     }

@@ -72,7 +72,7 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let indexPath = showListTableView.indexPathForSelectedRow else { return }
         if let target = segue.destination as? DownloadPlayerViewController, let showMDs = self.shows {
-            player?.showModel = showMDs[indexPath.row]
+            target.showModel = showMDs[indexPath.row]
             target.player = player
             print("self player")
             target.prevController = self

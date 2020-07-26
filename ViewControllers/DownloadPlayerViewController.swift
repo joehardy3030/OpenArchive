@@ -14,6 +14,7 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
 
     @IBOutlet weak var playButton: UIButton!
     @IBOutlet weak var showDetailTableView: UITableView!
+    var showModel: ShowMetadataModel?
     let archiveAPI = ArchiveAPI()
     
     override func viewDidLoad() {
@@ -24,28 +25,26 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
         }
         self.showDetailTableView.delegate = self
         self.showDetailTableView.dataSource = self
-//        getDownloadedShow()  // viewDidLoad is called after segue, so need to do this here
-  //      miniPlayer?.newShow()
         navigationController?.delegate = self
     }
     
+    /*
     override func viewWillAppear(_ animated: Bool) {
         if player?.playerQueue?.rate ?? 0.0 > 0.0 {
             playButton.isHidden = true
-//            setTitle("", for: .normal)
         }
         else {
             playButton.isHidden = false
-            //playButton.setTitle("Play", for: .normal)
-            //print("set play")
         }
 
     }
-    
+    */
     
     @IBAction func playButtonPress(_ sender: Any) {
+        miniPlayer?.player?.showModel = showModel
         getDownloadedShow()  // viewDidLoad is called after segue, so need to do this here
-        miniPlayer?.newShow()
+        miniPlayer?.setupShow()
+        miniPlayer?.playPause()
     }
     
     func getDownloadedShow() {
@@ -62,7 +61,7 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = showDetailTableView.dequeueReusableCell(withIdentifier: "ShowDetailCell", for: indexPath) as! ShowDetailTableViewCell
-        guard let m = player?.showModel?.metadata else { return cell }
+        guard let m = showModel?.metadata else { return cell }
         switch indexPath.row {
         case 0:
             cell.textLabel?.text = m.date

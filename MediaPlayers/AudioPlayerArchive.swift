@@ -63,7 +63,7 @@ class AudioPlayerArchive: NSObject {
         //    return img
        // })
         
-        if let image = UIImage(named: "cloudy") {
+        if let image = UIImage(named: "Chateau80") {
              nowPlayingInfo[MPMediaItemPropertyArtwork] =
                  MPMediaItemArtwork(boundsSize: image.size) { size in
                      return image

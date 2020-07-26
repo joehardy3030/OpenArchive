@@ -107,11 +107,11 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
                 saveDownloadData()
             }
         }
-        availableLabel.text = "Downloaded"
     }
     
      private func saveDownloadData() {
         let _ = network.addDownloadDataDoc(showMetadataModel: showMetadata)
+        availableLabel.text = "Downloaded"
     }
      
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

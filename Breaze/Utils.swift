@@ -215,5 +215,19 @@ class Utils {
             print("Error while enumerating files \(documentsURL.path): \(error.localizedDescription)")
         }
     }
+    
+    func getMiniPlayerController() -> MiniPlayerViewController? {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return nil }
+
+        if let vcs = appDelegate.window?.rootViewController?.children
+        {
+            for vc in vcs {
+                if let mp = vc as? MiniPlayerViewController {
+                    return mp
+                }
+            }
+        }
+        return nil
+    }
 
 }

@@ -25,48 +25,15 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
         }
         self.showDetailTableView.delegate = self
         self.showDetailTableView.dataSource = self
-       // navigationController?.delegate = self
     }
-    
-     override func viewWillAppear(_ animated: Bool) {
-            if let p = player {
-                print(p)
-                print("Player is being set")
-            }
-            
-            if let mp = miniPlayer {
-    //            mp.player = p
-                print(mp)
-                print("miniplayer is being set")
-            }
-            //print(player)
-            //print(miniPlayer?.player)
-            //print(player?.showModel?.metadata?.coverage)
-            
-            //miniPlayer?.setupShow()
-            //print("Will appear")
-        }
-    /*
-    override func viewWillAppear(_ animated: Bool) {
-        if player?.playerQueue?.rate ?? 0.0 > 0.0 {
-            playButton.isHidden = true
-        }
-        else {
-            playButton.isHidden = false
-        }
-
-    }
-    */
     
     @IBAction func playButtonPress(_ sender: Any) {
         player?.showModel = showModel
-        //miniPlayer?.player?.showModel = showModel
         getDownloadedShow()  // viewDidLoad is called after segue, so need to do this here
         player?.play()
-        //player?.setupShow()
-        
-        //miniPlayer?.setupShow()
-        //miniPlayer?.playPause()
+        if let mp = utils.getMiniPlayerController() {
+            mp.setupShow()
+        }
     }
     
     func getDownloadedShow() {

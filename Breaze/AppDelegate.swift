@@ -32,7 +32,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
           }
         FirebaseApp.configure()
         
+        guard let rvc = self.window?.rootViewController as? ArchiveSuperViewController else {fatalError()}
+        rvc.player = AudioPlayerArchive()
+        print(rvc.player)
         // Dependency injection is fun! Remind me again what's so bad about singeltons?
+        /*
         if let tbc = window?.rootViewController as? UITabBarController {
             if let rvc = tbc.viewControllers?[0] as? DownloadsNavigationController {
                 if let vc = rvc.topViewController as? DownloadsViewController {
@@ -40,6 +44,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
         }
+        */
 
         return true
     }

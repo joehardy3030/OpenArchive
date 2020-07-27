@@ -59,10 +59,14 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
     */
     
     @IBAction func playButtonPress(_ sender: Any) {
-        miniPlayer?.player?.showModel = showModel
+        player?.showModel = showModel
+        //miniPlayer?.player?.showModel = showModel
         getDownloadedShow()  // viewDidLoad is called after segue, so need to do this here
-        miniPlayer?.setupShow()
-        miniPlayer?.playPause()
+        player?.play()
+        //player?.setupShow()
+        
+        //miniPlayer?.setupShow()
+        //miniPlayer?.playPause()
     }
     
     func getDownloadedShow() {

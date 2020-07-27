@@ -261,7 +261,7 @@
                                 </items>
                             </navigationBar>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="uMI-up-Xte">
-                                <rect key="frame" x="0.0" y="44" width="375" height="454"/>
+                                <rect key="frame" x="0.0" y="102" width="375" height="516"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ShowCell" rowHeight="44" id="eec-gd-jWv" customClass="ShowTableViewCell" customModule="Chateau" customModuleProvider="target">
@@ -291,14 +291,14 @@
                                 </prototypes>
                             </tableView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VYb-Jw-dy1">
-                                <rect key="frame" x="64" y="539" width="69" height="30"/>
+                                <rect key="frame" x="61" y="58" width="69" height="30"/>
                                 <state key="normal" title="Download"/>
                                 <connections>
                                     <action selector="downloadShow:" destination="0wg-q7-zkq" eventType="touchUpInside" id="rUQ-rk-Qd7"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Available" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vom-qU-43S">
-                                <rect key="frame" x="221" y="544" width="67.5" height="20"/>
+                                <rect key="frame" x="230" y="65" width="68" height="17"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -306,19 +306,19 @@
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
-                            <constraint firstItem="D8P-Zs-ANE" firstAttribute="bottom" secondItem="uMI-up-Xte" secondAttribute="bottom" constant="120" id="0Du-cg-3Gr"/>
-                            <constraint firstItem="uMI-up-Xte" firstAttribute="top" secondItem="D8P-Zs-ANE" secondAttribute="top" id="HNn-f1-eD9"/>
-                            <constraint firstAttribute="trailing" secondItem="EcL-9l-r4I" secondAttribute="trailing" id="KNI-0o-BqO"/>
-                            <constraint firstItem="uMI-up-Xte" firstAttribute="leading" secondItem="Tle-F3-vmG" secondAttribute="leading" id="Pni-hE-2GO"/>
-                            <constraint firstItem="vom-qU-43S" firstAttribute="top" secondItem="uMI-up-Xte" secondAttribute="bottom" constant="46" id="Snp-LZ-XRO"/>
-                            <constraint firstItem="VYb-Jw-dy1" firstAttribute="leading" secondItem="D8P-Zs-ANE" secondAttribute="leading" constant="64" id="bsL-jV-eLj"/>
-                            <constraint firstItem="uMI-up-Xte" firstAttribute="trailing" secondItem="EcL-9l-r4I" secondAttribute="trailing" id="dGT-ki-ScX"/>
-                            <constraint firstItem="uMI-up-Xte" firstAttribute="leading" secondItem="EcL-9l-r4I" secondAttribute="leading" id="e73-jH-VSh"/>
-                            <constraint firstItem="VYb-Jw-dy1" firstAttribute="centerY" secondItem="vom-qU-43S" secondAttribute="centerY" id="ey2-Af-mL0"/>
-                            <constraint firstItem="D8P-Zs-ANE" firstAttribute="bottom" secondItem="VYb-Jw-dy1" secondAttribute="bottom" constant="49" id="nez-Cn-rg1"/>
-                            <constraint firstItem="uMI-up-Xte" firstAttribute="top" secondItem="EcL-9l-r4I" secondAttribute="bottom" id="oVU-8D-hgU"/>
-                            <constraint firstItem="vom-qU-43S" firstAttribute="leading" secondItem="VYb-Jw-dy1" secondAttribute="trailing" constant="88" id="tSd-va-yUS"/>
-                            <constraint firstItem="VYb-Jw-dy1" firstAttribute="top" secondItem="uMI-up-Xte" secondAttribute="bottom" constant="41" id="xlj-BG-d4d"/>
+                            <constraint firstItem="VYb-Jw-dy1" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="D8P-Zs-ANE" secondAttribute="leading" id="64R-4H-j9H"/>
+                            <constraint firstItem="D8P-Zs-ANE" firstAttribute="trailing" secondItem="vom-qU-43S" secondAttribute="trailing" constant="77" id="BNK-2Q-CmB"/>
+                            <constraint firstItem="vom-qU-43S" firstAttribute="leading" secondItem="VYb-Jw-dy1" secondAttribute="trailing" constant="100" id="DPd-cc-h0E"/>
+                            <constraint firstItem="uMI-up-Xte" firstAttribute="leading" secondItem="D8P-Zs-ANE" secondAttribute="leading" id="H63-h9-rF3"/>
+                            <constraint firstItem="EcL-9l-r4I" firstAttribute="bottom" secondItem="D8P-Zs-ANE" secondAttribute="top" id="IAI-13-BnU"/>
+                            <constraint firstItem="D8P-Zs-ANE" firstAttribute="trailing" secondItem="uMI-up-Xte" secondAttribute="trailing" id="IOr-cO-vWa"/>
+                            <constraint firstItem="EcL-9l-r4I" firstAttribute="leading" secondItem="uMI-up-Xte" secondAttribute="leading" id="Q22-rg-Jod"/>
+                            <constraint firstItem="uMI-up-Xte" firstAttribute="top" secondItem="vom-qU-43S" secondAttribute="bottom" constant="20" id="Vww-MM-VXN"/>
+                            <constraint firstItem="uMI-up-Xte" firstAttribute="top" secondItem="D8P-Zs-ANE" secondAttribute="top" constant="58" id="ZXp-Om-EPI"/>
+                            <constraint firstItem="EcL-9l-r4I" firstAttribute="trailing" secondItem="uMI-up-Xte" secondAttribute="trailing" id="a4I-cz-0eg"/>
+                            <constraint firstItem="vom-qU-43S" firstAttribute="top" secondItem="EcL-9l-r4I" secondAttribute="bottom" constant="21" id="e6y-Bk-yfc"/>
+                            <constraint firstItem="VYb-Jw-dy1" firstAttribute="top" secondItem="EcL-9l-r4I" secondAttribute="bottom" constant="14" id="eBe-xz-5Vu"/>
+                            <constraint firstItem="D8P-Zs-ANE" firstAttribute="bottom" secondItem="uMI-up-Xte" secondAttribute="bottom" id="tCf-kM-Ikf"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="D8P-Zs-ANE"/>
                     </view>

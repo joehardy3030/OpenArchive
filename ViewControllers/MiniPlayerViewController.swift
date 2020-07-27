@@ -26,12 +26,13 @@ class MiniPlayerViewController: UIViewController {
         super.viewDidLoad()
         view.layer.borderWidth = 2
         view.layer.borderColor = UIColor.gray.cgColor
-        
+        //setupShow()
         // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(_ animated: Bool) {
         setupShow()
+        //setupQueueObserver()
     }
     
     @IBAction func playButton(_ sender: Any) {
@@ -39,6 +40,7 @@ class MiniPlayerViewController: UIViewController {
     }
     
     @IBAction func forwardButton(_ sender: Any) {
+        setupShow()
         player?.playerQueue?.advanceToNextItem()
     }
     
@@ -89,6 +91,23 @@ class MiniPlayerViewController: UIViewController {
             ts.addTarget(self, action: #selector(handleSliderChange), for: .valueChanged)
         }
     }
+    /*
+    func loadQueue() {
+        player?.playerQueue?.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: .new, context: nil)
+        
+    }
+    */
+    func currentItemTotalTime() {
+        if let ci = self.player?.playerQueue?.currentItem {
+            let duration = ci.duration
+            let seconds = CMTimeGetSeconds(duration)
+            if seconds > 0 && seconds < 100000000.0 {
+                let secondsText =  String(format: "%02d", Int(seconds) % 60)
+                let minutesText = String(format: "%02d", Int(seconds) / 60)
+                totalTimeLabel.text = "\(minutesText):\(secondsText)"
+            }
+        }
+    }
     
     func setupTimer() {
         player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
@@ -110,16 +129,8 @@ class MiniPlayerViewController: UIViewController {
         
     }
     
-    func currentItemTotalTime() {
-        if let ci = self.player?.playerQueue?.currentItem {
-            let duration = ci.duration
-            let seconds = CMTimeGetSeconds(duration)
-            if seconds > 0 && seconds < 100000000.0 {
-                let secondsText =  String(format: "%02d", Int(seconds) % 60)
-                let minutesText = String(format: "%02d", Int(seconds) / 60)
-                totalTimeLabel.text = "\(minutesText):\(secondsText)"
-            }
-        }
+    func setupQueueObserver() {
+        player?.playerQueue?.addObserver(self, forKeyPath: #keyPath(AVQueuePlayer.status), options: .new, context: nil)
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -143,6 +154,17 @@ class MiniPlayerViewController: UIViewController {
                 }
             }
         }
+        
+        if keyPath == #keyPath(AVQueuePlayer.status) {
+            print("Got keypath")
+        }
+        
+        /*
+        if keyPath == #keyPath(AVPlayerItem.status) {
+            setupShow()
+        }
+        */
+        
     }
 
     func getCurrentTrackIndex() -> Int {

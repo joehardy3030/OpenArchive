@@ -13,11 +13,6 @@ import MediaPlayer
 class AudioPlayerArchive: NSObject {
     var playerQueue: AVQueuePlayer?
     var playerItems = [AVPlayerItem]()
-    //var mp3Array = [ShowMP3]()
-    let requiredAssetKeys = [
-        "playable",
-        "hasProtectedContent"
-    ]
     var nowPlayingInfo = [String : Any]()
     let commandCenter = MPRemoteCommandCenter.shared()
     let utils = Utils()
@@ -70,8 +65,6 @@ class AudioPlayerArchive: NSObject {
              }
          }
         else { print("no image")}
-       // print(nowPlayingInfo)
-
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
     }
     
@@ -103,6 +96,7 @@ class AudioPlayerArchive: NSObject {
         let asset = AVAsset(url: url)
         let assetKeys = ["playable"]
         let item = AVPlayerItem(asset: asset, automaticallyLoadedAssetKeys: assetKeys)
+        //item.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: .new, context: nil)
         playerItems.append(item)
     }
     
@@ -120,4 +114,16 @@ class AudioPlayerArchive: NSObject {
        // }
         playerQueue = AVQueuePlayer(items: playerItems)
     }
+    
+/*
+    item.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: .new, context: nil)
+
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == #keyPath(AVPlayerItem.status) {
+            print("Got keypath")
+        }
+    }
+ */
 }
+
+

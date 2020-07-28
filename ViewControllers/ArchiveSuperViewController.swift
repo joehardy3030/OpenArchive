@@ -38,7 +38,7 @@ class ArchiveSuperViewController: UIViewController {
 extension ArchiveSuperViewController: UINavigationControllerDelegate {
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
         print("called this")
-        if let vc = viewController as? ArchiveSuperViewController {
+        if let _ = viewController as? ArchiveSuperViewController {
             // vc.miniPlayer?.player = player
             //  vc.prevController = self
         }

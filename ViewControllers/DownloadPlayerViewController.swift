@@ -20,29 +20,27 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        if let m = player?.showModel {
-            self.navigationItem.title = m.metadata?.date
-        }
+        self.navigationItem.title = "Show Details"
         self.showDetailTableView.delegate = self
         self.showDetailTableView.dataSource = self
     }
     
     @IBAction func playButtonPress(_ sender: Any) {
         player?.showModel = showModel
-        getDownloadedShow()  // viewDidLoad is called after segue, so need to do this here
+        loadDownloadedShow()  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
         player?.play()
-        if let mp = utils.getMiniPlayerController() {
-            mp.setupShow()
-        }
     }
     
-    func getDownloadedShow() {
+    func loadDownloadedShow() {
         if let mp3s = self.player?.showModel?.mp3Array {
             if (player?.playerItems.count)! > 0 {
                 player?.playerItems = [AVPlayerItem]()
             }
             player?.loadQueuePlayer(tracks: mp3s)
          }
+        if let mp = utils.getMiniPlayerController() {
+            mp.setupShow()
+        }
      }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 6
@@ -67,7 +65,6 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
         default:
             cell.textLabel?.text = ""
         }
-        // if let showMDs = self.showMetadatas {
 
         return cell
     }

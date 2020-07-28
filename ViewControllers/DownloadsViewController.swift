@@ -27,22 +27,7 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        if let p = player {
-            print(p)
-            print("Player is being set")
-        }
-        
-        if let mp = miniPlayer {
-//            mp.player = p
-            print(mp)
-            print("miniplayer is being set")
-        }
-        //print(player)
-        //print(miniPlayer?.player)
-        //print(player?.showModel?.metadata?.coverage)
-        
-        //miniPlayer?.setupShow()
-        //print("Will appear")
+        self.getDownloadedShows()
     }
     
     func getDownloadedShows() {
@@ -53,9 +38,8 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
                 if let r = response {
                     self.shows = r
                     //if let s = self.shows {
-                    //    self.showMetadatas = s.sorted(by: { $0.date! < $1.date! })
-                    //}
-                   // print(r)
+                        //self.shows = s.sorted(by: { $0.metadata?.date! < $1.metadata?.date! })
+                   // }
                     self.showListTableView.reloadData()
                 }
             }

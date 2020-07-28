@@ -45,23 +45,18 @@ class MiniPlayerViewController: UIViewController {
             setupTimer()
         }
         setupSlider()
-        //setupTimer()
         setupShowDetails()
-        //player?.setupNotificationView()
         setupNotificationView()
-        //player?.play()
         if #available(iOS 13.0, *) {
             if let pb = playButton {
                 pb.setImage(UIImage(systemName: "pause"), for: .normal)
             }
-            
         }
     }
     
     func setupShowDetails() {
         let row = getCurrentTrackIndex()
         currentTrackIndex = row
-      //  print(player?.showModel?.metadata?.coverage)
         if let c = player?.showModel?.mp3Array?.count {
             if c > 0 {
                 let songName = player?.showModel?.mp3Array?[row].title
@@ -131,11 +126,16 @@ class MiniPlayerViewController: UIViewController {
     }
     
     func setupNotificationView() {
+        guard let ci = self.player?.playerQueue?.currentItem,
+            let mp3s = player?.showModel?.mp3Array,
+            let md = player?.showModel?.metadata
+            else { return }
+        let ct = getCurrentTrackIndex()
         nowPlayingInfo = [String : Any]()
-        nowPlayingInfo[MPMediaItemPropertyTitle] = "Song"
-        nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = "Live"
+        nowPlayingInfo[MPMediaItemPropertyTitle] = mp3s[ct].title
+        nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = String(md.date! + ", " + md.coverage!)
         nowPlayingInfo[MPMediaItemPropertyArtist] = "Grateful Dead"
-        nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = 100.0
+        nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = CMTimeGetSeconds(ci.duration)
         if let seconds = player?.playerQueue?.currentTime().seconds {
             nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = seconds
         }
@@ -156,6 +156,8 @@ class MiniPlayerViewController: UIViewController {
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "currentItem.loadedTimeRanges" {
             isPlaying = true
+            //setupShow()
+            //print("key path currentItem.loadedTimeRanges observed")
             if let ci = self.player?.playerQueue?.currentItem {
                 let duration = ci.duration
                 let seconds = CMTimeGetSeconds(duration)
@@ -164,14 +166,18 @@ class MiniPlayerViewController: UIViewController {
                     let minutesText = String(format: "%02d", Int(seconds) / 60)
                     totalTimeLabel.text = "\(minutesText):\(secondsText)"
                 }
+                setupShowDetails()
+                /*
                 let row = getCurrentTrackIndex()
                 currentTrackIndex = row
                 if (player?.showModel?.mp3Array?.count)! > 0 {
+                    setupNotificationView()
                     let songName = player?.showModel?.mp3Array?[row].title
                     songLabel.text = songName
                     showLabel.text = player?.showModel?.metadata?.date
                     venueLabel.text = player?.showModel?.metadata?.venue
                 }
+                */
             }
         }
         

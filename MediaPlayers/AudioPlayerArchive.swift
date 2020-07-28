@@ -45,32 +45,16 @@ class AudioPlayerArchive: NSObject {
             }
             return .commandFailed
         }
-    }
-
-    /*
-    func setupNotificationView() {
-        nowPlayingInfo = [String : Any]()
-        nowPlayingInfo[MPMediaItemPropertyTitle] = "Song"
-        nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = "Live"
-        nowPlayingInfo[MPMediaItemPropertyArtist] = "Grateful Dead"
-        nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = 100.0
-        if let seconds = playerQueue?.currentTime().seconds {
-            nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = seconds
-        }
-      //  self.nowPlayingInfo[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(boundsSize: img.size, requestHandler: { (size) -> UIImage in
-        //    return img
-       // })
         
-        if let image = UIImage(named: "Chateau80") {
-             nowPlayingInfo[MPMediaItemPropertyArtwork] =
-                 MPMediaItemArtwork(boundsSize: image.size) { size in
-                     return image
-             }
-         }
-        else { print("no image")}
-        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+        commandCenter.nextTrackCommand.isEnabled = true
+        commandCenter.nextTrackCommand.addTarget{ [unowned self] event in
+            if let pq = self.playerQueue {
+                pq.advanceToNextItem()
+                return .success
+            }
+            return .commandFailed
+        }
     }
-    */
     
     @objc func play() {
         self.playerQueue?.play()
@@ -109,25 +93,11 @@ class AudioPlayerArchive: NSObject {
             guard let n = track.name else { return }
             if let url = trackURLfromName(name: n) {
                 prepareToPlay(url: url)
-                //print(trackNameFromURL(url: url))
             }
         }
-        
-       // if let p = playerQueue {
-        //    p.removeAllItems()
-       // }
         playerQueue = AVQueuePlayer(items: playerItems)
     }
     
-/*
-    item.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: .new, context: nil)
-
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if keyPath == #keyPath(AVPlayerItem.status) {
-            print("Got keypath")
-        }
-    }
- */
 }
 
 

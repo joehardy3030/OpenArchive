@@ -57,6 +57,7 @@ class MiniPlayerViewController: UIViewController {
     func setupShowDetails() {
         let row = getCurrentTrackIndex()
         currentTrackIndex = row
+      //  print(player?.showModel?.metadata?.coverage)
         if let c = player?.showModel?.mp3Array?.count {
             if c > 0 {
                 let songName = player?.showModel?.mp3Array?[row].title
@@ -166,8 +167,6 @@ class MiniPlayerViewController: UIViewController {
                     let minutesText = String(format: "%02d", Int(seconds) / 60)
                     totalTimeLabel.text = "\(minutesText):\(secondsText)"
                 }
-                setupShowDetails()
-                /*
                 let row = getCurrentTrackIndex()
                 currentTrackIndex = row
                 if (player?.showModel?.mp3Array?.count)! > 0 {
@@ -177,7 +176,6 @@ class MiniPlayerViewController: UIViewController {
                     showLabel.text = player?.showModel?.metadata?.date
                     venueLabel.text = player?.showModel?.metadata?.venue
                 }
-                */
             }
         }
         

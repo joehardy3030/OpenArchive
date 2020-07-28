@@ -18,6 +18,7 @@ class MiniPlayerViewController: UIViewController {
     @IBOutlet weak var showLabel: UILabel!
     @IBOutlet weak var venueLabel: UILabel!
     @IBOutlet weak var songLabel: UILabel!
+    var nowPlayingInfo = [String : Any]()
     var player: AudioPlayerArchive?
     var currentTrackIndex = 0
     var isPlaying = false
@@ -29,18 +30,13 @@ class MiniPlayerViewController: UIViewController {
         //setupShow()
         // Do any additional setup after loading the view.
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        setupShow()
-        //setupQueueObserver()
-    }
-    
+        
     @IBAction func playButton(_ sender: Any) {
         playPause()
     }
     
     @IBAction func forwardButton(_ sender: Any) {
-        setupShow()
+        //setupShow()
         player?.playerQueue?.advanceToNextItem()
     }
     
@@ -51,7 +47,8 @@ class MiniPlayerViewController: UIViewController {
         setupSlider()
         //setupTimer()
         setupShowDetails()
-        player?.setupNotificationView()
+        //player?.setupNotificationView()
+        setupNotificationView()
         //player?.play()
         if #available(iOS 13.0, *) {
             if let pb = playButton {
@@ -131,6 +128,29 @@ class MiniPlayerViewController: UIViewController {
     
     func setupQueueObserver() {
         player?.playerQueue?.addObserver(self, forKeyPath: #keyPath(AVQueuePlayer.status), options: .new, context: nil)
+    }
+    
+    func setupNotificationView() {
+        nowPlayingInfo = [String : Any]()
+        nowPlayingInfo[MPMediaItemPropertyTitle] = "Song"
+        nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = "Live"
+        nowPlayingInfo[MPMediaItemPropertyArtist] = "Grateful Dead"
+        nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = 100.0
+        if let seconds = player?.playerQueue?.currentTime().seconds {
+            nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = seconds
+        }
+      //  self.nowPlayingInfo[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(boundsSize: img.size, requestHandler: { (size) -> UIImage in
+        //    return img
+       // })
+        
+        if let image = UIImage(named: "Chateau80") {
+             nowPlayingInfo[MPMediaItemPropertyArtwork] =
+                 MPMediaItemArtwork(boundsSize: image.size) { size in
+                     return image
+             }
+         }
+        else { print("no image")}
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {

@@ -15,14 +15,16 @@ class AudioPlayerArchive: NSObject {
     var playerItems = [AVPlayerItem]()
     var nowPlayingInfo = [String : Any]()
     let commandCenter = MPRemoteCommandCenter.shared()
+    //let notificationCenter = NotificationCenter.default
     let utils = Utils()
     var showModel: ShowMetadataModel?
     
     override init() {
         super.init()
         self.setupCommandCenter()
+        //notificationCenter.addObserver(self, selector: #selector(HearThisPlayer.playerDidFinishPlaying(note:)),name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: player.currentItem)
     }
-    
+
     func setupCommandCenter() {
         
         // Add a handler for the play command.
@@ -44,7 +46,8 @@ class AudioPlayerArchive: NSObject {
             return .commandFailed
         }
     }
-    
+
+    /*
     func setupNotificationView() {
         nowPlayingInfo = [String : Any]()
         nowPlayingInfo[MPMediaItemPropertyTitle] = "Song"
@@ -67,6 +70,7 @@ class AudioPlayerArchive: NSObject {
         else { print("no image")}
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
     }
+    */
     
     @objc func play() {
         self.playerQueue?.play()

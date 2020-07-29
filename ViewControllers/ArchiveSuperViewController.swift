@@ -21,7 +21,7 @@ class ArchiveSuperViewController: UIViewController {
         navigationController?.delegate = self
     }
     
-    
+    /*
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
             if let mp = segue.destination as? MiniPlayerViewController {
                 self.miniPlayer = mp
@@ -31,6 +31,7 @@ class ArchiveSuperViewController: UIViewController {
                 }
             }
     }
+    */
 
 }
 

@@ -22,8 +22,8 @@ class ArchiveNavigationController: UINavigationController {
     func distributePlayer() {
         if let tvc = self.topViewController as? ArchiveSuperViewController {
             tvc.player = self.player
-            print("nav distro")
-            print(tvc.player)
+         //   print("nav distro")
+        //    print(tvc.player)
         }
     }
 

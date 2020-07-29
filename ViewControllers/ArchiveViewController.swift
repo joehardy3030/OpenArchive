@@ -10,53 +10,18 @@ import UIKit
 import AVKit
 import AVFoundation
 
-class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, AVAudioPlayerDelegate {
+class ArchiveViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var yearTableView: UITableView!
-    let utils = Utils()
+   // let utils = Utils()
     var archiveAPI = ArchiveAPI()
     var years: [Int] = []
-    var identifier = "gd1990-03-30.sbd.barbella.8366.sbeok.shnf"
-    var filename = "gd90-03-30d1t03multi.mp3"
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.yearTableView.delegate = self
         self.yearTableView.dataSource = self
         self.years += 1965...1995
-    }
-    
-    func getIARequest() {
-        let url = archiveAPI.downloadURL(identifier: identifier,
-                                      filename: filename)
-        print("Download items \(url)")
-
-        archiveAPI.getIARequestItems(url: url) {
-            (response: Any?) -> Void in
-            
-            DispatchQueue.main.async{
-                if let r = response {
-                    debugPrint(r as Any)
-                }
-            }
-        }
-    }
-    
-    func getIADownload() {
-        let url = archiveAPI.downloadURL(identifier: identifier,
-                                      filename: filename)
-        print("Download from \(url)")
-
-        archiveAPI.getIADownload(url: url) {
-            (response: Any?) -> Void in
-            
-            DispatchQueue.main.async{
-                if let r = response {
-                    debugPrint(r as Any)
-                }
-            }
-        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -69,12 +34,6 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
         cell.titleLabel?.text = String(year)
         return cell
     }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        var url = utils.getDocumentsDirectory()
-        url?.appendPathComponent(filename)
-    }
-    
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let indexPath = yearTableView.indexPathForSelectedRow else { return }

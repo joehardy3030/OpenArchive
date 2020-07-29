@@ -22,7 +22,7 @@ class ArchiveTabBarController: UITabBarController {
             for vc in vcs {
                 if let avc = vc as? ArchiveNavigationController {
                     avc.player = self.player
-                    print(avc.player)
+                 //   print(avc.player)
                 }
             }
         }

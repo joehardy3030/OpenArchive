@@ -10,7 +10,7 @@ import UIKit
 import AVKit
 import AVFoundation
 
-class ShowViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
     
     @IBOutlet weak var availableLabel: UILabel!
     @IBOutlet weak var showTableView: UITableView!
@@ -19,9 +19,6 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     let archiveAPI = ArchiveAPI()
     var mp3Array = [ShowMP3]()
     var showMetadata: ShowMetadataModel!
-    let utils = Utils()
-    let network = NetworkUtility()
-    var isPlaying = false
     var isDownloaded = false
 
     override func viewDidLoad() {
@@ -36,7 +33,6 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
         else {
             self.navigationItem.title = showDate
-           // getDownloadedShow()
         }
     }
 
@@ -68,9 +64,6 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
                     }
                 }
             }
-            
-        //    self.downloadShow()
-            
             DispatchQueue.main.async{
                 self.showTableView.reloadData()
             }
@@ -140,9 +133,7 @@ class ShowViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // start playing that track and reload the queue
-        //if let cell = yearTableView.cellForRow(at: indexPath as IndexPath) {
-     //   self.playPause()
+
     }
 
 }

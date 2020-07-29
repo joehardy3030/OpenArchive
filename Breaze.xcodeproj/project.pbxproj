@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		791CE1C120B252F100299F76 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791CE1C020B252F100299F76 /* Utils.swift */; };
-		7984F98D24A4565400989DB8 /* ArchiveViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7984F98C24A4565400989DB8 /* ArchiveViewController.swift */; };
+		7984F98D24A4565400989DB8 /* YearViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7984F98C24A4565400989DB8 /* YearViewController.swift */; };
 		7984F98F24A56EFD00989DB8 /* ArchiveAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7984F98E24A56EFD00989DB8 /* ArchiveAPI.swift */; };
 		799C3C902345582F00D9341E /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C3C8F2345582F00D9341E /* HealthKit.framework */; };
 		C1A86AE7CB901E9AE4559733 /* Pods_BreazeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC1F0E4AA282D7B36ED40FA4 /* Pods_BreazeTests.framework */; };
@@ -69,7 +69,7 @@
 		4D96B2C7509FC4CCF930BABF /* Pods-Breaze.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Breaze.release.xcconfig"; path = "Target Support Files/Pods-Breaze/Pods-Breaze.release.xcconfig"; sourceTree = "<group>"; };
 		6A926AF80C0D08EF375C20D5 /* Pods_BreazeUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BreazeUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		791CE1C020B252F100299F76 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
-		7984F98C24A4565400989DB8 /* ArchiveViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveViewController.swift; sourceTree = "<group>"; };
+		7984F98C24A4565400989DB8 /* YearViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearViewController.swift; sourceTree = "<group>"; };
 		7984F98E24A56EFD00989DB8 /* ArchiveAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveAPI.swift; sourceTree = "<group>"; };
 		799C3C8E2345582E00D9341E /* Breaze.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Breaze.entitlements; sourceTree = "<group>"; };
 		799C3C8F2345582F00D9341E /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
@@ -228,7 +228,7 @@
 				D83EB53F24CE49880016726C /* StartViewController.swift */,
 				D83EB54124CE62170016726C /* ArchiveTabBarController.swift */,
 				D83EB53D24CE33C60016726C /* ArchiveNavigationController.swift */,
-				7984F98C24A4565400989DB8 /* ArchiveViewController.swift */,
+				7984F98C24A4565400989DB8 /* YearViewController.swift */,
 				D8449A6724AEF3C200F113F4 /* MonthViewController.swift */,
 				D852C3C624B1219400029EB9 /* ShowsListViewController.swift */,
 				D852C3CA24B1AA1C00029EB9 /* ShowViewController.swift */,
@@ -600,7 +600,7 @@
 				D850B8FF24B2BA7400E3DC6B /* AudioPlayer.swift in Sources */,
 				791CE1C120B252F100299F76 /* Utils.swift in Sources */,
 				D852C3C724B1219400029EB9 /* ShowsListViewController.swift in Sources */,
-				7984F98D24A4565400989DB8 /* ArchiveViewController.swift in Sources */,
+				7984F98D24A4565400989DB8 /* YearViewController.swift in Sources */,
 				D85A4EEF2022D0B600E480FB /* AppDelegate.swift in Sources */,
 				D879502E24C69E2900FB2436 /* MiniPlayerViewController.swift in Sources */,
 				D8B65F0024C54A5500F57355 /* DownloadPlayerViewController.swift in Sources */,

@@ -9,7 +9,7 @@
 import UIKit
 import SwiftyJSON
 
-class ShowsListViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var showListTableView: UITableView!
     var year: Int?
@@ -17,7 +17,7 @@ class ShowsListViewController: UIViewController, UITableViewDelegate, UITableVie
     var archiveAPI = ArchiveAPI()
     var identifiers: [String]?
     var showMetadatas: [ShowMetadata]?
-    let utils = Utils()
+    //let utils = Utils()
     
     override func viewDidLoad() {
         super.viewDidLoad()

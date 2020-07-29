@@ -10,7 +10,7 @@ import UIKit
 import AVKit
 import AVFoundation
 
-class ArchiveViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
+class YearViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var yearTableView: UITableView!
    // let utils = Utils()

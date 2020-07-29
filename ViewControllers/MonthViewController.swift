@@ -8,12 +8,11 @@
 
 import UIKit
 
-class MonthViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UITableViewDelegate {
 
     @IBOutlet weak var monthTableView: UITableView!
     var months: [String] = []
     var year: Int?
-    let utils = Utils()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,8 +31,6 @@ class MonthViewController: UIViewController, UITableViewDataSource, UITableViewD
                   "Oct",
                   "Nov",
                   "Dec"]
-        utils.getMemory()
-        // Do any additional setup after loading the view.
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -43,9 +40,11 @@ class MonthViewController: UIViewController, UITableViewDataSource, UITableViewD
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = monthTableView.dequeueReusableCell(withIdentifier: "MonthCell", for: indexPath) as! MonthTableViewCell
         let month = self.months[indexPath.row]
-        cell.monthLabel?.text = month
         if let year = self.year {
             cell.monthLabel?.text = month + " " + String(year)
+        }
+        else {
+            cell.monthLabel?.text = month
         }
         return cell
     }

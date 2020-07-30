@@ -12,7 +12,9 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
 
     @IBOutlet weak var monthTableView: UITableView!
     var months: [String] = []
+    var monthCount: [Int:Int] = [:]
     var year: Int?
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,6 +35,14 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
                   "Dec"]
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        if let y = year {
+            for i in 1...12 {
+                getIADateRange(year: y, month: i)
+            }
+        }
+    }
+    
     func getIADateRange(year: Int, month: Int) {
         let url = archiveAPI.dateRangeURL(year: year, month: month)
         
@@ -41,7 +51,11 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
             
             DispatchQueue.main.async{
                 if let r = response {
-                 //   self.showMetadatas = r
+                    var smd: [ShowMetadata]?
+                    smd = r
+                    let count = smd?.count
+                    self.monthCount[month] = count
+                    self.monthTableView.reloadData()
                   //  if let s = self.showMetadatas {
                   //      self.showMetadatas = s.sorted(by: { $0.date! < $1.date! })
                   //  }
@@ -56,10 +70,18 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+       // var countString: String?
         let cell = monthTableView.dequeueReusableCell(withIdentifier: "MonthCell", for: indexPath) as! MonthTableViewCell
         let month = self.months[indexPath.row]
+        let count = self.monthCount[indexPath.row]
+        //print(count)
         if let year = self.year {
-            cell.monthLabel?.text = month + " " + String(year)
+            if let c = count {
+                cell.monthLabel?.text = month + " " + String(year) + " " + "(" + String(c) + " shows)"
+            }
+            else {
+                cell.monthLabel?.text = month + " " + String(year)
+            }
         }
         else {
             cell.monthLabel?.text = month

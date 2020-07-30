@@ -26,6 +26,7 @@ class MiniPlayerViewController: UIViewController {
         super.viewDidLoad()
         view.layer.borderWidth = 2
         view.layer.borderColor = UIColor.gray.cgColor
+        initialDefaults()
     }
         
     @IBAction func playButton(_ sender: Any) {
@@ -45,7 +46,15 @@ class MiniPlayerViewController: UIViewController {
             })
         }
     }
+    
+    func initialDefaults() {
+        timeSlider.value = 0.0
+        songLabel.text = ""
+        showLabel.text = ""
+        venueLabel.text = ""
 
+    }
+    
     func currentItemTotalTime() {
         if let ci = self.player?.playerQueue?.currentItem {
             let duration = ci.duration

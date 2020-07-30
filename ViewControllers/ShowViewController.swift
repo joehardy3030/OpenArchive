@@ -16,7 +16,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     @IBOutlet weak var showTableView: UITableView!
     var identifier: String?
     var showDate: String?
-    let archiveAPI = ArchiveAPI()
+  //  let archiveAPI = ArchiveAPI()
     var mp3Array = [ShowMP3]()
     var showMetadata: ShowMetadataModel!
     var isDownloaded = false
@@ -34,7 +34,6 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         else {
             self.navigationItem.title = showDate
         }
-        print(player as Any)
     }
 
     @IBAction func downloadShow(_ sender: Any) {

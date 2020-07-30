@@ -11,10 +11,7 @@ import UIKit
 class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var showListTableView: UITableView!
-    //let network = NetworkUtility()
-    //let utils = Utils()
     var shows: [ShowMetadataModel]?
- //   var player: AudioPlayerArchive?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,7 +20,6 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
         self.showListTableView.rowHeight = 135.0
         self.getDownloadedShows()
         print("view load")
-        //player = AudioPlayerArchive()
     }
     
     override func viewWillAppear(_ animated: Bool) {

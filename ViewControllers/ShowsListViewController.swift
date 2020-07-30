@@ -14,17 +14,14 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
     @IBOutlet weak var showListTableView: UITableView!
     var year: Int?
     var month: Int?
-    var archiveAPI = ArchiveAPI()
     var identifiers: [String]?
     var showMetadatas: [ShowMetadata]?
-    //let utils = Utils()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.showListTableView.delegate = self
         self.showListTableView.dataSource = self
         self.showListTableView.rowHeight = 135.0
-    //    utils.getMemory()
     }
         
     func getIADateRange() {
@@ -83,7 +80,6 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
             target.showDate = showMDs[indexPath.row].date
             target.isDownloaded = false
             target.player = player
-            print(player)
         }
     }
     

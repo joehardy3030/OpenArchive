@@ -15,7 +15,7 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
     @IBOutlet weak var playButton: UIButton!
     @IBOutlet weak var showDetailTableView: UITableView!
     var showModel: ShowMetadataModel?
-    let archiveAPI = ArchiveAPI()
+    //let archiveAPI = ArchiveAPI()
     
     override func viewDidLoad() {
         

@@ -11,6 +11,7 @@ import UIKit
 class ArchiveSuperViewController: UIViewController {
     let network = NetworkUtility()
     let utils = Utils()
+    let archiveAPI = ArchiveAPI()
     var prevController: ArchiveSuperViewController?
     var miniPlayer: MiniPlayerViewController?
     var player: AudioPlayerArchive?

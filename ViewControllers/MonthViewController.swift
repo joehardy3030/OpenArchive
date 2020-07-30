@@ -33,6 +33,24 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
                   "Dec"]
     }
     
+    func getIADateRange(year: Int, month: Int) {
+        let url = archiveAPI.dateRangeURL(year: year, month: month)
+        
+        archiveAPI.getIARequestItems(url: url) {
+            (response: [ShowMetadata]?) -> Void in
+            
+            DispatchQueue.main.async{
+                if let r = response {
+                 //   self.showMetadatas = r
+                  //  if let s = self.showMetadatas {
+                  //      self.showMetadatas = s.sorted(by: { $0.date! < $1.date! })
+                  //  }
+                  //  self.showListTableView.reloadData()
+                }
+            }
+        }
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.months.count
     }
@@ -59,7 +77,6 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
             }
             target.resetMonth()
             target.player = player
-            print(player as Any)
         }
     }
 

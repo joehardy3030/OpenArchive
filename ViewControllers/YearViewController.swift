@@ -14,7 +14,7 @@ class YearViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
 
     @IBOutlet weak var yearTableView: UITableView!
    // let utils = Utils()
-    var archiveAPI = ArchiveAPI()
+   // var archiveAPI = ArchiveAPI()
     var years: [Int] = []
     
     override func viewDidLoad() {
@@ -41,7 +41,6 @@ class YearViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             let year = self.years[indexPath.row]
             target.year = year
             target.player = player
-            print(player as Any)
         }
     }
 }

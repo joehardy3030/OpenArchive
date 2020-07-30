@@ -12,8 +12,6 @@ class StartViewController: ArchiveSuperViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("Get Started")
-        print(player)
         for childViewController in self.children {
             if let playerHolder = childViewController as? ArchiveSuperViewController {
                 playerHolder.player = self.player

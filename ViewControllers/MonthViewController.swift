@@ -73,10 +73,10 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
        // var countString: String?
         let cell = monthTableView.dequeueReusableCell(withIdentifier: "MonthCell", for: indexPath) as! MonthTableViewCell
         let month = self.months[indexPath.row]
-        let count = self.monthCount[indexPath.row]
+        let count = self.monthCount[indexPath.row + 1]
         //print(count)
         if let year = self.year {
-            if let c = count {
+            if let c = count, c > 0 {
                 cell.monthLabel?.text = month + " " + String(year) + " " + "(" + String(c) + " shows)"
             }
             else {

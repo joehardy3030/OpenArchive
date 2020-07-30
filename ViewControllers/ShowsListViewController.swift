@@ -23,7 +23,7 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
         self.showListTableView.dataSource = self
         self.showListTableView.rowHeight = 135.0
     }
-        
+    
     func getIADateRange() {
         guard let year = self.year, let month = self.month else { return }
         let url = archiveAPI.dateRangeURL(year: year, month: month)
@@ -58,10 +58,14 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = showListTableView.dequeueReusableCell(withIdentifier: "ShowListCell", for: indexPath) as! ShowsListTableViewCell
-
         if let showMDs = self.showMetadatas {
             cell.dateLabel.text = utils.getDateFromDateTimeString(datetime: showMDs[indexPath.row].date)
-            cell.venueLabel.text = showMDs[indexPath.row].venue
+            if let v = showMDs[indexPath.row].venue, let c = showMDs[indexPath.row].coverage {
+                cell.venueLabel.text = v + ", " + c
+            }
+            else {
+                cell.venueLabel.text = showMDs[indexPath.row].venue
+            }
             cell.transfererLabel.text = showMDs[indexPath.row].transferer
             cell.sourceLabel.text = showMDs[indexPath.row].source
 

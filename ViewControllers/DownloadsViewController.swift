@@ -56,7 +56,14 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
 
         if let showMDs = self.shows {
             cell.dateLabel.text = showMDs[indexPath.row].metadata?.date
-            cell.venueLabel.text = showMDs[indexPath.row].metadata?.venue
+            
+            if let v = showMDs[indexPath.row].metadata?.venue, let c = showMDs[indexPath.row].metadata?.coverage {
+                cell.venueLabel.text = v + ", " + c
+            }
+            else {
+                cell.venueLabel.text = showMDs[indexPath.row].metadata?.venue
+            }
+            //cell.venueLabel.text = showMDs[indexPath.row].metadata?.venue
             cell.transfererLabel.text = showMDs[indexPath.row].metadata?.transferer
             cell.sourceLabel.text = showMDs[indexPath.row].metadata?.source
 

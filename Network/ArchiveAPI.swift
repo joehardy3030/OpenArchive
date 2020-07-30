@@ -54,7 +54,7 @@ class ArchiveAPI: NSObject {
         var monthString: String
                 
         url += "services/search/v1/scrape?"
-        url += "fields=date,venue,transferer,source&"
+        url += "fields=date,venue,transferer,source,coverage&"
         url += "q=collection%3A%28GratefulDead%29"
         url += andString
         url += dateString
@@ -148,6 +148,9 @@ class ArchiveAPI: NSObject {
                 var showMetadatas = [ShowMetadata]()
                 
                 for i in items {
+                   // print(i.1)
+                    let showMD = self.deserializeMetadata(json: i.1)
+                   /*
                     var showMD = ShowMetadata()
                     if let id_string = i.1["identifier"].string {
                         itemArray.append(id_string)
@@ -155,6 +158,10 @@ class ArchiveAPI: NSObject {
                     }
                     if let venue_string = i.1["venue"].string {
                         showMD.venue = venue_string
+                    }
+                    if let coverage_string = i.1["coverage"].string {
+                        showMD.coverage = coverage_string
+                        //print(coverage_string)
                     }
                     if let date_string = i.1["date"].string {
                         showMD.date = date_string
@@ -165,7 +172,7 @@ class ArchiveAPI: NSObject {
                     if let source_string = i.1["source"].string {
                         showMD.source = source_string
                     }
-
+                    */
                     showMetadatas.append(showMD)
                 }
                 completion(showMetadatas)

@@ -82,6 +82,8 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
             target.identifier = showMDs[indexPath.row].identifier
             target.showDate = showMDs[indexPath.row].date
             target.isDownloaded = false
+            target.player = player
+            print(player)
         }
     }
     

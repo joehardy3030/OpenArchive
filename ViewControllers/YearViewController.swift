@@ -40,6 +40,8 @@ class YearViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         if let target = segue.destination as? MonthViewController {
             let year = self.years[indexPath.row]
             target.year = year
+            target.player = player
+            print(player as Any)
         }
     }
 }

@@ -34,6 +34,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         else {
             self.navigationItem.title = showDate
         }
+        print(player as Any)
     }
 
     @IBAction func downloadShow(_ sender: Any) {

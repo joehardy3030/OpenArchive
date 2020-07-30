@@ -58,6 +58,8 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
                 target.year = y
             }
             target.resetMonth()
+            target.player = player
+            print(player as Any)
         }
     }
 

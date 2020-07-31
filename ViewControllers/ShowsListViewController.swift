@@ -17,7 +17,7 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
     var month: Int?
     var identifiers: [String]?
     var showMetadatas: [ShowMetadata]?
-    var sbdOnly: Bool?
+    var sbdOnly = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,14 +29,8 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
     
     func getIADateRange() {
         guard let year = self.year, let month = self.month else { return }
-        var url: String
-        if let sbd = sbdOnly {
-            url = archiveAPI.dateRangeURL(year: year, month: month, sbdOnly: sbd)
-        }
-        else {
-            url = archiveAPI.dateRangeURL(year: year, month: month, sbdOnly: true)
-        }
-        
+        let url = archiveAPI.dateRangeURL(year: year, month: month, sbdOnly: sbdOnly)
+
         archiveAPI.getIARequestItems(url: url) {
             (response: [ShowMetadata]?) -> Void in
             
@@ -118,11 +112,19 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
     }
     
     override func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
-        //print("called this")
         if let target = viewController as? MonthViewController {
-            target.sbdToggle.selectedSegmentIndex = sbdToggle.selectedSegmentIndex
-            // vc.miniPlayer?.player = player
-            //  vc.prevController = self
+         if sbdToggle.selectedSegmentIndex == 0 {
+                    target.sbdOnly = false
+                  //  print("false")
+
+                }
+                else {
+                    target.sbdOnly = true
+        
+                }
+            target.setSbdToggle()
+            target.getShows()
+
         }
     }
     

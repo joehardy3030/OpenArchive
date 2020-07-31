@@ -15,13 +15,13 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
     var months: [String] = []
     var monthCount: [Int:Int] = [:]
     var year: Int?
-    
+    var sbdOnly = true // look at observer pattern
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.monthTableView.delegate = self
         self.monthTableView.dataSource = self
-        sbdToggle.selectedSegmentIndex = 1
+        sbdToggle.selectedSegmentIndex = getSbdToggle()
         self.months = ["Jan",
                   "Feb",
                   "Mar",
@@ -37,24 +37,44 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        setSbdToggle()
         getShows()
         print("viewWillAppear")
+      //  print(sbdOnly)
     }
     
     @IBAction func sbdToggle(_ sender: Any) {
+        if sbdToggle.selectedSegmentIndex == 0 {
+            sbdOnly = false
+        }
+        else {
+            sbdOnly = true
+        }
         getShows()
 //        monthTableView.reloadData()
     }
     
-    func getShows() {
-        var sbdOnly = true
-        switch sbdToggle.selectedSegmentIndex {
-        case 0:
-            sbdOnly = false
+    func setSbdToggle() {
+        switch sbdOnly {
+        case false:
+            sbdToggle.selectedSegmentIndex = 0
         default:
-            sbdOnly = true
+            sbdToggle.selectedSegmentIndex = 1
         }
-        print(sbdOnly)
+
+    }
+    func getSbdToggle() -> Int {
+        var sbdInt = 1
+        switch sbdOnly {
+        case false:
+            sbdInt = 0
+        default:
+            sbdInt = 1
+        }
+        return sbdInt
+    }
+    
+    func getShows() {
         if let y = year {
             for i in 1...12 {
                 getIADateRange(year: y, month: i, sbdOnly: sbdOnly)

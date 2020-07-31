@@ -106,7 +106,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         let _ = network.addDownloadDataDoc(showMetadataModel: showMetadata)
         availableLabel.text = "Downloaded"
     }
-     
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.mp3Array.count
     }
@@ -130,6 +130,53 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
 
         return cell
     }
+    
+    
+    /*
+       func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+            let count = mp3Array.count
+            return (6 + count)
+       }
+       
+       func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+           let cell = showTableView.dequeueReusableCell(withIdentifier: "ShowCell", for: indexPath) as! ShowTableViewCell
+           guard let m = showMetadata?.metadata else { return cell }
+           cell.accessoryType = .none
+           switch indexPath.row {
+           case 0:
+               cell.textLabel?.text = m.date
+           case 1:
+               cell.textLabel?.text = m.venue
+           case 2:
+               cell.textLabel?.text = m.coverage
+           case 3:
+               cell.textLabel?.text = m.description
+           case 4:
+               cell.textLabel?.text = m.source
+           case 5:
+               cell.textLabel?.text = m.transferer
+           default:
+               let idx = indexPath.row - 6
+               if let title = mp3Array[idx].title,
+                   let track = mp3Array[idx].track {
+                    cell.textLabel?.text = track + " " + title
+                }
+                else {
+                    cell.textLabel?.text = "no song"
+                }
+                
+                if let _ = mp3Array[idx].destination {
+                    cell.accessoryType = .checkmark
+                }
+                else {
+                    cell.accessoryType = .none
+                }
+                   
+           }
+
+           return cell
+       }
+    */
     
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

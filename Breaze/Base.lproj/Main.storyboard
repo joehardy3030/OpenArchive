@@ -21,14 +21,14 @@
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ArchiveCell" id="oPe-Pq-P2Y" customClass="ArchiveCell" customModule="Chateau" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="375" height="43"/>
+                                        <rect key="frame" x="0.0" y="28" width="375" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="oPe-Pq-P2Y" id="DIS-r0-Sed">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LTW-wf-yTz">
-                                                    <rect key="frame" x="54" y="11" width="228" height="21"/>
+                                                    <rect key="frame" x="54" y="11" width="228" height="21.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -79,15 +79,21 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <navigationBar contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pLy-gd-qoK">
+                            <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pLy-gd-qoK">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <items>
                                     <navigationItem title="Shows" id="Cov-d4-L0j"/>
                                 </items>
                             </navigationBar>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="cPT-Us-beY">
+                                <rect key="frame" x="0.0" y="44" width="375" height="32"/>
+                                <segments>
+                                    <segment title="All tapes"/>
+                                    <segment title="SBD only"/>
+                                </segments>
+                            </segmentedControl>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="pKQ-5L-9Ff">
-                                <rect key="frame" x="0.0" y="44" width="375" height="454"/>
+                                <rect key="frame" x="0.0" y="76" width="375" height="422"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="ShowListCell" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ShowListCell" rowHeight="135" id="pO6-Rd-yOP" customClass="ShowsListTableViewCell" customModule="Chateau" customModuleProvider="target">
@@ -151,10 +157,16 @@
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
-                            <constraint firstItem="pKQ-5L-9Ff" firstAttribute="top" secondItem="mdI-K4-MOc" secondAttribute="top" id="73A-3r-1GG"/>
-                            <constraint firstItem="mdI-K4-MOc" firstAttribute="trailing" secondItem="pKQ-5L-9Ff" secondAttribute="trailing" id="8TF-Ae-jrM"/>
-                            <constraint firstItem="pKQ-5L-9Ff" firstAttribute="bottom" secondItem="mdI-K4-MOc" secondAttribute="bottom" constant="-120" id="X63-2h-JA0"/>
-                            <constraint firstItem="pKQ-5L-9Ff" firstAttribute="leading" secondItem="mdI-K4-MOc" secondAttribute="leading" id="sVe-GT-6Uo"/>
+                            <constraint firstItem="cPT-Us-beY" firstAttribute="leading" secondItem="pKQ-5L-9Ff" secondAttribute="leading" id="03l-kw-UYi"/>
+                            <constraint firstItem="pLy-gd-qoK" firstAttribute="bottom" secondItem="mdI-K4-MOc" secondAttribute="top" id="5FH-wX-Fme"/>
+                            <constraint firstItem="pKQ-5L-9Ff" firstAttribute="leading" secondItem="mdI-K4-MOc" secondAttribute="leading" id="7iB-py-X0Q"/>
+                            <constraint firstItem="mdI-K4-MOc" firstAttribute="bottom" secondItem="pKQ-5L-9Ff" secondAttribute="bottom" constant="120" id="OvY-YT-vma"/>
+                            <constraint firstItem="pKQ-5L-9Ff" firstAttribute="trailing" secondItem="pLy-gd-qoK" secondAttribute="trailing" id="Rvt-kl-bXs"/>
+                            <constraint firstItem="mdI-K4-MOc" firstAttribute="trailing" secondItem="pKQ-5L-9Ff" secondAttribute="trailing" id="SF7-AH-S85"/>
+                            <constraint firstItem="cPT-Us-beY" firstAttribute="trailing" secondItem="pKQ-5L-9Ff" secondAttribute="trailing" id="bjn-LX-spB"/>
+                            <constraint firstItem="pKQ-5L-9Ff" firstAttribute="top" secondItem="cPT-Us-beY" secondAttribute="bottom" constant="1" id="koW-jn-moQ"/>
+                            <constraint firstItem="cPT-Us-beY" firstAttribute="top" secondItem="mdI-K4-MOc" secondAttribute="top" id="lSw-Ut-YRH"/>
+                            <constraint firstItem="pKQ-5L-9Ff" firstAttribute="leading" secondItem="pLy-gd-qoK" secondAttribute="leading" id="lsZ-Dl-cMF"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="mdI-K4-MOc"/>
                     </view>
@@ -175,19 +187,26 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="1Ia-M0-h4e">
+                                <rect key="frame" x="0.0" y="44" width="375" height="32"/>
+                                <segments>
+                                    <segment title="All tapes"/>
+                                    <segment title="SBD only"/>
+                                </segments>
+                            </segmentedControl>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="0hU-i5-wPc">
-                                <rect key="frame" x="0.0" y="44" width="375" height="454"/>
+                                <rect key="frame" x="0.0" y="76" width="375" height="421"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="MonthCell" id="HcZ-fU-WPQ" customClass="MonthTableViewCell" customModule="Chateau" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="375" height="43.5"/>
+                                        <rect key="frame" x="0.0" y="28" width="375" height="43"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="HcZ-fU-WPQ" id="Ogc-r8-GMv">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Month" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zNP-8O-O75">
-                                                    <rect key="frame" x="44" y="11" width="262" height="21.5"/>
+                                                    <rect key="frame" x="44" y="11" width="262" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -210,10 +229,13 @@
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
-                            <constraint firstItem="0ft-Qd-A9F" firstAttribute="bottom" secondItem="0hU-i5-wPc" secondAttribute="bottom" constant="120" id="a0c-u7-eJj"/>
-                            <constraint firstItem="0hU-i5-wPc" firstAttribute="leading" secondItem="0ft-Qd-A9F" secondAttribute="leading" id="g9v-oM-b4z"/>
-                            <constraint firstItem="0ft-Qd-A9F" firstAttribute="trailing" secondItem="0hU-i5-wPc" secondAttribute="trailing" id="qah-yQ-PA7"/>
-                            <constraint firstItem="0hU-i5-wPc" firstAttribute="top" secondItem="0ft-Qd-A9F" secondAttribute="top" id="yrr-nG-qeN"/>
+                            <constraint firstItem="0hU-i5-wPc" firstAttribute="leading" secondItem="4pJ-As-zD0" secondAttribute="leading" id="K2B-HE-eW3"/>
+                            <constraint firstItem="0ft-Qd-A9F" firstAttribute="bottom" secondItem="0hU-i5-wPc" secondAttribute="bottom" constant="121" id="O8R-Xx-RSm"/>
+                            <constraint firstItem="0hU-i5-wPc" firstAttribute="top" secondItem="1Ia-M0-h4e" secondAttribute="bottom" constant="1" id="Whg-XS-Jyi"/>
+                            <constraint firstItem="0hU-i5-wPc" firstAttribute="leading" secondItem="1Ia-M0-h4e" secondAttribute="leading" id="ZfP-TL-r9a"/>
+                            <constraint firstItem="1Ia-M0-h4e" firstAttribute="top" secondItem="0ft-Qd-A9F" secondAttribute="top" id="dYL-3S-PjM"/>
+                            <constraint firstItem="0hU-i5-wPc" firstAttribute="trailing" secondItem="1Ia-M0-h4e" secondAttribute="trailing" id="gJ7-ub-gHs"/>
+                            <constraint firstAttribute="trailing" secondItem="0hU-i5-wPc" secondAttribute="trailing" id="jcZ-eY-hYE"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="0ft-Qd-A9F"/>
                     </view>
@@ -224,7 +246,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="yqs-f1-qa2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2220" y="-99"/>
+            <point key="canvasLocation" x="2220" y="-99.400299850074973"/>
         </scene>
         <!--Archive-->
         <scene sceneID="DC5-L9-xIP">
@@ -564,7 +586,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8t5-F9-vyY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2359" y="565"/>
+            <point key="canvasLocation" x="2220" y="884"/>
         </scene>
         <!--Mini Player View Controller-->
         <scene sceneID="jfT-j3-h4f">

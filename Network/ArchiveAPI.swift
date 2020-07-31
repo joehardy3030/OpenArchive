@@ -144,7 +144,7 @@ class ArchiveAPI: NSObject {
             if let json = response.result.value {
                 let j = JSON(json)
                 let items = j["items"]
-                var itemArray = [String]()
+                //var itemArray = [String]()
                 var showMetadatas = [ShowMetadata]()
                 
                 for i in items {

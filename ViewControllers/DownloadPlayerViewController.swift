@@ -43,12 +43,18 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
         }
      }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 6
+        if let count = showModel?.mp3Array?.count {
+            return (6 + count)
+        }
+        else {
+            return 6
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = showDetailTableView.dequeueReusableCell(withIdentifier: "ShowDetailCell", for: indexPath) as! ShowDetailTableViewCell
         guard let m = showModel?.metadata else { return cell }
+        cell.accessoryType = .none
         switch indexPath.row {
         case 0:
             cell.textLabel?.text = m.date
@@ -63,7 +69,23 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
         case 5:
             cell.textLabel?.text = m.transferer
         default:
-            cell.textLabel?.text = ""
+            if let mp3s = showModel?.mp3Array {
+            let idx = indexPath.row - 6
+            if let title = mp3s[idx].title,
+                let track = mp3s[idx].track {
+                 cell.textLabel?.text = track + " " + title
+             }
+             else {
+                 cell.textLabel?.text = "no song"
+             }
+             
+             if let _ = mp3s[idx].destination {
+                 cell.accessoryType = .checkmark
+             }
+             else {
+                 cell.accessoryType = .none
+             }
+                }
         }
 
         return cell

@@ -39,8 +39,6 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
     override func viewWillAppear(_ animated: Bool) {
         setSbdToggle()
         getShows()
-        print("viewWillAppear")
-      //  print(sbdOnly)
     }
     
     @IBAction func sbdToggle(_ sender: Any) {
@@ -51,7 +49,17 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
             sbdOnly = true
         }
         getShows()
-//        monthTableView.reloadData()
+    }
+    
+    func getSbdToggle() -> Int {
+        var sbdInt = 1
+        switch sbdOnly {
+        case false:
+            sbdInt = 0
+        default:
+            sbdInt = 1
+        }
+        return sbdInt
     }
     
     func setSbdToggle() {
@@ -63,16 +71,7 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
         }
 
     }
-    func getSbdToggle() -> Int {
-        var sbdInt = 1
-        switch sbdOnly {
-        case false:
-            sbdInt = 0
-        default:
-            sbdInt = 1
-        }
-        return sbdInt
-    }
+
     
     func getShows() {
         if let y = year {

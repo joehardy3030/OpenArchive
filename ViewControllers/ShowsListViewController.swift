@@ -46,6 +46,16 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
         }
     }
     
+    @IBAction func sbdToggle(_ sender: Any) {
+        if sbdToggle.selectedSegmentIndex == 0 {
+            sbdOnly = false
+        }
+        else {
+            sbdOnly = true
+        }
+        resetMonth()
+    }
+    
     func getSbdToggle() -> Int {
         var sbdInt = 1
         switch sbdOnly {
@@ -57,16 +67,7 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
         return sbdInt
     }
      
-    @IBAction func sbdToggle(_ sender: Any) {
-        if sbdToggle.selectedSegmentIndex == 1 {
-            sbdOnly = true
-        }
-        else {
-            sbdOnly = false
-        }
-        resetMonth()
-    }
-    
+
     func resetMonth() {
         self.getIADateRange()
     }
@@ -113,18 +114,11 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
     
     override func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
         if let target = viewController as? MonthViewController {
-         if sbdToggle.selectedSegmentIndex == 0 {
-                    target.sbdOnly = false
-                  //  print("false")
-
-                }
-                else {
-                    target.sbdOnly = true
-        
-                }
-            target.setSbdToggle()
-            target.getShows()
-
+            if target.sbdOnly != sbdOnly {
+                target.sbdOnly = sbdOnly
+                target.setSbdToggle()
+                target.getShows()
+            }
         }
     }
     

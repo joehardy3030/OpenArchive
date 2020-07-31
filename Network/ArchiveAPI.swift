@@ -43,10 +43,11 @@ class ArchiveAPI: NSObject {
         return url
     }
     
-    func dateRangeURL(year: Int, month: Int) -> String {
+    func dateRangeURL(year: Int, month: Int, sbdOnly: Bool) -> String {
         // Search in date range
         //https://archive.org/services/search/v1/scrape?q=collection%3A%28GratefulDead%29%20AND%20date%3A%5B1987-03-01%20TO%201987-03-31%5D
-
+        //https://archive.org/services/search/v1/scrape?fields=date,venue,transferer,source,collection&q=collection%3A%28GratefulDead%20AND%20stream_only%29%20AND%20date%3A%5B1992-05-01%20TO%201992-05-31%5D
+        //let sbdOnly = true
         let andString = "%20AND%20"
         let dateString = "date%3A%5B"
         let toString = "%20TO%20"
@@ -55,7 +56,12 @@ class ArchiveAPI: NSObject {
                 
         url += "services/search/v1/scrape?"
         url += "fields=date,venue,transferer,source,coverage&"
-        url += "q=collection%3A%28GratefulDead%29"
+        if sbdOnly {
+            url += "q=collection%3A%28GratefulDead%20AND%20stream_only%29"
+        }
+        else {
+            url += "q=collection%3A%28GratefulDead%29"
+        }
         url += andString
         url += dateString
         if month <= 9 {

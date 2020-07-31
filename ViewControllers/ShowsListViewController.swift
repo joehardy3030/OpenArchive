@@ -11,22 +11,31 @@ import SwiftyJSON
 
 class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
 
+    @IBOutlet weak var sbdToggle: UISegmentedControl!
     @IBOutlet weak var showListTableView: UITableView!
     var year: Int?
     var month: Int?
     var identifiers: [String]?
     var showMetadatas: [ShowMetadata]?
+    var sbdOnly: Bool?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.showListTableView.delegate = self
         self.showListTableView.dataSource = self
         self.showListTableView.rowHeight = 135.0
+        sbdToggle.selectedSegmentIndex = getSbdToggle()
     }
     
     func getIADateRange() {
         guard let year = self.year, let month = self.month else { return }
-        let url = archiveAPI.dateRangeURL(year: year, month: month)
+        var url: String
+        if let sbd = sbdOnly {
+            url = archiveAPI.dateRangeURL(year: year, month: month, sbdOnly: sbd)
+        }
+        else {
+            url = archiveAPI.dateRangeURL(year: year, month: month, sbdOnly: true)
+        }
         
         archiveAPI.getIARequestItems(url: url) {
             (response: [ShowMetadata]?) -> Void in
@@ -42,7 +51,28 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
             }
         }
     }
-
+    
+    func getSbdToggle() -> Int {
+        var sbdInt = 1
+        switch sbdOnly {
+        case false:
+            sbdInt = 0
+        default:
+            sbdInt = 1
+        }
+        return sbdInt
+    }
+     
+    @IBAction func sbdToggle(_ sender: Any) {
+        if sbdToggle.selectedSegmentIndex == 1 {
+            sbdOnly = true
+        }
+        else {
+            sbdOnly = false
+        }
+        resetMonth()
+    }
+    
     func resetMonth() {
         self.getIADateRange()
     }
@@ -84,6 +114,15 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
             target.showDate = showMDs[indexPath.row].date
             target.isDownloaded = false
             target.player = player
+        }
+    }
+    
+    override func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+        //print("called this")
+        if let target = viewController as? MonthViewController {
+            target.sbdToggle.selectedSegmentIndex = sbdToggle.selectedSegmentIndex
+            // vc.miniPlayer?.player = player
+            //  vc.prevController = self
         }
     }
     

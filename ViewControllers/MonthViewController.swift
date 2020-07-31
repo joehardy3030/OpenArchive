@@ -10,6 +10,7 @@ import UIKit
 
 class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UITableViewDelegate {
 
+    @IBOutlet weak var sbdToggle: UISegmentedControl!
     @IBOutlet weak var monthTableView: UITableView!
     var months: [String] = []
     var monthCount: [Int:Int] = [:]
@@ -20,7 +21,7 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
         super.viewDidLoad()
         self.monthTableView.delegate = self
         self.monthTableView.dataSource = self
-        
+        sbdToggle.selectedSegmentIndex = 1
         self.months = ["Jan",
                   "Feb",
                   "Mar",
@@ -36,15 +37,33 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        getShows()
+        print("viewWillAppear")
+    }
+    
+    @IBAction func sbdToggle(_ sender: Any) {
+        getShows()
+//        monthTableView.reloadData()
+    }
+    
+    func getShows() {
+        var sbdOnly = true
+        switch sbdToggle.selectedSegmentIndex {
+        case 0:
+            sbdOnly = false
+        default:
+            sbdOnly = true
+        }
+        print(sbdOnly)
         if let y = year {
             for i in 1...12 {
-                getIADateRange(year: y, month: i)
+                getIADateRange(year: y, month: i, sbdOnly: sbdOnly)
             }
         }
     }
     
-    func getIADateRange(year: Int, month: Int) {
-        let url = archiveAPI.dateRangeURL(year: year, month: month)
+    func getIADateRange(year: Int, month: Int, sbdOnly: Bool) {
+        let url = archiveAPI.dateRangeURL(year: year, month: month, sbdOnly: sbdOnly)
         
         archiveAPI.getIARequestItems(url: url) {
             (response: [ShowMetadata]?) -> Void in
@@ -77,7 +96,7 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
         //print(count)
         if let year = self.year {
             if let c = count, c > 0 {
-                cell.monthLabel?.text = month + " " + String(year) + " " + "(" + String(c) + " shows)"
+                cell.monthLabel?.text = month + " " + String(year) + " " + "(" + String(c) + " tapes)"
             }
             else {
                 cell.monthLabel?.text = month + " " + String(year)
@@ -96,6 +115,12 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
             target.month = m
             if let y = self.year {
                 target.year = y
+            }
+            if sbdToggle.selectedSegmentIndex == 0 {
+                target.sbdOnly = false
+            }
+            else {
+                target.sbdOnly = true
             }
             target.resetMonth()
             target.player = player

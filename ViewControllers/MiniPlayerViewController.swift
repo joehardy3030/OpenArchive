@@ -55,6 +55,10 @@ class MiniPlayerViewController: UIViewController {
 
     }
     
+    @IBAction func loadFullPlayer(_ sender: Any) {
+        print("tapped the button")
+    }
+    
     func currentItemTotalTime() {
         if let ci = self.player?.playerQueue?.currentItem {
             let duration = ci.duration
@@ -202,7 +206,11 @@ class MiniPlayerViewController: UIViewController {
     }
     
     
-    
+    /*
+    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+    let vc = storyboard.instantiateViewController(withIdentifier: "viewController")
+    self.navigationController!.pushViewController(vc, animated: true)
+     */
     
     /*
     // MARK: - Navigation

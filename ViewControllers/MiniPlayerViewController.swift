@@ -26,6 +26,7 @@ class MiniPlayerViewController: UIViewController {
         super.viewDidLoad()
         view.layer.borderWidth = 2
         view.layer.borderColor = UIColor.gray.cgColor
+        navigationController?.delegate = self
         initialDefaults()
     }
         
@@ -56,6 +57,17 @@ class MiniPlayerViewController: UIViewController {
     }
     
     @IBAction func loadFullPlayer(_ sender: Any) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        guard let vc = storyboard.instantiateViewController(withIdentifier: "ModalPlayer") as? ModalPlayerViewController else { return }
+        print(vc)
+        if let nc = self.navigationController {
+            nc.pushViewController(vc, animated: true)
+        }
+        else {
+            // self.pushViewController(vc, animated: true)
+            print("no navigation controller")
+        }
+        //self.pushViewController
         print("tapped the button")
     }
     
@@ -205,21 +217,16 @@ class MiniPlayerViewController: UIViewController {
         }
     }
     
-    
-    /*
-    let storyboard = UIStoryboard(name: "Main", bundle: nil)
-    let vc = storyboard.instantiateViewController(withIdentifier: "viewController")
-    self.navigationController!.pushViewController(vc, animated: true)
-     */
-    
-    /*
-    // MARK: - Navigation
+}
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+
+extension MiniPlayerViewController: UINavigationControllerDelegate {
+    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+       // print("called this")
+        //let self.navigationController = NavigationConroller()
+        if let _ = viewController as? ArchiveSuperViewController {
+            // vc.miniPlayer?.player = player
+            //  vc.prevController = self
+        }
     }
-    */
-
 }

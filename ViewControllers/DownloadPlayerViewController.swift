@@ -42,6 +42,7 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
             mp.setupShow()
         }
      }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let count = showModel?.mp3Array?.count {
             return (6 + count)

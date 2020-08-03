@@ -10,6 +10,7 @@ import UIKit
 
 class ModalPlayerViewController: ArchiveSuperViewController {
 
+    @IBOutlet weak var modalPlayerTableView: UITableView!
     override func viewDidLoad() {
         super.viewDidLoad()
 

@@ -27,6 +27,7 @@ class MiniPlayerViewController: UIViewController {
         view.layer.borderWidth = 2
         view.layer.borderColor = UIColor.gray.cgColor
         navigationController?.delegate = self
+        //playButton.imageView?.contentMode = .scaleToFill
         initialDefaults()
     }
         
@@ -63,11 +64,16 @@ class MiniPlayerViewController: UIViewController {
             else { return }
 
         if let rvc = ad.window?.rootViewController as? StartViewController {
+            prepareModalPlayer(viewController: vc)
             rvc.show(vc, sender: self)
         }
         else {
             print("no root view")
         }
+    }
+    
+    func prepareModalPlayer(viewController: ModalPlayerViewController) {
+        viewController.player = player
     }
     
     func currentItemTotalTime() {
@@ -88,11 +94,14 @@ class MiniPlayerViewController: UIViewController {
         player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
         setupSlider()
         setupSong()
+        playPause()
+        /*
         if #available(iOS 13.0, *) {
             if let pb = playButton {
                 pb.setImage(UIImage(systemName: "pause"), for: .normal)
             }
         }
+        */
     }
     
     func setupSong() {
@@ -196,20 +205,21 @@ class MiniPlayerViewController: UIViewController {
     }
 
     func playPause() {
-        if player?.playerQueue?.rate ?? 0.0 > 0.0 {
-            player?.playerQueue?.pause()
+        guard let q = player?.playerQueue else { return }
+        if q.rate > 0.0 {
+            q.pause()
             if let _ = playButton {
                 if #available(iOS 13.0, *) {
-                    playButton.setImage(UIImage(systemName: "play"), for: .normal)
+                    playButton.setBackgroundImage(UIImage(systemName: "play"), for: .normal)
                 }
             }
         //    isPlaying = false
         }
         else {
-            player?.playerQueue?.play()
+            q.play()
             if let _ = playButton {
                 if #available(iOS 13.0, *) {
-                    playButton.setImage(UIImage(systemName: "pause"), for: .normal)
+                    playButton.setBackgroundImage(UIImage(systemName: "pause"), for: .normal)
                 }
             }
          //   isPlaying = true
@@ -221,8 +231,6 @@ class MiniPlayerViewController: UIViewController {
 
 extension MiniPlayerViewController: UINavigationControllerDelegate {
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
-       // print("called this")
-        //let self.navigationController = NavigationConroller()
         if let _ = viewController as? ArchiveSuperViewController {
             // vc.miniPlayer?.player = player
             //  vc.prevController = self

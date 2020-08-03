@@ -57,18 +57,17 @@ class MiniPlayerViewController: UIViewController {
     }
     
     @IBAction func loadFullPlayer(_ sender: Any) {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        guard let vc = storyboard.instantiateViewController(withIdentifier: "ModalPlayer") as? ModalPlayerViewController else { return }
-        print(vc)
-        if let nc = self.navigationController {
-            nc.pushViewController(vc, animated: true)
+        let sbd = UIStoryboard(name: "Main", bundle: nil)
+        guard let vc = sbd.instantiateViewController(withIdentifier: "ModalPlayer") as? ModalPlayerViewController,
+            let ad = UIApplication.shared.delegate as? AppDelegate
+            else { return }
+
+        if let rvc = ad.window?.rootViewController as? StartViewController {
+            rvc.show(vc, sender: self)
         }
         else {
-            // self.pushViewController(vc, animated: true)
-            print("no navigation controller")
+            print("no root view")
         }
-        //self.pushViewController
-        print("tapped the button")
     }
     
     func currentItemTotalTime() {

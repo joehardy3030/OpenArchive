@@ -34,7 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         guard let rvc = self.window?.rootViewController as? ArchiveSuperViewController else {fatalError()}
         rvc.player = AudioPlayerArchive()
-        print(rvc.player)
+        //print(rvc.player)
         // Dependency injection is fun! Remind me again what's so bad about singeltons?
         /*
         if let tbc = window?.rootViewController as? UITabBarController {

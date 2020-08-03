@@ -8,18 +8,21 @@
 
 import UIKit
 
-class ModalPlayerViewController: ArchiveSuperViewController {
+class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var playButton: UIButton!
     @IBOutlet weak var modalPlayerTableView: UITableView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.modalPlayerTableView.delegate = self
+        self.modalPlayerTableView.dataSource = self
         // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(_ animated: Bool) {
         setupPlayer()
+        print(player)
     }
 
     @IBAction func forwardButton(_ sender: Any) {
@@ -77,6 +80,43 @@ class ModalPlayerViewController: ArchiveSuperViewController {
          //   isPlaying = true
         }
     }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if let c = player?.showModel?.mp3Array?.count {
+            print(c)
+            return c
+        }
+        else {
+            print(player?.showModel?.mp3Array?[0])
+            return 0
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = modalPlayerTableView.dequeueReusableCell(withIdentifier: "ModalPlayerCell", for: indexPath) as? ModalPlayerTableViewCell,
+            let mp3s = player?.showModel?.mp3Array
+            else {
+                print("no songs")
+                return UITableViewCell() }
+        
+        if let title = mp3s[indexPath.row].title, let track = mp3s[indexPath.row].track {
+            cell.textLabel?.text = track + " " + title
+        }
+        else {
+            cell.textLabel?.text = "no song"
+        }
+        
+        if let _ = mp3s[indexPath.row].destination {
+            cell.accessoryType = .checkmark
+        }
+        else {
+            cell.accessoryType = .none
+        }
+
+        return cell
+
+    }
+    
 
     /*
     // MARK: - Navigation

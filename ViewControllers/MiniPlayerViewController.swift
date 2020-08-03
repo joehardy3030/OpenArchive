@@ -74,6 +74,7 @@ class MiniPlayerViewController: UIViewController {
     
     func prepareModalPlayer(viewController: ModalPlayerViewController) {
         viewController.player = player
+        print(player)
     }
     
     func currentItemTotalTime() {

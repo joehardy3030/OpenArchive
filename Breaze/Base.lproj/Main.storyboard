@@ -729,7 +729,7 @@
                                 <rect key="frame" x="0.0" y="79" width="375" height="304"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="md1-nE-80D">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ModalPlayerCell" id="md1-nE-80D" customClass="ModalPlayerTableViewCell" customModule="Chateau" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="375" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="md1-nE-80D" id="3Sk-UP-mb0">
@@ -774,6 +774,7 @@
                         <viewLayoutGuide key="safeArea" id="WgY-SO-QeX"/>
                     </view>
                     <connections>
+                        <outlet property="modalPlayerTableView" destination="WAm-yL-G1j" id="tY5-o9-OMf"/>
                         <outlet property="playButton" destination="FJ2-WK-jp8" id="ucf-xw-Gnv"/>
                     </connections>
                 </viewController>

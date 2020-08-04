@@ -10,6 +10,8 @@ import UIKit
 
 class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
 
+    @IBOutlet weak var currentTimeLabel: UILabel!
+    @IBOutlet weak var totalTimeLabel: UILabel!
     @IBOutlet weak var playButton: UIButton!
     @IBOutlet weak var modalPlayerTableView: UITableView!
     var timer: ArchiveTimer?
@@ -45,19 +47,14 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     }
     
     func timerCallback(seconds: Double?, totalSeconds: Double?) {
-        print("\(String(describing: seconds)):\(String(describing: totalSeconds))")
-        // let secondsString = String(format: "%02d", Int(seconds) % 60)
-        // let minutesString = String(format: "%02d", Int(seconds) / 60)
-
+        //  print("\(String(describing: seconds)):\(String(describing: totalSeconds))")
+        let secondsString = String(format: "%02d", Int(seconds ?? 0) % 60)
+        let minutesString = String(format: "%02d", Int(seconds ?? 0) / 60)
+        self.currentTimeLabel.text = ("\(minutesString):\(secondsString)")
         
-        //self.currentTimeLabel.text = ("\(minutesString):\(secondsString)")
-        
-        //self.timeSlider.value = Float(seconds/totalSeconds)
-        //self.totalTimeLabel.text = "\(minutesText):\(secondsText)"
-
-       // print(seconds as Any)
-       // print(minutes as Any)
-       // print(total as Any)
+        let totalSecondsString = String(format: "%02d", Int(totalSeconds ?? 0) % 60)
+        let totalMinutesString = String(format: "%02d", Int(totalSeconds ?? 0) / 60)
+        self.totalTimeLabel.text = ("\(totalSecondsString):\(totalMinutesString)")
     }
     
     func playPauseButtonImageSetup() {

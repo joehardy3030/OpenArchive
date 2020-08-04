@@ -12,6 +12,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
 
     @IBOutlet weak var playButton: UIButton!
     @IBOutlet weak var modalPlayerTableView: UITableView!
+    var timer: ArchiveTimer?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,7 +23,11 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     
     override func viewWillAppear(_ animated: Bool) {
         setupPlayer()
-        print(player)
+        timer?.setupTimer()  { (seconds: String?, minutes: String?, total: Double?) -> Void in
+            self.timerCallback(seconds: seconds, minutes: minutes, total: total)
+        }
+                   
+       // print(player)
     }
 
     @IBAction func forwardButton(_ sender: Any) {
@@ -37,6 +42,12 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         
     func setupPlayer() {
         playPauseButtonImageSetup()
+    }
+    
+    func timerCallback(seconds: String?, minutes: String?, total: Double?) {
+       // print(seconds as Any)
+       // print(minutes as Any)
+       // print(total as Any)
     }
     
     func playPauseButtonImageSetup() {

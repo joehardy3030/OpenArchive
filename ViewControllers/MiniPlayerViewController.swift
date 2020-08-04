@@ -20,6 +20,7 @@ class MiniPlayerViewController: UIViewController {
     @IBOutlet weak var songLabel: UILabel!
     var nowPlayingInfo = [String : Any]()
     var player: AudioPlayerArchive?
+    var timer: ArchiveTimer?
     var currentTrackIndex = 0
     
     override func viewDidLoad() {
@@ -74,7 +75,9 @@ class MiniPlayerViewController: UIViewController {
     
     func prepareModalPlayer(viewController: ModalPlayerViewController) {
         viewController.player = player
-        print(player)
+        viewController.timer = timer
+        print(timer)
+        //print(player)
     }
     
     func currentItemTotalTime() {

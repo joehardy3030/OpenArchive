@@ -23,8 +23,8 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     
     override func viewWillAppear(_ animated: Bool) {
         setupPlayer()
-        timer?.setupTimer()  { (seconds: String?, minutes: String?, total: Double?) -> Void in
-            self.timerCallback(seconds: seconds, minutes: minutes, total: total)
+        timer?.setupTimer()  { (seconds: Double?, totalSeconds: Double?) -> Void in
+            self.timerCallback(seconds: seconds, totalSeconds: totalSeconds)
         }
                    
        // print(player)
@@ -44,7 +44,17 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         playPauseButtonImageSetup()
     }
     
-    func timerCallback(seconds: String?, minutes: String?, total: Double?) {
+    func timerCallback(seconds: Double?, totalSeconds: Double?) {
+        print("\(String(describing: seconds)):\(String(describing: totalSeconds))")
+        // let secondsString = String(format: "%02d", Int(seconds) % 60)
+        // let minutesString = String(format: "%02d", Int(seconds) / 60)
+
+        
+        //self.currentTimeLabel.text = ("\(minutesString):\(secondsString)")
+        
+        //self.timeSlider.value = Float(seconds/totalSeconds)
+        //self.totalTimeLabel.text = "\(minutesText):\(secondsText)"
+
        // print(seconds as Any)
        // print(minutes as Any)
        // print(total as Any)

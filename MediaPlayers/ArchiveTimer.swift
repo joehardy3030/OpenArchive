@@ -16,21 +16,21 @@ class ArchiveTimer: NSObject {
         self.player = player
     }
     
-    func setupTimer(completion: @escaping (_ seconds: String?, _ minutes: String?, _ duration: Double?) -> Void) {
+    func setupTimer(completion: @escaping (_ seconds: Double?, _ totalSeconds: Double?) -> Void) {
 
         let interval = CMTime(value: 1, timescale: 2)
         
         player?.playerQueue?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { (progressTime) in
             let seconds = CMTimeGetSeconds(progressTime)
-            let secondsString = String(format: "%02d", Int(seconds) % 60)
-            let minutesString = String(format: "%02d", Int(seconds) / 60)
+            //let secondsString = String(format: "%02d", Int(seconds) % 60)
+           // let minutesString = String(format: "%02d", Int(seconds) / 60)
           //  print("\(minutesString):\(secondsString)")
            // self.currentItemTotalTime()
             
             if let duration = self.player?.playerQueue?.currentItem?.duration {
                 let totalSeconds = CMTimeGetSeconds(duration)
              //   self.timeSlider.value = Float(seconds/totalSeconds)
-                completion(secondsString, minutesString, totalSeconds)
+                completion(seconds, totalSeconds)
             }
         }
         

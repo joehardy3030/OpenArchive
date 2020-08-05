@@ -172,6 +172,29 @@ class Utils {
         return "" as String?
     }
     
+    func getTimerStringSeconds(seconds: Double?) -> String {
+        var secondsString: String
+        if let s = seconds {
+            secondsString = String(format: "%02d", Int(s) % 60)
+        }
+        else {
+            secondsString = "00"
+        }
+        return secondsString
+    }
+
+    func getTimerStringMinutes(seconds: Double?) -> String {
+        var minutesString: String
+        if let s = seconds {
+            minutesString = String(format: "%02d", Int(s) / 60)
+        }
+        //let minutesString = String(format: "%02d", Int(seconds ?? 0) / 60)
+        else {
+            minutesString = "00"
+        }
+        return minutesString
+    }
+    
     func getDocumentsDirectory() -> URL? {
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         let documentsDirectory = paths[0]

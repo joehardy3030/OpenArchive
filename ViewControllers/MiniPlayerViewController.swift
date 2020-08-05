@@ -76,7 +76,7 @@ class MiniPlayerViewController: UIViewController {
     func prepareModalPlayer(viewController: ModalPlayerViewController) {
         viewController.player = player
         viewController.timer = timer
-        print(timer)
+        //print(timer)
         //print(player)
     }
     
@@ -99,13 +99,6 @@ class MiniPlayerViewController: UIViewController {
         setupSlider()
         setupSong()
         playPause()
-        /*
-        if #available(iOS 13.0, *) {
-            if let pb = playButton {
-                pb.setImage(UIImage(systemName: "pause"), for: .normal)
-            }
-        }
-        */
     }
     
     func setupSong() {

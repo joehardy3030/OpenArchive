@@ -16,7 +16,7 @@ class ArchiveTimer: NSObject {
         self.player = player
     }
     
-    func setupTimer(completion: @escaping (_ seconds: Double?, _ totalSeconds: Double?) -> Void) {
+    func setupTimer(completion: @escaping (_ seconds: Double?) -> Void) {
 
         let interval = CMTime(value: 1, timescale: 2)
         
@@ -27,13 +27,25 @@ class ArchiveTimer: NSObject {
           //  print("\(minutesString):\(secondsString)")
            // self.currentItemTotalTime()
             
-            if let duration = self.player?.playerQueue?.currentItem?.duration {
-                let totalSeconds = CMTimeGetSeconds(duration)
              //   self.timeSlider.value = Float(seconds/totalSeconds)
-                completion(seconds, totalSeconds)
-            }
+                completion(seconds)
+            
         }
         
+    }
+    
+    func currentItemTotalTime() -> String? {
+        if let ci = self.player?.playerQueue?.currentItem {
+            let duration = ci.duration
+            let seconds = CMTimeGetSeconds(duration)
+            if seconds > 0 && seconds < 100000000.0 {
+                let secondsText =  String(format: "%02d", Int(seconds) % 60)
+                let minutesText = String(format: "%02d", Int(seconds) / 60)
+                let totalTimeText = "\(minutesText):\(secondsText)"
+                return totalTimeText
+            }
+        }
+        return "00:00"
     }
 
 }

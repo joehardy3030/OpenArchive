@@ -7,9 +7,14 @@
 //
 
 import UIKit
+import MediaPlayer
 
 class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
 
+    @IBOutlet weak var songLabel: UILabel!
+    @IBOutlet weak var venueLabel: UILabel!
+    @IBOutlet weak var dateLabel: UILabel!
+    @IBOutlet weak var timerSlider: UISlider!
     @IBOutlet weak var currentTimeLabel: UILabel!
     @IBOutlet weak var totalTimeLabel: UILabel!
     @IBOutlet weak var playButton: UIButton!
@@ -20,41 +25,141 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         super.viewDidLoad()
         self.modalPlayerTableView.delegate = self
         self.modalPlayerTableView.dataSource = self
+        initialDefaults()
+        setupShow()
         // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        setupPlayer()
-        timer?.setupTimer()  { (seconds: Double?, totalSeconds: Double?) -> Void in
-            self.timerCallback(seconds: seconds, totalSeconds: totalSeconds)
-        }
+        //setupShow()
                    
        // print(player)
     }
 
+    
     @IBAction func forwardButton(_ sender: Any) {
         if let q = player?.playerQueue {
             q.advanceToNextItem()
         }
     }
     
+    @objc func handleSliderChange() {
+        if let duration = self.player?.playerQueue?.currentItem?.duration {
+            let totalSeconds = CMTimeGetSeconds(duration)
+            let value = Float64(timerSlider.value) * totalSeconds
+            let seekTime = CMTime(value: Int64(value), timescale: 1)
+            self.player?.playerQueue?.seek(to: seekTime, completionHandler: { (completedSeek) in
+            })
+        }
+    }
+    
     @IBAction func playButton(_ sender: Any) {
         playPause()
     }
+    
+    @IBAction func timerSlider(_ sender: Any) {
         
-    func setupPlayer() {
-        playPauseButtonImageSetup()
     }
     
-    func timerCallback(seconds: Double?, totalSeconds: Double?) {
-        //  print("\(String(describing: seconds)):\(String(describing: totalSeconds))")
+    func setupShow() {
+        setupPlayer()
+         timer?.setupTimer()  { (seconds: Double?) -> Void in
+             self.timerCallback(seconds: seconds)
+         }
+         setupSlider()
+        setupSong()
+    }
+    
+    func initialDefaults() {
+        dateLabel.text = ""
+        songLabel.text = ""
+        venueLabel.text = ""
+      }
+    
+    func setupSong() {
+        setupSongDetails()
+        selectCurrentTrack()
+    }
+    
+    func setupSongDetails() {
+        let row = getCurrentTrackIndex()
+        if let c = player?.showModel?.mp3Array?.count {
+            if c > 0 {
+                let songName = player?.showModel?.mp3Array?[row].title
+                songLabel.text = songName
+                dateLabel.text = player?.showModel?.metadata?.date
+                venueLabel.text = player?.showModel?.metadata?.venue
+            }
+        }
+    }
+    
+    func setupSlider() {
+        if let ts = timerSlider {
+            ts.value = 0.0
+            ts.addTarget(self, action: #selector(handleSliderChange), for: .valueChanged)
+        }
+    }
+    
+    func setupPlayer() {
+        playPauseButtonImageSetup()
+        player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
+    }
+    
+   
+    func selectCurrentTrack() {
+        let index = getCurrentTrackIndex()
+        let indexPath = IndexPath(item: index, section: 0)
+        self.modalPlayerTableView.selectRow(at: indexPath, animated: true, scrollPosition: UITableView.ScrollPosition.middle)
+
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == "currentItem.loadedTimeRanges" {
+//            let index = getCurrentTrackIndex()
+  //          let indexPath = IndexPath(item: index, section: 0)
+    //        self.modalPlayerTableView.selectRow(at: indexPath, animated: true, scrollPosition: UITableView.ScrollPosition.middle)
+            //isPlaying = true
+            setupSong()
+        }
+    }
+    
+    func getCurrentTrackIndex() -> Int {
+        guard let ci = self.player?.playerQueue?.currentItem else { return 0 }
+        let destinationURL = ci.asset.value(forKey: "URL") as? URL
+        let name = player?.trackNameFromURL(url: destinationURL)
+        if let mp3s = player?.showModel?.mp3Array {
+            if mp3s.count > 0 {
+                for i in 0...(mp3s.count - 1) {
+                    if mp3s[i].name == name {
+                        return i
+                        }
+                }
+            }
+        }
+        return 0
+    }
+    
+    func currentItemTotalTime() {
+        if let ci = self.player?.playerQueue?.currentItem {
+            let duration = ci.duration
+            let seconds = CMTimeGetSeconds(duration)
+            if seconds > 0 && seconds < 100000000.0 {
+                let secondsText =  String(format: "%02d", Int(seconds) % 60)
+                let minutesText = String(format: "%02d", Int(seconds) / 60)
+                totalTimeLabel.text = "\(minutesText):\(secondsText)"
+            }
+        }
+    }
+    
+    func timerCallback(seconds: Double?) {
         let secondsString = String(format: "%02d", Int(seconds ?? 0) % 60)
         let minutesString = String(format: "%02d", Int(seconds ?? 0) / 60)
         self.currentTimeLabel.text = ("\(minutesString):\(secondsString)")
-        
-        let totalSecondsString = String(format: "%02d", Int(totalSeconds ?? 0) % 60)
-        let totalMinutesString = String(format: "%02d", Int(totalSeconds ?? 0) / 60)
-        self.totalTimeLabel.text = ("\(totalSecondsString):\(totalMinutesString)")
+        self.currentItemTotalTime()
+        if let duration = self.player?.playerQueue?.currentItem?.duration {
+            let totalSeconds = CMTimeGetSeconds(duration)
+            self.timerSlider.value = Float((seconds ?? 0.0)/(totalSeconds ))
+        }
     }
     
     func playPauseButtonImageSetup() {
@@ -65,7 +170,6 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
                     playButton.setBackgroundImage(UIImage(systemName: "pause.circle.fill"), for: .normal)
                 }
             }
-        //    isPlaying = false
         }
         else {
             if let _ = playButton {
@@ -73,7 +177,6 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
                     playButton.setBackgroundImage(UIImage(systemName: "play.circle.fill"), for: .normal)
                 }
             }
-         //   isPlaying = true
         }
     }
     
@@ -86,7 +189,6 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
                     playButton.setBackgroundImage(UIImage(systemName: "play.circle.fill"), for: .normal)
                 }
             }
-        //    isPlaying = false
         }
         else {
             q.play()
@@ -95,17 +197,14 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
                     playButton.setBackgroundImage(UIImage(systemName: "pause.circle.fill"), for: .normal)
                 }
             }
-         //   isPlaying = true
         }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let c = player?.showModel?.mp3Array?.count {
-            print(c)
             return c
         }
         else {
-            print(player?.showModel?.mp3Array?[0])
             return 0
         }
     }

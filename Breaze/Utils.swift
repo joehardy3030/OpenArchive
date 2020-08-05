@@ -171,6 +171,21 @@ class Utils {
         
         return "" as String?
     }
+
+    func getDateFromDateString(datetime: String?) -> Date? {
+         let dateFormatter = DateFormatter()
+        var date: Date?
+        //dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        dateFormatter.locale = Locale.init(identifier: "en_US")
+        
+        if let d = datetime {
+            date = dateFormatter.date(from: d)
+        }
+        
+        return date
+    }
+
     
     func getTimerStringSeconds(seconds: Double?) -> String {
         var secondsString: String

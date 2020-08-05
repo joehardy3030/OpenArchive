@@ -33,9 +33,9 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
             DispatchQueue.main.async{
                 if let r = response {
                     self.shows = r
-                    //if let s = self.shows {
-                        //self.shows = s.sorted(by: { $0.metadata?.date! < $1.metadata?.date! })
-                   // }
+                    if let s = self.shows {
+                        self.shows = s.sorted(by: { self.utils.getDateFromDateString(datetime: $0.metadata?.date!)! < self.utils.getDateFromDateString(datetime: $1.metadata?.date!)! })
+                    }
                     self.showListTableView.reloadData()
                 }
             }

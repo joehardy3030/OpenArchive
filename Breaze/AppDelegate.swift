@@ -67,7 +67,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate {
         // You need to adopt a FUIAuthDelegate protocol to receive callback
         authUI.delegate = self
         let providers: [FUIAuthProvider] = [
-            FUIPhoneAuth(authUI:authUI),
+            //FUIPhoneAuth(authUI:authUI),
             FUIEmailAuth()
         ]
         authUI.providers = providers

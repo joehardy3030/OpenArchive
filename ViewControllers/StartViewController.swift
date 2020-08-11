@@ -7,9 +7,11 @@
 //
 
 import UIKit
+import Firebase
+import FirebaseUI
 
 class StartViewController: ArchiveSuperViewController {
-
+        
     override func viewDidLoad() {
         super.viewDidLoad()
         for childViewController in self.children {
@@ -17,6 +19,7 @@ class StartViewController: ArchiveSuperViewController {
                 playerHolder.player = self.player
             }
         }
+        
         // Do any additional setup after loading the view.
     
     }

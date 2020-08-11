@@ -8,8 +8,9 @@
 
 import UIKit
 import Firebase
+import FirebaseUI
 
-class ArchiveSuperViewController: UIViewController {
+class ArchiveSuperViewController: UIViewController, FUIAuthDelegate {
     let network = NetworkUtility()
     let utils = Utils()
     let archiveAPI = ArchiveAPI()
@@ -17,12 +18,14 @@ class ArchiveSuperViewController: UIViewController {
     var miniPlayer: MiniPlayerViewController?
     var player: AudioPlayerArchive?
     var isPlaying = false
-    fileprivate(set) var auth: Auth?
+    var auth: Auth?
+    var authUI: FUIAuth?
     fileprivate(set) var authStateListenerHandle: AuthStateDidChangeListenerHandle?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.auth = Auth.auth()
+      //  self.auth = Auth.auth()
+        authUI?.delegate = self
         navigationController?.delegate = self
     }
     
@@ -32,7 +35,14 @@ class ArchiveSuperViewController: UIViewController {
                   guard user != nil else {
                       //FirebaseUI
                     //self.navigationManager.navigateToLoginVC()
+                    if let authVC = self.authUI?.authViewController() {
+                        self.show(authVC, sender: self)
+                    }
 
+//                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+//                     let secondVC = storyboard.instantiateViewController(identifier: "SecondViewController")
+
+                    //authVC?.show(self, sender: Any?.self)
                       return
                   }
                   if let user = user {
@@ -41,6 +51,22 @@ class ArchiveSuperViewController: UIViewController {
               }
           }
     }
+    func authUI(_ authUI: FUIAuth, didSignInWith user: User?, error: Error?) {
+     // handle user and error as necessary
+   }
+
+    /*
+    func setupFirebaseAuth() {
+        //FirebaseApp.configure()
+        guard let authUI = FUIAuth.defaultAuthUI() else { return }
+        // You need to adopt a FUIAuthDelegate protocol to receive callback
+        authUI.delegate = self
+        let providers: [FUIAuthProvider] = [
+          FUIPhoneAuth(authUI:authUI)
+        ]
+        authUI.providers = providers
+    }
+    */
     /*
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
             if let mp = segue.destination as? MiniPlayerViewController {

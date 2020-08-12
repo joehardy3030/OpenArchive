@@ -41,6 +41,11 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         availableLabel.text = "Downloading"
     }
     
+    @IBAction func shareShow(_ sender: Any) {
+        shareShow()
+        availableLabel.text = "Sharing"
+    }
+    
     func getDownloadedShow() {
         if let mp3s = self.showMetadata.mp3Array {
             self.mp3Array = mp3s
@@ -69,6 +74,11 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             }
             
         }
+    }
+    
+    func shareShow() {
+        downloadShow()
+        saveShareData()
     }
     
     func downloadShow() {
@@ -101,7 +111,16 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             }
         }
     }
-    
+
+     private func saveShareData() {
+        let isPlaying = false
+        var shareMetadataModel = ShareMetadataModel()
+        shareMetadataModel.isPlaying = isPlaying
+        shareMetadataModel.showMetadataModel = showMetadata
+        let _ = network.addShareDataDoc(shareMetadataModel: shareMetadataModel)
+        availableLabel.text = "Shared"
+    }
+
      private func saveDownloadData() {
         let _ = network.addDownloadDataDoc(showMetadataModel: showMetadata)
         availableLabel.text = "Downloaded"

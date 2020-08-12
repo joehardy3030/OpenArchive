@@ -8,6 +8,11 @@
 
 import UIKit
 
+struct ShareMetadataModel: Codable {
+    var showMetadataModel: ShowMetadataModel?
+    var isPlaying: Bool?
+}
+
 struct ShowMetadataModel: Codable {
     var metadata: ShowMetadata?
     var files: [ShowFile]?

@@ -52,6 +52,7 @@ class ArchiveSuperViewController: UIViewController, FUIAuthDelegate {
           }
     }
     func authUI(_ authUI: FUIAuth, didSignInWith user: User?, error: Error?) {
+        print(user as Any)
      // handle user and error as necessary
    }
 

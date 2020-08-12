@@ -21,6 +21,7 @@
 		D8449A6824AEF3C200F113F4 /* MonthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8449A6724AEF3C200F113F4 /* MonthViewController.swift */; };
 		D8449A6A24AEF57600F113F4 /* MonthTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8449A6924AEF57600F113F4 /* MonthTableViewCell.swift */; };
 		D845E03924D7642A003381B6 /* ModalPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D845E03824D7642A003381B6 /* ModalPlayerViewController.swift */; };
+		D84A3AAB24E3B02C00A468E0 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84A3AAA24E3B02C00A468E0 /* ShareViewController.swift */; };
 		D84C3D8224CD164C007AF4EE /* ShowDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84C3D8124CD164C007AF4EE /* ShowDetailTableViewCell.swift */; };
 		D84D2B8E24C2925A006C8175 /* DownloadsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84D2B8D24C2925A006C8175 /* DownloadsViewController.swift */; };
 		D84D6E2824BEB5140022A058 /* NetworkUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84D6E2724BEB5140022A058 /* NetworkUtility.swift */; };
@@ -86,6 +87,7 @@
 		D8449A6724AEF3C200F113F4 /* MonthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthViewController.swift; sourceTree = "<group>"; };
 		D8449A6924AEF57600F113F4 /* MonthTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthTableViewCell.swift; sourceTree = "<group>"; };
 		D845E03824D7642A003381B6 /* ModalPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalPlayerViewController.swift; sourceTree = "<group>"; };
+		D84A3AAA24E3B02C00A468E0 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		D84C3D8124CD164C007AF4EE /* ShowDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowDetailTableViewCell.swift; sourceTree = "<group>"; };
 		D84D2B8D24C2925A006C8175 /* DownloadsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadsViewController.swift; sourceTree = "<group>"; };
 		D84D6E2724BEB5140022A058 /* NetworkUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkUtility.swift; sourceTree = "<group>"; };
@@ -238,6 +240,7 @@
 				D8449A6724AEF3C200F113F4 /* MonthViewController.swift */,
 				D852C3C624B1219400029EB9 /* ShowsListViewController.swift */,
 				D852C3CA24B1AA1C00029EB9 /* ShowViewController.swift */,
+				D84A3AAA24E3B02C00A468E0 /* ShareViewController.swift */,
 				D84D2B8D24C2925A006C8175 /* DownloadsViewController.swift */,
 				D8B65EFF24C54A5500F57355 /* DownloadPlayerViewController.swift */,
 				D845E03824D7642A003381B6 /* ModalPlayerViewController.swift */,
@@ -621,6 +624,7 @@
 				D852C3CD24B1AA5100029EB9 /* ShowTableViewCell.swift in Sources */,
 				D850B8FD24B26EAC00E3DC6B /* ShowMetadataModel.swift in Sources */,
 				D8A5324C24A9AFF2002379CF /* ArchiveCell.swift in Sources */,
+				D84A3AAB24E3B02C00A468E0 /* ShareViewController.swift in Sources */,
 				D84C3D8224CD164C007AF4EE /* ShowDetailTableViewCell.swift in Sources */,
 				D83EB53E24CE33C60016726C /* ArchiveNavigationController.swift in Sources */,
 			);

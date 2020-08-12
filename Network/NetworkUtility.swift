@@ -36,15 +36,12 @@ class NetworkUtility: NSObject {
 
     func addDownloadDataDoc(showMetadataModel: ShowMetadataModel?) -> String? {
         let db = Firestore.firestore()
-        //var ref: DocumentReference? = nil
         guard let s = showMetadataModel else { return "no data" }
         guard let docID = showMetadataModel?.metadata?.identifier else { return "no id" }
         
         let uuid = getUUID()
-        //let doc = ["uuid" : uuid]
         
         let docData = try! FirestoreEncoder().encode(s)
-        //db.collection("downloads").document(uuid).setData(docData) { error in
         db.collection(uuid).document("downloads").collection("shows").document(docID).setData(docData) { error in
             if let error = error {
                 print("Error writing document: \(error)")
@@ -52,7 +49,24 @@ class NetworkUtility: NSObject {
                 print("Document successfully written!")
             }
         }
+        return docID
+    }
+
+    func addShareDataDoc(shareMetadataModel: ShareMetadataModel?) -> String? {
+        let db = Firestore.firestore()
+        guard let s = shareMetadataModel else { return "no data" }
+        guard let docID = shareMetadataModel?.showMetadataModel?.metadata?.identifier else { return "no id" }
         
+        //let uuid = getUUID()
+        
+        let docData = try! FirestoreEncoder().encode(s)
+        db.collection("share").document(docID).setData(docData) { error in
+            if let error = error {
+                print("Error writing document: \(error)")
+            } else {
+                print("Document successfully written!")
+            }
+        }
         return docID
     }
     

@@ -32,7 +32,7 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
             (response: [ShareMetadataModel]?) -> Void in
             if let r = response {
                 self.shareMetadataModels = r
-                self.lastShareMetadataModel = r.last
+                self.lastShareMetadataModel = r.first
                 if let files = self.lastShareMetadataModel?.showMetadataModel?.files,
                     let id = self.lastShareMetadataModel?.showMetadataModel?.metadata?.identifier {
                     
@@ -42,7 +42,7 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
                             self.mp3Array.append(showMP3)
                             if let url = self.player?.trackURLfromName(name: f.name) {
                                 let fileManager = FileManager.default
-                                if fileManager.fileExists(atPath: url.absoluteString) {
+                                if fileManager.fileExists(atPath: url.path) {
                                       print("FILE AVAILABLE")
                                   } else {
                                       print("FILE NOT AVAILABLE")

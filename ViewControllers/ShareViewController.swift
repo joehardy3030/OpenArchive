@@ -40,20 +40,33 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
                         if (f.format?.contains("MP3"))! {
                             let showMP3 = ShowMP3(identifier: id, name: f.name, title: f.title, track: f.track)
                             self.mp3Array.append(showMP3)
-                            if let url = self.player?.trackURLfromName(name: f.name) {
+                            if let localURL = self.player?.trackURLfromName(name: f.name) {
                                 let fileManager = FileManager.default
-                                if fileManager.fileExists(atPath: url.path) {
-                                      print("FILE AVAILABLE")
-                                  } else {
-                                      print("FILE NOT AVAILABLE")
-                                  }
+                                if fileManager.fileExists(atPath: localURL.path) {
+                                    DispatchQueue.main.async{
+                                        self.setDownloadComplete(destination: localURL, name: f.name)
+                                        self.sharedShowTableView.reloadData()
+                                    }
+                                    print("FILE AVAILABLE")
+                                } else {
+                                    let archiveURL = self.archiveAPI.downloadURL(identifier: id, filename: f.name)
+                                    self.archiveAPI.getIADownload(url: archiveURL) {
+                                           (response: URL?) -> Void in
+                                           DispatchQueue.main.async{
+                                               self.setDownloadComplete(destination: response, name: f.name)
+                                               self.sharedShowTableView.reloadData()
+                                           }
+                                       }
+                                    print("FILE NOT AVAILABLE")
+                                }
                             }
                         }
                     }
                 }
-                self.lastShareMetadataModel?.showMetadataModel?.mp3Array = self.mp3Array
+                //self.lastShareMetadataModel?.showMetadataModel?.mp3Array = self.mp3Array
             }
             DispatchQueue.main.async{
+                print("download complete")
                 self.sharedShowTableView.reloadData()
             }
         }

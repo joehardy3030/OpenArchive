@@ -11,6 +11,7 @@ import AVKit
 
 class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
 
+    @IBOutlet weak var playButton: UIButton!
     @IBOutlet weak var sharedShowTableView: UITableView!
     var shareMetadataModels: [ShareMetadataModel]?
     var lastShareMetadataModel: ShareMetadataModel?
@@ -25,6 +26,13 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
     
     override func viewWillAppear(_ animated: Bool) {
         getSharedShow()
+    }
+    
+    @IBAction func playButtonPress(_ sender: Any) {
+        guard let showModel = lastShareMetadataModel?.showMetadataModel else { return }
+        player?.showModel = showModel
+        loadDownloadedShow()  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
+        player?.play()
     }
     
     func getSharedShow() {
@@ -66,6 +74,7 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
                 //self.lastShareMetadataModel?.showMetadataModel?.mp3Array = self.mp3Array
             }
             DispatchQueue.main.async{
+                self.playButton.setTitle("Play", for: .normal)
                 print("download complete")
                 self.sharedShowTableView.reloadData()
             }
@@ -112,11 +121,17 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
             }
             if self.mp3Array.count == counter {
                 self.lastShareMetadataModel?.showMetadataModel?.mp3Array = self.mp3Array
-                //saveDownloadData()
+                saveDownloadData()
             }
         }
     }
 
+    private func saveDownloadData() {
+        let _ = network.addDownloadDataDoc(showMetadataModel: lastShareMetadataModel?.showMetadataModel)
+    //    availableLabel.text = "Downloaded"
+    }
+
+    
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let count = lastShareMetadataModel?.showMetadataModel?.mp3Array?.count {

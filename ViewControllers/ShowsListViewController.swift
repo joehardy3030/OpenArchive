@@ -34,7 +34,7 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
         archiveAPI.getIARequestItems(url: url) {
             (response: [ShowMetadata]?) -> Void in
             
-            DispatchQueue.main.async{
+             DispatchQueue.main.async{
                 if let r = response {
                     self.showMetadatas = r
                     if let s = self.showMetadatas {

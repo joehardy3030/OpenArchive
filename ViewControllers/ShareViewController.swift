@@ -21,11 +21,14 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
         super.viewDidLoad()
         sharedShowTableView.delegate = self
         sharedShowTableView.dataSource = self
+        getSharedShow()
+        //self.sharedShowTableView.reloadData()
         // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(_ animated: Bool) {
         getSharedShow()
+        self.sharedShowTableView.reloadData()
     }
     
     @IBAction func playButtonPress(_ sender: Any) {
@@ -39,6 +42,7 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
         network.getSharedDoc() {
             (response: [ShareMetadataModel]?) -> Void in
             if let r = response {
+                self.mp3Array = [ShowMP3]()
                 self.shareMetadataModels = r
                 self.lastShareMetadataModel = r.first
                 if let files = self.lastShareMetadataModel?.showMetadataModel?.files,
@@ -52,7 +56,8 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
                                 let fileManager = FileManager.default
                                 if fileManager.fileExists(atPath: localURL.path) {
                                     DispatchQueue.main.async{
-                                        self.setDownloadComplete(destination: localURL, name: f.name)
+                                        self.setDownloadComplete(destination: localURL, name: f.name, available: true)
+                                        //self.playButton.setTitle("Play", for: .normal)
                                         self.sharedShowTableView.reloadData()
                                     }
                                     print("FILE AVAILABLE")
@@ -61,7 +66,8 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
                                     self.archiveAPI.getIADownload(url: archiveURL) {
                                            (response: URL?) -> Void in
                                            DispatchQueue.main.async{
-                                               self.setDownloadComplete(destination: response, name: f.name)
+                                               self.playButton.setTitle("Downloading", for: .normal)
+                                               self.setDownloadComplete(destination: response, name: f.name, available: false)
                                                self.sharedShowTableView.reloadData()
                                            }
                                        }
@@ -74,7 +80,6 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
                 //self.lastShareMetadataModel?.showMetadataModel?.mp3Array = self.mp3Array
             }
             DispatchQueue.main.async{
-                self.playButton.setTitle("Play", for: .normal)
                 print("download complete")
                 self.sharedShowTableView.reloadData()
             }
@@ -101,14 +106,14 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
             archiveAPI.getIADownload(url: url) {
                 (response: URL?) -> Void in
                 DispatchQueue.main.async{
-                    self.setDownloadComplete(destination: response, name: f.name)
+                    self.setDownloadComplete(destination: response, name: f.name, available: false)
                     self.sharedShowTableView.reloadData()
                 }
             }
         }
     }
 
-    private func setDownloadComplete(destination: URL?, name: String?) {
+    private func setDownloadComplete(destination: URL?, name: String?, available: Bool) {
         var counter = 0
         if let d = destination {
             for i in 0...(self.mp3Array.count - 1) {
@@ -121,7 +126,11 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
             }
             if self.mp3Array.count == counter {
                 self.lastShareMetadataModel?.showMetadataModel?.mp3Array = self.mp3Array
-                saveDownloadData()
+                //print(self.playButton.titleLabel?.text)
+                if !available {
+                    saveDownloadData()
+                }
+                self.playButton.setTitle("Play", for: .normal)
             }
         }
     }

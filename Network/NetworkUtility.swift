@@ -55,19 +55,16 @@ class NetworkUtility: NSObject {
     func addShareDataDoc(shareMetadataModel: ShareMetadataModel?) -> String? {
         let db = Firestore.firestore()
         guard let s = shareMetadataModel else { return "no data" }
-        guard let docID = shareMetadataModel?.showMetadataModel?.metadata?.identifier else { return "no id" }
-        
-        //let uuid = getUUID()
-        
+        //guard let docID = shareMetadataModel?.showMetadataModel?.metadata?.identifier else { return "no id" }
         let docData = try! FirestoreEncoder().encode(s)
-        db.collection("share").document(docID).setData(docData) { error in
+        db.collection("share").document("shareShow").setData(docData) { error in
             if let error = error {
                 print("Error writing document: \(error)")
             } else {
                 print("Document successfully written!")
             }
         }
-        return docID
+        return "shared"
     }
     
     func getDownloadDoc(identifier: String?) -> String? {
@@ -81,7 +78,7 @@ class NetworkUtility: NSObject {
         
         db.collection(uuid).document("downloads").collection("shows").document(docID).addSnapshotListener { document, error in
             if let document = document {
-                let model = try! FirestoreDecoder().decode(ShowMetadataModel.self, from: document.data()!)
+                let _ = try! FirestoreDecoder().decode(ShowMetadataModel.self, from: document.data()!)
                // print("Model: \(model)")
             } else {
                 print("Document does not exist")
@@ -118,12 +115,12 @@ class NetworkUtility: NSObject {
         var shows: [ShareMetadataModel] = []
         let docRef = db.collection("share")
         docRef.addSnapshotListener { (querySnapshot, error) in
+            print("snapshot")
             if let error = error {
                 print("Error getting documents: \(error)")
             } else {
                 for document in querySnapshot!.documents {
                     let show = try! FirestoreDecoder().decode(ShareMetadataModel.self, from: document.data())
-                    //print("\(document.documentID) => \(document.data())")
                     shows.append(show)
                 }
                 completion(shows)

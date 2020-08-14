@@ -59,6 +59,9 @@ class MiniPlayerViewController: UIViewController {
     }
     
     @IBAction func loadFullPlayer(_ sender: Any) {
+        if player?.playerQueue != nil {
+            
+        
         let sbd = UIStoryboard(name: "Main", bundle: nil)
         guard let vc = sbd.instantiateViewController(withIdentifier: "ModalPlayer") as? ModalPlayerViewController,
             let ad = UIApplication.shared.delegate as? AppDelegate
@@ -71,6 +74,7 @@ class MiniPlayerViewController: UIViewController {
         else {
             print("no root view")
         }
+            }
     }
     
     func prepareModalPlayer(viewController: ModalPlayerViewController) {

@@ -113,7 +113,21 @@ class NetworkUtility: NSObject {
         let db = Firestore.firestore()
         print("called shared doc")
         var shows: [ShareMetadataModel] = []
-        let docRef = db.collection("share")
+        let docRef = db.collection("share").document("shareShow")
+        docRef.addSnapshotListener { (document, error) in
+            print("snapshot")
+            if let error = error {
+                print("Error getting documents: \(error)")
+            } else {
+                guard let data = document?.data() else { return }
+                let show = try! FirestoreDecoder().decode(ShareMetadataModel.self, from: data)
+                    shows.append(show)
+                }
+                completion(shows)
+            }
+        }
+
+        /*
         docRef.addSnapshotListener { (querySnapshot, error) in
             print("snapshot")
             if let error = error {
@@ -126,8 +140,9 @@ class NetworkUtility: NSObject {
                 completion(shows)
             }
         }
+        
     }
-
+    */
 
     //let auth = Auth()
     // private let auth: Auth

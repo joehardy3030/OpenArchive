@@ -78,14 +78,14 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
                     }
                 }
                 //self.lastShareMetadataModel?.showMetadataModel?.mp3Array = self.mp3Array
-            }
-            DispatchQueue.main.async{
-                print("download complete")
-                self.sharedShowTableView.reloadData()
+                DispatchQueue.main.async{
+                    print("download complete")
+                    self.sharedShowTableView.reloadData()
+                }
             }
         }
     }
-
+    
     func loadDownloadedShow() {
         if let mp3s = self.player?.showModel?.mp3Array {
             if (player?.playerItems.count)! > 0 {

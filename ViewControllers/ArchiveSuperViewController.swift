@@ -11,7 +11,7 @@ import Firebase
 import FirebaseUI
 
 class ArchiveSuperViewController: UIViewController, FUIAuthDelegate {
-    let network = NetworkUtility()
+    var network: NetworkUtility!
     let utils = Utils()
     let archiveAPI = ArchiveAPI()
     var prevController: ArchiveSuperViewController?
@@ -24,6 +24,7 @@ class ArchiveSuperViewController: UIViewController, FUIAuthDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        network = NetworkUtility()
       //  self.auth = Auth.auth()
         authUI?.delegate = self
         navigationController?.delegate = self

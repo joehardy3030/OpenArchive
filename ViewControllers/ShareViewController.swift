@@ -8,6 +8,8 @@
 
 import UIKit
 import AVKit
+import FirebaseFirestore
+import CodableFirebase
 
 class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
 
@@ -16,18 +18,19 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
     var shareMetadataModels: [ShareMetadataModel]?
     var lastShareMetadataModel: ShareMetadataModel?
     var mp3Array = [ShowMP3]()
+    var db: Firestore!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         sharedShowTableView.delegate = self
         sharedShowTableView.dataSource = self
-        getSharedShow()
-        //self.sharedShowTableView.reloadData()
-        // Do any additional setup after loading the view.
+        db = Firestore.firestore()
+       //  getSharedShow()
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        getSharedShow()
+        //getSharedShow()
+        loadShareSnaptshot()
         self.sharedShowTableView.reloadData()
     }
     
@@ -36,8 +39,79 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
         player?.showModel = showModel
         loadDownloadedShow()  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
         player?.play()
+        
     }
     
+    func loadShareSnaptshot() {
+        getShareSnapshot() {
+            (response: ShareMetadataModel?) -> Void in
+            //print(response)
+                if let r = response {
+                    self.mp3Array = [ShowMP3]()
+                    self.lastShareMetadataModel = r
+                    //self.lastShareMetadataModel = r.first
+                    if let files = self.lastShareMetadataModel?.showMetadataModel?.files,
+                        let id = self.lastShareMetadataModel?.showMetadataModel?.metadata?.identifier {
+                        
+                        for f in files {
+                            if (f.format?.contains("MP3"))! {
+                                let showMP3 = ShowMP3(identifier: id, name: f.name, title: f.title, track: f.track)
+                                self.mp3Array.append(showMP3)
+                                if let localURL = self.player?.trackURLfromName(name: f.name) {
+                                    let fileManager = FileManager.default
+                                    if fileManager.fileExists(atPath: localURL.path) {
+                                        DispatchQueue.main.async{
+                                            self.setDownloadComplete(destination: localURL, name: f.name, available: true)
+                                            //self.playButton.setTitle("Play", for: .normal)
+                                            self.sharedShowTableView.reloadData()
+                                        }
+                                        print("FILE AVAILABLE")
+                                    } else {
+                                        let archiveURL = self.archiveAPI.downloadURL(identifier: id, filename: f.name)
+                                        self.archiveAPI.getIADownload(url: archiveURL) {
+                                               (response: URL?) -> Void in
+                                               DispatchQueue.main.async{
+                                                   self.playButton.setTitle("Downloading", for: .normal)
+                                                   self.setDownloadComplete(destination: response, name: f.name, available: false)
+                                                   self.sharedShowTableView.reloadData()
+                                               }
+                                           }
+                                        print("FILE NOT AVAILABLE")
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    //self.lastShareMetadataModel?.showMetadataModel?.mp3Array = self.mp3Array
+                    DispatchQueue.main.async{
+                        print("download complete")
+                        self.sharedShowTableView.reloadData()
+                    }
+                }
+            }
+    }
+    
+    func getShareSnapshot(completion: @escaping (ShareMetadataModel?) -> Void) {
+            print("called shared doc")
+            let docRef = db.collection("share").document("shareShow")
+            docRef.addSnapshotListener { (document, error) in
+                print("snapshot")
+                if let error = error {
+                    print("Error getting documents: \(error)")
+                } else {
+                    guard let data = document?.data() else { return }
+                    //DispatchQueue.main.async{
+
+                   // print("got data \(data)")
+                   // }
+                    let show = try! FirestoreDecoder().decode(ShareMetadataModel.self, from: data)
+                    completion(show)
+                    }
+                }
+        
+    }
+    
+    /*
     func getSharedShow() {
         network.getSharedDoc() {
             (response: [ShareMetadataModel]?) -> Void in
@@ -85,6 +159,7 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
             }
         }
     }
+    */
     
     func loadDownloadedShow() {
         if let mp3s = self.player?.showModel?.mp3Array {

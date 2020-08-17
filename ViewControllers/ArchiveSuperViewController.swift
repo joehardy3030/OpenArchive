@@ -20,6 +20,7 @@ class ArchiveSuperViewController: UIViewController, FUIAuthDelegate {
     var isPlaying = false
     var auth: Auth?
     var authUI: FUIAuth?
+    var db: Firestore!
     fileprivate(set) var authStateListenerHandle: AuthStateDidChangeListenerHandle?
 
     override func viewDidLoad() {

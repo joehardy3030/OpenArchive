@@ -21,6 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate {
     let center = UNUserNotificationCenter.current()
     fileprivate(set) var auth: Auth!
     fileprivate(set) var authUI: FUIAuth!
+    fileprivate(set) var db: Firestore!
 
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         print(url)
@@ -44,6 +45,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate {
         rvc.player = AudioPlayerArchive()
         rvc.auth = self.auth
         rvc.authUI = self.authUI
+        rvc.db = self.db
         
         //print(rvc.player)
         // Dependency injection is fun! Remind me again what's so bad about singeltons?
@@ -71,6 +73,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate {
             FUIEmailAuth()
         ]
         authUI.providers = providers
+        self.db = Firestore.firestore()
     }
 
     func applicationWillTerminate(_ application: UIApplication) {

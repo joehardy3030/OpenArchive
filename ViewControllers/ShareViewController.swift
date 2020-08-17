@@ -18,7 +18,7 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
     var shareMetadataModels: [ShareMetadataModel]?
     var lastShareMetadataModel: ShareMetadataModel?
     var mp3Array = [ShowMP3]()
-    var db: Firestore!
+   // var db: Firestore!
     
     override func viewDidLoad() {
         super.viewDidLoad()

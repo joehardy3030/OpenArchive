@@ -72,6 +72,17 @@ class ArchiveAPI: NSObject {
         }
         url += String(year) + "-" + monthString + "-01"
         url += toString
+        switch month {
+        case 1,3,5,7,8,10,12:
+            url += String(year) + "-" + monthString + "-31"
+        case 4,6,9,11:
+            url += String(year) + "-" + monthString + "-30"
+        case 2:
+            url += String(year) + "-" + monthString + "-28"
+        default:
+            url += String(year) + "-" + monthString + "-30"
+        }
+        
         url += String(year) + "-" + monthString + "-31"
         url += "%5D"
         

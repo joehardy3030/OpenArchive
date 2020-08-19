@@ -90,6 +90,7 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
             target.player = player
            // print("self player")
             target.prevController = self
+            target.db = db
         }
         else {
             print("Nope")

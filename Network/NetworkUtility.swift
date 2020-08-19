@@ -19,9 +19,10 @@ class NetworkUtility: NSObject {
     var db: Firestore!
 //    static let defaultDateEncodingStrategy: DateEncodingStrategy = .iso8601
     
-    override init() {
-        super.init()
-        db = Firestore.firestore()
+    init(db: Firestore) {
+        //super.init()
+        self.db = db
+        //db = Firestore.firestore()
     }
     
     enum NetworkError: Error {
@@ -31,7 +32,6 @@ class NetworkUtility: NSObject {
     
     func getUUID() -> String {
         if let uuid = UIDevice.current.identifierForVendor?.uuidString {
-            //self.present(vc, animated: true, completion: nil)print(uuid)
             return uuid
         }
         else {

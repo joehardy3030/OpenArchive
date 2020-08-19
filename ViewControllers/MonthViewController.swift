@@ -143,6 +143,7 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
             }
             target.resetMonth()
             target.player = player
+            target.db = db
         }
     }
 

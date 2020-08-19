@@ -29,6 +29,9 @@ class StartViewController: ArchiveSuperViewController {
             if let p = player {
                 vc.player = p // There needs to be a player already for this to work. Need to inject it.
             }
+            if let db = db {
+                vc.db = db
+            }
         }
         
         if let mp = segue.destination as? MiniPlayerViewController {

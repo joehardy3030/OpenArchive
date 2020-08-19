@@ -131,6 +131,26 @@ class NetworkUtility: NSObject {
                 completion(shows)
         }
     }
+    
+    func getShareSnapshot(completion: @escaping (ShareMetadataModel?) -> Void) {
+            print("called shared doc")
+            let docRef = db.collection("share").document("shareShow")
+            docRef.addSnapshotListener { (document, error) in
+                print("snapshot")
+                if let error = error {
+                    print("Error getting documents: \(error)")
+                } else {
+                    guard let data = document?.data() else { return }
+                    //DispatchQueue.main.async{
+
+                   // print("got data \(data)")
+                   // }
+                    let show = try! FirestoreDecoder().decode(ShareMetadataModel.self, from: data)
+                    completion(show)
+                    }
+                }
+        
+    }
         /*
         docRef.addSnapshotListener { (querySnapshot, error) in
             print("snapshot")

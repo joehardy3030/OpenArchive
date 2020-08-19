@@ -24,7 +24,7 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
         super.viewDidLoad()
         sharedShowTableView.delegate = self
         sharedShowTableView.dataSource = self
-        db = Firestore.firestore()
+      //  db = Firestore.firestore()
        //  getSharedShow()
     }
     
@@ -43,7 +43,7 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
     }
     
     func loadShareSnaptshot() {
-        getShareSnapshot() {
+        network.getShareSnapshot() {
             (response: ShareMetadataModel?) -> Void in
             //print(response)
                 if let r = response {
@@ -91,6 +91,7 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
             }
     }
     
+    /*
     func getShareSnapshot(completion: @escaping (ShareMetadataModel?) -> Void) {
             print("called shared doc")
             let docRef = db.collection("share").document("shareShow")
@@ -110,7 +111,7 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
                 }
         
     }
-    
+    */
     /*
     func getSharedShow() {
         network.getSharedDoc() {

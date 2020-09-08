@@ -16,7 +16,15 @@ enum iaQueryType {
 }
 
 class ArchiveAPI: NSObject {
-
+    var configuration: URLSessionConfiguration
+    var sessionManager: Alamofire.SessionManager
+    
+    override init() {
+        configuration = URLSessionConfiguration.default
+        configuration.timeoutIntervalForRequest = 10000
+        sessionManager = Alamofire.SessionManager(configuration: configuration)
+        super.init()
+    }
     
     let baseURLString = "https://archive.org/"
 
@@ -161,35 +169,10 @@ class ArchiveAPI: NSObject {
             if let json = response.result.value {
                 let j = JSON(json)
                 let items = j["items"]
-                //var itemArray = [String]()
                 var showMetadatas = [ShowMetadata]()
                 
                 for i in items {
-                   // print(i.1)
                     let showMD = self.deserializeMetadata(json: i.1)
-                   /*
-                    var showMD = ShowMetadata()
-                    if let id_string = i.1["identifier"].string {
-                        itemArray.append(id_string)
-                        showMD.identifier = id_string
-                    }
-                    if let venue_string = i.1["venue"].string {
-                        showMD.venue = venue_string
-                    }
-                    if let coverage_string = i.1["coverage"].string {
-                        showMD.coverage = coverage_string
-                        //print(coverage_string)
-                    }
-                    if let date_string = i.1["date"].string {
-                        showMD.date = date_string
-                    }
-                    if let transferer_string = i.1["transferer"].string {
-                        showMD.transferer = transferer_string
-                    }
-                    if let source_string = i.1["source"].string {
-                        showMD.source = source_string
-                    }
-                    */
                     showMetadatas.append(showMD)
                 }
                 completion(showMetadatas)
@@ -200,11 +183,13 @@ class ArchiveAPI: NSObject {
     func getIADownload(url: String, completion: @escaping (URL?) -> Void) {
         //https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#downloading-data-to-a-file
         let destination = DownloadRequest.suggestedDownloadDestination(for: .documentDirectory)
-        //debugPrint(destination)
-        Alamofire.download(url, to: destination)
-            // .downloadProgress { (progress) in
-               //         print((String)(progress.fractionCompleted*100)+"%")
-             //     }
+        
+        //Alamofire.download(url, to: destination)
+        
+        self.sessionManager.download(url, to: destination)
+             .downloadProgress { (progress) in
+                        print("Progress: \(progress.fractionCompleted)")
+                  }
                  .responseJSON { response in
                                  completion(response.destinationURL)
         }

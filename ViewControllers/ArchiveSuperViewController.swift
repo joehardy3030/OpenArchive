@@ -25,7 +25,9 @@ class ArchiveSuperViewController: UIViewController, FUIAuthDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        network = NetworkUtility(db: db)
+        if db != nil {
+            network = NetworkUtility(db: db)
+        }
         authUI?.delegate = self
         navigationController?.delegate = self
     }

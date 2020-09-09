@@ -80,6 +80,7 @@ class MiniPlayerViewController: UIViewController {
     func prepareModalPlayer(viewController: ModalPlayerViewController) {
         viewController.player = player
         viewController.timer = timer
+       // viewController.db = db
         //print(timer)
         //print(player)
     }

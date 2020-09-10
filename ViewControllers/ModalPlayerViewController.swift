@@ -32,11 +32,14 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     
     override func viewWillAppear(_ animated: Bool) {
         //setupShow()
-                   
+        
        // print(player)
     }
 
-    
+    override func viewWillDisappear(_ animated: Bool) {
+        // give it a reference to mp and then give the timer back to the mp
+    }
+
     @IBAction func forwardButton(_ sender: Any) {
         if let q = player?.playerQueue {
             q.advanceToNextItem()
@@ -63,10 +66,10 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     
     func setupShow() {
         setupPlayer()
-         timer?.setupTimer()  { (seconds: Double?) -> Void in
+        timer?.setupTimer()  { (seconds: Double?) -> Void in
              self.timerCallback(seconds: seconds)
-         }
-         setupSlider()
+        }
+        setupSlider()
         setupSong()
     }
     
@@ -85,8 +88,9 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         let row = getCurrentTrackIndex()
         if let c = player?.showModel?.mp3Array?.count {
             if c > 0 {
-                let songName = player?.showModel?.mp3Array?[row].title
-                songLabel.text = songName
+                if let songName = player?.showModel?.mp3Array?[row].title {
+                    songLabel.text = songName
+                }
                 dateLabel.text = player?.showModel?.metadata?.date
                 venueLabel.text = player?.showModel?.metadata?.venue
             }

@@ -150,6 +150,12 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         return cell
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+     //   guard let indexPath = showTableView.indexPathForSelectedRow else { return }
+
+    }
+
+    
     
     /*
        func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -198,8 +204,5 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     */
     
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-
-    }
 
 }

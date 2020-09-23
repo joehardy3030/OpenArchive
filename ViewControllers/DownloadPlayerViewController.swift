@@ -92,4 +92,68 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
         return cell
     }
         
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let indexPath = showDetailTableView.indexPathForSelectedRow else { return }
+        let songIndex = indexPath.row - 6
+        player?.showModel = showModel
+        
+        
+        if let mp3s = player?.showModel?.mp3Array {
+            if let trackURL = player?.trackURLfromName(name: mp3s[songIndex].name) {
+                do {
+                    let available = try trackURL.checkResourceIsReachable()
+                    print(available)
+                }
+                catch {
+                    print(error)
+                }
+                
+                
+            }
+            
+            //for mp3 in mp3s {
+             //   print(mp3.name)
+           // }
+            /*
+            if (player?.playerItems.count)! > 0 {
+                player?.playerItems = [AVPlayerItem]()
+            }
+            player?.loadQueuePlayer(tracks: mp3s)
+            */
+            
+         }
+        
+        // if let mp = utils.getMiniPlayerController() {
+        //    mp.setupShow()
+      //  }
+        
+        
+        /*
+         func getIAGetShow() {
+             
+             guard let id = self.identifier else { return }
+             let url = archiveAPI.metadataURL(identifier: id)
+         
+             archiveAPI.getIARequestMetadata(url: url) {
+                 (response: ShowMetadataModel) -> Void in
+                 
+                 self.showMetadata = response
+                 if let files = self.showMetadata?.files {
+                     for f in files {
+                         if (f.format?.contains("MP3"))! {
+                             let showMP3 = ShowMP3(identifier: self.identifier, name: f.name, title: f.title, track: f.track)
+                             self.mp3Array.append(showMP3)
+                         }
+                     }
+                 }
+                 DispatchQueue.main.async{
+                     self.showTableView.reloadData()
+                 }
+                 
+             }
+         }
+         */
+
+    }
+
 }

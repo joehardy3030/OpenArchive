@@ -25,9 +25,6 @@
 		D84C3D8224CD164C007AF4EE /* ShowDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84C3D8124CD164C007AF4EE /* ShowDetailTableViewCell.swift */; };
 		D84D2B8E24C2925A006C8175 /* DownloadsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84D2B8D24C2925A006C8175 /* DownloadsViewController.swift */; };
 		D84D6E2824BEB5140022A058 /* NetworkUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84D6E2724BEB5140022A058 /* NetworkUtility.swift */; };
-		D84D6E2A24BFE5780022A058 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D84D6E2924BFE5780022A058 /* GoogleService-Info.plist */; };
-		D84D6E2B24BFE5780022A058 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D84D6E2924BFE5780022A058 /* GoogleService-Info.plist */; };
-		D84D6E2C24BFE5780022A058 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D84D6E2924BFE5780022A058 /* GoogleService-Info.plist */; };
 		D850B8FD24B26EAC00E3DC6B /* ShowMetadataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D850B8FC24B26EAC00E3DC6B /* ShowMetadataModel.swift */; };
 		D850B8FF24B2BA7400E3DC6B /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D850B8FE24B2BA7400E3DC6B /* AudioPlayer.swift */; };
 		D852C3C724B1219400029EB9 /* ShowsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D852C3C624B1219400029EB9 /* ShowsListViewController.swift */; };
@@ -46,6 +43,7 @@
 		D892BBA024CBBCF5008E4960 /* ArchiveSuperViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D892BB9F24CBBCF5008E4960 /* ArchiveSuperViewController.swift */; };
 		D8A5324C24A9AFF2002379CF /* ArchiveCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A5324B24A9AFF2002379CF /* ArchiveCell.swift */; };
 		D8B65F0024C54A5500F57355 /* DownloadPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B65EFF24C54A5500F57355 /* DownloadPlayerViewController.swift */; };
+		D8DC6A842529072600C66C29 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D8DC6A832529072600C66C29 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -91,7 +89,6 @@
 		D84C3D8124CD164C007AF4EE /* ShowDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowDetailTableViewCell.swift; sourceTree = "<group>"; };
 		D84D2B8D24C2925A006C8175 /* DownloadsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadsViewController.swift; sourceTree = "<group>"; };
 		D84D6E2724BEB5140022A058 /* NetworkUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkUtility.swift; sourceTree = "<group>"; };
-		D84D6E2924BFE5780022A058 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D850B8FC24B26EAC00E3DC6B /* ShowMetadataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowMetadataModel.swift; sourceTree = "<group>"; };
 		D850B8FE24B2BA7400E3DC6B /* AudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayer.swift; sourceTree = "<group>"; };
 		D852C3C624B1219400029EB9 /* ShowsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowsListViewController.swift; sourceTree = "<group>"; };
@@ -116,6 +113,7 @@
 		D892BB9F24CBBCF5008E4960 /* ArchiveSuperViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveSuperViewController.swift; sourceTree = "<group>"; };
 		D8A5324B24A9AFF2002379CF /* ArchiveCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveCell.swift; sourceTree = "<group>"; };
 		D8B65EFF24C54A5500F57355 /* DownloadPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadPlayerViewController.swift; sourceTree = "<group>"; };
+		D8DC6A832529072600C66C29 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -198,7 +196,7 @@
 		D85A4EED2022D0B500E480FB /* Breaze */ = {
 			isa = PBXGroup;
 			children = (
-				D84D6E2924BFE5780022A058 /* GoogleService-Info.plist */,
+				D8DC6A832529072600C66C29 /* GoogleService-Info.plist */,
 				799C3C8E2345582E00D9341E /* Breaze.entitlements */,
 				D85A4EEE2022D0B600E480FB /* AppDelegate.swift */,
 				D85A4EF92022D0B600E480FB /* LaunchScreen.storyboard */,
@@ -416,9 +414,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				D85A4EFB2022D0B600E480FB /* LaunchScreen.storyboard in Resources */,
+				D8DC6A842529072600C66C29 /* GoogleService-Info.plist in Resources */,
 				D85A4EF82022D0B600E480FB /* Assets.xcassets in Resources */,
 				D85A4EF62022D0B600E480FB /* Main.storyboard in Resources */,
-				D84D6E2A24BFE5780022A058 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -426,7 +424,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D84D6E2B24BFE5780022A058 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -434,7 +431,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D84D6E2C24BFE5780022A058 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

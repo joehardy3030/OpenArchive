@@ -97,9 +97,10 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
         let songIndex = indexPath.row - 6
         player?.showModel = showModel
         
-        
-        if let mp3s = player?.showModel?.mp3Array {
-            if let trackURL = player?.trackURLfromName(name: mp3s[songIndex].name) {
+        DispatchQueue.main.async{
+
+            if let mp3s = self.player?.showModel?.mp3Array {
+                if let trackURL = self.player?.trackURLfromName(name: mp3s[songIndex].name) {
                 do {
                     let available = try trackURL.checkResourceIsReachable()
                     print(available)
@@ -122,6 +123,7 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
             */
             
          }
+        }
         
         // if let mp = utils.getMiniPlayerController() {
         //    mp.setupShow()

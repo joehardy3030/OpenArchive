@@ -155,10 +155,10 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         let songIndex = indexPath.row
         player?.showModel = showMetadata
         
-        
-        if let mp3s = player?.showModel?.mp3Array {
-            if let trackURL = player?.trackURLfromName(name: mp3s[songIndex].name) {
-                DispatchQueue.main.async{
+        DispatchQueue.main.async{
+
+            if let mp3s = self.player?.showModel?.mp3Array {
+                if let trackURL = self.player?.trackURLfromName(name: mp3s[songIndex].name) {
                 do {
                     let available = try trackURL.checkResourceIsReachable()
                     print(available)

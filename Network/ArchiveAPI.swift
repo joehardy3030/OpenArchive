@@ -17,12 +17,12 @@ enum iaQueryType {
 
 class ArchiveAPI: NSObject {
     var configuration: URLSessionConfiguration
-    var sessionManager: Alamofire.SessionManager
+    var sessionManager: Alamofire.Session
     
     override init() {
         configuration = URLSessionConfiguration.default
         configuration.timeoutIntervalForRequest = 10000
-        sessionManager = Alamofire.SessionManager(configuration: configuration)
+        sessionManager = Alamofire.Session(configuration: configuration)
         super.init()
     }
     
@@ -98,7 +98,7 @@ class ArchiveAPI: NSObject {
     }
     
     func getIARequestMetadata(url: String, completion: @escaping (ShowMetadataModel) -> Void) {
-        Alamofire.request(url).responseJSON { response in
+        AF.request(url).responseJSON { response in
             if let json = response.result.value {
                 let j = JSON(json)
                 let showMetadataModel = self.deserializeMetadataModel(json: j)
@@ -164,7 +164,7 @@ class ArchiveAPI: NSObject {
     }
     
     func getIARequestItems(url: String, completion: @escaping ([ShowMetadata]?) -> Void) {
-        Alamofire.request(url).responseJSON { response in
+        AF.request(url).responseJSON { response in
 
             if let json = response.result.value {
                 let j = JSON(json)

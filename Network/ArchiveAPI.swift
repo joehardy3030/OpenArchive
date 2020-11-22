@@ -99,11 +99,11 @@ class ArchiveAPI: NSObject {
     
     func getIARequestMetadata(url: String, completion: @escaping (ShowMetadataModel) -> Void) {
         AF.request(url).responseJSON { response in
-            if let json = response.result.value {
+            if let json = response.value {
                 let j = JSON(json)
                 let showMetadataModel = self.deserializeMetadataModel(json: j)
                 completion(showMetadataModel)
-              }
+            }
         }
     }
     
@@ -165,18 +165,16 @@ class ArchiveAPI: NSObject {
     
     func getIARequestItems(url: String, completion: @escaping ([ShowMetadata]?) -> Void) {
         AF.request(url).responseJSON { response in
-
-            if let json = response.result.value {
+            if let json = response.value {
                 let j = JSON(json)
                 let items = j["items"]
                 var showMetadatas = [ShowMetadata]()
-                
                 for i in items {
                     let showMD = self.deserializeMetadata(json: i.1)
                     showMetadatas.append(showMD)
                 }
                 completion(showMetadatas)
-              }
+            }
         }
     }
 
@@ -191,7 +189,9 @@ class ArchiveAPI: NSObject {
                         print("Progress: \(progress.fractionCompleted)")
                   }
                  .responseJSON { response in
-                                 completion(response.destinationURL)
+                    completion(response.fileURL)
+
+                                 //completion(response.destinationURL)
         }
     }
 }

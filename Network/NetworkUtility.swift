@@ -35,9 +35,9 @@ class NetworkUtility: NSObject {
             return ""
         }
     }
-
+    
     func addDownloadDataDoc(showMetadataModel: ShowMetadataModel?) -> String? {
-        //let db = Firestore.firestore()
+        
         guard let s = showMetadataModel else { return "no data" }
         guard let docID = showMetadataModel?.metadata?.identifier else { return "no id" }
         
@@ -54,8 +54,20 @@ class NetworkUtility: NSObject {
         return docID
     }
 
+    func removeDownloadDataDoc(docID: String?) {
+        guard let docID = docID else { return }
+        let uuid = getUUID()
+        db.collection(uuid).document("downloads").collection("shows").document(docID).delete() { err in
+            if let err = err {
+                print("Error removing document: \(err)")
+            } else {
+                print("Document successfully removed!")
+            }
+        }
+    }
+    
     func addShareDataDoc(shareMetadataModel: ShareMetadataModel?) -> String? {
-        //let db = Firestore.firestore()
+        
         guard let s = shareMetadataModel else { return "no data" }
         let docData = try! FirestoreEncoder().encode(s)
         db.collection("share").document("shareShow").setData(docData) { error in
@@ -69,11 +81,9 @@ class NetworkUtility: NSObject {
     }
     
     func getDownloadDoc(identifier: String?) -> String? {
-        //        let db = Firestore.firestore()
+        
         guard let docID = identifier else { return "no id" }
-        
         let uuid = getUUID()
-        
         db.collection(uuid).document("downloads").collection("shows").document(docID).addSnapshotListener { document, error in
             if let document = document {
                 let _ = try! FirestoreDecoder().decode(ShowMetadataModel.self, from: document.data()!)
@@ -86,7 +96,7 @@ class NetworkUtility: NSObject {
     }
     
     func getAllDownloadDocs(completion: @escaping ([ShowMetadataModel]?) -> Void) {
-        //        let db = Firestore.firestore()
+        
         let uuid = getUUID()
         var shows: [ShowMetadataModel] = []
         print("called get all downloaded docs")
@@ -105,7 +115,7 @@ class NetworkUtility: NSObject {
     }
     
     func getSharedDoc(completion: @escaping ([ShareMetadataModel]?) -> Void) {
-        //let db = Firestore.firestore()
+        
         print("called shared doc")
         var shows: [ShareMetadataModel] = []
         let docRef = db.collection("share").document("shareShow")
@@ -116,9 +126,9 @@ class NetworkUtility: NSObject {
             } else {
                 guard let data = document?.data() else { return }
                 let show = try! FirestoreDecoder().decode(ShareMetadataModel.self, from: data)
-                    shows.append(show)
-                }
-                completion(shows)
+                shows.append(show)
+            }
+            completion(shows)
         }
     }
     

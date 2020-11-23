@@ -26,22 +26,24 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
         self.getDownloadedShows()
     }
     
-    func checkTracksAndRemove(show: ShowMetadataModel) {
-        if let mp3s = show.mp3Array {
-            for song in mp3s {
-                if let trackURL = self.player?.trackURLfromName(name: song.name) {
-                    do {
-                        let available = try trackURL.checkResourceIsReachable()
-                        print(available)
-                    }
-                    catch {
-                        print(error)
-                    }
+    func checkTracksAndRemove(show: ShowMetadataModel) -> Bool {
+        guard let mp3s = show.mp3Array else { return false }
+        for song in mp3s {
+            if let trackURL = self.player?.trackURLfromName(name: song.name) {
+                do {
+                    let available = try trackURL.checkResourceIsReachable()
+                    print(available)
                 }
-            }	
+                catch {
+                    print(error)
+                    return false
+                }
+            }
         }
+        return true
     }
-    
+
+
     func getDownloadedShows() {
         network.getAllDownloadDocs() {
             (response: [ShowMetadataModel]?) -> Void in
@@ -51,8 +53,10 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
                     self.shows = r
                     if let ss = self.shows {
                         for s in ss {
-                            self.checkTracksAndRemove(show: s)
-                        }
+                            if !self.checkTracksAndRemove(show: s) {
+                                self.network.removeDownloadDataDoc(docID: s.metadata?.identifier)
+                            }
+                        }	
                         self.shows = ss.sorted(by: { self.utils.getDateFromDateString(datetime: $0.metadata?.date!)! < self.utils.getDateFromDateString(datetime: $1.metadata?.date!)! })
                     }
                     self.showListTableView.reloadData()

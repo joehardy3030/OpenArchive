@@ -14,13 +14,13 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     
     @IBOutlet weak var availableLabel: UILabel!
     @IBOutlet weak var showTableView: UITableView!
+    let fileManager = FileManager.default
     var identifier: String?
     var showDate: String?
-  //  let archiveAPI = ArchiveAPI()
     var mp3Array = [ShowMP3]()
     var showMetadata: ShowMetadataModel!
     var isDownloaded = false
-
+    
     override func viewDidLoad() {
 
         super.viewDidLoad()
@@ -84,11 +84,20 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     func downloadShow() {
         for f in self.mp3Array {
             let url = archiveAPI.downloadURL(identifier: self.identifier, filename: f.name)
-            archiveAPI.getIADownload(url: url) {
-                (response: URL?) -> Void in
+            guard let localURL = self.player?.trackURLfromName(name: f.name) else { return }
+            if fileManager.fileExists(atPath: localURL.path) {
                 DispatchQueue.main.async{
-                    self.setDownloadComplete(destination: response, name: f.name)
+                    self.setDownloadComplete(destination: localURL, name: f.name)
                     self.showTableView.reloadData()
+                }
+            }
+            else {
+                archiveAPI.getIADownload(url: url) {
+                    (response: URL?) -> Void in
+                    DispatchQueue.main.async{
+                        self.setDownloadComplete(destination: response, name: f.name)
+                        self.showTableView.reloadData()
+                    }
                 }
             }
         }

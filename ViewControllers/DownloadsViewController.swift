@@ -12,6 +12,7 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
 
     @IBOutlet weak var showListTableView: UITableView!
     var shows: [ShowMetadataModel]?
+    let fileManager = FileManager.default
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,6 +65,31 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
             }
         }
     }
+
+    func deleteSongs(row: Int) {
+        guard let mp3s = self.shows?[row].mp3Array else { return }
+        for mp3 in mp3s {
+            if let localURL = self.player?.trackURLfromName(name: mp3.name) {
+                if fileManager.fileExists(atPath: localURL.path) {
+                    do {
+                        try fileManager.removeItem(atPath: localURL.path)
+                        print("Deleted \(localURL.path)")
+                    }
+                    catch {
+                        print("Can't delete")
+                    }
+                }
+            }
+        }
+    }
+
+    func deleteShow(row: Int) {
+        guard let _ = self.shows else { return }
+        deleteSongs(row: row)
+        self.network.removeDownloadDataDoc(docID: self.shows?[row].metadata?.identifier)
+        self.shows?.remove(at: row)
+        self.getDownloadedShows()
+    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let s = self.shows {
@@ -99,11 +125,8 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            guard let _ = self.shows else { return }
-            self.network.removeDownloadDataDoc(docID: self.shows?[indexPath.row].metadata?.identifier)
-            self.shows?.remove(at: indexPath.row)
+            deleteShow(row: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
-            self.getDownloadedShows()
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
         }

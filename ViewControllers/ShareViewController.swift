@@ -22,6 +22,7 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
     override func viewDidLoad() {
         super.viewDidLoad()
         sharedShowTableView.delegate = self
+        sharedShowTableView.dataSource = self
     }
     
     override func viewWillAppear(_ animated: Bool) {

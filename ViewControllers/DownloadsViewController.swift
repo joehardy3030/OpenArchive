@@ -26,6 +26,22 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
         self.getDownloadedShows()
     }
     
+    func checkTracksAndRemove(show: ShowMetadataModel) {
+        if let mp3s = show.mp3Array {
+            for song in mp3s {
+                if let trackURL = self.player?.trackURLfromName(name: song.name) {
+                    do {
+                        let available = try trackURL.checkResourceIsReachable()
+                        print(available)
+                    }
+                    catch {
+                        print(error)
+                    }
+                }
+            }	
+        }
+    }
+    
     func getDownloadedShows() {
         network.getAllDownloadDocs() {
             (response: [ShowMetadataModel]?) -> Void in
@@ -33,8 +49,11 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
             DispatchQueue.main.async{
                 if let r = response {
                     self.shows = r
-                    if let s = self.shows {
-                        self.shows = s.sorted(by: { self.utils.getDateFromDateString(datetime: $0.metadata?.date!)! < self.utils.getDateFromDateString(datetime: $1.metadata?.date!)! })
+                    if let ss = self.shows {
+                        for s in ss {
+                            self.checkTracksAndRemove(show: s)
+                        }
+                        self.shows = ss.sorted(by: { self.utils.getDateFromDateString(datetime: $0.metadata?.date!)! < self.utils.getDateFromDateString(datetime: $1.metadata?.date!)! })
                     }
                     self.showListTableView.reloadData()
                 }
@@ -63,7 +82,6 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
             else {
                 cell.venueLabel.text = showMDs[indexPath.row].metadata?.venue
             }
-            //cell.venueLabel.text = showMDs[indexPath.row].metadata?.venue
             cell.transfererLabel.text = showMDs[indexPath.row].metadata?.transferer
             cell.sourceLabel.text = showMDs[indexPath.row].metadata?.source
 
@@ -88,7 +106,6 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
         if let target = segue.destination as? DownloadPlayerViewController, let showMDs = self.shows {
             target.showModel = showMDs[indexPath.row]
             target.player = player
-           // print("self player")
             target.prevController = self
             target.db = db
         }
@@ -98,8 +115,6 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
         
 
     }
-    //    self.present(s, animated: true)
-    // }
     
 }
 

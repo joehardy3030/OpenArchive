@@ -181,17 +181,13 @@ class ArchiveAPI: NSObject {
     func getIADownload(url: String, completion: @escaping (URL?) -> Void) {
         //https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#downloading-data-to-a-file
         let destination = DownloadRequest.suggestedDownloadDestination(for: .documentDirectory)
-        
-        //Alamofire.download(url, to: destination)
-        
+                
         self.sessionManager.download(url, to: destination)
              .downloadProgress { (progress) in
                         print("Progress: \(progress.fractionCompleted)")
                   }
                  .responseJSON { response in
                     completion(response.fileURL)
-
-                                 //completion(response.destinationURL)
         }
     }
 }

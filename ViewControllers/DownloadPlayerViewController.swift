@@ -15,10 +15,8 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
     @IBOutlet weak var playButton: UIButton!
     @IBOutlet weak var showDetailTableView: UITableView!
     var showModel: ShowMetadataModel?
-    //let archiveAPI = ArchiveAPI()
     
     override func viewDidLoad() {
-        
         super.viewDidLoad()
         self.navigationItem.title = "Show Details"
         self.showDetailTableView.delegate = self
@@ -98,64 +96,19 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
         player?.showModel = showModel
         
         DispatchQueue.main.async{
-
+            
             if let mp3s = self.player?.showModel?.mp3Array {
                 if let trackURL = self.player?.trackURLfromName(name: mp3s[songIndex].name) {
-                do {
-                    let available = try trackURL.checkResourceIsReachable()
-                    print(available)
+                    do {
+                        let available = try trackURL.checkResourceIsReachable()
+                        print(available)
+                    }
+                    catch {
+                        print(error)
+                    }
                 }
-                catch {
-                    print(error)
-                }
-                
-                
             }
-            
-            //for mp3 in mp3s {
-             //   print(mp3.name)
-           // }
-            /*
-            if (player?.playerItems.count)! > 0 {
-                player?.playerItems = [AVPlayerItem]()
-            }
-            player?.loadQueuePlayer(tracks: mp3s)
-            */
-            
-         }
         }
-        
-        // if let mp = utils.getMiniPlayerController() {
-        //    mp.setupShow()
-      //  }
-        
-        
-        /*
-         func getIAGetShow() {
-             
-             guard let id = self.identifier else { return }
-             let url = archiveAPI.metadataURL(identifier: id)
-         
-             archiveAPI.getIARequestMetadata(url: url) {
-                 (response: ShowMetadataModel) -> Void in
-                 
-                 self.showMetadata = response
-                 if let files = self.showMetadata?.files {
-                     for f in files {
-                         if (f.format?.contains("MP3"))! {
-                             let showMP3 = ShowMP3(identifier: self.identifier, name: f.name, title: f.title, track: f.track)
-                             self.mp3Array.append(showMP3)
-                         }
-                     }
-                 }
-                 DispatchQueue.main.async{
-                     self.showTableView.reloadData()
-                 }
-                 
-             }
-         }
-         */
-
     }
-
+    
 }

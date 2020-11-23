@@ -47,20 +47,20 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
     func getDownloadedShows() {
         network.getAllDownloadDocs() {
             (response: [ShowMetadataModel]?) -> Void in
-            
             DispatchQueue.main.async{
                 if let r = response {
                     self.shows = r
                     if let ss = self.shows {
-                        for s in ss {
+                        for (i, s) in ss.enumerated() {
                             if !self.checkTracksAndRemove(show: s) {
                                 self.network.removeDownloadDataDoc(docID: s.metadata?.identifier)
+                                self.shows?.remove(at: i)
                             }
                         }	
                         self.shows = ss.sorted(by: { self.utils.getDateFromDateString(datetime: $0.metadata?.date!)! < self.utils.getDateFromDateString(datetime: $1.metadata?.date!)! })
                     }
-                    self.showListTableView.reloadData()
                 }
+                self.showListTableView.reloadData()
             }
         }
     }
@@ -95,7 +95,19 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
         }
         
         return cell
-  }    
+  }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            guard let _ = self.shows else { return }
+            self.network.removeDownloadDataDoc(docID: self.shows?[indexPath.row].metadata?.identifier)
+            self.shows?.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
+            self.getDownloadedShows()
+        } else if editingStyle == .insert {
+            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
+        }
+    }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
       if let mp = segue.destination as? MiniPlayerViewController {

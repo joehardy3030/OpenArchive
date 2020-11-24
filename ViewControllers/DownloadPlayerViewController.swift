@@ -92,23 +92,28 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
         
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let indexPath = showDetailTableView.indexPathForSelectedRow else { return }
-        let songIndex = indexPath.row - 6
-        player?.showModel = showModel
         
-        DispatchQueue.main.async{
+        if indexPath.row >= 6 {
+            print(indexPath.row)
+            let songIndex = indexPath.row - 6
+            player?.showModel = showModel
             
-            if let mp3s = self.player?.showModel?.mp3Array {
-                if let trackURL = self.player?.trackURLfromName(name: mp3s[songIndex].name) {
-                    do {
-                        let available = try trackURL.checkResourceIsReachable()
-                        print(available)
-                    }
-                    catch {
-                        print(error)
+            DispatchQueue.main.async{
+                
+                if let mp3s = self.player?.showModel?.mp3Array {
+                    if let trackURL = self.player?.trackURLfromName(name: mp3s[songIndex].name) {
+                        do {
+                            let available = try trackURL.checkResourceIsReachable()
+                            print(available)
+                        }
+                        catch {
+                            print(error)
+                        }
                     }
                 }
             }
         }
+        
     }
     
 }

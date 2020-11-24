@@ -52,10 +52,11 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
                 if let r = response {
                     self.shows = r
                     if let ss = self.shows {
-                        for (i, s) in ss.enumerated() {
+                        for s in ss {
                             if !self.checkTracksAndRemove(show: s) {
-                                self.network.removeDownloadDataDoc(docID: s.metadata?.identifier)
-                                self.shows?.remove(at: i)
+                                self.network.removeDownloadDataDoc(docID: s.metadata?.identifier) // use callback
+                               // print(i)
+                                //self.shows?.remove(at: i)
                             }
                         }	
                         self.shows = ss.sorted(by: { self.utils.getDateFromDateString(datetime: $0.metadata?.date!)! < self.utils.getDateFromDateString(datetime: $1.metadata?.date!)! })

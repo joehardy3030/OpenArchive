@@ -343,6 +343,7 @@
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DbB-GD-GP3" userLabel="Play Button">
                                 <rect key="frame" x="199" y="57" width="160" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <state key="normal" title="Available"/>
                                 <connections>
                                     <action selector="playButton:" destination="0wg-q7-zkq" eventType="touchUpInside" id="klz-uX-Hbn"/>

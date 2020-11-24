@@ -30,6 +30,7 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
     }
     
     func loadDownloadedShow() {
+        // This operation should probably belong to the player class
         if let mp3s = self.player?.showModel?.mp3Array {
             if (player?.playerItems.count)! > 0 {
                 player?.playerItems = [AVPlayerItem]()

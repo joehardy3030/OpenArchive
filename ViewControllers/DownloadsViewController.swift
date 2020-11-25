@@ -19,12 +19,24 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
         self.showListTableView.delegate = self
         self.showListTableView.dataSource = self
         self.showListTableView.rowHeight = 135.0
+        self.listFiles()
         self.getDownloadedShows()
         print("view load")
     }
     
     override func viewWillAppear(_ animated: Bool) {
         self.getDownloadedShows()
+    }
+    
+    func listFiles() {
+        do {
+            let urls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+            let files = try fileManager.contentsOfDirectory(atPath: urls[0].path)
+            print(files)
+        }
+        catch let error as NSError {
+            print("Ooops! Something went wrong: \(error)")
+        }
     }
     
     func checkTracksAndRemove(show: ShowMetadataModel) -> Bool {

@@ -44,8 +44,8 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
         for song in mp3s {
             if let trackURL = self.player?.trackURLfromName(name: song.name) {
                 do {
-                    let available = try trackURL.checkResourceIsReachable()
-                    print(available)
+                    let _ = try trackURL.checkResourceIsReachable()
+                    //print(available)
                 }
                 catch {
                     print(error)

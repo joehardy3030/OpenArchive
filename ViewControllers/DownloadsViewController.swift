@@ -153,6 +153,7 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
                mp.player = p // There needs to be a player already for this to work. Need to inject it.
            }
        }
+       
         
         guard let indexPath = showListTableView.indexPathForSelectedRow else { return }
         if let target = segue.destination as? DownloadPlayerViewController, let showMDs = self.shows {
@@ -165,8 +166,6 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
             print("Nope")
         }
         
-
     }
-    
 }
 

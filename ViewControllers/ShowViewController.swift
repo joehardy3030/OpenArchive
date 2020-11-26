@@ -48,7 +48,6 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     
     @IBAction func playButton(_ sender: Any) {
         if playButtonLabel.currentTitle == "Play" {
-            //print("Ready to play")
             player?.showModel = showMetadataModel // Change showMetadata to showModel for consistency
             loadDownloadedShow()  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
             player?.play()
@@ -137,7 +136,6 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         if let d = destination {
             for i in 0...(self.mp3Array.count - 1) {
                 if self.mp3Array[i].name == name {
-                    print(self.mp3Array[i].name)
                     self.mp3Array[i].destination = d
                     self.showMetadataModel?.mp3Array?[i].destination = d
                 }
@@ -174,17 +172,6 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         else {
             return 6
         }
-        /*
-        if let count = showMetadataModel?.mp3Array?.count {
-            print("Count \(count)")
-            return count
-        }
-        else {
-            return 0
-        }
-        */
-        //return showMetadataModel?.mp3Array?.count
-        //return self.mp3Array.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

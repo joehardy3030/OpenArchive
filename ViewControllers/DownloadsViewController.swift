@@ -19,7 +19,7 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
         self.showListTableView.delegate = self
         self.showListTableView.dataSource = self
         self.showListTableView.rowHeight = 135.0
-        self.listFiles()
+        //self.listFiles()
         self.getDownloadedShows()
         print("view load")
     }
@@ -153,15 +153,26 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
                mp.player = p // There needs to be a player already for this to work. Need to inject it.
            }
        }
-       
-        
+
         guard let indexPath = showListTableView.indexPathForSelectedRow else { return }
+        
+        if let target = segue.destination as? ShowViewController, let showMDs = self.shows {
+            target.identifier = showMDs[indexPath.row].metadata?.identifier
+            target.showDate = showMDs[indexPath.row].metadata?.date
+            target.showMetadataModel = showMDs[indexPath.row]
+            target.isDownloaded = true
+            target.player = player
+            target.prevController = self
+            target.db = db
+        }
+        /*
         if let target = segue.destination as? DownloadPlayerViewController, let showMDs = self.shows {
             target.showModel = showMDs[indexPath.row]
             target.player = player
             target.prevController = self
             target.db = db
         }
+        */
         else {
             print("Nope")
         }

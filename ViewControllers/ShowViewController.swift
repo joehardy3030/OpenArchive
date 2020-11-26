@@ -33,6 +33,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         }
         else {
             self.navigationItem.title = showDate
+            playButtonLabel.setTitle("Play", for: .normal)
         }
     }
     
@@ -181,6 +182,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
               let m = self.showMetadataModel?.metadata
               else { return UITableViewCell() }
         let idx = indexPath.row - 6
+        cell.accessoryType = .none
 
         switch indexPath.row {
         case 0:

@@ -518,7 +518,7 @@
                                             <outlet property="sourceLabel" destination="uLm-QH-mU0" id="fCX-c7-bdI"/>
                                             <outlet property="transfererLabel" destination="P7b-3F-7iK" id="1kh-6c-bPL"/>
                                             <outlet property="venueLabel" destination="dlA-jf-Wxn" id="hdb-aX-jrS"/>
-                                            <segue destination="UKn-fe-95U" kind="show" id="6Qf-Qs-UQ9"/>
+                                            <segue destination="0wg-q7-zkq" kind="show" id="wDf-Rk-Vwo"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -568,7 +568,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WCa-s9-UpW">
-                                <rect key="frame" x="147.5" y="43" width="80" height="50"/>
+                                <rect key="frame" x="147.5" y="-1" width="80" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="WZw-g3-T5U"/>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="vJr-bJ-pP4"/>
@@ -580,7 +580,7 @@
                                 </connections>
                             </button>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="3yS-7V-cXB">
-                                <rect key="frame" x="0.0" y="101" width="375" height="395"/>
+                                <rect key="frame" x="0.0" y="57" width="375" height="488"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="375" id="aeB-Xn-kJn"/>
@@ -960,6 +960,9 @@
             <point key="canvasLocation" x="2220" y="1478"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="wDf-Rk-Vwo"/>
+    </inferredMetricsTieBreakers>
     <resources>
         <image name="backward.end.fill" catalog="system" width="128" height="102"/>
         <image name="forward" catalog="system" width="128" height="79"/>

@@ -15,7 +15,6 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
 
     @IBOutlet weak var playButton: UIButton!
     @IBOutlet weak var sharedShowTableView: UITableView!
-    var shareMetadataModels: [ShareMetadataModel]?
     var lastShareMetadataModel: ShareMetadataModel?
     var mp3Array = [ShowMP3]()
     
@@ -77,6 +76,7 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
                     }
                     DispatchQueue.main.async{
                         print("download complete")
+                        self.navigationItem.title = self.lastShareMetadataModel?.showMetadataModel?.metadata?.date
                         self.sharedShowTableView.reloadData()
                     }
                 }

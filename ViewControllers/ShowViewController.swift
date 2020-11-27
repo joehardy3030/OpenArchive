@@ -81,13 +81,6 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         }
     }
     
-    
-    //func getDownloadedShow() {
-    //    if let mp3s = self.showMetadataModel?.mp3Array {
-    //        self.mp3Array = mp3s
-     //   }
-   // }
-    
     func getIAGetShow() {
         
         guard let id = self.identifier else { return }
@@ -102,7 +95,6 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 for f in files {
                     if (f.format?.contains("MP3"))! {
                         let showMP3 = ShowMP3(identifier: self.identifier, name: f.name, title: f.title, track: f.track)
-                       // self.mp3Array.append(showMP3)
                         mp3s.append(showMP3)
                     }
                 }
@@ -203,14 +195,12 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 }
                 if self.mp3Array[i].destination != nil {
                     counter += 1
-                    print("counter \(counter)")
                 }
             }
             if self.mp3Array.count == counter {
                 if (showType == .shared) {
                     self.lastShareMetadataModel?.showMetadataModel?.mp3Array = self.mp3Array
                     self.showMetadataModel = self.lastShareMetadataModel?.showMetadataModel
-                    //self.saveShareData()
                 }
                 //self.showMetadataModel?.mp3Array = self.mp3Array
                 saveDownloadData()

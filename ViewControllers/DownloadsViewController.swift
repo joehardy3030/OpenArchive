@@ -146,33 +146,26 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-      if let mp = segue.destination as? MiniPlayerViewController {
-           self.miniPlayer = mp
-           print("Set the miniplayer")
-           if let p = player {
-               mp.player = p // There needs to be a player already for this to work. Need to inject it.
-           }
-       }
-
-        guard let indexPath = showListTableView.indexPathForSelectedRow else { return }
         
+        if let mp = segue.destination as? MiniPlayerViewController {
+            self.miniPlayer = mp
+            print("Set the miniplayer")
+            if let p = player {
+                mp.player = p // There needs to be a player already for this to work. Need to inject it.
+            }
+        }
+        
+        guard let indexPath = showListTableView.indexPathForSelectedRow else { return }
         if let target = segue.destination as? ShowViewController, let showMDs = self.shows {
             target.identifier = showMDs[indexPath.row].metadata?.identifier
             target.showDate = showMDs[indexPath.row].metadata?.date
             target.showMetadataModel = showMDs[indexPath.row]
-            target.isDownloaded = true
+            target.showType = .downloaded
             target.player = player
             target.prevController = self
             target.db = db
         }
-        /*
-        if let target = segue.destination as? DownloadPlayerViewController, let showMDs = self.shows {
-            target.showModel = showMDs[indexPath.row]
-            target.player = player
-            target.prevController = self
-            target.db = db
-        }
-        */
+        
         else {
             print("Nope")
         }

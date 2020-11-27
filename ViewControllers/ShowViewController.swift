@@ -26,7 +26,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     var mp3Array = [ShowMP3]()
     var showMetadataModel: ShowMetadataModel?
     var lastShareMetadataModel: ShareMetadataModel?
-    var showType: ShowType?
+    var showType: ShowType? = .shared
     
     override func viewDidLoad() {
         
@@ -41,9 +41,11 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         case .downloaded:
             self.navigationItem.title = showDate
             playButtonLabel.setTitle("Play", for: .normal)
-        default:
+        case .shared:
             self.navigationItem.title = utils.getDateFromDateTimeString(datetime: showDate)
             getShareSnaptshot()
+        default:
+            print("No show type")
         }
     }
     
@@ -131,7 +133,8 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                                     let fileManager = FileManager.default
                                     if fileManager.fileExists(atPath: localURL.path) {
                                         DispatchQueue.main.async{
-                                            self.setDownloadComplete(destination: localURL, name: f.name, available: true)
+                                            //self.setDownloadComplete(destination: localURL, name: f.name, available: true)
+                                            self.setDownloadComplete(destination: localURL, name: f.name)
                                             self.showTableView.reloadData()
                                         }
                                         print("FILE AVAILABLE")
@@ -140,9 +143,10 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                                         self.archiveAPI.getIADownload(url: archiveURL) {
                                                (response: URL?) -> Void in
                                                DispatchQueue.main.async{
-                                                   self.playButtonLabel.setTitle("Downloading", for: .normal)
-                                                   self.setDownloadComplete(destination: response, name: f.name, available: false)
-                                                   self.showTableView.reloadData()
+                                                    self.playButtonLabel.setTitle("Downloading", for: .normal)
+                                                    //self.setDownloadComplete(destination: response, name: f.name, available: false)
+                                                    self.setDownloadComplete(destination: response, name: f.name)
+                                                    self.showTableView.reloadData()
                                                }
                                            }
                                         print("FILE NOT AVAILABLE")
@@ -203,12 +207,17 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 }
             }
             if self.mp3Array.count == counter {
+                if (showType == .shared) {
+                    self.lastShareMetadataModel?.showMetadataModel?.mp3Array = self.mp3Array
+                    self.showMetadataModel = self.lastShareMetadataModel?.showMetadataModel
+                    //self.saveShareData()
+                }
                 //self.showMetadataModel?.mp3Array = self.mp3Array
                 saveDownloadData()
             }
         }
     }
-    
+    /*
     private func setDownloadComplete(destination: URL?, name: String?, available: Bool) {
         var counter = 0
         if let d = destination {
@@ -225,13 +234,15 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 self.lastShareMetadataModel?.showMetadataModel?.mp3Array = self.mp3Array
                 self.showMetadataModel?.mp3Array = self.mp3Array
                 //print(self.playButton.titleLabel?.text)
-                if !available {
+                //if !available {
                     saveDownloadData()
-                }
+                //}
+                print("save downloaded data")
                 self.playButtonLabel.setTitle("Play", for: .normal)
             }
         }
     }
+    */
     
     private func saveShareData() {
         let isPlaying = false

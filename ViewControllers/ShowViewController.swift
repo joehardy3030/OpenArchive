@@ -50,13 +50,33 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     }
     
     @IBAction func downloadShow(_ sender: Any) {
-        downloadShow()
-        playButtonLabel.setTitle("Downloading", for: .normal)
+        switch showType {
+        case .downloaded:
+            print("Do nothing, for now")
+        case .archive:
+            downloadShow()
+            playButtonLabel.setTitle("Downloading", for: .normal)
+        case .shared:
+            downloadShow()
+            playButtonLabel.setTitle("Downloading", for: .normal)
+        default:
+            print("Do nothing by default")
+        }
+
     }
     
     @IBAction func shareShow(_ sender: Any) {
-        shareShow()
-        playButtonLabel.setTitle("Sharing", for: .normal)
+        switch showType {
+        case .downloaded:
+            print("Do nothing, for now")
+        case .archive:
+            shareShow()
+            playButtonLabel.setTitle("Sharing", for: .normal)
+        case .shared:
+            print("Do nothing, for now")
+        default:
+            print("Do nothing by default")
+        }
     }
     
     @IBAction func playButton(_ sender: Any) {
@@ -159,7 +179,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     
     func shareShow() {
         downloadShow()
-        saveShareData()
+        saveShareData(isPlaying: false)
     }
     
     func downloadShow() {
@@ -234,12 +254,12 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     }
     */
     
-    private func saveShareData() {
-        let isPlaying = false
+    private func saveShareData(isPlaying: Bool) {
         var shareMetadataModel = ShareMetadataModel()
         shareMetadataModel.isPlaying = isPlaying
         shareMetadataModel.showMetadataModel = showMetadataModel
-        let _ = network.addShareDataDoc(shareMetadataModel: shareMetadataModel)
+        let response = network.addShareDataDoc(shareMetadataModel: shareMetadataModel)
+        print("Add share doc response: \(String(describing: response))")
         playButtonLabel.setTitle("Shared", for: .normal)
     }
     

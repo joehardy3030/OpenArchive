@@ -235,12 +235,12 @@
 				7984F98C24A4565400989DB8 /* YearViewController.swift */,
 				D8449A6724AEF3C200F113F4 /* MonthViewController.swift */,
 				D852C3C624B1219400029EB9 /* ShowsListViewController.swift */,
-				D852C3CA24B1AA1C00029EB9 /* ShowViewController.swift */,
-				D84A3AAA24E3B02C00A468E0 /* ShareViewController.swift */,
 				D84D2B8D24C2925A006C8175 /* DownloadsViewController.swift */,
-				D8B65EFF24C54A5500F57355 /* DownloadPlayerViewController.swift */,
+				D852C3CA24B1AA1C00029EB9 /* ShowViewController.swift */,
 				D845E03824D7642A003381B6 /* ModalPlayerViewController.swift */,
 				D879502D24C69E2900FB2436 /* MiniPlayerViewController.swift */,
+				D8B65EFF24C54A5500F57355 /* DownloadPlayerViewController.swift */,
+				D84A3AAA24E3B02C00A468E0 /* ShareViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";

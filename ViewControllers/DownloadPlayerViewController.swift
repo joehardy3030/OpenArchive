@@ -114,7 +114,5 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
                 }
             }
         }
-        
     }
-    
 }

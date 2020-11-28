@@ -42,7 +42,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             getIAGetShow()
         case .downloaded:
             self.navigationItem.title = showDate
-            self.shareButton.isEnabled = false
+            //self.shareButton.isEnabled = false
             //self.downloadButton.isEnabled = false
             //self.shareButton.isHidden = true
             self.downloadButton.isHidden = true
@@ -86,10 +86,11 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     @IBAction func shareShow(_ sender: Any) {
         switch showType {
         case .downloaded:
-            print("Do nothing, for now")
-        case .archive:
-            shareShow()
             playButtonLabel.setTitle("Sharing", for: .normal)
+            shareShow()
+        case .archive:
+            playButtonLabel.setTitle("Sharing", for: .normal)
+            shareShow()
         case .shared:
             print("Do nothing, for now")
         default:
@@ -107,10 +108,10 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             loadDownloadedShow()  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
             player?.play()
         }
-        if showType == .shared {
-            lastShareMetadataModel?.isPlaying = true
-            saveShareData(isPlaying: true)
-        }
+       // if showType == .shared {
+           // lastShareMetadataModel?.isPlaying = true
+          //  saveShareData(isPlaying: true)
+       // }
     }
     
     func loadDownloadedShow() {
@@ -196,9 +197,14 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                         print("download complete")
                         self.showMetadataModel = self.lastShareMetadataModel?.showMetadataModel
                         self.navigationItem.title = self.lastShareMetadataModel?.showMetadataModel?.metadata?.date
+                        /*
                         if self.lastShareMetadataModel?.isPlaying == true {
                             self.playShow()
                         }
+                        else if self.lastShareMetadataModel?.isPlaying == false {
+                            self.player?.pause()
+                        }
+                        */
                         self.showTableView.reloadData()
                     }
                 }
@@ -206,8 +212,18 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     }
     
     func shareShow() {
-        downloadShow()
-        saveShareData(isPlaying: false)
+        switch showType {
+        case .archive:
+            if playButtonLabel.currentTitle != "Play" {
+                downloadShow()
+            }
+            saveShareData(isPlaying: false)
+        case .downloaded:
+            saveShareData(isPlaying: false)
+            //playButtonLabel.setTitle("Play", for: .normal)
+        default:
+            print("Do nothing")
+        }
     }
     
     func downloadShow() {
@@ -288,7 +304,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         shareMetadataModel.showMetadataModel = showMetadataModel
         let response = network.addShareDataDoc(shareMetadataModel: shareMetadataModel)
         print("Add share doc response: \(String(describing: response))")
-        playButtonLabel.setTitle("Shared", for: .normal)
+        playButtonLabel.setTitle("Play", for: .normal)
     }
     
     private func saveDownloadData() {

@@ -59,6 +59,14 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         }
     }
     
+    /*
+    override func viewWillAppear(_ animated: Bool) {
+        if (showType == .shared) && (self.lastShareMetadataModel?.isPlaying == true) {
+            playShow()
+        }
+    }
+    */
+    
     @IBAction func downloadShow(_ sender: Any) {
         switch showType {
         case .downloaded:
@@ -90,13 +98,20 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     }
     
     @IBAction func playButton(_ sender: Any) {
+        playShow()
+    }
+    
+    func playShow() {
         if playButtonLabel.currentTitle == "Play" {
             player?.showModel = showMetadataModel // Change showMetadata to showModel for consistency
             loadDownloadedShow()  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
             player?.play()
         }
+        if showType == .shared {
+            lastShareMetadataModel?.isPlaying = true
+            saveShareData(isPlaying: true)
+        }
     }
-    
     
     func loadDownloadedShow() {
         // This operation should probably belong to the player class
@@ -181,6 +196,9 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                         print("download complete")
                         self.showMetadataModel = self.lastShareMetadataModel?.showMetadataModel
                         self.navigationItem.title = self.lastShareMetadataModel?.showMetadataModel?.metadata?.date
+                        if self.lastShareMetadataModel?.isPlaying == true {
+                            self.playShow()
+                        }
                         self.showTableView.reloadData()
                     }
                 }

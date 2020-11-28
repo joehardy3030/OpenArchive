@@ -80,6 +80,13 @@ class NetworkUtility: NSObject {
         return "shared"
     }
     
+    func updateSharedPlayPause(broadcastIsPlaying: Bool?) {
+        guard let p = broadcastIsPlaying else { return }
+        db.collection("share").document("shareShow").updateData([
+            "isPlaying": p
+        ])
+    }
+    
     func getDownloadDoc(identifier: String?) -> String? {
         
         guard let docID = identifier else { return "no id" }

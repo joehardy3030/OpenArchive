@@ -22,6 +22,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     @IBOutlet weak var shareButton: UIButton!
     @IBOutlet weak var playButtonLabel: UIButton!
     @IBOutlet weak var showTableView: UITableView!
+    @IBOutlet weak var broadcastPlayPauseButton: UIButton!
     let fileManager = FileManager.default
     var identifier: String?
     var showDate: String?
@@ -29,6 +30,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     var showMetadataModel: ShowMetadataModel?
     var lastShareMetadataModel: ShareMetadataModel?
     var showType: ShowType? = .shared
+    var broadcastIsPlaying: Bool = false
     
     override func viewDidLoad() {
         
@@ -50,7 +52,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         case .shared:
             self.navigationItem.title = utils.getDateFromDateTimeString(datetime: showDate)
             //self.shareButton.isEnabled = false
-            //self.downloadButton.isEnabled = false
+            self.broadcastPlayPauseButton.isHidden = false
             self.shareButton.isHidden = true
             self.downloadButton.isHidden = true
             getShareSnaptshot()
@@ -96,6 +98,11 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         default:
             print("Do nothing by default")
         }
+    }
+    
+    @IBAction func broadcastPlayPause(_ sender: Any) {
+        broadcastIsPlaying = !broadcastIsPlaying
+        network.updateSharedPlayPause(broadcastIsPlaying: broadcastIsPlaying)
     }
     
     @IBAction func playButton(_ sender: Any) {
@@ -197,14 +204,14 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                         print("download complete")
                         self.showMetadataModel = self.lastShareMetadataModel?.showMetadataModel
                         self.navigationItem.title = self.lastShareMetadataModel?.showMetadataModel?.metadata?.date
-                        /*
                         if self.lastShareMetadataModel?.isPlaying == true {
+                            self.broadcastIsPlaying = true
                             self.playShow()
                         }
                         else if self.lastShareMetadataModel?.isPlaying == false {
+                            self.broadcastIsPlaying = false
                             self.player?.pause()
                         }
-                        */
                         self.showTableView.reloadData()
                     }
                 }
@@ -217,9 +224,9 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             if playButtonLabel.currentTitle != "Play" {
                 downloadShow()
             }
-            saveShareData(isPlaying: false)
+            saveShareData(broadcastIsPlaying: false)
         case .downloaded:
-            saveShareData(isPlaying: false)
+            saveShareData(broadcastIsPlaying: false)
             //playButtonLabel.setTitle("Play", for: .normal)
         default:
             print("Do nothing")
@@ -298,11 +305,11 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     }
     */
     
-    private func saveShareData(isPlaying: Bool) {
-        var shareMetadataModel = ShareMetadataModel()
-        shareMetadataModel.isPlaying = isPlaying
-        shareMetadataModel.showMetadataModel = showMetadataModel
-        let response = network.addShareDataDoc(shareMetadataModel: shareMetadataModel)
+    private func saveShareData(broadcastIsPlaying: Bool) {
+        var saveShareMetadataModel = ShareMetadataModel()
+        saveShareMetadataModel.isPlaying = broadcastIsPlaying
+        saveShareMetadataModel.showMetadataModel = showMetadataModel
+        let response = network.addShareDataDoc(shareMetadataModel: saveShareMetadataModel)
         print("Add share doc response: \(String(describing: response))")
         playButtonLabel.setTitle("Play", for: .normal)
     }

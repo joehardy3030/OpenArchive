@@ -18,6 +18,8 @@ enum ShowType {
 
 class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
     
+    @IBOutlet weak var downloadButton: UIButton!
+    @IBOutlet weak var shareButton: UIButton!
     @IBOutlet weak var playButtonLabel: UIButton!
     @IBOutlet weak var showTableView: UITableView!
     let fileManager = FileManager.default
@@ -40,9 +42,17 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             getIAGetShow()
         case .downloaded:
             self.navigationItem.title = showDate
+            self.shareButton.isEnabled = false
+            //self.downloadButton.isEnabled = false
+            //self.shareButton.isHidden = true
+            self.downloadButton.isHidden = true
             playButtonLabel.setTitle("Play", for: .normal)
         case .shared:
             self.navigationItem.title = utils.getDateFromDateTimeString(datetime: showDate)
+            //self.shareButton.isEnabled = false
+            //self.downloadButton.isEnabled = false
+            self.shareButton.isHidden = true
+            self.downloadButton.isHidden = true
             getShareSnaptshot()
         default:
             print("No show type")

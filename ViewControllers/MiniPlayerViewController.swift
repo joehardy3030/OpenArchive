@@ -29,7 +29,7 @@ class MiniPlayerViewController: UIViewController {
         view.layer.borderColor = UIColor.gray.cgColor
         navigationController?.delegate = self
         //playButton.imageView?.contentMode = .scaleToFill
-        initialDefaults()
+        initialTimerDefaults()
     }
         
     @IBAction func playButton(_ sender: Any) {
@@ -50,13 +50,6 @@ class MiniPlayerViewController: UIViewController {
         }
     }
     
-    func initialDefaults() {
-        timeSlider.value = 0.0
-        songLabel.text = ""
-        showLabel.text = ""
-        venueLabel.text = ""
-
-    }
     
     @IBAction func loadFullPlayer(_ sender: Any) {
         if player?.playerQueue != nil {
@@ -97,10 +90,23 @@ class MiniPlayerViewController: UIViewController {
         }
     }
 
+    func timerCallback(seconds: Double?) {
+        let secondsString = String(format: "%02d", Int(seconds ?? 0) % 60)
+        let minutesString = String(format: "%02d", Int(seconds ?? 0) / 60)
+        self.currentTimeLabel.text = ("\(minutesString):\(secondsString)")
+        self.currentItemTotalTime()
+        if let duration = self.player?.playerQueue?.currentItem?.duration {
+            let totalSeconds = CMTimeGetSeconds(duration)
+            self.timeSlider.value = Float((seconds ?? 0.0)/(totalSeconds ))
+        }
+    }
+
+
     func setupShow () {
         guard let _ = player?.playerQueue else { return }
-        setupTimer()
-        player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
+        //player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
+        //setupTimer()
+        timer?.setupTimer(completion: timerCallback)
         setupSlider()
         setupSong()
         playPause()
@@ -111,9 +117,20 @@ class MiniPlayerViewController: UIViewController {
         setupNotificationView()
     }
 
+    func initialTimerDefaults() {
+        //timer = ArchiveTimer(player: player)
+        //timer?.player = player
+        timeSlider.value = 0.0
+        songLabel.text = ""
+        showLabel.text = ""
+        venueLabel.text = ""
+
+    }
+
     func setupTimer() {
       //  player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
         //track player progress
+        initialTimerDefaults()
         let interval = CMTime(value: 1, timescale: 2)
         
         player?.playerQueue?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { (progressTime) in
@@ -182,6 +199,7 @@ class MiniPlayerViewController: UIViewController {
             setupSong()
         }
     }
+    
 
     // func setupQueueObserver() {
     //     player?.playerQueue?.addObserver(self, forKeyPath: #keyPath(AVQueuePlayer.status), options: .new, context: nil)

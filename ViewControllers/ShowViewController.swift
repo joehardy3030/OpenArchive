@@ -113,7 +113,10 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     
     func playShow() {
         if playButtonLabel.currentTitle == "Play" {
+            player?.pause()
             player?.showModel = showMetadataModel // Change showMetadata to showModel for consistency
+            //let t = ArchiveTimer(player: player)
+            //miniPlayer.timer = ArchiveTimer(player: player)
             loadDownloadedShow()  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
             player?.play()
         }
@@ -132,6 +135,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             player?.loadQueuePlayer(tracks: mp3s)
         }
         if let mp = utils.getMiniPlayerController() {
+           // mp.timer = ArchiveTimer(player: player)
             mp.setupShow()
         }
     }
@@ -163,6 +167,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         }
     }
     
+    ///Download manager class
     func getShareSnaptshot() {
         network.getShareSnapshot() {
             (response: ShareMetadataModel?) -> Void in
@@ -248,7 +253,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         //playButtonLabel.setTitle("Play", for: .normal)
     }
     
-    
+    ///Download manager class
     func downloadShow() {
         guard let mp3s = self.showMetadataModel?.mp3Array else { return }
         for f in mp3s {
@@ -273,6 +278,32 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         print("Download show")
     }
     
+    ///Download manager class
+    func downloadSong(song: ShowMP3) {
+        guard let mp3s = self.showMetadataModel?.mp3Array else { return }
+        for f in mp3s {
+            let url = archiveAPI.downloadURL(identifier: self.identifier, filename: f.name)
+            guard let localURL = self.player?.trackURLfromName(name: f.name) else { return }
+            if fileManager.fileExists(atPath: localURL.path) {
+                DispatchQueue.main.async{
+                    self.setDownloadComplete(destination: localURL, name: f.name)
+                    self.showTableView.reloadData()
+                }
+            }
+            else {
+                archiveAPI.getIADownload(url: url) {
+                    (response: URL?) -> Void in
+                    DispatchQueue.main.async{
+                        self.setDownloadComplete(destination: response, name: f.name)
+                        self.showTableView.reloadData()
+                    }
+                }
+            }
+        }
+        print("Download show")
+    }
+    
+    ///Download manager class
     private func setDownloadComplete(destination: URL?, name: String?) {
         var counter = 0
         if let d = destination {

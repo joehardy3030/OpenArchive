@@ -88,10 +88,12 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     @IBAction func shareShow(_ sender: Any) {
         switch showType {
         case .downloaded:
-            playButtonLabel.setTitle("Sharing", for: .normal)
+            //playButtonLabel.setTitle("Sharing", for: .normal)
+            print("Share show from Downlaoded")
             shareShow()
         case .archive:
             playButtonLabel.setTitle("Sharing", for: .normal)
+            print("Share show from archive")
             shareShow()
         case .shared:
             print("Do nothing, for now")
@@ -167,6 +169,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 if let r = response {
                     self.mp3Array = [ShowMP3]()
                     self.lastShareMetadataModel = r
+                    self.showMetadataModel = self.lastShareMetadataModel?.showMetadataModel
                     if let files = self.lastShareMetadataModel?.showMetadataModel?.files,
                         let id = self.lastShareMetadataModel?.showMetadataModel?.metadata?.identifier {
                         
@@ -179,7 +182,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                                     if fileManager.fileExists(atPath: localURL.path) {
                                         DispatchQueue.main.async{
                                             //self.setDownloadComplete(destination: localURL, name: f.name, available: true)
-                                            self.setDownloadComplete(destination: localURL, name: f.name)
+                                            //self.setDownloadComplete(destination: localURL, name: f.name)
                                             self.showTableView.reloadData()
                                         }
                                         print("FILE AVAILABLE")
@@ -202,6 +205,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                     }
                     DispatchQueue.main.async{
                         print("download complete")
+                        self.playButtonLabel.setTitle("Play", for: .normal)
                         self.showMetadataModel = self.lastShareMetadataModel?.showMetadataModel
                         self.navigationItem.title = self.lastShareMetadataModel?.showMetadataModel?.metadata?.date
                         if self.lastShareMetadataModel?.isPlaying == true {
@@ -221,17 +225,29 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     func shareShow() {
         switch showType {
         case .archive:
-            if playButtonLabel.currentTitle != "Play" {
-                downloadShow()
-            }
-            saveShareData(broadcastIsPlaying: false)
+            //if playButtonLabel.currentTitle != "Play" {
+            //    downloadShow()
+            //}
+            self.broadcastIsPlaying = false
+            saveShareData()
         case .downloaded:
-            saveShareData(broadcastIsPlaying: false)
+            self.broadcastIsPlaying = false
+            saveShareData()
             //playButtonLabel.setTitle("Play", for: .normal)
         default:
             print("Do nothing")
         }
     }
+    
+    private func saveShareData() {
+        var saveShareMetadataModel = ShareMetadataModel()
+        saveShareMetadataModel.isPlaying = broadcastIsPlaying
+        saveShareMetadataModel.showMetadataModel = showMetadataModel
+        let response = network.addShareDataDoc(shareMetadataModel: saveShareMetadataModel)
+        print("Add share doc response: \(String(describing: response))")
+        //playButtonLabel.setTitle("Play", for: .normal)
+    }
+    
     
     func downloadShow() {
         guard let mp3s = self.showMetadataModel?.mp3Array else { return }
@@ -254,6 +270,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 }
             }
         }
+        print("Download show")
     }
     
     private func setDownloadComplete(destination: URL?, name: String?) {
@@ -277,45 +294,12 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 saveDownloadData()
             }
         }
-    }
-    /*
-    private func setDownloadComplete(destination: URL?, name: String?, available: Bool) {
-        var counter = 0
-        if let d = destination {
-            for i in 0...(self.mp3Array.count - 1) {
-                if self.mp3Array[i].name == name {
-                    self.mp3Array[i].destination = d
-                    //self.showMetadataModel?.mp3Array?[i].destination = d
-                }
-                if self.mp3Array[i].destination != nil {
-                    counter += 1
-                }
-            }
-            if self.mp3Array.count == counter {
-                self.lastShareMetadataModel?.showMetadataModel?.mp3Array = self.mp3Array
-                self.showMetadataModel?.mp3Array = self.mp3Array
-                //print(self.playButton.titleLabel?.text)
-                //if !available {
-                    saveDownloadData()
-                //}
-                print("save downloaded data")
-                self.playButtonLabel.setTitle("Play", for: .normal)
-            }
-        }
-    }
-    */
-    
-    private func saveShareData(broadcastIsPlaying: Bool) {
-        var saveShareMetadataModel = ShareMetadataModel()
-        saveShareMetadataModel.isPlaying = broadcastIsPlaying
-        saveShareMetadataModel.showMetadataModel = showMetadataModel
-        let response = network.addShareDataDoc(shareMetadataModel: saveShareMetadataModel)
-        print("Add share doc response: \(String(describing: response))")
-        playButtonLabel.setTitle("Play", for: .normal)
+        print("Set download complete")
     }
     
     private func saveDownloadData() {
         let _ = network.addDownloadDataDoc(showMetadataModel: showMetadataModel)
+        print("Save download data")
         playButtonLabel.setTitle("Play", for: .normal)
     }
     

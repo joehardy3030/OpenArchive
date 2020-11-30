@@ -189,6 +189,12 @@ class Utils {
         return documentsDirectory
     }
     
+    func trackURLfromName(name: String?) -> URL? {
+        guard let d = getDocumentsDirectory(), let n = name else { return nil }
+        let url = d.appendingPathComponent(n)
+        return url
+    }
+    
     func getMemory() {
         var pagesize: vm_size_t = 0
 

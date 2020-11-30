@@ -76,8 +76,11 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             print("Do nothing, for now")
         case .archive:
             //downloadShow()
-            downloadSyncRun()
-            playButtonLabel.setTitle("Downloading", for: .normal)
+            if playButtonLabel.currentTitle == "Available" {
+                mp3index = 0
+                downloadSyncRun()
+                playButtonLabel.setTitle("Downloading", for: .normal)
+            }
         case .shared:
             downloadShow()
             playButtonLabel.setTitle("Downloading", for: .normal)
@@ -297,12 +300,16 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 if (player?.playerItems.count)! > 0 {
                     player?.playerItems = [AVPlayerItem]()
                 }
-                player?.getTrackFromName(track: mp3)
+                player?.getTrackItemAndPrepareToPlay(track: mp3)
                 player?.loadQueuePlayerTrack()
                 if let mp = utils.getMiniPlayerController() {
                     mp.setupShow()
                 }
             }
+            else {
+                player?.getTrackItemAndPrepareToPlay(track: mp3)
+            }
+            //player?.loadQueuePlayerTrack()
         }
     }
     

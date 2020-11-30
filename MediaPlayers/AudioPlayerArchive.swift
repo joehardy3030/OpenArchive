@@ -88,10 +88,21 @@ class AudioPlayerArchive: NSObject {
         playerItems.append(item)
     }
 
-    func getTrackFromName(track: ShowMP3) {
+    func prepareToPlaySong(url: URL) {
+        let asset = AVAsset(url: url)
+        let assetKeys = ["playable"]
+        let lastItem = playerItems.last
+        let item = AVPlayerItem(asset: asset, automaticallyLoadedAssetKeys: assetKeys)
+        //item.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: .new, context: nil)
+        playerItems.append(item)
+        playerQueue?.insert(item, after: lastItem)
+    }
+
+
+    func getTrackItemAndPrepareToPlay(track: ShowMP3) {
         guard let n = track.name else { return }
         if let url = trackURLfromName(name: n) {
-            prepareToPlay(url: url)
+            prepareToPlaySong(url: url)
         }
     }
     

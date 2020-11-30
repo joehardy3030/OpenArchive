@@ -87,7 +87,18 @@ class AudioPlayerArchive: NSObject {
         //item.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: .new, context: nil)
         playerItems.append(item)
     }
+
+    func getTrackFromName(track: ShowMP3) {
+        guard let n = track.name else { return }
+        if let url = trackURLfromName(name: n) {
+            prepareToPlay(url: url)
+        }
+    }
     
+    func loadQueuePlayerTrack() {
+        playerQueue = AVQueuePlayer(items: playerItems)
+    }
+
     func loadQueuePlayer(tracks: [ShowMP3]) {
         for track in tracks {
             guard let n = track.name else { return }

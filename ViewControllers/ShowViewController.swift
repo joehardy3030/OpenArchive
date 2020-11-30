@@ -110,22 +110,16 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     }
     
     @IBAction func playButton(_ sender: Any) {
-        playShow()
+        if playButtonLabel.currentTitle == "Play" {
+            playShow()
+        }
     }
     
     func playShow() {
-        if playButtonLabel.currentTitle == "Play" {
             player?.pause()
             player?.showModel = showMetadataModel // Change showMetadata to showModel for consistency
-            //let t = ArchiveTimer(player: player)
-            //miniPlayer.timer = ArchiveTimer(player: player)
             loadDownloadedShow()  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
             player?.play()
-        }
-       // if showType == .shared {
-           // lastShareMetadataModel?.isPlaying = true
-          //  saveShareData(isPlaying: true)
-       // }
     }
     
     func loadDownloadedShow() {
@@ -230,20 +224,8 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     }
     
     func shareShow() {
-        switch showType {
-        case .archive:
-            //if playButtonLabel.currentTitle != "Play" {
-            //    downloadShow()
-            //}
-            self.broadcastIsPlaying = false
-            saveShareData()
-        case .downloaded:
-            self.broadcastIsPlaying = false
-            saveShareData()
-            //playButtonLabel.setTitle("Play", for: .normal)
-        default:
-            print("Do nothing")
-        }
+        self.broadcastIsPlaying = false
+        saveShareData()
     }
     
     private func saveShareData() {
@@ -294,20 +276,36 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     
     func downloadSync(showMP3: ShowMP3?) {
         guard let mp3 = showMP3 else { return }
-            downloadSong(showMP3: mp3) {
-                (destination: URL?) -> Void in
-                DispatchQueue.main.async{
-                    self.setDownloadComplete(destination: destination, name: mp3.name)
-                    self.showTableView.reloadData()
-                    self.mp3index = self.mp3index + 1
-                    self.downloadSyncRun()
-                }
+        downloadSong(showMP3: mp3) {
+            (destination: URL?) -> Void in
+            DispatchQueue.main.async{
+                self.setDownloadComplete(destination: destination, name: mp3.name)
+                self.showTableView.reloadData()
+                self.loadAndPlaySong(showMP3: mp3)
+                self.mp3index = self.mp3index + 1
+                self.downloadSyncRun()
+                //self.playShow()
+            }
         }
-        
-        // for mp3 in mp3s {
-        //   downloadSong(song: mp3)
-        // }
     }
+    
+    func loadAndPlaySong(showMP3: ShowMP3?) {
+        if let mp3 = showMP3 {
+            if mp3index == 0 {
+                player?.pause()
+                player?.showModel = showMetadataModel // Change showMetadata to showModel for consistency
+                if (player?.playerItems.count)! > 0 {
+                    player?.playerItems = [AVPlayerItem]()
+                }
+                player?.getTrackFromName(track: mp3)
+                player?.loadQueuePlayerTrack()
+                if let mp = utils.getMiniPlayerController() {
+                    mp.setupShow()
+                }
+            }
+        }
+    }
+    
     ///Download manager class
     func downloadSong(showMP3: ShowMP3?, completion: @escaping (URL?) -> Void) {
         guard let s = showMP3 else { return }
@@ -323,8 +321,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             }
         }
     }
-            
-    
+                
     ///Download manager class
     private func setDownloadComplete(destination: URL?, name: String?) {
         var counter = 0

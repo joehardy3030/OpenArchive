@@ -103,11 +103,20 @@ class MiniPlayerViewController: UIViewController {
         guard let _ = player?.playerQueue else { return }
         //player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
         //setupTimer()
-        timer?.setupTimer(completion: timerCallback)
+        //timer?.setupTimer(completion: timerCallback)
+        timer?.setupTimer()  { (seconds: Double?) -> Void in
+             self.timerCallback(seconds: seconds)
+        }
+        //print(timer?.currentItemTotalTime())
         setupSlider()
+        self.player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
         setupSong()
         playPause()
     }
+    
+    //timer?.setupTimer()  { (seconds: Double?) -> Void in
+    //     self.timerCallback(seconds: seconds)
+   // }
     
     func setupSong() {
         setupSongDetails()
@@ -115,7 +124,7 @@ class MiniPlayerViewController: UIViewController {
     }
 
     func initialTimerDefaults() {
-        //timer = ArchiveTimer(player: player)
+        timer = ArchiveTimer(player: player)
         //timer?.player = player
         timeSlider.value = 0.0
         songLabel.text = ""
@@ -123,7 +132,7 @@ class MiniPlayerViewController: UIViewController {
         venueLabel.text = ""
 
     }
-
+    /*
     func setupTimer() {
       //  player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
         //track player progress
@@ -143,7 +152,8 @@ class MiniPlayerViewController: UIViewController {
         }
         
     }
-
+    */
+    
     func setupSlider() {
         if let ts = timeSlider {
             ts.value = 0.0
@@ -152,7 +162,7 @@ class MiniPlayerViewController: UIViewController {
     }
 
     func setupSongDetails() {
-        player?.songDetailsModel.songDetailsFromMetadata(row: getCurrentTrackIndex(), showModel: player?.showModel)
+        player?.songDetailsModel.songDetailsFromMetadata(row: player?.getCurrentTrackIndex(), showModel: player?.showModel)
         songLabel.text = player?.songDetailsModel.name
         venueLabel.text = player?.songDetailsModel.venue
     }
@@ -162,7 +172,11 @@ class MiniPlayerViewController: UIViewController {
             let mp3s = player?.showModel?.mp3Array,
             let md = player?.showModel?.metadata
             else { return }
-        let ct = getCurrentTrackIndex()
+        guard let ct = player?.getCurrentTrackIndex()
+        else {
+            print("No current track index")
+            return
+        }
         print("current track index \(ct)")
         nowPlayingInfo = [String : Any]()
         nowPlayingInfo[MPMediaItemPropertyTitle] = mp3s[ct].title
@@ -186,11 +200,9 @@ class MiniPlayerViewController: UIViewController {
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "currentItem.loadedTimeRanges" {
-            //isPlaying = true
             setupSong()
         }
     }
-    
 
     // func setupQueueObserver() {
     //     player?.playerQueue?.addObserver(self, forKeyPath: #keyPath(AVQueuePlayer.status), options: .new, context: nil)
@@ -199,6 +211,7 @@ class MiniPlayerViewController: UIViewController {
      //    print("Got keypath")
      //}
 
+    /*
     func getCurrentTrackIndex() -> Int {
         guard let ci = self.player?.playerQueue?.currentItem else { return 0 }
         let destinationURL = ci.asset.value(forKey: "URL") as? URL
@@ -214,7 +227,8 @@ class MiniPlayerViewController: UIViewController {
         }
         return 0
     }
-
+    */
+    
     func playPause() {
         guard let q = player?.playerQueue else { return }
         if q.rate > 0.0 {

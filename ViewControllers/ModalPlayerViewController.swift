@@ -64,11 +64,18 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         
     }
     
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == "currentItem.loadedTimeRanges" {
+            setupSong()
+        }
+    }
+
     func setupShow() {
         setupPlayer()
         timer?.setupTimer()  { (seconds: Double?) -> Void in
              self.timerCallback(seconds: seconds)
         }
+       // print(timer)
         setupSlider()
         setupSong()
     }
@@ -110,13 +117,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         self.modalPlayerTableView.selectRow(at: indexPath, animated: true, scrollPosition: UITableView.ScrollPosition.middle)
 
     }
-    
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if keyPath == "currentItem.loadedTimeRanges" {
-            setupSong()
-        }
-    }
-    
+        
     func currentItemTotalTime() {
         if let ci = self.player?.playerQueue?.currentItem {
             let duration = ci.duration

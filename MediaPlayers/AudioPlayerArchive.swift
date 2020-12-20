@@ -15,9 +15,10 @@ class AudioPlayerArchive: NSObject {
     var playerItems = [AVPlayerItem]()
     var nowPlayingInfo = [String : Any]()
     let commandCenter = MPRemoteCommandCenter.shared()
-    //let notificationCenter = NotificationCenter.default
     let utils = Utils()
+    var songDetailsModel = SongDetailsModel()
     var showModel: ShowMetadataModel?
+    
     
     override init() {
         super.init()
@@ -63,7 +64,23 @@ class AudioPlayerArchive: NSObject {
     @objc func pause() {
         self.playerQueue?.pause()
     }
-    
+
+    func getCurrentTrackIndex() -> Int {
+        guard let ci = self.playerQueue?.currentItem else { return 0 }
+        let destinationURL = ci.asset.value(forKey: "URL") as? URL
+        let name = trackNameFromURL(url: destinationURL)
+        if let mp3s = showModel?.mp3Array {
+            if mp3s.count > 0 {
+                for i in 0...(mp3s.count - 1) {
+                    if mp3s[i].name == name {
+                        return i
+                        }
+                }
+            }
+        }
+        return 0
+    }
+
     func trackURLfromName(name: String?) -> URL? {
         guard let d = utils.getDocumentsDirectory(), let n = name else { return nil }
         let url = d.appendingPathComponent(n)

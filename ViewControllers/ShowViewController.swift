@@ -308,6 +308,9 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             }
             else {
                 player?.getTrackItemAndPrepareToPlay(track: mp3)
+                //if let mp = utils.getMiniPlayerController() {
+                //    mp.setupSong()
+                //}
             }
             //player?.loadQueuePlayerTrack()
         }

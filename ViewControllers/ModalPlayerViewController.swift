@@ -85,18 +85,12 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     }
     
     func setupSongDetails() {
-        let row = getCurrentTrackIndex()
-        if let c = player?.showModel?.mp3Array?.count {
-            if c > 0 {
-                if let songName = player?.showModel?.mp3Array?[row].title {
-                    songLabel.text = songName
-                }
-                dateLabel.text = player?.showModel?.metadata?.date
-                venueLabel.text = player?.showModel?.metadata?.venue
-            }
-        }
+        player?.songDetailsModel.songDetailsFromMetadata(row: player?.getCurrentTrackIndex(), showModel: player?.showModel)
+        songLabel.text = player?.songDetailsModel.name
+        dateLabel.text = player?.songDetailsModel.date
+        venueLabel.text = player?.songDetailsModel.venue
     }
-    
+     
     func setupSlider() {
         if let ts = timerSlider {
             ts.value = 0.0
@@ -111,7 +105,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     
    
     func selectCurrentTrack() {
-        let index = getCurrentTrackIndex()
+        guard let index = player?.getCurrentTrackIndex() else { return }
         let indexPath = IndexPath(item: index, section: 0)
         self.modalPlayerTableView.selectRow(at: indexPath, animated: true, scrollPosition: UITableView.ScrollPosition.middle)
 
@@ -119,28 +113,8 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "currentItem.loadedTimeRanges" {
-//            let index = getCurrentTrackIndex()
-  //          let indexPath = IndexPath(item: index, section: 0)
-    //        self.modalPlayerTableView.selectRow(at: indexPath, animated: true, scrollPosition: UITableView.ScrollPosition.middle)
-            //isPlaying = true
             setupSong()
         }
-    }
-    
-    func getCurrentTrackIndex() -> Int {
-        guard let ci = self.player?.playerQueue?.currentItem else { return 0 }
-        let destinationURL = ci.asset.value(forKey: "URL") as? URL
-        let name = player?.trackNameFromURL(url: destinationURL)
-        if let mp3s = player?.showModel?.mp3Array {
-            if mp3s.count > 0 {
-                for i in 0...(mp3s.count - 1) {
-                    if mp3s[i].name == name {
-                        return i
-                        }
-                }
-            }
-        }
-        return 0
     }
     
     func currentItemTotalTime() {

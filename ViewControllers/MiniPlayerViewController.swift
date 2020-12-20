@@ -73,9 +73,6 @@ class MiniPlayerViewController: UIViewController {
     func prepareModalPlayer(viewController: ModalPlayerViewController) {
         viewController.player = player
         viewController.timer = timer
-       // viewController.db = db
-        //print(timer)
-        //print(player)
     }
     
     func currentItemTotalTime() {
@@ -113,7 +110,7 @@ class MiniPlayerViewController: UIViewController {
     }
     
     func setupSong() {
-        setupShowDetails()
+        setupSongDetails()
         setupNotificationView()
     }
 
@@ -154,17 +151,10 @@ class MiniPlayerViewController: UIViewController {
         }
     }
 
-    func setupShowDetails() {
-        let row = getCurrentTrackIndex()
-        currentTrackIndex = row
-        if let c = player?.showModel?.mp3Array?.count {
-            if c > 0 {
-                let songName = player?.showModel?.mp3Array?[row].title
-                songLabel.text = songName
-                showLabel.text = player?.showModel?.metadata?.date
-                venueLabel.text = player?.showModel?.metadata?.venue
-            }
-        }
+    func setupSongDetails() {
+        player?.songDetailsModel.songDetailsFromMetadata(row: getCurrentTrackIndex(), showModel: player?.showModel)
+        songLabel.text = player?.songDetailsModel.name
+        venueLabel.text = player?.songDetailsModel.venue
     }
     
     func setupNotificationView() {
@@ -173,6 +163,7 @@ class MiniPlayerViewController: UIViewController {
             let md = player?.showModel?.metadata
             else { return }
         let ct = getCurrentTrackIndex()
+        print("current track index \(ct)")
         nowPlayingInfo = [String : Any]()
         nowPlayingInfo[MPMediaItemPropertyTitle] = mp3s[ct].title
         nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = String(md.date! + ", " + md.coverage!)

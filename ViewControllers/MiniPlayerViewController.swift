@@ -97,7 +97,7 @@ class MiniPlayerViewController: UIViewController {
              self.timerCallback(seconds: seconds)
         }
         setupSlider()
-        setupSong()
+        //setupSong()
         playPause()
     }
 
@@ -132,7 +132,7 @@ class MiniPlayerViewController: UIViewController {
             print("No current track index")
             return
         }
-        print("current track index \(ct)")
+        //print("current track index \(ct)")
         nowPlayingInfo = [String : Any]()
         nowPlayingInfo[MPMediaItemPropertyTitle] = mp3s[ct].title
         nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = String(md.date! + ", " + md.coverage!)

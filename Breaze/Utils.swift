@@ -183,6 +183,13 @@ class Utils {
         return minutesString
     }
     
+    func getTimerString(seconds: Double?) -> String {
+        let secondsText = getTimerStringSeconds(seconds: seconds)
+        let minutesText = getTimerStringMinutes(seconds: seconds)
+        let text = "\(minutesText):\(secondsText)"
+        return text
+    }
+    
     func getDocumentsDirectory() -> URL? {
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         let documentsDirectory = paths[0]

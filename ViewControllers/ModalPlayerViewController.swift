@@ -47,6 +47,9 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     }
     
     @objc func handleSliderChange() {
+        
+        self.timer?.timerSliderHandler(timerValue: timerSlider.value)
+        /*
         if let duration = self.player?.playerQueue?.currentItem?.duration {
             let totalSeconds = CMTimeGetSeconds(duration)
             let value = Float64(timerSlider.value) * totalSeconds
@@ -54,6 +57,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
             self.player?.playerQueue?.seek(to: seekTime, completionHandler: { (completedSeek) in
             })
         }
+        */
     }
     
     @IBAction func playButton(_ sender: Any) {
@@ -123,17 +127,13 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
             let duration = ci.duration
             let seconds = CMTimeGetSeconds(duration)
             if seconds > 0 && seconds < 100000000.0 {
-                let secondsText =  String(format: "%02d", Int(seconds) % 60)
-                let minutesText = String(format: "%02d", Int(seconds) / 60)
-                totalTimeLabel.text = "\(minutesText):\(secondsText)"
+                totalTimeLabel.text = utils.getTimerString(seconds: seconds)
             }
         }
     }
     
     func timerCallback(seconds: Double?) {
-        let secondsString = String(format: "%02d", Int(seconds ?? 0) % 60)
-        let minutesString = String(format: "%02d", Int(seconds ?? 0) / 60)
-        self.currentTimeLabel.text = ("\(minutesString):\(secondsString)")
+        self.currentTimeLabel.text = utils.getTimerString(seconds: seconds)
         self.currentItemTotalTime()
         if let duration = self.player?.playerQueue?.currentItem?.duration {
             let totalSeconds = CMTimeGetSeconds(duration)
@@ -213,15 +213,5 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
 
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

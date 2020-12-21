@@ -18,6 +18,7 @@ class MiniPlayerViewController: UIViewController {
     @IBOutlet weak var showLabel: UILabel!
     @IBOutlet weak var venueLabel: UILabel!
     @IBOutlet weak var songLabel: UILabel!
+    let utils = Utils()
     var nowPlayingInfo = [String : Any]()
     var player: AudioPlayerArchive?
     var timer: ArchiveTimer?
@@ -41,6 +42,8 @@ class MiniPlayerViewController: UIViewController {
     }
 
     @objc func handleSliderChange() {
+        self.timer?.timerSliderHandler(timerValue: timeSlider.value)
+        /*
         if let duration = self.player?.playerQueue?.currentItem?.duration {
             let totalSeconds = CMTimeGetSeconds(duration)
             let value = Float64(timeSlider.value) * totalSeconds
@@ -48,8 +51,8 @@ class MiniPlayerViewController: UIViewController {
             self.player?.playerQueue?.seek(to: seekTime, completionHandler: { (completedSeek) in
             })
         }
+        */
     }
-    
     
     @IBAction func loadFullPlayer(_ sender: Any) {
         if player?.playerQueue != nil {
@@ -70,6 +73,12 @@ class MiniPlayerViewController: UIViewController {
             }
     }
     
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == "currentItem.loadedTimeRanges" {
+            setupSong()
+        }
+    }
+    
     func prepareModalPlayer(viewController: ModalPlayerViewController) {
         viewController.player = player
         viewController.timer = timer
@@ -80,17 +89,13 @@ class MiniPlayerViewController: UIViewController {
             let duration = ci.duration
             let seconds = CMTimeGetSeconds(duration)
             if seconds > 0 && seconds < 100000000.0 {
-                let secondsText =  String(format: "%02d", Int(seconds) % 60)
-                let minutesText = String(format: "%02d", Int(seconds) / 60)
-                totalTimeLabel.text = "\(minutesText):\(secondsText)"
+                totalTimeLabel.text = utils.getTimerString(seconds: seconds)
             }
         }
     }
 
     func timerCallback(seconds: Double?) {
-        let secondsString = String(format: "%02d", Int(seconds ?? 0) % 60)
-        let minutesString = String(format: "%02d", Int(seconds ?? 0) / 60)
-        self.currentTimeLabel.text = ("\(minutesString):\(secondsString)")
+        self.currentTimeLabel.text = utils.getTimerString(seconds: seconds)
         self.currentItemTotalTime()
         if let duration = self.player?.playerQueue?.currentItem?.duration {
             let totalSeconds = CMTimeGetSeconds(duration)
@@ -101,22 +106,14 @@ class MiniPlayerViewController: UIViewController {
 
     func setupShow () {
         guard let _ = player?.playerQueue else { return }
-        //player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
-        //setupTimer()
-        //timer?.setupTimer(completion: timerCallback)
+        self.player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
         timer?.setupTimer()  { (seconds: Double?) -> Void in
              self.timerCallback(seconds: seconds)
         }
-        //print(timer?.currentItemTotalTime())
         setupSlider()
-        self.player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
         setupSong()
         playPause()
     }
-    
-    //timer?.setupTimer()  { (seconds: Double?) -> Void in
-    //     self.timerCallback(seconds: seconds)
-   // }
     
     func setupSong() {
         setupSongDetails()
@@ -198,11 +195,6 @@ class MiniPlayerViewController: UIViewController {
 //        MPRemoteCommandCenter.shared().skipForwardCommand = player?.playerQueue?.advanceToNextItem()
     }
     
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if keyPath == "currentItem.loadedTimeRanges" {
-            setupSong()
-        }
-    }
 
     // func setupQueueObserver() {
     //     player?.playerQueue?.addObserver(self, forKeyPath: #keyPath(AVQueuePlayer.status), options: .new, context: nil)

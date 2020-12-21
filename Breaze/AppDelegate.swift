@@ -33,8 +33,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate {
         center.requestAuthorization(options: [.alert, .sound]) { granted, error in }
         do {
               //options: AVAudioSession.CategoryOptions.mixWithOthers
-              try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
-              try AVAudioSession.sharedInstance().setActive(true)
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
+            try AVAudioSession.sharedInstance().setActive(true)
           }
           catch {
               print("nope")

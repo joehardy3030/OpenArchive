@@ -17,6 +17,7 @@ class AudioPlayerArchive: NSObject {
     let commandCenter = MPRemoteCommandCenter.shared()
     let utils = Utils()
     var songDetailsModel = SongDetailsModel()
+    var timer: ArchiveTimer?
     var showModel: ShowMetadataModel?
     
     
@@ -27,7 +28,6 @@ class AudioPlayerArchive: NSObject {
     }
 
     func setupCommandCenter() {
-        
         // Add a handler for the play command.
         commandCenter.playCommand.isEnabled = true
         commandCenter.playCommand.addTarget { [unowned self] event in

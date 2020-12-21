@@ -26,20 +26,10 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         self.modalPlayerTableView.delegate = self
         self.modalPlayerTableView.dataSource = self
         initialDefaults()
+        setupSlider()
         setupShow()
-        // Do any additional setup after loading the view.
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        //setupShow()
-        
-       // print(player)
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        // give it a reference to mp and then give the timer back to the mp
-    }
-
     @IBAction func forwardButton(_ sender: Any) {
         if let q = player?.playerQueue {
             q.advanceToNextItem()
@@ -47,17 +37,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     }
     
     @objc func handleSliderChange() {
-        
         self.timer?.timerSliderHandler(timerValue: timerSlider.value)
-        /*
-        if let duration = self.player?.playerQueue?.currentItem?.duration {
-            let totalSeconds = CMTimeGetSeconds(duration)
-            let value = Float64(timerSlider.value) * totalSeconds
-            let seekTime = CMTime(value: Int64(value), timescale: 1)
-            self.player?.playerQueue?.seek(to: seekTime, completionHandler: { (completedSeek) in
-            })
-        }
-        */
     }
     
     @IBAction func playButton(_ sender: Any) {
@@ -74,13 +54,18 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         }
     }
 
+    func setupSlider() {
+        if let ts = timerSlider {
+            ts.value = 0.0
+            ts.addTarget(self, action: #selector(handleSliderChange), for: .valueChanged)
+        }
+    }
+
     func setupShow() {
         setupPlayer()
         timer?.setupTimer()  { (seconds: Double?) -> Void in
              self.timerCallback(seconds: seconds)
         }
-       // print(timer)
-        setupSlider()
         setupSong()
     }
     
@@ -101,14 +86,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         dateLabel.text = player?.songDetailsModel.date
         venueLabel.text = player?.songDetailsModel.venue
     }
-     
-    func setupSlider() {
-        if let ts = timerSlider {
-            ts.value = 0.0
-            ts.addTarget(self, action: #selector(handleSliderChange), for: .valueChanged)
-        }
-    }
-    
+         
     func setupPlayer() {
         playPauseButtonImageSetup()
         player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
@@ -119,22 +97,11 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         guard let index = player?.getCurrentTrackIndex() else { return }
         let indexPath = IndexPath(item: index, section: 0)
         self.modalPlayerTableView.selectRow(at: indexPath, animated: true, scrollPosition: UITableView.ScrollPosition.middle)
-
-    }
-        
-    func currentItemTotalTime() {
-        if let ci = self.player?.playerQueue?.currentItem {
-            let duration = ci.duration
-            let seconds = CMTimeGetSeconds(duration)
-            if seconds > 0 && seconds < 100000000.0 {
-                totalTimeLabel.text = utils.getTimerString(seconds: seconds)
-            }
-        }
     }
     
     func timerCallback(seconds: Double?) {
         self.currentTimeLabel.text = utils.getTimerString(seconds: seconds)
-        self.currentItemTotalTime()
+        self.totalTimeLabel.text = self.player?.getCurrentTrackTotalTimeString()
         if let duration = self.player?.playerQueue?.currentItem?.duration {
             let totalSeconds = CMTimeGetSeconds(duration)
             self.timerSlider.value = Float((seconds ?? 0.0)/(totalSeconds ))

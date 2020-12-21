@@ -233,7 +233,6 @@
 			isa = PBXGroup;
 			children = (
 				D892BB9F24CBBCF5008E4960 /* ArchiveSuperViewController.swift */,
-				D89D789825901D80009324EE /* ArchivePlayerViewController.swift */,
 				D83EB53F24CE49880016726C /* StartViewController.swift */,
 				D83EB54124CE62170016726C /* ArchiveTabBarController.swift */,
 				D83EB53D24CE33C60016726C /* ArchiveNavigationController.swift */,
@@ -242,6 +241,7 @@
 				D852C3C624B1219400029EB9 /* ShowsListViewController.swift */,
 				D84D2B8D24C2925A006C8175 /* DownloadsViewController.swift */,
 				D852C3CA24B1AA1C00029EB9 /* ShowViewController.swift */,
+				D89D789825901D80009324EE /* ArchivePlayerViewController.swift */,
 				D845E03824D7642A003381B6 /* ModalPlayerViewController.swift */,
 				D879502D24C69E2900FB2436 /* MiniPlayerViewController.swift */,
 				D8B65EFF24C54A5500F57355 /* DownloadPlayerViewController.swift */,

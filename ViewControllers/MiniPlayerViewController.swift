@@ -29,7 +29,6 @@ class MiniPlayerViewController: UIViewController {
         view.layer.borderWidth = 2
         view.layer.borderColor = UIColor.gray.cgColor
         navigationController?.delegate = self
-        //playButton.imageView?.contentMode = .scaleToFill
         initialTimerDefaults()
     }
         
@@ -43,20 +42,10 @@ class MiniPlayerViewController: UIViewController {
 
     @objc func handleSliderChange() {
         self.timer?.timerSliderHandler(timerValue: timeSlider.value)
-        /*
-        if let duration = self.player?.playerQueue?.currentItem?.duration {
-            let totalSeconds = CMTimeGetSeconds(duration)
-            let value = Float64(timeSlider.value) * totalSeconds
-            let seekTime = CMTime(value: Int64(value), timescale: 1)
-            self.player?.playerQueue?.seek(to: seekTime, completionHandler: { (completedSeek) in
-            })
-        }
-        */
     }
     
     @IBAction func loadFullPlayer(_ sender: Any) {
         if player?.playerQueue != nil {
-            
         
         let sbd = UIStoryboard(name: "Main", bundle: nil)
         guard let vc = sbd.instantiateViewController(withIdentifier: "ModalPlayer") as? ModalPlayerViewController,
@@ -84,19 +73,9 @@ class MiniPlayerViewController: UIViewController {
         viewController.timer = timer
     }
     
-    func currentItemTotalTime() {
-        if let ci = self.player?.playerQueue?.currentItem {
-            let duration = ci.duration
-            let seconds = CMTimeGetSeconds(duration)
-            if seconds > 0 && seconds < 100000000.0 {
-                totalTimeLabel.text = utils.getTimerString(seconds: seconds)
-            }
-        }
-    }
-
     func timerCallback(seconds: Double?) {
         self.currentTimeLabel.text = utils.getTimerString(seconds: seconds)
-        self.currentItemTotalTime()
+        self.totalTimeLabel.text = self.player?.getCurrentTrackTotalTimeString()
         if let duration = self.player?.playerQueue?.currentItem?.duration {
             let totalSeconds = CMTimeGetSeconds(duration)
             self.timeSlider.value = Float((seconds ?? 0.0)/(totalSeconds ))
@@ -121,35 +100,12 @@ class MiniPlayerViewController: UIViewController {
     }
 
     func initialTimerDefaults() {
-        timer = ArchiveTimer(player: player)
-        //timer?.player = player
         timeSlider.value = 0.0
         songLabel.text = ""
         showLabel.text = ""
         venueLabel.text = ""
 
     }
-    /*
-    func setupTimer() {
-      //  player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
-        //track player progress
-        initialTimerDefaults()
-        let interval = CMTime(value: 1, timescale: 2)
-        
-        player?.playerQueue?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { (progressTime) in
-            let seconds = CMTimeGetSeconds(progressTime)
-            let secondsString = String(format: "%02d", Int(seconds) % 60)
-            let minutesString = String(format: "%02d", Int(seconds) / 60)
-            self.currentTimeLabel.text = ("\(minutesString):\(secondsString)")
-            self.currentItemTotalTime()
-            if let duration = self.player?.playerQueue?.currentItem?.duration {
-                let totalSeconds = CMTimeGetSeconds(duration)
-                self.timeSlider.value = Float(seconds/totalSeconds)
-            }
-        }
-        
-    }
-    */
     
     func setupSlider() {
         if let ts = timeSlider {
@@ -192,34 +148,7 @@ class MiniPlayerViewController: UIViewController {
         }
         else { print("no image")}
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
-//        MPRemoteCommandCenter.shared().skipForwardCommand = player?.playerQueue?.advanceToNextItem()
     }
-    
-
-    // func setupQueueObserver() {
-    //     player?.playerQueue?.addObserver(self, forKeyPath: #keyPath(AVQueuePlayer.status), options: .new, context: nil)
-    // }
-     //if keyPath == #keyPath(AVQueuePlayer.status) {
-     //    print("Got keypath")
-     //}
-
-    /*
-    func getCurrentTrackIndex() -> Int {
-        guard let ci = self.player?.playerQueue?.currentItem else { return 0 }
-        let destinationURL = ci.asset.value(forKey: "URL") as? URL
-        let name = player?.trackNameFromURL(url: destinationURL)
-        if let mp3s = player?.showModel?.mp3Array {
-            if mp3s.count > 0 {
-                for i in 0...(mp3s.count - 1) {
-                    if mp3s[i].name == name {
-                        return i
-                        }
-                }
-            }
-        }
-        return 0
-    }
-    */
     
     func playPause() {
         guard let q = player?.playerQueue else { return }
@@ -230,7 +159,6 @@ class MiniPlayerViewController: UIViewController {
                     playButton.setBackgroundImage(UIImage(systemName: "play"), for: .normal)
                 }
             }
-        //    isPlaying = false
         }
         else {
             q.play()
@@ -239,7 +167,6 @@ class MiniPlayerViewController: UIViewController {
                     playButton.setBackgroundImage(UIImage(systemName: "pause"), for: .normal)
                 }
             }
-         //   isPlaying = true
         }
     }
     

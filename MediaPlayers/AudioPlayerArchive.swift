@@ -80,6 +80,18 @@ class AudioPlayerArchive: NSObject {
         }
         return 0
     }
+    
+    func getCurrentTrackTotalTimeString() -> String? {
+        guard let ci = self.playerQueue?.currentItem else { return "" }
+        let duration = ci.duration
+        let seconds = CMTimeGetSeconds(duration)
+        var timeString: String?
+        if seconds > 0 && seconds < 100000000.0 {
+             timeString = utils.getTimerString(seconds: seconds)
+        }
+        return timeString
+    }
+
 
     func trackURLfromName(name: String?) -> URL? {
         guard let d = utils.getDocumentsDirectory(), let n = name else { return nil }

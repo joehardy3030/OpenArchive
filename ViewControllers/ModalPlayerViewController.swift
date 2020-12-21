@@ -30,6 +30,10 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         setupShow()
     }
     
+    @IBAction func playButton(_ sender: Any) {
+        playPause()
+    }
+
     @IBAction func forwardButton(_ sender: Any) {
         if let q = player?.playerQueue {
             q.advanceToNextItem()
@@ -40,9 +44,6 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         self.timer?.timerSliderHandler(timerValue: timerSlider.value)
     }
     
-    @IBAction func playButton(_ sender: Any) {
-        playPause()
-    }
     
     @IBAction func timerSlider(_ sender: Any) {
         

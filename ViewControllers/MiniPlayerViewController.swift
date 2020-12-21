@@ -29,7 +29,7 @@ class MiniPlayerViewController: UIViewController {
         view.layer.borderWidth = 2
         view.layer.borderColor = UIColor.gray.cgColor
         navigationController?.delegate = self
-        initialTimerDefaults()
+        initialDefaults()
     }
         
     @IBAction func playButton(_ sender: Any) {
@@ -37,13 +37,21 @@ class MiniPlayerViewController: UIViewController {
     }
     
     @IBAction func forwardButton(_ sender: Any) {
-        player?.playerQueue?.advanceToNextItem()
+        if let q = player?.playerQueue {
+            q.advanceToNextItem()
+        }
     }
 
     @objc func handleSliderChange() {
         self.timer?.timerSliderHandler(timerValue: timeSlider.value)
     }
     
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == "currentItem.loadedTimeRanges" {
+            setupSong()
+        }
+    }
+
     @IBAction func loadFullPlayer(_ sender: Any) {
         if player?.playerQueue != nil {
         
@@ -61,16 +69,18 @@ class MiniPlayerViewController: UIViewController {
         }
             }
     }
-    
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if keyPath == "currentItem.loadedTimeRanges" {
-            setupSong()
-        }
-    }
-    
+
     func prepareModalPlayer(viewController: ModalPlayerViewController) {
         viewController.player = player
         viewController.timer = timer
+    }
+
+    
+    func initialDefaults() {
+        timeSlider.value = 0.0
+        songLabel.text = ""
+        showLabel.text = ""
+        venueLabel.text = ""
     }
     
     func timerCallback(seconds: Double?) {
@@ -82,7 +92,6 @@ class MiniPlayerViewController: UIViewController {
         }
     }
 
-
     func setupShow () {
         guard let _ = player?.playerQueue else { return }
         self.player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
@@ -93,26 +102,19 @@ class MiniPlayerViewController: UIViewController {
         setupSong()
         playPause()
     }
-    
-    func setupSong() {
-        setupSongDetails()
-        setupNotificationView()
-    }
 
-    func initialTimerDefaults() {
-        timeSlider.value = 0.0
-        songLabel.text = ""
-        showLabel.text = ""
-        venueLabel.text = ""
-
-    }
-    
     func setupSlider() {
         if let ts = timeSlider {
             ts.value = 0.0
             ts.addTarget(self, action: #selector(handleSliderChange), for: .valueChanged)
         }
     }
+
+    func setupSong() {
+        setupSongDetails()
+        setupNotificationView()
+    }
+    
 
     func setupSongDetails() {
         player?.songDetailsModel.songDetailsFromMetadata(row: player?.getCurrentTrackIndex(), showModel: player?.showModel)

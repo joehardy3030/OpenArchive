@@ -23,6 +23,7 @@ class MiniPlayerViewController: UIViewController {
     var player: AudioPlayerArchive?
     var timer: ArchiveTimer?
     var currentTrackIndex = 0
+    //private var playerItemContext = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,8 +48,34 @@ class MiniPlayerViewController: UIViewController {
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if keyPath == "currentItem.loadedTimeRanges" {
-            setupSong()
+        //if keyPath == "currentItem.loadedTimeRanges" {
+           // setupSong()
+       // }
+        //if keyPath == "currentItem.status" {
+       //     print("status")
+       // }
+        
+        if keyPath == #keyPath(AVQueuePlayer.currentItem.status) {
+            let status: AVPlayerItem.Status
+            if let statusNumber = change?[.newKey] as? NSNumber {
+                status = AVPlayerItem.Status(rawValue: statusNumber.intValue)!
+            } else {
+                status = .unknown
+            }
+
+            // Switch over status value
+            switch status {
+            case .readyToPlay:
+                setupSong()
+                print("ready to play")
+            case .failed:
+                print("failed ")
+            case .unknown:
+                print("unknown status")
+            default:
+                print("nope")
+            }
+            
         }
     }
     
@@ -92,12 +119,13 @@ class MiniPlayerViewController: UIViewController {
     
     func setupShow () {
         guard let _ = player?.playerQueue else { return }
-        self.player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
+        //self.player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
+        self.player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
         timer?.setupTimer()  { (seconds: Double?) -> Void in
              self.timerCallback(seconds: seconds)
         }
         setupSlider()
-        //setupSong()
+        setupSong()
         playPause()
     }
 
@@ -132,7 +160,6 @@ class MiniPlayerViewController: UIViewController {
             print("No current track index")
             return
         }
-        //print("current track index \(ct)")
         nowPlayingInfo = [String : Any]()
         nowPlayingInfo[MPMediaItemPropertyTitle] = mp3s[ct].title
         nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = String(md.date! + ", " + md.coverage!)

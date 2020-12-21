@@ -44,9 +44,33 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if keyPath == "currentItem.loadedTimeRanges" {
-            setupSong()
+       // if keyPath == "currentItem.loadedTimeRanges" {
+       //     setupSong()
+       // }
+        
+        if keyPath == #keyPath(AVQueuePlayer.currentItem.status) {
+            let status: AVPlayerItem.Status
+            if let statusNumber = change?[.newKey] as? NSNumber {
+                status = AVPlayerItem.Status(rawValue: statusNumber.intValue)!
+            } else {
+                status = .unknown
+            }
+
+            // Switch over status value
+            switch status {
+            case .readyToPlay:
+                setupSong()
+                print("ready to play")
+            case .failed:
+                print("failed ")
+            case .unknown:
+                print("unknown status")
+            default:
+                print("nope")
+            }
+            
         }
+
     }
 
     @IBAction func timerSlider(_ sender: Any) {
@@ -69,7 +93,8 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     func setupShow() {
         guard let _ = player?.playerQueue else { return }
         playPauseButtonImageSetup()
-        player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
+        //player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
+        self.player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
         timer?.setupTimer()  { (seconds: Double?) -> Void in
              self.timerCallback(seconds: seconds)
         }

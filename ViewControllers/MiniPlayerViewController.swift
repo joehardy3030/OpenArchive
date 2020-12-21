@@ -51,6 +51,13 @@ class MiniPlayerViewController: UIViewController {
             setupSong()
         }
     }
+    
+    func setupSlider() {
+        if let ts = timeSlider {
+            ts.value = 0.0
+            ts.addTarget(self, action: #selector(handleSliderChange), for: .valueChanged)
+        }
+    }
 
     @IBAction func loadFullPlayer(_ sender: Any) {
         if player?.playerQueue != nil {
@@ -83,15 +90,6 @@ class MiniPlayerViewController: UIViewController {
         venueLabel.text = ""
     }
     
-    func timerCallback(seconds: Double?) {
-        self.currentTimeLabel.text = utils.getTimerString(seconds: seconds)
-        self.totalTimeLabel.text = self.player?.getCurrentTrackTotalTimeString()
-        if let duration = self.player?.playerQueue?.currentItem?.duration {
-            let totalSeconds = CMTimeGetSeconds(duration)
-            self.timeSlider.value = Float((seconds ?? 0.0)/(totalSeconds ))
-        }
-    }
-
     func setupShow () {
         guard let _ = player?.playerQueue else { return }
         self.player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
@@ -101,13 +99,6 @@ class MiniPlayerViewController: UIViewController {
         setupSlider()
         setupSong()
         playPause()
-    }
-
-    func setupSlider() {
-        if let ts = timeSlider {
-            ts.value = 0.0
-            ts.addTarget(self, action: #selector(handleSliderChange), for: .valueChanged)
-        }
     }
 
     func setupSong() {
@@ -122,6 +113,15 @@ class MiniPlayerViewController: UIViewController {
         venueLabel.text = player?.songDetailsModel.venue
     }
     
+    func timerCallback(seconds: Double?) {
+        self.currentTimeLabel.text = utils.getTimerString(seconds: seconds)
+        self.totalTimeLabel.text = self.player?.getCurrentTrackTotalTimeString()
+        if let duration = self.player?.playerQueue?.currentItem?.duration {
+            let totalSeconds = CMTimeGetSeconds(duration)
+            self.timeSlider.value = Float((seconds ?? 0.0)/(totalSeconds ))
+        }
+    }
+
     func setupNotificationView() {
         guard let ci = self.player?.playerQueue?.currentItem,
             let mp3s = player?.showModel?.mp3Array,

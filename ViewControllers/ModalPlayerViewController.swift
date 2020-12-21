@@ -26,7 +26,6 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         self.modalPlayerTableView.delegate = self
         self.modalPlayerTableView.dataSource = self
         initialDefaults()
-        setupSlider()
         setupShow()
     }
     
@@ -44,17 +43,16 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         self.timer?.timerSliderHandler(timerValue: timerSlider.value)
     }
     
-    
-    @IBAction func timerSlider(_ sender: Any) {
-        
-    }
-    
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "currentItem.loadedTimeRanges" {
             setupSong()
         }
     }
 
+    @IBAction func timerSlider(_ sender: Any) {
+        
+    }
+    
     func setupSlider() {
         if let ts = timerSlider {
             ts.value = 0.0
@@ -62,20 +60,23 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         }
     }
 
-    func setupShow() {
-        setupPlayer()
-        timer?.setupTimer()  { (seconds: Double?) -> Void in
-             self.timerCallback(seconds: seconds)
-        }
-        setupSong()
-    }
-    
     func initialDefaults() {
         dateLabel.text = ""
         songLabel.text = ""
         venueLabel.text = ""
       }
-    
+
+    func setupShow() {
+        guard let _ = player?.playerQueue else { return }
+        playPauseButtonImageSetup()
+        player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
+        timer?.setupTimer()  { (seconds: Double?) -> Void in
+             self.timerCallback(seconds: seconds)
+        }
+        setupSlider()
+        setupSong()
+    }
+        
     func setupSong() {
         setupSongDetails()
         selectCurrentTrack()
@@ -86,13 +87,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         songLabel.text = player?.songDetailsModel.name
         dateLabel.text = player?.songDetailsModel.date
         venueLabel.text = player?.songDetailsModel.venue
-    }
-         
-    func setupPlayer() {
-        playPauseButtonImageSetup()
-        player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
-    }
-    
+    }    
    
     func selectCurrentTrack() {
         guard let index = player?.getCurrentTrackIndex() else { return }

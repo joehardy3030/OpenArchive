@@ -7,6 +7,7 @@
 //
 
 import UIKit
+//import AVKit
 import MediaPlayer
 
 class ArchiveTimer: NSObject {
@@ -15,12 +16,13 @@ class ArchiveTimer: NSObject {
     init(player: AudioPlayerArchive?) {
         self.player = player
     }
+    //var queue: AVQueuePlayer?
     
     func setupTimer(completion: @escaping (_ seconds: Double?) -> Void) {
 
         let interval = CMTime(value: 1, timescale: 2)
         
-        player?.playerQueue?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { (progressTime) in
+        self.player?.playerQueue?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { (progressTime) in
             let seconds = CMTimeGetSeconds(progressTime)
             //let secondsString = String(format: "%02d", Int(seconds) % 60)
            // let minutesString = String(format: "%02d", Int(seconds) / 60)
@@ -47,5 +49,17 @@ class ArchiveTimer: NSObject {
         }
         return "00:00"
     }
+    
+    func timerSliderHandler(timerValue: Float) {
+        if let duration = self.player?.playerQueue?.currentItem?.duration {
+            let totalSeconds = CMTimeGetSeconds(duration)
+            let value = Float64(timerValue) * totalSeconds
+            let seekTime = CMTime(value: Int64(value), timescale: 1)
+            self.player?.playerQueue?.seek(to: seekTime, completionHandler: { (completedSeek) in
+            })
+        }
+    }
+    
+
 
 }

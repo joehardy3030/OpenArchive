@@ -17,12 +17,12 @@ enum iaQueryType {
 
 class ArchiveAPI: NSObject {
     var configuration: URLSessionConfiguration
-    var sessionManager: Alamofire.SessionManager
+    var sessionManager: Alamofire.Session
     
     override init() {
         configuration = URLSessionConfiguration.default
         configuration.timeoutIntervalForRequest = 10000
-        sessionManager = Alamofire.SessionManager(configuration: configuration)
+        sessionManager = Alamofire.Session(configuration: configuration)
         super.init()
     }
     
@@ -98,12 +98,12 @@ class ArchiveAPI: NSObject {
     }
     
     func getIARequestMetadata(url: String, completion: @escaping (ShowMetadataModel) -> Void) {
-        Alamofire.request(url).responseJSON { response in
-            if let json = response.result.value {
+        AF.request(url).responseJSON { response in
+            if let json = response.value {
                 let j = JSON(json)
                 let showMetadataModel = self.deserializeMetadataModel(json: j)
                 completion(showMetadataModel)
-              }
+            }
         }
     }
     
@@ -164,35 +164,30 @@ class ArchiveAPI: NSObject {
     }
     
     func getIARequestItems(url: String, completion: @escaping ([ShowMetadata]?) -> Void) {
-        Alamofire.request(url).responseJSON { response in
-
-            if let json = response.result.value {
+        AF.request(url).responseJSON { response in
+            if let json = response.value {
                 let j = JSON(json)
                 let items = j["items"]
                 var showMetadatas = [ShowMetadata]()
-                
                 for i in items {
                     let showMD = self.deserializeMetadata(json: i.1)
                     showMetadatas.append(showMD)
                 }
                 completion(showMetadatas)
-              }
+            }
         }
     }
 
     func getIADownload(url: String, completion: @escaping (URL?) -> Void) {
         //https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#downloading-data-to-a-file
         let destination = DownloadRequest.suggestedDownloadDestination(for: .documentDirectory)
-        
-        //Alamofire.download(url, to: destination)
-        
         self.sessionManager.download(url, to: destination)
-             .downloadProgress { (progress) in
-                        print("Progress: \(progress.fractionCompleted)")
-                  }
-                 .responseJSON { response in
-                                 completion(response.destinationURL)
-        }
+            .downloadProgress { (progress) in
+                print("Progress: \(progress.fractionCompleted)")
+            }
+            .responseJSON { response in
+                completion(response.fileURL)
+            }
     }
 }
 

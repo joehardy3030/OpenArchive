@@ -27,17 +27,10 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         self.modalPlayerTableView.dataSource = self
         initialDefaults()
         setupShow()
-        // Do any additional setup after loading the view.
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        //setupShow()
-        
-       // print(player)
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        // give it a reference to mp and then give the timer back to the mp
+    @IBAction func playButton(_ sender: Any) {
+        playPause()
     }
 
     @IBAction func forwardButton(_ sender: Any) {
@@ -47,54 +40,41 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     }
     
     @objc func handleSliderChange() {
-        if let duration = self.player?.playerQueue?.currentItem?.duration {
-            let totalSeconds = CMTimeGetSeconds(duration)
-            let value = Float64(timerSlider.value) * totalSeconds
-            let seekTime = CMTime(value: Int64(value), timescale: 1)
-            self.player?.playerQueue?.seek(to: seekTime, completionHandler: { (completedSeek) in
-            })
+        self.timer?.timerSliderHandler(timerValue: timerSlider.value)
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+       // if keyPath == "currentItem.loadedTimeRanges" {
+       //     setupSong()
+       // }
+        
+        if keyPath == #keyPath(AVQueuePlayer.currentItem.status) {
+            let status: AVPlayerItem.Status
+            if let statusNumber = change?[.newKey] as? NSNumber {
+                status = AVPlayerItem.Status(rawValue: statusNumber.intValue)!
+            } else {
+                status = .unknown
+            }
+
+            // Switch over status value
+            switch status {
+            case .readyToPlay:
+                setupSong()
+                print("ready to play")
+            case .failed:
+                print("failed ")
+            case .unknown:
+                print("unknown status")
+            default:
+                print("nope")
+            }
+            
         }
+
     }
-    
-    @IBAction func playButton(_ sender: Any) {
-        playPause()
-    }
-    
+
     @IBAction func timerSlider(_ sender: Any) {
         
-    }
-    
-    func setupShow() {
-        setupPlayer()
-        timer?.setupTimer()  { (seconds: Double?) -> Void in
-             self.timerCallback(seconds: seconds)
-        }
-        setupSlider()
-        setupSong()
-    }
-    
-    func initialDefaults() {
-        dateLabel.text = ""
-        songLabel.text = ""
-        venueLabel.text = ""
-      }
-    
-    func setupSong() {
-        setupSongDetails()
-        selectCurrentTrack()
-    }
-    
-    func setupSongDetails() {
-        let row = getCurrentTrackIndex()
-        if let c = player?.showModel?.mp3Array?.count {
-            if c > 0 {
-                if let songName = player?.showModel?.mp3Array?[row].title {
-                    songLabel.text = songName
-                }
-                dateLabel.text = player?.showModel?.metadata?.date
-                venueLabel.text = player?.showModel?.metadata?.venue
-            }
-        }
     }
     
     func setupSlider() {
@@ -103,63 +83,46 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
             ts.addTarget(self, action: #selector(handleSliderChange), for: .valueChanged)
         }
     }
-    
-    func setupPlayer() {
+
+    func initialDefaults() {
+        dateLabel.text = ""
+        songLabel.text = ""
+        venueLabel.text = ""
+      }
+
+    func setupShow() {
+        guard let _ = player?.playerQueue else { return }
         playPauseButtonImageSetup()
-        player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
+        //player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
+        self.player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
+        timer?.setupTimer()  { (seconds: Double?) -> Void in
+             self.timerCallback(seconds: seconds)
+        }
+        setupSlider()
+        setupSong()
+    }
+        
+    func setupSong() {
+        setupSongDetails()
+        selectCurrentTrack()
     }
     
+    func setupSongDetails() {
+        player?.songDetailsModel.songDetailsFromMetadata(row: player?.getCurrentTrackIndex(), showModel: player?.showModel)
+        songLabel.text = player?.songDetailsModel.name
+        dateLabel.text = player?.songDetailsModel.date
+        venueLabel.text = player?.songDetailsModel.venue
+    }    
    
     func selectCurrentTrack() {
-        let index = getCurrentTrackIndex()
+        guard let index = player?.getCurrentTrackIndex() else { return }
         let indexPath = IndexPath(item: index, section: 0)
         self.modalPlayerTableView.selectRow(at: indexPath, animated: true, scrollPosition: UITableView.ScrollPosition.middle)
-
-    }
-    
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if keyPath == "currentItem.loadedTimeRanges" {
-//            let index = getCurrentTrackIndex()
-  //          let indexPath = IndexPath(item: index, section: 0)
-    //        self.modalPlayerTableView.selectRow(at: indexPath, animated: true, scrollPosition: UITableView.ScrollPosition.middle)
-            //isPlaying = true
-            setupSong()
-        }
-    }
-    
-    func getCurrentTrackIndex() -> Int {
-        guard let ci = self.player?.playerQueue?.currentItem else { return 0 }
-        let destinationURL = ci.asset.value(forKey: "URL") as? URL
-        let name = player?.trackNameFromURL(url: destinationURL)
-        if let mp3s = player?.showModel?.mp3Array {
-            if mp3s.count > 0 {
-                for i in 0...(mp3s.count - 1) {
-                    if mp3s[i].name == name {
-                        return i
-                        }
-                }
-            }
-        }
-        return 0
-    }
-    
-    func currentItemTotalTime() {
-        if let ci = self.player?.playerQueue?.currentItem {
-            let duration = ci.duration
-            let seconds = CMTimeGetSeconds(duration)
-            if seconds > 0 && seconds < 100000000.0 {
-                let secondsText =  String(format: "%02d", Int(seconds) % 60)
-                let minutesText = String(format: "%02d", Int(seconds) / 60)
-                totalTimeLabel.text = "\(minutesText):\(secondsText)"
-            }
-        }
     }
     
     func timerCallback(seconds: Double?) {
-        let secondsString = String(format: "%02d", Int(seconds ?? 0) % 60)
-        let minutesString = String(format: "%02d", Int(seconds ?? 0) / 60)
-        self.currentTimeLabel.text = ("\(minutesString):\(secondsString)")
-        self.currentItemTotalTime()
+        self.currentTimeLabel.text = utils.getTimerString(seconds: seconds)
+        self.totalTimeLabel.text = self.player?.getCurrentTrackTotalTimeString()
         if let duration = self.player?.playerQueue?.currentItem?.duration {
             let totalSeconds = CMTimeGetSeconds(duration)
             self.timerSlider.value = Float((seconds ?? 0.0)/(totalSeconds ))
@@ -238,15 +201,5 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
 
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

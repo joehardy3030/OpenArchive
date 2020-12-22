@@ -11,34 +11,7 @@ import CoreData
 import CoreLocation
 
 class Utils {
- /*   let appDelegate = UIApplication.shared.delegate as! AppDelegate
-    struct lastLocation {
-        var latitude: String?
-        var longitude: String?
-    }
 
-    func fetchLastLocation() -> lastLocation {
-        
-        var location = lastLocation()
-      //  let context = appDelegate.persistentContainer.viewContext
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "LastLocation")
-        request.returnsObjectsAsFaults = false
-        do {
-            let result = try context.fetch(request)
-            for data in result as! [NSManagedObject] {
-                //
-                print(data.value(forKey: "longitude") as! String)
-                location.longitude = data.value(forKey: "longitude") as? String
-                location.latitude = data.value(forKey: "latitude") as? String
-            }
-            
-        } catch {
-            print("Failed")
-        }
-        return location
-    }
-   */
-    
     func switchConditionsText(icon: String) -> String {
         var conditions: String
         switch icon {
@@ -210,10 +183,23 @@ class Utils {
         return minutesString
     }
     
+    func getTimerString(seconds: Double?) -> String {
+        let secondsText = getTimerStringSeconds(seconds: seconds)
+        let minutesText = getTimerStringMinutes(seconds: seconds)
+        let text = "\(minutesText):\(secondsText)"
+        return text
+    }
+    
     func getDocumentsDirectory() -> URL? {
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         let documentsDirectory = paths[0]
         return documentsDirectory
+    }
+    
+    func trackURLfromName(name: String?) -> URL? {
+        guard let d = getDocumentsDirectory(), let n = name else { return nil }
+        let url = d.appendingPathComponent(n)
+        return url
     }
     
     func getMemory() {

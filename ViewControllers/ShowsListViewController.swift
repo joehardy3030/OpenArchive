@@ -107,7 +107,7 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
         if let target = segue.destination as? ShowViewController, let showMDs = self.showMetadatas {
             target.identifier = showMDs[indexPath.row].identifier
             target.showDate = showMDs[indexPath.row].date
-            target.isDownloaded = false
+            target.showType = .archive
             target.player = player
             target.db = db
         }

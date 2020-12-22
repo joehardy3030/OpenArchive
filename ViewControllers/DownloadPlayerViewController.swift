@@ -15,10 +15,8 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
     @IBOutlet weak var playButton: UIButton!
     @IBOutlet weak var showDetailTableView: UITableView!
     var showModel: ShowMetadataModel?
-    //let archiveAPI = ArchiveAPI()
     
     override func viewDidLoad() {
-        
         super.viewDidLoad()
         self.navigationItem.title = "Show Details"
         self.showDetailTableView.delegate = self
@@ -32,6 +30,7 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
     }
     
     func loadDownloadedShow() {
+        // This operation should probably belong to the player class
         if let mp3s = self.player?.showModel?.mp3Array {
             if (player?.playerItems.count)! > 0 {
                 player?.playerItems = [AVPlayerItem]()
@@ -92,4 +91,28 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
         return cell
     }
         
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let indexPath = showDetailTableView.indexPathForSelectedRow else { return }
+        
+        if indexPath.row >= 6 {
+            print(indexPath.row)
+            let songIndex = indexPath.row - 6
+            player?.showModel = showModel
+            
+            DispatchQueue.main.async{
+                
+                if let mp3s = self.player?.showModel?.mp3Array {
+                    if let trackURL = self.player?.trackURLfromName(name: mp3s[songIndex].name) {
+                        do {
+                            let available = try trackURL.checkResourceIsReachable()
+                            print(available)
+                        }
+                        catch {
+                            print(error)
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

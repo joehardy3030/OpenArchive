@@ -156,20 +156,20 @@ class AudioPlayer: NSObject {
         let currentItemUrl = (self.playerQueue?.currentItem?.asset as! AVURLAsset).url
         
         let fileUrl = self.getSaveFileUrl(fileName: currentItemUrl.absoluteString)
-        let destination: DownloadRequest.DownloadFileDestination = { _, _ in
+        let destination: DownloadRequest.Destination = { _, _ in
             return (fileUrl, [.removePreviousFile, .createIntermediateDirectories])
         }
         
-        Alamofire.download(currentItemUrl, to:destination)
+        AF.download(currentItemUrl, to:destination)
             .downloadProgress { (progress) in
                 print((String)(progress.fractionCompleted*100)+"%")
             }
             .responseData { (data) in
                 print("completed")
-                print(data.destinationURL!)
-                print(data.destinationURL?.absoluteString as Any)
-                print(data.destinationURL?.lastPathComponent as Any)
-                callback((data.destinationURL?.absoluteString)!)
+                print(data.fileURL!)
+                print(data.fileURL?.absoluteString as Any)
+                print(data.fileURL?.lastPathComponent as Any)
+                callback((data.fileURL?.absoluteString)!)
         }
     }
     
@@ -178,20 +178,20 @@ class AudioPlayer: NSObject {
      */
     public func download(track: String, callback: @escaping (String)->()) {
         let fileUrl = self.getSaveFileUrl(fileName: track)
-        let destination: DownloadRequest.DownloadFileDestination = { _, _ in
+        let destination: DownloadRequest.Destination = { _, _ in
             return (fileUrl, [.removePreviousFile, .createIntermediateDirectories])
         }
         
-        Alamofire.download(track, to:destination)
+        AF.download(track, to:destination)
             .downloadProgress { (progress) in
                 print((String)(progress.fractionCompleted*100)+"%")
             }
             .responseData { (data) in
                 print("completed")
-                print(data.destinationURL!)
-                print(data.destinationURL?.absoluteString as Any)
-                print(data.destinationURL?.lastPathComponent as Any)
-                callback((data.destinationURL?.absoluteString)!)
+                print(data.fileURL!)
+                print(data.fileURL?.absoluteString as Any)
+                print(data.fileURL?.lastPathComponent as Any)
+                callback((data.fileURL?.absoluteString)!)
         }
     }
     

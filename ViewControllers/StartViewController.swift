@@ -39,7 +39,7 @@ class StartViewController: ArchiveSuperViewController {
                 mp.player = p // There needs to be a player already for this to work. Need to inject it.
                 let t = ArchiveTimer(player: p)
                 mp.timer = t
-                print(t)
+                //print(t)
             }
         }
     }

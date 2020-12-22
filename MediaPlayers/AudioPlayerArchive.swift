@@ -15,9 +15,11 @@ class AudioPlayerArchive: NSObject {
     var playerItems = [AVPlayerItem]()
     var nowPlayingInfo = [String : Any]()
     let commandCenter = MPRemoteCommandCenter.shared()
-    //let notificationCenter = NotificationCenter.default
     let utils = Utils()
+    var songDetailsModel = SongDetailsModel()
+    var timer: ArchiveTimer?
     var showModel: ShowMetadataModel?
+    
     
     override init() {
         super.init()
@@ -26,7 +28,6 @@ class AudioPlayerArchive: NSObject {
     }
 
     func setupCommandCenter() {
-        
         // Add a handler for the play command.
         commandCenter.playCommand.isEnabled = true
         commandCenter.playCommand.addTarget { [unowned self] event in
@@ -63,7 +64,35 @@ class AudioPlayerArchive: NSObject {
     @objc func pause() {
         self.playerQueue?.pause()
     }
+
+    func getCurrentTrackIndex() -> Int {
+        guard let ci = self.playerQueue?.currentItem else { return 0 }
+        let destinationURL = ci.asset.value(forKey: "URL") as? URL
+        let name = trackNameFromURL(url: destinationURL)
+        if let mp3s = showModel?.mp3Array {
+            if mp3s.count > 0 {
+                for i in 0...(mp3s.count - 1) {
+                    if mp3s[i].name == name {
+                        return i
+                        }
+                }
+            }
+        }
+        return 0
+    }
     
+    func getCurrentTrackTotalTimeString() -> String? {
+        guard let ci = self.playerQueue?.currentItem else { return "" }
+        let duration = ci.duration
+        let seconds = CMTimeGetSeconds(duration)
+        var timeString: String?
+        if seconds > 0 && seconds < 100000000.0 {
+             timeString = utils.getTimerString(seconds: seconds)
+        }
+        return timeString
+    }
+
+
     func trackURLfromName(name: String?) -> URL? {
         guard let d = utils.getDocumentsDirectory(), let n = name else { return nil }
         let url = d.appendingPathComponent(n)
@@ -87,7 +116,29 @@ class AudioPlayerArchive: NSObject {
         //item.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: .new, context: nil)
         playerItems.append(item)
     }
+
+    func prepareToPlaySong(url: URL) {
+        let asset = AVAsset(url: url)
+        let assetKeys = ["playable"]
+        let lastItem = playerItems.last
+        let item = AVPlayerItem(asset: asset, automaticallyLoadedAssetKeys: assetKeys)
+        //item.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: .new, context: nil)
+        playerItems.append(item)
+        playerQueue?.insert(item, after: lastItem)
+    }
+
+
+    func getTrackItemAndPrepareToPlay(track: ShowMP3) {
+        guard let n = track.name else { return }
+        if let url = trackURLfromName(name: n) {
+            prepareToPlaySong(url: url)
+        }
+    }
     
+    func loadQueuePlayerTrack() {
+        playerQueue = AVQueuePlayer(items: playerItems)
+    }
+
     func loadQueuePlayer(tracks: [ShowMP3]) {
         for track in tracks {
             guard let n = track.name else { return }

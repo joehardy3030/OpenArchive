@@ -296,13 +296,15 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         if let mp3 = showMP3 {
             if mp3index == 0 {
                 player?.pause()
-                player?.showModel = showMetadataModel // Change showMetadata to showModel for consistency
                 if (player?.playerItems.count)! > 0 {
                     player?.playerItems = [AVPlayerItem]()
+                    player?.playerQueue = nil
                 }
+                player?.showModel = showMetadataModel // Change showMetadata to showModel for consistency
                 player?.getTrackItemAndPrepareToPlay(track: mp3)
                 player?.loadQueuePlayerTrack()
                 if let mp = utils.getMiniPlayerController() {
+                    mp.timer = ArchiveTimer(player: player)
                     mp.setupShow()
                 }
             }

@@ -31,6 +31,7 @@ class MiniPlayerViewController: UIViewController {
         view.layer.borderColor = UIColor.gray.cgColor
         navigationController?.delegate = self
         initialDefaults()
+        //setupQueueCallback()
     }
         
     @IBAction func playButton(_ sender: Any) {
@@ -79,6 +80,12 @@ class MiniPlayerViewController: UIViewController {
         }
     }
     
+    func setupQueueTimerCallback() {
+        timer?.setupTimer()  { (seconds: Double?) -> Void in
+             self.timerCallback(seconds: seconds)
+        }
+    }
+        
     func setupSlider() {
         if let ts = timeSlider {
             ts.value = 0.0
@@ -116,15 +123,16 @@ class MiniPlayerViewController: UIViewController {
         showLabel.text = ""
         venueLabel.text = ""
     }
-    
+        
     func setupShow () {
         guard let _ = player?.playerQueue else { return }
         //self.player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
         self.player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
         //timer? = ArchiveTimer(player: player)
-        timer?.setupTimer()  { (seconds: Double?) -> Void in
-             self.timerCallback(seconds: seconds)
-        }
+        //timer?.setupTimer()  { (seconds: Double?) -> Void in
+        //     self.timerCallback(seconds: seconds)
+        //}
+        setupQueueTimerCallback()
         setupSlider()
         setupSong()
         playPause()

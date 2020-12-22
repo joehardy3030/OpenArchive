@@ -134,7 +134,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             player?.loadQueuePlayer(tracks: mp3s)
         }
         if let mp = utils.getMiniPlayerController() {
-            mp.timer = ArchiveTimer(player: player)
+           // mp.timer = ArchiveTimer(player: player)
             mp.setupShow()
         }
     }
@@ -305,8 +305,8 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 player?.getTrackItemAndPrepareToPlay(track: mp3)
                 player?.loadQueuePlayerTrack()
                 if let mp = utils.getMiniPlayerController() {
-                    mp.timer = nil
-                    mp.timer = ArchiveTimer(player: player)
+                    //mp.timer = nil
+                    //mp.timer = ArchiveTimer(player: player)
                     //print(mp.timer)
                     //mp.timer = player?.timer
                     mp.setupShow()

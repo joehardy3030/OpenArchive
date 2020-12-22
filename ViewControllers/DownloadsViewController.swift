@@ -70,7 +70,7 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
                                // print(i)
                                 //self.shows?.remove(at: i)
                             }
-                        }	
+                        }
                         self.shows = ss.sorted(by: { self.utils.getDateFromDateString(datetime: $0.metadata?.date!)! < self.utils.getDateFromDateString(datetime: $1.metadata?.date!)! })
                     }
                 }

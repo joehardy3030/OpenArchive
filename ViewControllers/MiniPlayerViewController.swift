@@ -121,6 +121,7 @@ class MiniPlayerViewController: UIViewController {
         guard let _ = player?.playerQueue else { return }
         //self.player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
         self.player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
+        //timer? = ArchiveTimer(player: player)
         timer?.setupTimer()  { (seconds: Double?) -> Void in
              self.timerCallback(seconds: seconds)
         }

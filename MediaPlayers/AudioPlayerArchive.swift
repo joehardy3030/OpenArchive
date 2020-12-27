@@ -19,11 +19,19 @@ class AudioPlayerArchive: NSObject {
     var songDetailsModel = SongDetailsModel()
     var timer: ArchiveTimer?
     var showModel: ShowMetadataModel?
+    private let notificationCenter: NotificationCenter
+    private var state = State.idle {
+        // We add a property observer on 'state', which lets us
+        // run a function on each value change.
+        // didSet { stateDidChange() }
+        didSet { stateDidChange() }
+    }
     
-    
-    override init() {
+    init(notificationCenter: NotificationCenter = .default) {
+        self.notificationCenter = notificationCenter
         super.init()
         self.setupCommandCenter()
+        
         //notificationCenter.addObserver(self, selector: #selector(HearThisPlayer.playerDidFinishPlaying(note:)),name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: player.currentItem)
     }
 
@@ -32,7 +40,8 @@ class AudioPlayerArchive: NSObject {
         commandCenter.playCommand.isEnabled = true
         commandCenter.playCommand.addTarget { [unowned self] event in
             if self.playerQueue?.rate == 0.0 {
-                self.playerQueue?.play()
+                self.play()
+                //self.playerQueue?.play()
                 return .success
             }
             return .commandFailed
@@ -41,7 +50,8 @@ class AudioPlayerArchive: NSObject {
         commandCenter.pauseCommand.isEnabled = true
         commandCenter.pauseCommand.addTarget { [unowned self] event in
             if self.playerQueue?.rate ?? 0.0 > 0.0 {
-                self.playerQueue?.pause()
+                self.pause()
+                //self.playerQueue?.pause()
                 return .success
             }
             return .commandFailed
@@ -59,10 +69,18 @@ class AudioPlayerArchive: NSObject {
     
     @objc func play() {
         self.playerQueue?.play()
+        state = .playing
     }
 
     @objc func pause() {
-        self.playerQueue?.pause()
+        switch state {
+        case .idle, .paused:
+            // Don't need to send a signal if it's already paused
+            break
+        case .playing:
+            self.playerQueue?.pause()
+            state = .paused
+        }
     }
 
     func getCurrentTrackIndex() -> Int {
@@ -151,4 +169,37 @@ class AudioPlayerArchive: NSObject {
     
 }
 
+private extension AudioPlayerArchive {
+    enum State {
+        case idle
+        case playing
+        case paused
+    }
+}
 
+private extension AudioPlayerArchive {
+    func stateDidChange() {
+        switch state {
+        case .idle:
+            notificationCenter.post(name: .playbackStopped, object: nil)
+        case .playing:
+            notificationCenter.post(name: .playbackStarted, object: self.playerQueue)
+        case .paused:
+            notificationCenter.post(name: .playbackPaused, object: self.playerQueue)
+        }
+    }
+}
+
+extension Notification.Name {
+    static var playbackStarted: Notification.Name {
+        return .init(rawValue: "AudioPlayer.playbackStarted")
+    }
+
+    static var playbackPaused: Notification.Name {
+        return .init(rawValue: "AudioPlayer.playbackPaused")
+    }
+
+    static var playbackStopped: Notification.Name {
+        return .init(rawValue: "AudioPlayer.playbackStopped")
+    }
+}

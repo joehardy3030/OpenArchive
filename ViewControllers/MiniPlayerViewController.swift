@@ -191,7 +191,7 @@ class MiniPlayerViewController: UIViewController {
     func playPause() {
         guard let q = player?.playerQueue else { return }
         if q.rate > 0.0 {
-            q.pause()
+            player?.pause()
             if let _ = playButton {
                 if #available(iOS 13.0, *) {
                     playButton.setBackgroundImage(UIImage(systemName: "play"), for: .normal)
@@ -199,7 +199,7 @@ class MiniPlayerViewController: UIViewController {
             }
         }
         else {
-            q.play()
+            player?.play()
             if let _ = playButton {
                 if #available(iOS 13.0, *) {
                     playButton.setBackgroundImage(UIImage(systemName: "pause"), for: .normal)

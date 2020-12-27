@@ -23,6 +23,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     @IBOutlet weak var playButtonLabel: UIButton!
     @IBOutlet weak var showTableView: UITableView!
     @IBOutlet weak var broadcastPlayPauseButton: UIButton!
+    let notificationCenter: NotificationCenter = .default
     let fileManager = FileManager.default
     var identifier: String?
     var showDate: String?
@@ -38,6 +39,8 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         super.viewDidLoad()
         self.showTableView.delegate = self
         self.showTableView.dataSource = self
+        notificationCenter.addObserver(self, selector: #selector(playbackDidStart), name: .playbackStarted, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(playbackDidPause), name: .playbackPaused, object: self.player?.playerQueue)
         
         switch showType {
         case .archive:
@@ -462,5 +465,15 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             }
             
         }
+    }
+}
+
+private extension ShowViewController {
+    @objc private func playbackDidStart(_ notification: Notification) {
+        print("Item playing")
+    }
+    
+    @objc private func playbackDidPause(_ notification: Notification) {
+        print("Item paused")
     }
 }

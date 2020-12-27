@@ -55,7 +55,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             //self.shareButton.isEnabled = false
             self.broadcastPlayPauseButton.isHidden = false
             self.shareButton.isHidden = true
-            self.downloadButton.isHidden = true
+            self.downloadButton.isHidden = false
             getShareSnaptshot()
         default:
             print("No show type")
@@ -82,8 +82,13 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 playButtonLabel.setTitle("Downloading", for: .normal)
             }
         case .shared:
-            downloadShow()
-            playButtonLabel.setTitle("Downloading", for: .normal)
+            //downloadShow()
+            //playButtonLabel.setTitle("Downloading", for: .normal)
+            if playButtonLabel.currentTitle == "Available" {
+                mp3index = 0
+                downloadSyncRun()
+                playButtonLabel.setTitle("Downloading", for: .normal)
+            }
         default:
             print("Do nothing by default")
         }
@@ -168,6 +173,38 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     
     ///Download manager class
     func getShareSnaptshot() {
+        mp3index = 0
+        network.getShareSnapshot() {
+            (response: ShareMetadataModel?) -> Void in
+            if let r = response {
+                self.mp3Array = [ShowMP3]()
+                self.lastShareMetadataModel = r
+                self.identifier = self.lastShareMetadataModel?.showMetadataModel?.metadata?.identifier
+                self.getIAGetShow()
+            }
+            DispatchQueue.main.async{
+                print("download complete")
+                self.navigationItem.title = self.lastShareMetadataModel?.showMetadataModel?.metadata?.date
+                self.sharePlayPause()
+                self.showTableView.reloadData()
+            }
+        }
+    }
+    
+    func sharePlayPause() {
+        if self.lastShareMetadataModel?.isPlaying == true {
+            self.broadcastIsPlaying = true
+            self.playShow()
+        }
+        else if self.lastShareMetadataModel?.isPlaying == false {
+            self.broadcastIsPlaying = false
+            self.player?.pause()
+        }
+    }
+    
+  /*
+    ///Download manager class
+    func getShareSnaptshot() {
         network.getShareSnapshot() {
             (response: ShareMetadataModel?) -> Void in
                 if let r = response {
@@ -225,6 +262,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 }
             }
     }
+    */
     
     func shareShow() {
         self.broadcastIsPlaying = false

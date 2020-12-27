@@ -18,6 +18,7 @@ class MiniPlayerViewController: UIViewController {
     @IBOutlet weak var showLabel: UILabel!
     @IBOutlet weak var venueLabel: UILabel!
     @IBOutlet weak var songLabel: UILabel!
+    let notificationCenter: NotificationCenter = .default
     let utils = Utils()
     var nowPlayingInfo = [String : Any]()
     var player: AudioPlayerArchive?
@@ -30,6 +31,8 @@ class MiniPlayerViewController: UIViewController {
         view.layer.borderWidth = 2
         view.layer.borderColor = UIColor.gray.cgColor
         navigationController?.delegate = self
+        notificationCenter.addObserver(self, selector: #selector(playbackDidStart), name: .playbackStarted, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(playbackDidPause), name: .playbackPaused, object: self.player?.playerQueue)
         initialDefaults()
         //setupQueueCallback()
     }
@@ -192,19 +195,19 @@ class MiniPlayerViewController: UIViewController {
         guard let q = player?.playerQueue else { return }
         if q.rate > 0.0 {
             player?.pause()
-            if let _ = playButton {
-                if #available(iOS 13.0, *) {
-                    playButton.setBackgroundImage(UIImage(systemName: "play"), for: .normal)
-                }
-            }
+            //if let _ = playButton {
+            //    if #available(iOS 13.0, *) {
+            //        playButton.setBackgroundImage(UIImage(systemName: "play"), for: .normal)
+            //    }
+            //}
         }
         else {
             player?.play()
-            if let _ = playButton {
-                if #available(iOS 13.0, *) {
-                    playButton.setBackgroundImage(UIImage(systemName: "pause"), for: .normal)
-                }
-            }
+            //if let _ = playButton {
+            //    if #available(iOS 13.0, *) {
+            //        playButton.setBackgroundImage(UIImage(systemName: "pause"), for: .normal)
+            //    }
+            //}
         }
     }
     
@@ -217,5 +220,23 @@ extension MiniPlayerViewController: UINavigationControllerDelegate {
             // vc.miniPlayer?.player = player
             //  vc.prevController = self
         }
+    }
+}
+
+private extension MiniPlayerViewController {
+    @objc private func playbackDidStart(_ notification: Notification) {
+        guard let _ = playButton else { return }
+        if #available(iOS 13.0, *) {
+            playButton.setBackgroundImage(UIImage(systemName: "pause"), for: .normal)
+        }
+        //print("Item playing -- miniplayer")
+    }
+    
+    @objc private func playbackDidPause(_ notification: Notification) {
+        guard let _ = playButton else { return }
+        if #available(iOS 13.0, *) {
+            playButton.setBackgroundImage(UIImage(systemName: "play"), for: .normal)
+        }
+        //print("Item paused -- miniplayer ")
     }
 }

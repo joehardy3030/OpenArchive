@@ -19,14 +19,22 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     @IBOutlet weak var totalTimeLabel: UILabel!
     @IBOutlet weak var playButton: UIButton!
     @IBOutlet weak var modalPlayerTableView: UITableView!
+    let notificationCenter: NotificationCenter = .default
     var timer: ArchiveTimer?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.modalPlayerTableView.delegate = self
         self.modalPlayerTableView.dataSource = self
+        notificationCenter.addObserver(self, selector: #selector(playbackDidStart), name: .playbackStarted, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(playbackDidPause), name: .playbackPaused, object: self.player?.playerQueue)
         initialDefaults()
         setupShow()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        notificationCenter.removeObserver(self, name: .playbackStarted, object: nil)
+        notificationCenter.removeObserver(self, name: .playbackPaused, object: self.player?.playerQueue)
     }
     
     @IBAction func playButton(_ sender: Any) {
@@ -151,19 +159,19 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         guard let q = player?.playerQueue else { return }
         if q.rate > 0.0 {
             player?.pause()
-            if let _ = playButton {
-                if #available(iOS 13.0, *) {
-                    playButton.setBackgroundImage(UIImage(systemName: "play.circle.fill"), for: .normal)
-                }
-            }
+          //  if let _ = playButton {
+          //      if #available(iOS 13.0, *) {
+          //          playButton.setBackgroundImage(UIImage(systemName: "play.circle.fill"), for: .normal)
+           //     }
+          //  }
         }
         else {
             player?.play()
-            if let _ = playButton {
-                if #available(iOS 13.0, *) {
-                    playButton.setBackgroundImage(UIImage(systemName: "pause.circle.fill"), for: .normal)
-                }
-            }
+           // if let _ = playButton {
+           //     if #available(iOS 13.0, *) {
+           //         playButton.setBackgroundImage(UIImage(systemName: "pause.circle.fill"), for: .normal)
+           //     }
+           // }
         }
     }
     
@@ -202,4 +210,22 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     }
     
 
+}
+
+private extension ModalPlayerViewController {
+    @objc private func playbackDidStart(_ notification: Notification) {
+        guard let _ = playButton else { return }
+        if #available(iOS 13.0, *) {
+            playButton.setBackgroundImage(UIImage(systemName: "pause.circle.fill"), for: .normal)
+        }
+        print("Item playing -- modal player")
+    }
+    
+    @objc private func playbackDidPause(_ notification: Notification) {
+        guard let _ = playButton else { return }
+        if #available(iOS 13.0, *) {
+            playButton.setBackgroundImage(UIImage(systemName: "play.circle.fill"), for: .normal)
+        }
+        print("Item paused -- modal player ")
+    }
 }

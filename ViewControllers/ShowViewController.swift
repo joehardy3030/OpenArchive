@@ -45,14 +45,10 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             getIAGetShow()
         case .downloaded:
             self.navigationItem.title = showDate
-            //self.shareButton.isEnabled = false
-            //self.downloadButton.isEnabled = false
-            //self.shareButton.isHidden = true
             self.downloadButton.isHidden = true
             playButtonLabel.setTitle("Play", for: .normal)
         case .shared:
             self.navigationItem.title = utils.getDateFromDateTimeString(datetime: showDate)
-            //self.shareButton.isEnabled = false
             self.broadcastPlayPauseButton.isHidden = false
             self.shareButton.isHidden = true
             self.downloadButton.isHidden = false
@@ -62,28 +58,17 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         }
     }
     
-    /*
-    override func viewWillAppear(_ animated: Bool) {
-        if (showType == .shared) && (self.lastShareMetadataModel?.isPlaying == true) {
-            playShow()
-        }
-    }
-    */
-    
     @IBAction func downloadShow(_ sender: Any) {
         switch showType {
         case .downloaded:
             print("Do nothing, for now")
         case .archive:
-            //downloadShow()
             if playButtonLabel.currentTitle == "Available" {
                 mp3index = 0
                 downloadSyncRun()
                 playButtonLabel.setTitle("Downloading", for: .normal)
             }
         case .shared:
-            //downloadShow()
-            //playButtonLabel.setTitle("Downloading", for: .normal)
             if playButtonLabel.currentTitle == "Available" {
                 mp3index = 0
                 downloadSyncRun()
@@ -98,7 +83,6 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     @IBAction func shareShow(_ sender: Any) {
         switch showType {
         case .downloaded:
-            //playButtonLabel.setTitle("Sharing", for: .normal)
             print("Share show from Downlaoded")
             shareShow()
         case .archive:
@@ -139,7 +123,6 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             player?.loadQueuePlayer(tracks: mp3s)
         }
         if let mp = utils.getMiniPlayerController() {
-           // mp.timer = ArchiveTimer(player: player)
             mp.setupShow()
         }
     }
@@ -182,7 +165,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 self.identifier = self.lastShareMetadataModel?.showMetadataModel?.metadata?.identifier
                 self.getIAGetShow()
             }
-            DispatchQueue.main.async{
+            DispatchQueue.main.async {
                 print("download complete")
                 self.navigationItem.title = self.lastShareMetadataModel?.showMetadataModel?.metadata?.date
                 self.sharePlayPause()

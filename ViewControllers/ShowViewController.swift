@@ -23,6 +23,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     @IBOutlet weak var playButtonLabel: UIButton!
     @IBOutlet weak var showTableView: UITableView!
     @IBOutlet weak var broadcastPlayPauseButton: UIButton!
+    let notificationCenter: NotificationCenter = .default
     let fileManager = FileManager.default
     var identifier: String?
     var showDate: String?
@@ -38,6 +39,8 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         super.viewDidLoad()
         self.showTableView.delegate = self
         self.showTableView.dataSource = self
+        notificationCenter.addObserver(self, selector: #selector(playbackDidStart), name: .playbackStarted, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(playbackDidPause), name: .playbackPaused, object: self.player?.playerQueue)
         
         switch showType {
         case .archive:
@@ -45,45 +48,35 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             getIAGetShow()
         case .downloaded:
             self.navigationItem.title = showDate
-            //self.shareButton.isEnabled = false
-            //self.downloadButton.isEnabled = false
-            //self.shareButton.isHidden = true
             self.downloadButton.isHidden = true
             playButtonLabel.setTitle("Play", for: .normal)
         case .shared:
             self.navigationItem.title = utils.getDateFromDateTimeString(datetime: showDate)
-            //self.shareButton.isEnabled = false
             self.broadcastPlayPauseButton.isHidden = false
             self.shareButton.isHidden = true
-            self.downloadButton.isHidden = true
+            self.downloadButton.isHidden = false
             getShareSnaptshot()
         default:
             print("No show type")
         }
     }
     
-    /*
-    override func viewWillAppear(_ animated: Bool) {
-        if (showType == .shared) && (self.lastShareMetadataModel?.isPlaying == true) {
-            playShow()
-        }
-    }
-    */
-    
     @IBAction func downloadShow(_ sender: Any) {
         switch showType {
         case .downloaded:
             print("Do nothing, for now")
         case .archive:
-            //downloadShow()
             if playButtonLabel.currentTitle == "Available" {
                 mp3index = 0
                 downloadSyncRun()
                 playButtonLabel.setTitle("Downloading", for: .normal)
             }
         case .shared:
-            downloadShow()
-            playButtonLabel.setTitle("Downloading", for: .normal)
+            if playButtonLabel.currentTitle == "Available" {
+                mp3index = 0
+                downloadSyncRun()
+                playButtonLabel.setTitle("Downloading", for: .normal)
+            }
         default:
             print("Do nothing by default")
         }
@@ -93,7 +86,6 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     @IBAction func shareShow(_ sender: Any) {
         switch showType {
         case .downloaded:
-            //playButtonLabel.setTitle("Sharing", for: .normal)
             print("Share show from Downlaoded")
             shareShow()
         case .archive:
@@ -134,7 +126,6 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             player?.loadQueuePlayer(tracks: mp3s)
         }
         if let mp = utils.getMiniPlayerController() {
-            mp.timer = ArchiveTimer(player: player)
             mp.setupShow()
         }
     }
@@ -166,6 +157,38 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         }
     }
     
+    ///Download manager class
+    func getShareSnaptshot() {
+        mp3index = 0
+        network.getShareSnapshot() {
+            (response: ShareMetadataModel?) -> Void in
+            if let r = response {
+                self.mp3Array = [ShowMP3]()
+                self.lastShareMetadataModel = r
+                self.identifier = self.lastShareMetadataModel?.showMetadataModel?.metadata?.identifier
+                self.getIAGetShow()
+            }
+            DispatchQueue.main.async {
+                print("download complete")
+                self.navigationItem.title = self.lastShareMetadataModel?.showMetadataModel?.metadata?.date
+                self.sharePlayPause()
+                self.showTableView.reloadData()
+            }
+        }
+    }
+    
+    func sharePlayPause() {
+        if self.lastShareMetadataModel?.isPlaying == true {
+            self.broadcastIsPlaying = true
+            self.playShow()
+        }
+        else if self.lastShareMetadataModel?.isPlaying == false {
+            self.broadcastIsPlaying = false
+            self.player?.pause()
+        }
+    }
+    
+  /*
     ///Download manager class
     func getShareSnaptshot() {
         network.getShareSnapshot() {
@@ -225,6 +248,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 }
             }
     }
+    */
     
     func shareShow() {
         self.broadcastIsPlaying = false
@@ -305,8 +329,8 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 player?.getTrackItemAndPrepareToPlay(track: mp3)
                 player?.loadQueuePlayerTrack()
                 if let mp = utils.getMiniPlayerController() {
-                    mp.timer = nil
-                    mp.timer = ArchiveTimer(player: player)
+                    //mp.timer = nil
+                    //mp.timer = ArchiveTimer(player: player)
                     //print(mp.timer)
                     //mp.timer = player?.timer
                     mp.setupShow()
@@ -441,5 +465,15 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             }
             
         }
+    }
+}
+
+private extension ShowViewController {
+    @objc private func playbackDidStart(_ notification: Notification) {
+        print("Item playing")
+    }
+    
+    @objc private func playbackDidPause(_ notification: Notification) {
+        print("Item paused")
     }
 }

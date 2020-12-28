@@ -12,6 +12,7 @@ import MediaPlayer
 
 class ArchiveTimer: NSObject {
     var player: AudioPlayerArchive?
+    var token: Any?
     
     init(player: AudioPlayerArchive?) {
         self.player = player
@@ -22,7 +23,7 @@ class ArchiveTimer: NSObject {
 
         let interval = CMTime(value: 1, timescale: 2)
         
-        self.player?.playerQueue?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { (progressTime) in
+        let timerObserverToken = self.player?.playerQueue?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { [weak self] (progressTime) in
             let seconds = CMTimeGetSeconds(progressTime)
             //let secondsString = String(format: "%02d", Int(seconds) % 60)
            // let minutesString = String(format: "%02d", Int(seconds) / 60)
@@ -33,7 +34,7 @@ class ArchiveTimer: NSObject {
                 completion(seconds)
             
         }
-        
+        token = timerObserverToken
     }
     
     func currentItemTotalTime() -> String? {

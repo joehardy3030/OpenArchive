@@ -18,6 +18,7 @@ class MiniPlayerViewController: UIViewController {
     @IBOutlet weak var showLabel: UILabel!
     @IBOutlet weak var venueLabel: UILabel!
     @IBOutlet weak var songLabel: UILabel!
+    let notificationCenter: NotificationCenter = .default
     let utils = Utils()
     var nowPlayingInfo = [String : Any]()
     var player: AudioPlayerArchive?
@@ -30,7 +31,10 @@ class MiniPlayerViewController: UIViewController {
         view.layer.borderWidth = 2
         view.layer.borderColor = UIColor.gray.cgColor
         navigationController?.delegate = self
+        notificationCenter.addObserver(self, selector: #selector(playbackDidStart), name: .playbackStarted, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(playbackDidPause), name: .playbackPaused, object: self.player?.playerQueue)
         initialDefaults()
+        //setupQueueCallback()
     }
         
     @IBAction func playButton(_ sender: Any) {
@@ -79,6 +83,12 @@ class MiniPlayerViewController: UIViewController {
         }
     }
     
+    func setupQueueTimerCallback() {
+        timer?.setupTimer()  { (seconds: Double?) -> Void in
+             self.timerCallback(seconds: seconds)
+        }
+    }
+        
     func setupSlider() {
         if let ts = timeSlider {
             ts.value = 0.0
@@ -116,15 +126,16 @@ class MiniPlayerViewController: UIViewController {
         showLabel.text = ""
         venueLabel.text = ""
     }
-    
+        
     func setupShow () {
         guard let _ = player?.playerQueue else { return }
         //self.player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
         self.player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
         //timer? = ArchiveTimer(player: player)
-        timer?.setupTimer()  { (seconds: Double?) -> Void in
-             self.timerCallback(seconds: seconds)
-        }
+        //timer?.setupTimer()  { (seconds: Double?) -> Void in
+        //     self.timerCallback(seconds: seconds)
+        //}
+        setupQueueTimerCallback()
         setupSlider()
         setupSong()
         playPause()
@@ -183,20 +194,20 @@ class MiniPlayerViewController: UIViewController {
     func playPause() {
         guard let q = player?.playerQueue else { return }
         if q.rate > 0.0 {
-            q.pause()
-            if let _ = playButton {
-                if #available(iOS 13.0, *) {
-                    playButton.setBackgroundImage(UIImage(systemName: "play"), for: .normal)
-                }
-            }
+            player?.pause()
+            //if let _ = playButton {
+            //    if #available(iOS 13.0, *) {
+            //        playButton.setBackgroundImage(UIImage(systemName: "play"), for: .normal)
+            //    }
+            //}
         }
         else {
-            q.play()
-            if let _ = playButton {
-                if #available(iOS 13.0, *) {
-                    playButton.setBackgroundImage(UIImage(systemName: "pause"), for: .normal)
-                }
-            }
+            player?.play()
+            //if let _ = playButton {
+            //    if #available(iOS 13.0, *) {
+            //        playButton.setBackgroundImage(UIImage(systemName: "pause"), for: .normal)
+            //    }
+            //}
         }
     }
     
@@ -209,5 +220,23 @@ extension MiniPlayerViewController: UINavigationControllerDelegate {
             // vc.miniPlayer?.player = player
             //  vc.prevController = self
         }
+    }
+}
+
+private extension MiniPlayerViewController {
+    @objc private func playbackDidStart(_ notification: Notification) {
+        guard let _ = playButton else { return }
+        if #available(iOS 13.0, *) {
+            playButton.setBackgroundImage(UIImage(systemName: "pause"), for: .normal)
+        }
+        //print("Item playing -- miniplayer")
+    }
+    
+    @objc private func playbackDidPause(_ notification: Notification) {
+        guard let _ = playButton else { return }
+        if #available(iOS 13.0, *) {
+            playButton.setBackgroundImage(UIImage(systemName: "play"), for: .normal)
+        }
+        //print("Item paused -- miniplayer ")
     }
 }

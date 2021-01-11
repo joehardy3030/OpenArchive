@@ -13,6 +13,7 @@ import UserNotifications
 import ARKit
 import Firebase
 import FirebaseUI
+import CarPlay
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate {

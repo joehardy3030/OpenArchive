@@ -14,6 +14,7 @@
 		C1A86AE7CB901E9AE4559733 /* Pods_BreazeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC1F0E4AA282D7B36ED40FA4 /* Pods_BreazeTests.framework */; };
 		CBC5228E1B6761BEF185B8AD /* Pods_Breaze.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A700AD3051D76CBB67400BC /* Pods_Breaze.framework */; };
 		D51C53AE71B1FA9965B4E724 /* Pods_BreazeUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A926AF80C0D08EF375C20D5 /* Pods_BreazeUITests.framework */; };
+		D830CC4E25AC026D00BD76A1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D830CC4D25AC026D00BD76A1 /* GoogleService-Info.plist */; };
 		D83EB53E24CE33C60016726C /* ArchiveNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83EB53D24CE33C60016726C /* ArchiveNavigationController.swift */; };
 		D83EB54024CE49880016726C /* StartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83EB53F24CE49880016726C /* StartViewController.swift */; };
 		D83EB54224CE62170016726C /* ArchiveTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83EB54124CE62170016726C /* ArchiveTabBarController.swift */; };
@@ -45,7 +46,6 @@
 		D89D789925901D80009324EE /* ArchivePlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89D789825901D80009324EE /* ArchivePlayerViewController.swift */; };
 		D8A5324C24A9AFF2002379CF /* ArchiveCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A5324B24A9AFF2002379CF /* ArchiveCell.swift */; };
 		D8B65F0024C54A5500F57355 /* DownloadPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B65EFF24C54A5500F57355 /* DownloadPlayerViewController.swift */; };
-		D8DC6A842529072600C66C29 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D8DC6A832529072600C66C29 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -80,6 +80,7 @@
 		9C04CF7422E0CBAEE4822157 /* Pods-BreazeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BreazeTests.debug.xcconfig"; path = "Target Support Files/Pods-BreazeTests/Pods-BreazeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BC1F0E4AA282D7B36ED40FA4 /* Pods_BreazeTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BreazeTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCE8FC1545CF717B71C529A8 /* Pods-BreazeUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BreazeUITests.debug.xcconfig"; path = "Target Support Files/Pods-BreazeUITests/Pods-BreazeUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		D830CC4D25AC026D00BD76A1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D83EB53D24CE33C60016726C /* ArchiveNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveNavigationController.swift; sourceTree = "<group>"; };
 		D83EB53F24CE49880016726C /* StartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartViewController.swift; sourceTree = "<group>"; };
 		D83EB54124CE62170016726C /* ArchiveTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveTabBarController.swift; sourceTree = "<group>"; };
@@ -117,7 +118,6 @@
 		D89D789825901D80009324EE /* ArchivePlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivePlayerViewController.swift; sourceTree = "<group>"; };
 		D8A5324B24A9AFF2002379CF /* ArchiveCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveCell.swift; sourceTree = "<group>"; };
 		D8B65EFF24C54A5500F57355 /* DownloadPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadPlayerViewController.swift; sourceTree = "<group>"; };
-		D8DC6A832529072600C66C29 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -200,7 +200,7 @@
 		D85A4EED2022D0B500E480FB /* Breaze */ = {
 			isa = PBXGroup;
 			children = (
-				D8DC6A832529072600C66C29 /* GoogleService-Info.plist */,
+				D830CC4D25AC026D00BD76A1 /* GoogleService-Info.plist */,
 				799C3C8E2345582E00D9341E /* Breaze.entitlements */,
 				D85A4EEE2022D0B600E480FB /* AppDelegate.swift */,
 				D87109F325ABF09D00CA133E /* CarPlaySceneDelegate.swift */,
@@ -420,7 +420,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D85A4EFB2022D0B600E480FB /* LaunchScreen.storyboard in Resources */,
-				D8DC6A842529072600C66C29 /* GoogleService-Info.plist in Resources */,
+				D830CC4E25AC026D00BD76A1 /* GoogleService-Info.plist in Resources */,
 				D85A4EF82022D0B600E480FB /* Assets.xcassets in Resources */,
 				D85A4EF62022D0B600E480FB /* Main.storyboard in Resources */,
 			);

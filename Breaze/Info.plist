@@ -26,34 +26,6 @@
 	<string>We use your location to find the correct weather</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Location</string>
-	<key>UIApplicationSceneManifest</key>
-	<dict>
-		<key>UISceneConfigurations</key>
-		<dict>
-			<key>CPTemplateApplicationSceneSessionRoleApplication</key>
-			<array>
-				<dict>
-					<key>UISceneClassName</key>
-					<string>CPTemplateApplicationScene</string>
-					<key>UISceneConfigurationName</key>
-					<string>Breaze-Car</string>
-					<key>UISceneDelegateClassName</key>
-					<string>Breaze.CarPlaySceneDelegate</string>
-				</dict>
-			</array>
-			<key>UIWindowSceneSessionRoleApplication</key>
-			<array>
-				<dict>
-					<key>UISceneClassName</key>
-					<string>UIWindowScene</string>
-					<key>UISceneConfigurationName</key>
-					<string>Phone</string>
-					<key>UISceneDelegateClassName</key>
-					<string>AppDelegate</string>
-				</dict>
-			</array>
-		</dict>
-	</dict>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>

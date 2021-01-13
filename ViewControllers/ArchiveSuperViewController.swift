@@ -62,3 +62,25 @@ extension ArchiveSuperViewController: UINavigationControllerDelegate {
         }
     }
 }
+
+@available(iOS 13.0, *)
+extension ArchiveSuperViewController {
+    func getMiniPlayerController() -> MiniPlayerViewController? {
+        guard let sceneDelegate = self.view.window?.windowScene?.delegate as? SceneDelegate else { return nil }
+        //guard let sceneDelegate = UIApplication.shared.delegate as? SceneDelegate else { return nil }
+        
+        //guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return nil }
+        //if let vcs = appDelegate.window?.rootViewController?.children
+        
+        if let vcs = sceneDelegate.window?.rootViewController?.children
+        {
+            for vc in vcs {
+                if let mp = vc as? MiniPlayerViewController {
+                    return mp
+                }
+            }
+        }
+        return nil
+    }
+}
+

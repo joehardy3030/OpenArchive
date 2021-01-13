@@ -481,7 +481,7 @@ private extension ShowViewController {
         print("Item paused")
     }
 }
-
+/*
 @available(iOS 13.0, *)
 private extension ShowViewController {
     func getMiniPlayerController() -> MiniPlayerViewController? {
@@ -502,3 +502,4 @@ private extension ShowViewController {
         return nil
     }
 }
+*/

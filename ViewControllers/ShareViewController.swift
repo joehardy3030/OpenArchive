@@ -91,7 +91,7 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
             }
             player?.loadQueuePlayer(tracks: mp3s)
          }
-        if let mp = utils.getMiniPlayerController() {
+        if let mp = self.getMiniPlayerController() {
             mp.setupShow()
         }
      }

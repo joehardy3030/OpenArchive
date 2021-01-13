@@ -17,8 +17,6 @@
 					<string>$(PRODUCT_MODULE_NAME).CarPlaySceneDelegate</string>
 					<key>UISceneConfigurationName</key>
 					<string>CarPlay Configuration</string>
-					<key>UISceneStoryboardFile</key>
-					<string></string>
 				</dict>
 			</array>
 			<key>UIWindowSceneSessionRoleApplication</key>

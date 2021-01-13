@@ -26,11 +26,9 @@ class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
         //}
         let section = CPListSection(items: [item])
         let listTemplate = CPListTemplate(title: "Albums", sections: [section])
-        self.interfaceController?.pushTemplate(listTemplate, animated: true)
-
-        
-        //let listTemplate: CPListTemplate = CPListTemplate()
         interfaceController.setRootTemplate(listTemplate, animated: true)
+        //self.interfaceController?.pushTemplate(listTemplate, animated: true)
+        //let listTemplate: CPListTemplate = CPListTemplate()
     }
     // CarPlay disconnected
     @available(iOS 13.0, *)

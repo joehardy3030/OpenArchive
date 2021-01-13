@@ -240,6 +240,7 @@ class Utils {
         }
     }
     
+    /*
     @available(iOS 13.0, *)
     func getMiniPlayerController() -> MiniPlayerViewController? {
         guard let sceneDelegate = UIApplication.shared.delegate as? SceneDelegate else { return nil }
@@ -257,5 +258,6 @@ class Utils {
         }
         return nil
     }
+    */
 
 }

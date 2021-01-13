@@ -16,6 +16,8 @@ enum ShowType {
     case shared
 }
 
+@available(iOS 13.0, *)
+@available(iOS 13.0, *)
 class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
     
     @IBOutlet weak var downloadButton: UIButton!
@@ -468,6 +470,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     }
 }
 
+@available(iOS 13.0, *)
 private extension ShowViewController {
     @objc private func playbackDidStart(_ notification: Notification) {
         print("Item playing")

@@ -37,6 +37,7 @@
 		D85A4EFB2022D0B600E480FB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D85A4EF92022D0B600E480FB /* LaunchScreen.storyboard */; };
 		D85A4F062022D0B600E480FB /* BreazeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A4F052022D0B600E480FB /* BreazeTests.swift */; };
 		D85A4F112022D0B600E480FB /* BreazeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A4F102022D0B600E480FB /* BreazeUITests.swift */; };
+		D85B4AFB25AD75A800A786DB /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85B4AFA25AD75A800A786DB /* SceneDelegate.swift */; };
 		D87109F425ABF09D00CA133E /* CarPlaySceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87109F325ABF09D00CA133E /* CarPlaySceneDelegate.swift */; };
 		D8717D38258FE93E00C86954 /* SongDetailsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8717D37258FE93E00C86954 /* SongDetailsModel.swift */; };
 		D879502E24C69E2900FB2436 /* MiniPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D879502D24C69E2900FB2436 /* MiniPlayerViewController.swift */; };
@@ -109,6 +110,7 @@
 		D85A4F0C2022D0B600E480FB /* BreazeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BreazeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D85A4F102022D0B600E480FB /* BreazeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreazeUITests.swift; sourceTree = "<group>"; };
 		D85A4F122022D0B600E480FB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D85B4AFA25AD75A800A786DB /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		D87109F325ABF09D00CA133E /* CarPlaySceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarPlaySceneDelegate.swift; sourceTree = "<group>"; };
 		D8717D37258FE93E00C86954 /* SongDetailsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongDetailsModel.swift; sourceTree = "<group>"; };
 		D879502D24C69E2900FB2436 /* MiniPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerViewController.swift; sourceTree = "<group>"; };
@@ -204,6 +206,7 @@
 				799C3C8E2345582E00D9341E /* Breaze.entitlements */,
 				D85A4EEE2022D0B600E480FB /* AppDelegate.swift */,
 				D87109F325ABF09D00CA133E /* CarPlaySceneDelegate.swift */,
+				D85B4AFA25AD75A800A786DB /* SceneDelegate.swift */,
 				D85A4EF92022D0B600E480FB /* LaunchScreen.storyboard */,
 				791CE1C020B252F100299F76 /* Utils.swift */,
 				D85A4EF42022D0B600E480FB /* Main.storyboard */,
@@ -623,6 +626,7 @@
 				D84D6E2824BEB5140022A058 /* NetworkUtility.swift in Sources */,
 				D892BBA024CBBCF5008E4960 /* ArchiveSuperViewController.swift in Sources */,
 				D845E03924D7642A003381B6 /* ModalPlayerViewController.swift in Sources */,
+				D85B4AFB25AD75A800A786DB /* SceneDelegate.swift in Sources */,
 				D8449A6824AEF3C200F113F4 /* MonthViewController.swift in Sources */,
 				D852C3CB24B1AA1C00029EB9 /* ShowViewController.swift in Sources */,
 				D83EB54224CE62170016726C /* ArchiveTabBarController.swift in Sources */,
@@ -752,7 +756,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -806,7 +810,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";

@@ -10,6 +10,8 @@ import UIKit
 import AVKit
 import AVFoundation
 
+@available(iOS 13.0, *)
+@available(iOS 13.0, *)
 class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var playButton: UIButton!

@@ -18,7 +18,7 @@ import CarPlay
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate {
 
-    var window: UIWindow?
+    //var window: UIWindow?
     let center = UNUserNotificationCenter.current()
     fileprivate(set) var auth: Auth!
     fileprivate(set) var authUI: FUIAuth!
@@ -41,13 +41,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate {
               print("nope")
           }
         //FirebaseApp.configure()
-        setupFirebase()
+       // setupFirebase()
+        /*
         guard let rvc = self.window?.rootViewController as? ArchiveSuperViewController else {fatalError()}
         rvc.player = AudioPlayerArchive()
         rvc.auth = self.auth
         rvc.authUI = self.authUI
         rvc.db = self.db
-        
+        */
         //print(rvc.player)
         // Dependency injection is fun! Remind me again what's so bad about singeltons?
         /*

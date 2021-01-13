@@ -17,7 +17,6 @@ enum ShowType {
 }
 
 @available(iOS 13.0, *)
-@available(iOS 13.0, *)
 class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
     
     @IBOutlet weak var downloadButton: UIButton!
@@ -127,7 +126,8 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             }
             player?.loadQueuePlayer(tracks: mp3s)
         }
-        if let mp = utils.getMiniPlayerController() {
+        //if let mp = utils.getMiniPlayerController() {
+        if let mp = self.getMiniPlayerController() {
             mp.setupShow()
         }
     }
@@ -330,7 +330,8 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 player?.showModel = showMetadataModel // Change showMetadata to showModel for consistency
                 player?.getTrackItemAndPrepareToPlay(track: mp3)
                 player?.loadQueuePlayerTrack()
-                if let mp = utils.getMiniPlayerController() {
+                //if let mp = utils.getMiniPlayerController() {
+                if let mp = self.getMiniPlayerController() {
                     //mp.timer = nil
                     //mp.timer = ArchiveTimer(player: player)
                     //print(mp.timer)
@@ -478,5 +479,26 @@ private extension ShowViewController {
     
     @objc private func playbackDidPause(_ notification: Notification) {
         print("Item paused")
+    }
+}
+
+@available(iOS 13.0, *)
+private extension ShowViewController {
+    func getMiniPlayerController() -> MiniPlayerViewController? {
+        guard let sceneDelegate = self.view.window?.windowScene?.delegate as? SceneDelegate else { return nil }
+        //guard let sceneDelegate = UIApplication.shared.delegate as? SceneDelegate else { return nil }
+        
+        //guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return nil }
+        //if let vcs = appDelegate.window?.rootViewController?.children
+        
+        if let vcs = sceneDelegate.window?.rootViewController?.children
+        {
+            for vc in vcs {
+                if let mp = vc as? MiniPlayerViewController {
+                    return mp
+                }
+            }
+        }
+        return nil
     }
 }

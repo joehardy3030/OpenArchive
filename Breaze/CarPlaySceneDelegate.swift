@@ -17,19 +17,10 @@ class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
     func templateApplicationScene(_ templateApplicationScene: CPTemplateApplicationScene,
                                   didConnect interfaceController: CPInterfaceController) {
         self.interfaceController = interfaceController
-        
-        let item = CPListItem(text: "My title", detailText: "My subtitle")
-        //item.listItemHandler = { item, completion, [weak self] in
-         // Start playback asynchronously…
-        // self.interfaceController.pushTemplate(CPNowPlayingTemplate.shared(), animated: true)
-        // completion()
-        //}
-        let section = CPListSection(items: [item])
-        let listTemplate = CPListTemplate(title: "Albums", sections: [section])
-        interfaceController.setRootTemplate(listTemplate, animated: true)
-        //self.interfaceController?.pushTemplate(listTemplate, animated: true)
-        //let listTemplate: CPListTemplate = CPListTemplate()
+        // Hand a reference to the interface controller to CarPlayDownloadsTemplate
+        _ = CarPlayDownloadsTemplate(interfaceController: interfaceController)
     }
+    
     // CarPlay disconnected
     @available(iOS 13.0, *)
     private func templateApplicationScene(_ templateApplicationScene: CPTemplateApplicationScene,

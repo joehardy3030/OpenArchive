@@ -47,6 +47,7 @@
 		D89D789925901D80009324EE /* ArchivePlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89D789825901D80009324EE /* ArchivePlayerViewController.swift */; };
 		D8A5324C24A9AFF2002379CF /* ArchiveCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A5324B24A9AFF2002379CF /* ArchiveCell.swift */; };
 		D8B65F0024C54A5500F57355 /* DownloadPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B65EFF24C54A5500F57355 /* DownloadPlayerViewController.swift */; };
+		D8DCF13425AFFEA200D28837 /* CarPlayDownloadsTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DCF13325AFFEA200D28837 /* CarPlayDownloadsTemplate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -120,6 +121,7 @@
 		D89D789825901D80009324EE /* ArchivePlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivePlayerViewController.swift; sourceTree = "<group>"; };
 		D8A5324B24A9AFF2002379CF /* ArchiveCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveCell.swift; sourceTree = "<group>"; };
 		D8B65EFF24C54A5500F57355 /* DownloadPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadPlayerViewController.swift; sourceTree = "<group>"; };
+		D8DCF13325AFFEA200D28837 /* CarPlayDownloadsTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarPlayDownloadsTemplate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,6 +156,7 @@
 		7984F98924A4556400989DB8 /* Archive */ = {
 			isa = PBXGroup;
 			children = (
+				D8DCF13225AFFE6D00D28837 /* CarPlay */,
 				D892BBA124CBBD98008E4960 /* ViewControllers */,
 				D892BBA524CBBEF3008E4960 /* Cells */,
 				D892BBA424CBBE40008E4960 /* MediaPlayers */,
@@ -294,6 +297,14 @@
 				7984F98E24A56EFD00989DB8 /* ArchiveAPI.swift */,
 			);
 			path = Network;
+			sourceTree = "<group>";
+		};
+		D8DCF13225AFFE6D00D28837 /* CarPlay */ = {
+			isa = PBXGroup;
+			children = (
+				D8DCF13325AFFEA200D28837 /* CarPlayDownloadsTemplate.swift */,
+			);
+			path = CarPlay;
 			sourceTree = "<group>";
 		};
 		F750615CF5BAF14CDA3C127E /* Frameworks */ = {
@@ -641,6 +652,7 @@
 				7984F98D24A4565400989DB8 /* YearViewController.swift in Sources */,
 				D85A4EEF2022D0B600E480FB /* AppDelegate.swift in Sources */,
 				D879502E24C69E2900FB2436 /* MiniPlayerViewController.swift in Sources */,
+				D8DCF13425AFFEA200D28837 /* CarPlayDownloadsTemplate.swift in Sources */,
 				D8B65F0024C54A5500F57355 /* DownloadPlayerViewController.swift in Sources */,
 				D84D2B8E24C2925A006C8175 /* DownloadsViewController.swift in Sources */,
 				D8449A6A24AEF57600F113F4 /* MonthTableViewCell.swift in Sources */,

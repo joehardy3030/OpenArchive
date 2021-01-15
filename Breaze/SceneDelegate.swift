@@ -11,7 +11,7 @@ import Firebase
 import FirebaseUI
 import CarPlay
 
-
+//let sharedPlayer = AudioPlayerArchive()
 @available(iOS 13.0, *)
 class SceneDelegate: UIResponder, UIWindowSceneDelegate, FUIAuthDelegate {
 
@@ -26,11 +26,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, FUIAuthDelegate {
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let _ = (scene as? UIWindowScene) else { return }
-        
+        print(scene)
         setupFirebase()
 
         guard let rvc = self.window?.rootViewController as? ArchiveSuperViewController else {fatalError()}
-        rvc.player = AudioPlayerArchive()
+        rvc.player = AudioPlayerArchive.shared //sharedPlayer //AudioPlayerArchive()
         rvc.auth = self.auth
         rvc.authUI = self.authUI
         rvc.db = self.db

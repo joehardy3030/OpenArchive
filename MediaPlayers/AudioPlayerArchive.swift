@@ -11,6 +11,7 @@ import AVKit
 import MediaPlayer
 
 class AudioPlayerArchive: NSObject {
+    static let shared = AudioPlayerArchive()
     var playerQueue: AVQueuePlayer?
     var playerItems = [AVPlayerItem]()
     var nowPlayingInfo = [String : Any]()

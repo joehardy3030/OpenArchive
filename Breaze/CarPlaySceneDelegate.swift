@@ -9,20 +9,20 @@
 import Foundation
 import CarPlay
 
+@available(iOS 14.0, *)
 class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
     var interfaceController: CPInterfaceController?
     
     // CarPlay connected
-    @available(iOS 13.0, *)
     func templateApplicationScene(_ templateApplicationScene: CPTemplateApplicationScene,
                                   didConnect interfaceController: CPInterfaceController) {
         self.interfaceController = interfaceController
+        //let nowPlayingTemplate = CPNowPlayingTemplate.shared
         // Hand a reference to the interface controller to CarPlayDownloadsTemplate
         _ = CarPlayDownloadsTemplate(interfaceController: interfaceController)
     }
     
     // CarPlay disconnected
-    @available(iOS 13.0, *)
     private func templateApplicationScene(_ templateApplicationScene: CPTemplateApplicationScene,
                                   didDisconnect interfaceController: CPInterfaceController) {
         self.interfaceController = nil

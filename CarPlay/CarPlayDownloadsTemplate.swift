@@ -17,7 +17,7 @@ import MediaPlayer
 // MPPlayableContentManager, MPPlayableContentManagerContext
 
 @available(iOS 14.0, *)
-class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableContentDataSource {
+class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableContentDataSource, CPInterfaceControllerDelegate {
 
     let fileManager = FileManager.default
     let notificationCenter: NotificationCenter = .default
@@ -37,12 +37,12 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
     var auth: Auth?
     var db: Firestore!
     var isPlaying = false
-
     fileprivate(set) var authStateListenerHandle: AuthStateDidChangeListenerHandle?
 
     init(interfaceController: CPInterfaceController?) {
         self.interfaceController = interfaceController
         super.init()
+        self.interfaceController?.delegate = self
         self.db = Firestore.firestore()
         self.player = AudioPlayerArchive.shared
         self.network = NetworkUtility(db: db)
@@ -53,6 +53,18 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
         playableContentManager?.delegate = self
         notificationCenter.addObserver(self, selector: #selector(playbackDidStart), name: .playbackStarted, object: nil)
         notificationCenter.addObserver(self, selector: #selector(playbackDidPause), name: .playbackPaused, object: self.player?.playerQueue)
+        
+        /*
+        if (self.authStateListenerHandle == nil) {
+            self.authStateListenerHandle = self.auth?.addStateDidChangeListener { (auth, user) in
+                guard user != nil else {
+                    print("Nil user")
+                    return
+                }
+                return
+            }
+        }
+        */
     }
     
     func numberOfChildItems(at indexPath: IndexPath) -> Int {

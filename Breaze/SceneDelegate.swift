@@ -16,6 +16,7 @@ import CarPlay
 class SceneDelegate: UIResponder, UIWindowSceneDelegate, FUIAuthDelegate {
 
     var window: UIWindow?
+    let center = UNUserNotificationCenter.current()
     fileprivate(set) var auth: Auth!
     fileprivate(set) var authUI: FUIAuth!
     fileprivate(set) var db: Firestore!
@@ -29,11 +30,28 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, FUIAuthDelegate {
         print(scene)
         setupFirebase()
 
+        center.requestAuthorization(options: [.alert, .sound]) { granted, error in }
+        do {
+              //options: AVAudioSession.CategoryOptions.mixWithOthers
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
+            try AVAudioSession.sharedInstance().setActive(true)
+          }
+          catch {
+              print("nope")
+          }
+
+        
         guard let rvc = self.window?.rootViewController as? ArchiveSuperViewController else {fatalError()}
         rvc.player = AudioPlayerArchive.shared //sharedPlayer //AudioPlayerArchive()
         rvc.auth = self.auth
         rvc.authUI = self.authUI
         rvc.db = self.db
+        
+        /*
+        let window = UIWindow(windowScene: windowScene)
+        self.window = window
+        window.makeKeyAndVisible()
+        */
 
     }
 

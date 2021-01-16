@@ -113,8 +113,8 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
             item.handler = { (item, completion: () -> Void) in
                 print(item.description)
                 self.selectedShow = s
-               // self.loadDownloadedShow()
                 self.playShow()
+                self.interfaceController?.pushTemplate(CPNowPlayingTemplate.shared, animated: true)
                 completion()
             }
             items.append(item)
@@ -134,6 +134,7 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
         player?.pause()
         player?.showModel = selectedShow // Change showMetadata to showModel for consistency
         loadDownloadedShow()  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
+        self.player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
         player?.play()
         print("player nominally playing")
     }
@@ -148,6 +149,34 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
         }
     }
     
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        
+        if keyPath == #keyPath(AVQueuePlayer.currentItem.status) {
+            let status: AVPlayerItem.Status
+            if let statusNumber = change?[.newKey] as? NSNumber {
+                status = AVPlayerItem.Status(rawValue: statusNumber.intValue)!
+            } else {
+                status = .unknown
+            }
+
+            // Switch over status value
+            switch status {
+            case .readyToPlay:
+                setupNotificationView()
+                print("ready to play")
+            case .failed:
+                print("failed ")
+            case .unknown:
+                print("unknown status")
+            default:
+                print("nope")
+            }
+            
+        }
+    }
+    
+    
+    // Per song
     func setupNotificationView() {
         guard let ci = self.player?.playerQueue?.currentItem,
             let mp3s = player?.showModel?.mp3Array,
@@ -181,10 +210,18 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
 @available(iOS 14.0, *)
 private extension CarPlayDownloadsTemplate {
     @objc private func playbackDidStart(_ notification: Notification) {
+//        playButton.setBackgroundImage(UIImage(systemName: "pause"), for: .normal)
         print("Item playing")
+        setupNotificationView()
     }
     
     @objc private func playbackDidPause(_ notification: Notification) {
+
         print("Item paused")
     }
+}
+
+@available(iOS 14.0, *)
+private extension CarPlayDownloadsTemplate {
+
 }

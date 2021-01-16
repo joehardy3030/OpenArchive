@@ -10,6 +10,7 @@ import UIKit
 import AVFoundation
 import CarPlay
 import Firebase
+import FirebaseFirestore
 import MediaPlayer
 
 //, MPPlayableContentDataSource, MPPlayableContentDelegate,
@@ -46,6 +47,7 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
         self.player = AudioPlayerArchive.shared
         self.network = NetworkUtility(db: db)
         self.getDownloadedShows()
+        //self.nowPlayingSongManager = MPNowPlayingInfoCenter.default()
         playableContentManager = MPPlayableContentManager.shared()
         playableContentManager?.dataSource = self
         playableContentManager?.delegate = self
@@ -110,7 +112,7 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
         
         for s in shows {
             let item = CPListItem(text: s.metadata?.date, detailText: s.metadata?.coverage)
-            item.handler = { (item, completion: () -> Void) in
+            item.handler = { [unowned self] (item, completion: () -> Void) in
                 print(item.description)
                 self.selectedShow = s
                 self.playShow()
@@ -175,7 +177,6 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
         }
     }
     
-    
     // Per song
     func setupNotificationView() {
         guard let ci = self.player?.playerQueue?.currentItem,
@@ -203,6 +204,7 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
             }
         }
         else { print("no image")}
+        //self.nowPlayingSongManager?.nowPlayingInfo = nowPlayingInfo
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
     }
 }

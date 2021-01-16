@@ -41,8 +41,8 @@ class AudioPlayerArchive: NSObject {
         commandCenter.playCommand.isEnabled = true
         commandCenter.playCommand.addTarget { [unowned self] event in
             if self.playerQueue?.rate == 0.0 {
+                //if self.state == .idle {
                 self.play()
-                //self.playerQueue?.play()
                 return .success
             }
             return .commandFailed
@@ -51,8 +51,8 @@ class AudioPlayerArchive: NSObject {
         commandCenter.pauseCommand.isEnabled = true
         commandCenter.pauseCommand.addTarget { [unowned self] event in
             if self.playerQueue?.rate ?? 0.0 > 0.0 {
+            //    if self.state == .playing {
                 self.pause()
-                //self.playerQueue?.pause()
                 return .success
             }
             return .commandFailed

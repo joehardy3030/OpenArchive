@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AVFoundation
 import CarPlay
 import Firebase
 import MediaPlayer
@@ -17,33 +18,39 @@ import MediaPlayer
 @available(iOS 14.0, *)
 class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableContentDataSource {
 
-    var shows: [ShowMetadataModel]?
     let fileManager = FileManager.default
+    let notificationCenter: NotificationCenter = .default
+    let interfaceController: CPInterfaceController?
+    let commandCenter = MPRemoteCommandCenter.shared()
+    var nowPlayingSongManager: MPNowPlayingInfoCenter?
+    var playableContentManager: MPPlayableContentManager?
+    var nowPlayingInfo = [String : Any]()
+    var shows: [ShowMetadataModel]?
+    var selectedShow: ShowMetadataModel?
     var network: NetworkUtility!
     let utils = Utils()
     let archiveAPI = ArchiveAPI()
     var prevController: ArchiveSuperViewController?
     var miniPlayer: MiniPlayerViewController?
     var player: AudioPlayerArchive?
-    var isPlaying = false
     var auth: Auth?
     var db: Firestore!
-    let interfaceController: CPInterfaceController?
-    let commandCenter = MPRemoteCommandCenter.shared()
-    var nowPlayingSongManager: MPNowPlayingInfoCenter?
-    var playableContentManager: MPPlayableContentManager?
+    var isPlaying = false
+
     fileprivate(set) var authStateListenerHandle: AuthStateDidChangeListenerHandle?
 
     init(interfaceController: CPInterfaceController?) {
         self.interfaceController = interfaceController
         super.init()
         self.db = Firestore.firestore()
+        self.player = AudioPlayerArchive.shared
         self.network = NetworkUtility(db: db)
-//        simpleList()
         self.getDownloadedShows()
         playableContentManager = MPPlayableContentManager.shared()
         playableContentManager?.dataSource = self
         playableContentManager?.delegate = self
+        notificationCenter.addObserver(self, selector: #selector(playbackDidStart), name: .playbackStarted, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(playbackDidPause), name: .playbackPaused, object: self.player?.playerQueue)
     }
     
     func numberOfChildItems(at indexPath: IndexPath) -> Int {
@@ -55,33 +62,6 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
         item.title = shows?[indexPath.row].metadata?.title
         return item
     }
-    
-
-//    func numberOfChildItems(at indexPath: IndexPath) -> Int {
-//        return 0
-//    }
-    
-  //  func contentItem(at indexPath: IndexPath) -> MPContentItem? {
-  //      <#code#>
-  //  }
-    
-    /*
-    func simpleList() {
-        let item = CPListItem(text: "My title", detailText: "My subtitle")
-        item.handler = {
-            (item, completion: () -> Void) in
-                    completion()
-                }
-        //item.listItemHandler = { item, completion, [weak self] in
-         // Start playback asynchronously…
-        // self.interfaceController.pushTemplate(CPNowPlayingTemplate.shared(), animated: true)
-        // completion()
-        //}
-        let section = CPListSection(items: [item])
-        let listTemplate = CPListTemplate(title: "Albums", sections: [section])
-        self.interfaceController?.setRootTemplate(listTemplate, animated: true)
-    }
-    */
     
     func getDownloadedShows() {
         network.getAllDownloadDocs() {
@@ -130,40 +110,81 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
         
         for s in shows {
             let item = CPListItem(text: s.metadata?.date, detailText: s.metadata?.coverage)
-            //let completion = {}
-            
-            item.handler = {
-                (item, completion: () -> Void) in
+            item.handler = { (item, completion: () -> Void) in
                 print(item.description)
-                        completion()
-                    }
-
-            //item.handler!(item) {
-            //    print("Selected item")
-           // }
-            
+                self.selectedShow = s
+               // self.loadDownloadedShow()
+                self.playShow()
+                completion()
+            }
             items.append(item)
-            //item.handler = {
-                
-            //(CPSelectableListItem, @escaping () -> Void) -> Void
-           // }
-            //listItemHandler = { item, completion, [weak self] in
-             // Start playback asynchronously…
-             //self.interfaceController.pushTemplate(CPNowPlayingTemplate.shared(), animated: true)
-            // completion()
-            //}
         }
-        
                 
         let section = CPListSection(items: items)
-        let listTemplate = CPListTemplate(title: "Downloaded Shows", sections: [section])
+        let listTemplate = CPListTemplate(title: "My Tapes", sections: [section])
         self.interfaceController?.setRootTemplate(listTemplate, animated: true)
     }
-
     
     func playableContentManager(_ contentManager: MPPlayableContentManager, initiatePlaybackOfContentItemAt indexPath: IndexPath, completionHandler: @escaping (Error?) -> Void) {
         print(indexPath)
         completionHandler(nil)
     }
+    
+    func playShow() {
+        player?.pause()
+        player?.showModel = selectedShow // Change showMetadata to showModel for consistency
+        loadDownloadedShow()  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
+        player?.play()
+        print("player nominally playing")
+    }
+    
+    func loadDownloadedShow() {
+        if let mp3s = self.player?.showModel?.mp3Array {
+            if (player?.playerItems.count)! > 0 {
+                player?.playerItems = [AVPlayerItem]()
+            }
+            player?.loadQueuePlayer(tracks: mp3s)
+            print("Got here")
+        }
+    }
+    
+    func setupNotificationView() {
+        guard let ci = self.player?.playerQueue?.currentItem,
+            let mp3s = player?.showModel?.mp3Array,
+            let md = player?.showModel?.metadata
+            else { return }
+        guard let ct = player?.getCurrentTrackIndex()
+        else {
+            print("No current track index")
+            return
+        }
+        nowPlayingInfo = [String : Any]()
+        nowPlayingInfo[MPMediaItemPropertyTitle] = mp3s[ct].title
+        nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = String(md.date! + ", " + md.coverage!)
+        nowPlayingInfo[MPMediaItemPropertyArtist] = "Grateful Dead"
+        nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = CMTimeGetSeconds(ci.duration)
+        if let seconds = player?.playerQueue?.currentTime().seconds {
+            nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = seconds
+        }
+        
+        if let image = UIImage(named: "Chateau80") {
+            nowPlayingInfo[MPMediaItemPropertyArtwork] =
+                MPMediaItemArtwork(boundsSize: image.size) { size in
+                    return image
+            }
+        }
+        else { print("no image")}
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+    }
+}
 
+@available(iOS 14.0, *)
+private extension CarPlayDownloadsTemplate {
+    @objc private func playbackDidStart(_ notification: Notification) {
+        print("Item playing")
+    }
+    
+    @objc private func playbackDidPause(_ notification: Notification) {
+        print("Item paused")
+    }
 }

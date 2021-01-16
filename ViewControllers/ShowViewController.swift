@@ -190,68 +190,6 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         }
     }
     
-  /*
-    ///Download manager class
-    func getShareSnaptshot() {
-        network.getShareSnapshot() {
-            (response: ShareMetadataModel?) -> Void in
-                if let r = response {
-                    self.mp3Array = [ShowMP3]()
-                    self.lastShareMetadataModel = r
-                    self.showMetadataModel = self.lastShareMetadataModel?.showMetadataModel
-                    if let files = self.lastShareMetadataModel?.showMetadataModel?.files,
-                        let id = self.lastShareMetadataModel?.showMetadataModel?.metadata?.identifier {
-                        
-                        for f in files {
-                            if (f.format?.contains("MP3"))! {
-                                let showMP3 = ShowMP3(identifier: id, name: f.name, title: f.title, track: f.track)
-                                self.mp3Array.append(showMP3)
-                                if let localURL = self.player?.trackURLfromName(name: f.name) {
-                                    let fileManager = FileManager.default
-                                    if fileManager.fileExists(atPath: localURL.path) {
-                                        DispatchQueue.main.async{
-                                            //self.setDownloadComplete(destination: localURL, name: f.name, available: true)
-                                            //self.setDownloadComplete(destination: localURL, name: f.name)
-                                            self.showTableView.reloadData()
-                                        }
-                                        print("FILE AVAILABLE")
-                                    } else {
-                                        let archiveURL = self.archiveAPI.downloadURL(identifier: id, filename: f.name)
-                                        self.archiveAPI.getIADownload(url: archiveURL) {
-                                               (response: URL?) -> Void in
-                                               DispatchQueue.main.async{
-                                                    self.playButtonLabel.setTitle("Downloading", for: .normal)
-                                                    //self.setDownloadComplete(destination: response, name: f.name, available: false)
-                                                    self.setDownloadComplete(destination: response, name: f.name)
-                                                    self.showTableView.reloadData()
-                                               }
-                                           }
-                                        print("FILE NOT AVAILABLE")
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    DispatchQueue.main.async{
-                        print("download complete")
-                        self.playButtonLabel.setTitle("Play", for: .normal)
-                        self.showMetadataModel = self.lastShareMetadataModel?.showMetadataModel
-                        self.navigationItem.title = self.lastShareMetadataModel?.showMetadataModel?.metadata?.date
-                        if self.lastShareMetadataModel?.isPlaying == true {
-                            self.broadcastIsPlaying = true
-                            self.playShow()
-                        }
-                        else if self.lastShareMetadataModel?.isPlaying == false {
-                            self.broadcastIsPlaying = false
-                            self.player?.pause()
-                        }
-                        self.showTableView.reloadData()
-                    }
-                }
-            }
-    }
-    */
-    
     func shareShow() {
         self.broadcastIsPlaying = false
         saveShareData()

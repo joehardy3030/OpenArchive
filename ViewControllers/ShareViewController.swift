@@ -11,6 +11,7 @@ import AVKit
 import FirebaseFirestore
 import CodableFirebase
 
+@available(iOS 13.0, *)
 class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var playButton: UIButton!
@@ -90,7 +91,7 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
             }
             player?.loadQueuePlayer(tracks: mp3s)
          }
-        if let mp = utils.getMiniPlayerController() {
+        if let mp = self.getMiniPlayerController() {
             mp.setupShow()
         }
      }

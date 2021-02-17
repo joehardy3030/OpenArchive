@@ -10,6 +10,7 @@ import UIKit
 import AVKit
 import AVFoundation
 
+@available(iOS 13.0, *)
 class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var playButton: UIButton!
@@ -37,7 +38,7 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
             }
             player?.loadQueuePlayer(tracks: mp3s)
          }
-        if let mp = utils.getMiniPlayerController() {
+        if let mp = self.getMiniPlayerController() {
             mp.setupShow()
         }
      }

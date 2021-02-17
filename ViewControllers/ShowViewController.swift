@@ -16,6 +16,7 @@ enum ShowType {
     case shared
 }
 
+@available(iOS 13.0, *)
 class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
     
     @IBOutlet weak var downloadButton: UIButton!
@@ -125,7 +126,8 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             }
             player?.loadQueuePlayer(tracks: mp3s)
         }
-        if let mp = utils.getMiniPlayerController() {
+        //if let mp = utils.getMiniPlayerController() {
+        if let mp = self.getMiniPlayerController() {
             mp.setupShow()
         }
     }
@@ -187,68 +189,6 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             self.player?.pause()
         }
     }
-    
-  /*
-    ///Download manager class
-    func getShareSnaptshot() {
-        network.getShareSnapshot() {
-            (response: ShareMetadataModel?) -> Void in
-                if let r = response {
-                    self.mp3Array = [ShowMP3]()
-                    self.lastShareMetadataModel = r
-                    self.showMetadataModel = self.lastShareMetadataModel?.showMetadataModel
-                    if let files = self.lastShareMetadataModel?.showMetadataModel?.files,
-                        let id = self.lastShareMetadataModel?.showMetadataModel?.metadata?.identifier {
-                        
-                        for f in files {
-                            if (f.format?.contains("MP3"))! {
-                                let showMP3 = ShowMP3(identifier: id, name: f.name, title: f.title, track: f.track)
-                                self.mp3Array.append(showMP3)
-                                if let localURL = self.player?.trackURLfromName(name: f.name) {
-                                    let fileManager = FileManager.default
-                                    if fileManager.fileExists(atPath: localURL.path) {
-                                        DispatchQueue.main.async{
-                                            //self.setDownloadComplete(destination: localURL, name: f.name, available: true)
-                                            //self.setDownloadComplete(destination: localURL, name: f.name)
-                                            self.showTableView.reloadData()
-                                        }
-                                        print("FILE AVAILABLE")
-                                    } else {
-                                        let archiveURL = self.archiveAPI.downloadURL(identifier: id, filename: f.name)
-                                        self.archiveAPI.getIADownload(url: archiveURL) {
-                                               (response: URL?) -> Void in
-                                               DispatchQueue.main.async{
-                                                    self.playButtonLabel.setTitle("Downloading", for: .normal)
-                                                    //self.setDownloadComplete(destination: response, name: f.name, available: false)
-                                                    self.setDownloadComplete(destination: response, name: f.name)
-                                                    self.showTableView.reloadData()
-                                               }
-                                           }
-                                        print("FILE NOT AVAILABLE")
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    DispatchQueue.main.async{
-                        print("download complete")
-                        self.playButtonLabel.setTitle("Play", for: .normal)
-                        self.showMetadataModel = self.lastShareMetadataModel?.showMetadataModel
-                        self.navigationItem.title = self.lastShareMetadataModel?.showMetadataModel?.metadata?.date
-                        if self.lastShareMetadataModel?.isPlaying == true {
-                            self.broadcastIsPlaying = true
-                            self.playShow()
-                        }
-                        else if self.lastShareMetadataModel?.isPlaying == false {
-                            self.broadcastIsPlaying = false
-                            self.player?.pause()
-                        }
-                        self.showTableView.reloadData()
-                    }
-                }
-            }
-    }
-    */
     
     func shareShow() {
         self.broadcastIsPlaying = false
@@ -328,7 +268,8 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 player?.showModel = showMetadataModel // Change showMetadata to showModel for consistency
                 player?.getTrackItemAndPrepareToPlay(track: mp3)
                 player?.loadQueuePlayerTrack()
-                if let mp = utils.getMiniPlayerController() {
+                //if let mp = utils.getMiniPlayerController() {
+                if let mp = self.getMiniPlayerController() {
                     //mp.timer = nil
                     //mp.timer = ArchiveTimer(player: player)
                     //print(mp.timer)
@@ -468,6 +409,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     }
 }
 
+@available(iOS 13.0, *)
 private extension ShowViewController {
     @objc private func playbackDidStart(_ notification: Notification) {
         print("Item playing")
@@ -477,3 +419,25 @@ private extension ShowViewController {
         print("Item paused")
     }
 }
+/*
+@available(iOS 13.0, *)
+private extension ShowViewController {
+    func getMiniPlayerController() -> MiniPlayerViewController? {
+        guard let sceneDelegate = self.view.window?.windowScene?.delegate as? SceneDelegate else { return nil }
+        //guard let sceneDelegate = UIApplication.shared.delegate as? SceneDelegate else { return nil }
+        
+        //guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return nil }
+        //if let vcs = appDelegate.window?.rootViewController?.children
+        
+        if let vcs = sceneDelegate.window?.rootViewController?.children
+        {
+            for vc in vcs {
+                if let mp = vc as? MiniPlayerViewController {
+                    return mp
+                }
+            }
+        }
+        return nil
+    }
+}
+*/

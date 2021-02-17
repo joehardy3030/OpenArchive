@@ -13,12 +13,13 @@ import UserNotifications
 import ARKit
 import Firebase
 import FirebaseUI
+import CarPlay
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate {
 
-    var window: UIWindow?
-    let center = UNUserNotificationCenter.current()
+    //var window: UIWindow?
+   // let center = UNUserNotificationCenter.current()
     fileprivate(set) var auth: Auth!
     fileprivate(set) var authUI: FUIAuth!
     fileprivate(set) var db: Firestore!
@@ -30,6 +31,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        /*
         center.requestAuthorization(options: [.alert, .sound]) { granted, error in }
         do {
               //options: AVAudioSession.CategoryOptions.mixWithOthers
@@ -39,14 +41,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate {
           catch {
               print("nope")
           }
+ 
+        */
         //FirebaseApp.configure()
-        setupFirebase()
+       // setupFirebase()
+        /*
         guard let rvc = self.window?.rootViewController as? ArchiveSuperViewController else {fatalError()}
         rvc.player = AudioPlayerArchive()
         rvc.auth = self.auth
         rvc.authUI = self.authUI
         rvc.db = self.db
-        
+        */
         //print(rvc.player)
         // Dependency injection is fun! Remind me again what's so bad about singeltons?
         /*
@@ -61,7 +66,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate {
 
         return true
     }
-
+    
+    /*
+    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+        return UISceneConfiguration()
+    }
+    
+    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
+        
+    }
+    */
+    
     func setupFirebase() {
         FirebaseApp.configure()
         self.auth = Auth.auth()

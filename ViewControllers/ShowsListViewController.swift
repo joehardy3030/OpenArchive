@@ -9,6 +9,7 @@
 import UIKit
 import SwiftyJSON
 
+@available(iOS 13.0, *)
 class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var sbdToggle: UISegmentedControl!

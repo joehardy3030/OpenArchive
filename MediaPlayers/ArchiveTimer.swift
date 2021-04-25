@@ -20,7 +20,7 @@ class ArchiveTimer: NSObject {
     }
     
     func setupTimer(completion: @escaping (_ seconds: Double?) -> Void) {
-        // removePeriodicTimeObserver()
+        //removePeriodicTimeObserver()
         let interval = CMTime(value: 1, timescale: 2)
         
         let timerObserverToken = self.player.playerQueue?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { [weak self] (progressTime) in

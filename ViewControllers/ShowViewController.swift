@@ -112,10 +112,10 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     }
     
     func playShow() {
-            player?.pause()
-            player?.showModel = showMetadataModel // Change showMetadata to showModel for consistency
-            loadDownloadedShow()  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
-            player?.play()
+        self.player?.pause()
+        self.player?.showModel = showMetadataModel // Change showMetadata to showModel for consistency
+        self.loadDownloadedShow()  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
+        self.player?.play()
     }
     
     func loadDownloadedShow() {

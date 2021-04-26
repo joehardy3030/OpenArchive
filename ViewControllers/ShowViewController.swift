@@ -258,20 +258,11 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     
     func loadAndPlaySong(showMP3: ShowMP3?) {
         guard let mp3 = showMP3 else {return }
-        /*
-         self.player?.loadAndPlaySong(mp3: mp3, mp3index: mp3index)
-         print("mp3index \(mp3index)")
-         if mp3index == 0 {
-         if let mp = self.getMiniPlayerController() {
-         mp.setupShow()
-         }
-         }
-         */
         if mp3index == 0 {
-            
             player?.pause()
             if (player?.playerItems.count)! > 0 {
                 player?.playerItems = [AVPlayerItem]()
+                player?.removePeriodicTimeObserver()
                 player?.playerQueue = nil
                 //player?.playerQueue?.removeAllItems()
                 //player?.playerQueue = AVQueuePlayer()

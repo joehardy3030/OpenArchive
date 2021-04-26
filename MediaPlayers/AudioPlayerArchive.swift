@@ -147,28 +147,8 @@ class AudioPlayerArchive: NSObject {
             prepareToPlaySong(url: url)
         }
     }
-    
-    /*
-    func loadAndPlaySong(mp3: ShowMP3?, mp3index: Int) {
-        guard let mp3 = mp3 else { return }
-        if mp3index == 0 {
-            pause()
-            if (self.playerItems.count) > 0 {
-                playerItems = [AVPlayerItem]()
-                playerQueue = nil
-                //player?.playerQueue?.removeAllItems()
-                //player?.playerQueue = AVQueuePlayer()
-            }
-            getTrackItemAndPrepareToPlay(track: mp3)
-            loadQueuePlayerTrack()
-        }
-        else {
-            getTrackItemAndPrepareToPlay(track: mp3)
-        }
-    }
-    */
 
-    
+
     func loadQueuePlayerTrack() {
         playerQueue = AVQueuePlayer(items: playerItems)
         //playerQueue?.insert(playerItems[0], after: playerQueue?.currentItem)

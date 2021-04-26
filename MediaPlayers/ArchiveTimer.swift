@@ -7,38 +7,42 @@
 //
 
 import UIKit
-//import AVKit
 import MediaPlayer
 
 class ArchiveTimer: NSObject {
-    var player: AudioPlayerArchive?
+    var player = AudioPlayerArchive.shared
     var token: Any?
     
     init(player: AudioPlayerArchive?) {
-        self.player = player
+        if let player = player {
+            self.player = player
+        }
     }
-    //var queue: AVQueuePlayer?
     
     func setupTimer(completion: @escaping (_ seconds: Double?) -> Void) {
-
+        //removePeriodicTimeObserver()
         let interval = CMTime(value: 1, timescale: 2)
         
-        let timerObserverToken = self.player?.playerQueue?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { [weak self] (progressTime) in
-            let seconds = CMTimeGetSeconds(progressTime)
-            //let secondsString = String(format: "%02d", Int(seconds) % 60)
-           // let minutesString = String(format: "%02d", Int(seconds) / 60)
-          //  print("\(minutesString):\(secondsString)")
-           // self.currentItemTotalTime()
-            
-             //   self.timeSlider.value = Float(seconds/totalSeconds)
-                completion(seconds)
-            
+        let timerObserverToken = self.player.playerQueue?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { [weak self] (progressTime) in
+            //let seconds = CMTimeGetSeconds(progressTime)
+            //completion(seconds)
+            if let s = self?.player.playerQueue?.currentTime().seconds {
+                completion(s)
+                print(s)
+            }
         }
         token = timerObserverToken
     }
     
+    func removePeriodicTimeObserver() {
+        // If a time observer exists, remove it
+        if let token = self.token {
+            self.player.playerQueue?.removeTimeObserver(token)
+        }
+    }
+    
     func currentItemTotalTime() -> String? {
-        if let ci = self.player?.playerQueue?.currentItem {
+        if let ci = self.player.playerQueue?.currentItem {
             let duration = ci.duration
             let seconds = CMTimeGetSeconds(duration)
             if seconds > 0 && seconds < 100000000.0 {
@@ -52,11 +56,11 @@ class ArchiveTimer: NSObject {
     }
     
     func timerSliderHandler(timerValue: Float) {
-        if let duration = self.player?.playerQueue?.currentItem?.duration {
+        if let duration = self.player.playerQueue?.currentItem?.duration {
             let totalSeconds = CMTimeGetSeconds(duration)
             let value = Float64(timerValue) * totalSeconds
             let seekTime = CMTime(value: Int64(value), timescale: 1)
-            self.player?.playerQueue?.seek(to: seekTime, completionHandler: { (completedSeek) in
+            self.player.playerQueue?.seek(to: seekTime, completionHandler: { (completedSeek) in
             })
         }
     }

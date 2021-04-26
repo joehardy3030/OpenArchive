@@ -112,10 +112,10 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     }
     
     func playShow() {
-            player?.pause()
-            player?.showModel = showMetadataModel // Change showMetadata to showModel for consistency
-            loadDownloadedShow()  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
-            player?.play()
+        self.player?.pause()
+        self.player?.showModel = showMetadataModel // Change showMetadata to showModel for consistency
+        self.loadDownloadedShow()  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
+        self.player?.play()
     }
     
     func loadDownloadedShow() {
@@ -263,27 +263,19 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 if (player?.playerItems.count)! > 0 {
                     player?.playerItems = [AVPlayerItem]()
                     player?.playerQueue = nil
+                    //player?.playerQueue?.removeAllItems()
                     //player?.playerQueue = AVQueuePlayer()
                 }
                 player?.showModel = showMetadataModel // Change showMetadata to showModel for consistency
                 player?.getTrackItemAndPrepareToPlay(track: mp3)
                 player?.loadQueuePlayerTrack()
-                //if let mp = utils.getMiniPlayerController() {
                 if let mp = self.getMiniPlayerController() {
-                    //mp.timer = nil
-                    //mp.timer = ArchiveTimer(player: player)
-                    //print(mp.timer)
-                    //mp.timer = player?.timer
                     mp.setupShow()
                 }
             }
             else {
                 player?.getTrackItemAndPrepareToPlay(track: mp3)
-                //if let mp = utils.getMiniPlayerController() {
-                //    mp.setupSong()
-                //}
             }
-            //player?.loadQueuePlayerTrack()
         }
     }
     

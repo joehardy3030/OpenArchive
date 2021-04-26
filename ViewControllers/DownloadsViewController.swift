@@ -151,7 +151,7 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
         if let mp = segue.destination as? MiniPlayerViewController {
             self.miniPlayer = mp
             print("Set the miniplayer")
-            if let p = player {
+            if let p = self.player {
                 mp.player = p // There needs to be a player already for this to work. Need to inject it.
             }
         }

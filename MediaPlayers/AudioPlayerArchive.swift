@@ -156,6 +156,11 @@ class AudioPlayerArchive: NSObject {
     
     func loadQueuePlayerTrack() {
         playerQueue = AVQueuePlayer(items: playerItems)
+        //playerQueue?.insert(playerItems[0], after: playerQueue?.currentItem)
+        //let lastItem = self.playerQueue?.items().last
+        //playerQueue?.insert(playerItems[0], after: lastItem)
+        //print(playerItems[0])
+        //play()
     }
 
     func loadQueuePlayer(tracks: [ShowMP3]) {

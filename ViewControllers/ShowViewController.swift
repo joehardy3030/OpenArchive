@@ -121,9 +121,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     func loadDownloadedShow() {
         // This operation should probably belong to the player class
         if let mp3s = self.player?.showMetadataModel?.mp3Array {
-            if (player?.playerItems.count)! > 0 {
-                player?.playerItems = [AVPlayerItem]()
-            }
+            player?.cleanQueue()
             player?.loadQueuePlayer(tracks: mp3s)
         }
         //if let mp = utils.getMiniPlayerController() {

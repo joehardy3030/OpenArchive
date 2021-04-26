@@ -86,9 +86,7 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
     
     func loadDownloadedShow() {
         if let mp3s = self.player?.showMetadataModel?.mp3Array {
-            if (player?.playerItems.count)! > 0 {
-                player?.playerItems = [AVPlayerItem]()
-            }
+            player?.cleanQueue()
             player?.loadQueuePlayer(tracks: mp3s)
          }
         if let mp = self.getMiniPlayerController() {

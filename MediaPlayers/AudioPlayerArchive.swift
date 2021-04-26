@@ -162,6 +162,7 @@ class AudioPlayerArchive: NSObject {
     }
 
     func loadQueuePlayer(tracks: [ShowMP3]) {
+        cleanQueue()
         for track in tracks {
             guard let n = track.name else { return }
             if let url = trackURLfromName(name: n) {

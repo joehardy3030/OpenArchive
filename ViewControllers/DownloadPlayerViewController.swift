@@ -33,7 +33,6 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
     func loadDownloadedShow() {
         // This operation should probably belong to the player class
         if let mp3s = self.player?.showMetadataModel?.mp3Array {
-            player?.cleanQueue()
             player?.loadQueuePlayer(tracks: mp3s)
          }
         if let mp = self.getMiniPlayerController() {

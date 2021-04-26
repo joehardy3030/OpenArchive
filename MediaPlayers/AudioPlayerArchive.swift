@@ -18,7 +18,7 @@ class AudioPlayerArchive: NSObject {
     let commandCenter = MPRemoteCommandCenter.shared()
     let utils = Utils()
     var songDetailsModel = SongDetailsModel()
-    var timer: ArchiveTimer?
+    var timerToken: Any?
     var showModel: ShowMetadataModel?
     private let notificationCenter: NotificationCenter
     private var state = State.idle {
@@ -32,8 +32,6 @@ class AudioPlayerArchive: NSObject {
         self.notificationCenter = notificationCenter
         super.init()
         self.setupCommandCenter()
-        
-        //notificationCenter.addObserver(self, selector: #selector(HearThisPlayer.playerDidFinishPlaying(note:)),name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: player.currentItem)
     }
 
     func setupCommandCenter() {
@@ -41,7 +39,6 @@ class AudioPlayerArchive: NSObject {
         commandCenter.playCommand.isEnabled = true
         commandCenter.playCommand.addTarget { [unowned self] event in
             if self.playerQueue?.rate == 0.0 {
-                //if self.state == .idle {
                 self.play()
                 return .success
             }
@@ -51,7 +48,6 @@ class AudioPlayerArchive: NSObject {
         commandCenter.pauseCommand.isEnabled = true
         commandCenter.pauseCommand.addTarget { [unowned self] event in
             if self.playerQueue?.rate ?? 0.0 > 0.0 {
-            //    if self.state == .playing {
                 self.pause()
                 return .success
             }
@@ -132,7 +128,6 @@ class AudioPlayerArchive: NSObject {
         let asset = AVAsset(url: url)
         let assetKeys = ["playable"]
         let item = AVPlayerItem(asset: asset, automaticallyLoadedAssetKeys: assetKeys)
-        //item.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: .new, context: nil)
         playerItems.append(item)
     }
 
@@ -141,7 +136,6 @@ class AudioPlayerArchive: NSObject {
         let assetKeys = ["playable"]
         let lastItem = playerItems.last
         let item = AVPlayerItem(asset: asset, automaticallyLoadedAssetKeys: assetKeys)
-        //item.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: .new, context: nil)
         playerItems.append(item)
         playerQueue?.insert(item, after: lastItem)
     }
@@ -173,6 +167,56 @@ class AudioPlayerArchive: NSObject {
         playerQueue = AVQueuePlayer(items: playerItems)
     }
     
+}
+
+private extension AudioPlayerArchive {
+        
+    func setupTimer(completion: @escaping (_ seconds: Double?) -> Void) {
+        //removePeriodicTimeObserver()
+        let interval = CMTime(value: 1, timescale: 2)
+        
+        let timerObserverToken = self.playerQueue?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { [weak self] (progressTime) in
+            //let seconds = CMTimeGetSeconds(progressTime)
+            //completion(seconds)
+            if let s = self?.playerQueue?.currentTime().seconds {
+                completion(s)
+                print(s)
+            }
+        }
+        self.timerToken = timerObserverToken
+    }
+    
+    func removePeriodicTimeObserver() {
+        // If a time observer exists, remove it
+        if let token = self.timerToken {
+            self.playerQueue?.removeTimeObserver(token)
+        }
+    }
+    
+    func currentItemTotalTime() -> String? {
+        if let ci = self.playerQueue?.currentItem {
+            let duration = ci.duration
+            let seconds = CMTimeGetSeconds(duration)
+            if seconds > 0 && seconds < 100000000.0 {
+                let secondsText =  String(format: "%02d", Int(seconds) % 60)
+                let minutesText = String(format: "%02d", Int(seconds) / 60)
+                let totalTimeText = "\(minutesText):\(secondsText)"
+                return totalTimeText
+            }
+        }
+        return "00:00"
+    }
+    
+    func timerSliderHandler(timerValue: Float) {
+        if let duration = self.playerQueue?.currentItem?.duration {
+            let totalSeconds = CMTimeGetSeconds(duration)
+            let value = Float64(timerValue) * totalSeconds
+            let seekTime = CMTime(value: Int64(value), timescale: 1)
+            self.playerQueue?.seek(to: seekTime, completionHandler: { (completedSeek) in
+            })
+        }
+    }
+
 }
 
 private extension AudioPlayerArchive {

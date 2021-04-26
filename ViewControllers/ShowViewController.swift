@@ -260,13 +260,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         guard let mp3 = showMP3 else {return }
         if mp3index == 0 {
             player?.pause()
-            if (player?.playerItems.count)! > 0 {
-                player?.playerItems = [AVPlayerItem]()
-                player?.removePeriodicTimeObserver()
-                player?.playerQueue = nil
-                //player?.playerQueue?.removeAllItems()
-                //player?.playerQueue = AVQueuePlayer()
-            }
+            player?.cleanQueue()
             player?.showMetadataModel = showMetadataModel // Change showMetadata to showModel for consistency
             player?.getTrackItemAndPrepareToPlay(track: mp3)
             player?.loadQueuePlayerTrack()

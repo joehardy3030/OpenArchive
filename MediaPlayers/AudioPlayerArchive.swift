@@ -106,6 +106,14 @@ class AudioPlayerArchive: NSObject {
         }
         return timeString
     }
+    
+    func cleanQueue() {
+        if (playerItems.count) > 0 {
+            playerItems = [AVPlayerItem]()
+            removePeriodicTimeObserver()
+            playerQueue = nil
+        }
+    }
 
 
     func trackURLfromName(name: String?) -> URL? {

@@ -27,7 +27,6 @@
 		D84D2B8E24C2925A006C8175 /* DownloadsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84D2B8D24C2925A006C8175 /* DownloadsViewController.swift */; };
 		D84D6E2824BEB5140022A058 /* NetworkUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84D6E2724BEB5140022A058 /* NetworkUtility.swift */; };
 		D850B8FD24B26EAC00E3DC6B /* ShowMetadataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D850B8FC24B26EAC00E3DC6B /* ShowMetadataModel.swift */; };
-		D850B8FF24B2BA7400E3DC6B /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D850B8FE24B2BA7400E3DC6B /* AudioPlayer.swift */; };
 		D852C3C724B1219400029EB9 /* ShowsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D852C3C624B1219400029EB9 /* ShowsListViewController.swift */; };
 		D852C3C924B121E000029EB9 /* ShowsListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D852C3C824B121E000029EB9 /* ShowsListTableViewCell.swift */; };
 		D852C3CB24B1AA1C00029EB9 /* ShowViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D852C3CA24B1AA1C00029EB9 /* ShowViewController.swift */; };
@@ -42,7 +41,6 @@
 		D8717D38258FE93E00C86954 /* SongDetailsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8717D37258FE93E00C86954 /* SongDetailsModel.swift */; };
 		D879502E24C69E2900FB2436 /* MiniPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D879502D24C69E2900FB2436 /* MiniPlayerViewController.swift */; };
 		D87A551624D7B6D3005F32BA /* ModalPlayerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87A551524D7B6D3005F32BA /* ModalPlayerTableViewCell.swift */; };
-		D87E7DBD24D9050900B59874 /* ArchiveTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87E7DBC24D9050900B59874 /* ArchiveTimer.swift */; };
 		D892BBA024CBBCF5008E4960 /* ArchiveSuperViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D892BB9F24CBBCF5008E4960 /* ArchiveSuperViewController.swift */; };
 		D89D789925901D80009324EE /* ArchivePlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89D789825901D80009324EE /* ArchivePlayerViewController.swift */; };
 		D8A5324C24A9AFF2002379CF /* ArchiveCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A5324B24A9AFF2002379CF /* ArchiveCell.swift */; };
@@ -95,7 +93,6 @@
 		D84D2B8D24C2925A006C8175 /* DownloadsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadsViewController.swift; sourceTree = "<group>"; };
 		D84D6E2724BEB5140022A058 /* NetworkUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkUtility.swift; sourceTree = "<group>"; };
 		D850B8FC24B26EAC00E3DC6B /* ShowMetadataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowMetadataModel.swift; sourceTree = "<group>"; };
-		D850B8FE24B2BA7400E3DC6B /* AudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayer.swift; sourceTree = "<group>"; };
 		D852C3C624B1219400029EB9 /* ShowsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowsListViewController.swift; sourceTree = "<group>"; };
 		D852C3C824B121E000029EB9 /* ShowsListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowsListTableViewCell.swift; sourceTree = "<group>"; };
 		D852C3CA24B1AA1C00029EB9 /* ShowViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowViewController.swift; sourceTree = "<group>"; };
@@ -116,7 +113,6 @@
 		D8717D37258FE93E00C86954 /* SongDetailsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongDetailsModel.swift; sourceTree = "<group>"; };
 		D879502D24C69E2900FB2436 /* MiniPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerViewController.swift; sourceTree = "<group>"; };
 		D87A551524D7B6D3005F32BA /* ModalPlayerTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalPlayerTableViewCell.swift; sourceTree = "<group>"; };
-		D87E7DBC24D9050900B59874 /* ArchiveTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveTimer.swift; sourceTree = "<group>"; };
 		D892BB9F24CBBCF5008E4960 /* ArchiveSuperViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveSuperViewController.swift; sourceTree = "<group>"; };
 		D89D789825901D80009324EE /* ArchivePlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivePlayerViewController.swift; sourceTree = "<group>"; };
 		D8A5324B24A9AFF2002379CF /* ArchiveCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveCell.swift; sourceTree = "<group>"; };
@@ -272,8 +268,6 @@
 			isa = PBXGroup;
 			children = (
 				D843EBDC24B3B10300C128A5 /* AudioPlayerArchive.swift */,
-				D850B8FE24B2BA7400E3DC6B /* AudioPlayer.swift */,
-				D87E7DBC24D9050900B59874 /* ArchiveTimer.swift */,
 			);
 			path = MediaPlayers;
 			sourceTree = "<group>";
@@ -632,7 +626,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D87E7DBD24D9050900B59874 /* ArchiveTimer.swift in Sources */,
 				D843EBDD24B3B10300C128A5 /* AudioPlayerArchive.swift in Sources */,
 				D84D6E2824BEB5140022A058 /* NetworkUtility.swift in Sources */,
 				D892BBA024CBBCF5008E4960 /* ArchiveSuperViewController.swift in Sources */,
@@ -645,7 +638,6 @@
 				D852C3C924B121E000029EB9 /* ShowsListTableViewCell.swift in Sources */,
 				D87109F425ABF09D00CA133E /* CarPlaySceneDelegate.swift in Sources */,
 				7984F98F24A56EFD00989DB8 /* ArchiveAPI.swift in Sources */,
-				D850B8FF24B2BA7400E3DC6B /* AudioPlayer.swift in Sources */,
 				791CE1C120B252F100299F76 /* Utils.swift in Sources */,
 				D852C3C724B1219400029EB9 /* ShowsListViewController.swift in Sources */,
 				D87A551624D7B6D3005F32BA /* ModalPlayerTableViewCell.swift in Sources */,

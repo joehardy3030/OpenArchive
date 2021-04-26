@@ -19,7 +19,7 @@ class AudioPlayerArchive: NSObject {
     let utils = Utils()
     var songDetailsModel = SongDetailsModel()
     var timerToken: Any?
-    var showModel: ShowMetadataModel?
+    var showMetadataModel: ShowMetadataModel?
     private let notificationCenter: NotificationCenter
     private var state = State.idle {
         // We add a property observer on 'state', which lets us
@@ -84,7 +84,7 @@ class AudioPlayerArchive: NSObject {
         guard let ci = self.playerQueue?.currentItem else { return 0 }
         let destinationURL = ci.asset.value(forKey: "URL") as? URL
         let name = trackNameFromURL(url: destinationURL)
-        if let mp3s = showModel?.mp3Array {
+        if let mp3s = showMetadataModel?.mp3Array {
             if mp3s.count > 0 {
                 for i in 0...(mp3s.count - 1) {
                     if mp3s[i].name == name {
@@ -148,6 +148,27 @@ class AudioPlayerArchive: NSObject {
         }
     }
     
+    /*
+    func loadAndPlaySong(mp3: ShowMP3?, mp3index: Int) {
+        guard let mp3 = mp3 else { return }
+        if mp3index == 0 {
+            pause()
+            if (self.playerItems.count) > 0 {
+                playerItems = [AVPlayerItem]()
+                playerQueue = nil
+                //player?.playerQueue?.removeAllItems()
+                //player?.playerQueue = AVQueuePlayer()
+            }
+            getTrackItemAndPrepareToPlay(track: mp3)
+            loadQueuePlayerTrack()
+        }
+        else {
+            getTrackItemAndPrepareToPlay(track: mp3)
+        }
+    }
+    */
+
+    
     func loadQueuePlayerTrack() {
         playerQueue = AVQueuePlayer(items: playerItems)
         //playerQueue?.insert(playerItems[0], after: playerQueue?.currentItem)
@@ -169,18 +190,15 @@ class AudioPlayerArchive: NSObject {
     
 }
 
-private extension AudioPlayerArchive {
+extension AudioPlayerArchive {
         
     func setupTimer(completion: @escaping (_ seconds: Double?) -> Void) {
         //removePeriodicTimeObserver()
         let interval = CMTime(value: 1, timescale: 2)
         
         let timerObserverToken = self.playerQueue?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { [weak self] (progressTime) in
-            //let seconds = CMTimeGetSeconds(progressTime)
-            //completion(seconds)
             if let s = self?.playerQueue?.currentTime().seconds {
                 completion(s)
-                print(s)
             }
         }
         self.timerToken = timerObserverToken

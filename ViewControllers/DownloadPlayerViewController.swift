@@ -25,14 +25,14 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
     }
     
     @IBAction func playButtonPress(_ sender: Any) {
-        player?.showModel = showModel
+        player?.showMetadataModel = showModel
         loadDownloadedShow()  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
         player?.play()
     }
     
     func loadDownloadedShow() {
         // This operation should probably belong to the player class
-        if let mp3s = self.player?.showModel?.mp3Array {
+        if let mp3s = self.player?.showMetadataModel?.mp3Array {
             if (player?.playerItems.count)! > 0 {
                 player?.playerItems = [AVPlayerItem]()
             }
@@ -98,11 +98,11 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
         if indexPath.row >= 6 {
             print(indexPath.row)
             let songIndex = indexPath.row - 6
-            player?.showModel = showModel
+            player?.showMetadataModel = showModel
             
             DispatchQueue.main.async{
                 
-                if let mp3s = self.player?.showModel?.mp3Array {
+                if let mp3s = self.player?.showMetadataModel?.mp3Array {
                     if let trackURL = self.player?.trackURLfromName(name: mp3s[songIndex].name) {
                         do {
                             let available = try trackURL.checkResourceIsReachable()

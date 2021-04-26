@@ -32,7 +32,7 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
     
     @IBAction func playButtonPress(_ sender: Any) {
         guard let showModel = lastShareMetadataModel?.showMetadataModel else { return }
-        player?.showModel = showModel
+        player?.showMetadataModel = showModel
         loadDownloadedShow()  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
         player?.play()
         
@@ -85,7 +85,7 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
     }
     
     func loadDownloadedShow() {
-        if let mp3s = self.player?.showModel?.mp3Array {
+        if let mp3s = self.player?.showMetadataModel?.mp3Array {
             if (player?.playerItems.count)! > 0 {
                 player?.playerItems = [AVPlayerItem]()
             }

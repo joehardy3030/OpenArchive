@@ -22,7 +22,6 @@ class MiniPlayerViewController: UIViewController {
     let utils = Utils()
     var nowPlayingInfo = [String : Any]()
     var player: AudioPlayerArchive?
-    var timer: ArchiveTimer?
     var currentTrackIndex = 0
     //private var playerItemContext = 0
     
@@ -48,7 +47,7 @@ class MiniPlayerViewController: UIViewController {
     }
 
     @objc func handleSliderChange() {
-        self.timer?.timerSliderHandler(timerValue: timeSlider.value)
+        self.player?.timerSliderHandler(timerValue: timeSlider.value)
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -84,7 +83,7 @@ class MiniPlayerViewController: UIViewController {
     }
     
     func setupQueueTimerCallback() {
-        timer?.setupTimer()  { (seconds: Double?) -> Void in
+        player?.setupTimer()  { (seconds: Double?) -> Void in
              self.timerCallback(seconds: seconds)
         }
     }
@@ -120,7 +119,6 @@ class MiniPlayerViewController: UIViewController {
 
     func prepareModalPlayer(viewController: ModalPlayerViewController) {
         viewController.player = player
-        viewController.timer = timer
     }
 
     
@@ -135,10 +133,6 @@ class MiniPlayerViewController: UIViewController {
         guard let _ = player?.playerQueue else { return }
         //self.player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
         self.player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
-        //timer? = ArchiveTimer(player: player)
-        //timer?.setupTimer()  { (seconds: Double?) -> Void in
-        //     self.timerCallback(seconds: seconds)
-        //}
         setupQueueTimerCallback()
         setupSlider()
         setupSong()
@@ -152,7 +146,7 @@ class MiniPlayerViewController: UIViewController {
     
 
     func setupSongDetails() {
-        player?.songDetailsModel.songDetailsFromMetadata(row: player?.getCurrentTrackIndex(), showModel: player?.showModel)
+        player?.songDetailsModel.songDetailsFromMetadata(row: player?.getCurrentTrackIndex(), showModel: player?.showMetadataModel)
         songLabel.text = player?.songDetailsModel.name
         venueLabel.text = player?.songDetailsModel.venue
     }
@@ -168,8 +162,8 @@ class MiniPlayerViewController: UIViewController {
 
     func setupNotificationView() {
         guard let ci = self.player?.playerQueue?.currentItem,
-            let mp3s = player?.showModel?.mp3Array,
-            let md = player?.showModel?.metadata
+            let mp3s = player?.showMetadataModel?.mp3Array,
+            let md = player?.showMetadataModel?.metadata
             else { return }
         guard let ct = player?.getCurrentTrackIndex()
         else {

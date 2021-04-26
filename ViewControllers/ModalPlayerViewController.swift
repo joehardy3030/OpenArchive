@@ -20,7 +20,6 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     @IBOutlet weak var playButton: UIButton!
     @IBOutlet weak var modalPlayerTableView: UITableView!
     let notificationCenter: NotificationCenter = .default
-    var timer: ArchiveTimer?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,14 +47,11 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     }
     
     @objc func handleSliderChange() {
-        self.timer?.timerSliderHandler(timerValue: timerSlider.value)
+        self.player?.timerSliderHandler(timerValue: timerSlider.value)
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-       // if keyPath == "currentItem.loadedTimeRanges" {
-       //     setupSong()
-       // }
-        
+
         if keyPath == #keyPath(AVQueuePlayer.currentItem.status) {
             let status: AVPlayerItem.Status
             if let statusNumber = change?[.newKey] as? NSNumber {
@@ -103,7 +99,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         playPauseButtonImageSetup()
         //player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
         self.player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
-        timer?.setupTimer()  { (seconds: Double?) -> Void in
+        player?.setupTimer()  { (seconds: Double?) -> Void in
              self.timerCallback(seconds: seconds)
         }
         setupSlider()
@@ -116,7 +112,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     }
     
     func setupSongDetails() {
-        player?.songDetailsModel.songDetailsFromMetadata(row: player?.getCurrentTrackIndex(), showModel: player?.showModel)
+        player?.songDetailsModel.songDetailsFromMetadata(row: player?.getCurrentTrackIndex(), showModel: player?.showMetadataModel)
         songLabel.text = player?.songDetailsModel.name
         dateLabel.text = player?.songDetailsModel.date
         venueLabel.text = player?.songDetailsModel.venue
@@ -159,24 +155,14 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         guard let q = player?.playerQueue else { return }
         if q.rate > 0.0 {
             player?.pause()
-          //  if let _ = playButton {
-          //      if #available(iOS 13.0, *) {
-          //          playButton.setBackgroundImage(UIImage(systemName: "play.circle.fill"), for: .normal)
-           //     }
-          //  }
         }
         else {
             player?.play()
-           // if let _ = playButton {
-           //     if #available(iOS 13.0, *) {
-           //         playButton.setBackgroundImage(UIImage(systemName: "pause.circle.fill"), for: .normal)
-           //     }
-           // }
         }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let c = player?.showModel?.mp3Array?.count {
+        if let c = player?.showMetadataModel?.mp3Array?.count {
             return c
         }
         else {
@@ -186,7 +172,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = modalPlayerTableView.dequeueReusableCell(withIdentifier: "ModalPlayerCell", for: indexPath) as? ModalPlayerTableViewCell,
-            let mp3s = player?.showModel?.mp3Array
+            let mp3s = player?.showMetadataModel?.mp3Array
             else {
                 print("no songs")
                 return UITableViewCell() }

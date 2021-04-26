@@ -146,7 +146,7 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
     
     func playShow() {
         player?.pause()
-        player?.showModel = selectedShow // Change showMetadata to showModel for consistency
+        player?.showMetadataModel = selectedShow // Change showMetadata to showModel for consistency
         loadDownloadedShow()  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
         self.player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
         player?.play()
@@ -154,7 +154,7 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
     }
     
     func loadDownloadedShow() {
-        if let mp3s = self.player?.showModel?.mp3Array {
+        if let mp3s = self.player?.showMetadataModel?.mp3Array {
             if (player?.playerItems.count)! > 0 {
                 player?.playerItems = [AVPlayerItem]()
             }
@@ -192,8 +192,8 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
     // Per song
     func setupNotificationView() {
         guard let ci = self.player?.playerQueue?.currentItem,
-            let mp3s = player?.showModel?.mp3Array,
-            let md = player?.showModel?.metadata
+            let mp3s = player?.showMetadataModel?.mp3Array,
+            let md = player?.showMetadataModel?.metadata
             else { return }
         guard let ct = player?.getCurrentTrackIndex()
         else {

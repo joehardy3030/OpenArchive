@@ -286,7 +286,7 @@
                             <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EcL-9l-r4I">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                                 <items>
-                                    <navigationItem title="Show" id="mcI-GE-PDo"/>
+                                    <navigationItem id="mcI-GE-PDo"/>
                                 </items>
                             </navigationBar>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="uMI-up-Xte">
@@ -372,7 +372,7 @@
                             <constraint firstItem="vk3-ay-scc" firstAttribute="leading" secondItem="VYb-Jw-dy1" secondAttribute="trailing" constant="40" id="uO9-hG-et7"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Show" id="FdQ-hs-0oj"/>
+                    <navigationItem key="navigationItem" id="dg1-eS-dHE"/>
                     <connections>
                         <outlet property="broadcastPlayPauseButton" destination="fOH-b9-gB0" id="VYm-Vk-cwu"/>
                         <outlet property="downloadButton" destination="VYb-Jw-dy1" id="yw7-Qe-RPE"/>
@@ -972,7 +972,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="2gD-Gv-5Fs"/>
+        <segue reference="P7t-lR-Gax"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="backward.end.fill" catalog="system" width="128" height="102"/>

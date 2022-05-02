@@ -43,8 +43,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate {
           }
  
         */
-        //FirebaseApp.configure()
-       // setupFirebase()
+        if FirebaseApp.app() == nil {
+            setupFirebase()
+        }
+        else {
+            self.db = Firestore.firestore()
+        }
+
+        //
         /*
         guard let rvc = self.window?.rootViewController as? ArchiveSuperViewController else {fatalError()}
         rvc.player = AudioPlayerArchive()

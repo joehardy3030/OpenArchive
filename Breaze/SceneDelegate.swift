@@ -28,7 +28,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, FUIAuthDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let _ = (scene as? UIWindowScene) else { return }
         print(scene)
-        setupFirebase()
+        // guard if
+        if FirebaseApp.app() == nil {
+            setupFirebase()
+        }
+        else {
+            self.db = Firestore.firestore()
+        }
 
         center.requestAuthorization(options: [.alert, .sound]) { granted, error in }
         do {

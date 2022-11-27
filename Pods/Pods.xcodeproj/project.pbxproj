@@ -28699,6 +28699,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/FirebaseUI";
+				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				IBSC_MODULE = FirebaseUI;
 				INFOPLIST_FILE = "Target Support Files/FirebaseUI/ResourceBundle-FirebaseAuthUI-FirebaseUI-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -28968,6 +28969,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/FirebaseUI";
+				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				IBSC_MODULE = FirebaseUI;
 				INFOPLIST_FILE = "Target Support Files/FirebaseUI/ResourceBundle-FirebasePhoneAuthUI-FirebaseUI-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -29018,6 +29020,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/FirebaseUI";
+				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				IBSC_MODULE = FirebaseUI;
 				INFOPLIST_FILE = "Target Support Files/FirebaseUI/ResourceBundle-FirebaseEmailAuthUI-FirebaseUI-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -29067,6 +29070,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/FirebaseUI";
+				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				IBSC_MODULE = FirebaseUI;
 				INFOPLIST_FILE = "Target Support Files/FirebaseUI/ResourceBundle-FirebaseFacebookAuthUI-FirebaseUI-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -29117,6 +29121,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/FirebaseUI";
+				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				IBSC_MODULE = FirebaseUI;
 				INFOPLIST_FILE = "Target Support Files/FirebaseUI/ResourceBundle-FirebaseOAuthUI-FirebaseUI-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -29264,6 +29269,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/FirebaseUI";
+				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				IBSC_MODULE = FirebaseUI;
 				INFOPLIST_FILE = "Target Support Files/FirebaseUI/ResourceBundle-FirebasePhoneAuthUI-FirebaseUI-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -29345,6 +29351,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/FirebaseUI";
+				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				IBSC_MODULE = FirebaseUI;
 				INFOPLIST_FILE = "Target Support Files/FirebaseUI/ResourceBundle-FirebaseFacebookAuthUI-FirebaseUI-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -29427,6 +29434,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/FirebaseUI";
+				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				IBSC_MODULE = FirebaseUI;
 				INFOPLIST_FILE = "Target Support Files/FirebaseUI/ResourceBundle-FirebaseAnonymousAuthUI-FirebaseUI-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -29638,6 +29646,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/FirebaseUI";
+				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				IBSC_MODULE = FirebaseUI;
 				INFOPLIST_FILE = "Target Support Files/FirebaseUI/ResourceBundle-FirebaseGoogleAuthUI-FirebaseUI-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -29671,6 +29680,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/FirebaseUI";
+				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				IBSC_MODULE = FirebaseUI;
 				INFOPLIST_FILE = "Target Support Files/FirebaseUI/ResourceBundle-FirebaseOAuthUI-FirebaseUI-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -29943,6 +29953,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/gRPC-C++";
+				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				IBSC_MODULE = grpcpp;
 				INFOPLIST_FILE = "Target Support Files/gRPC-C++/ResourceBundle-gRPCCertificates-Cpp-gRPC-C++-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -29960,6 +29971,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/FirebaseUI";
+				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				IBSC_MODULE = FirebaseUI;
 				INFOPLIST_FILE = "Target Support Files/FirebaseUI/ResourceBundle-FirebaseEmailAuthUI-FirebaseUI-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -30139,6 +30151,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/FirebaseUI";
+				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				IBSC_MODULE = FirebaseUI;
 				INFOPLIST_FILE = "Target Support Files/FirebaseUI/ResourceBundle-FirebaseGoogleAuthUI-FirebaseUI-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -30470,6 +30483,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/FirebaseUI";
+				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				IBSC_MODULE = FirebaseUI;
 				INFOPLIST_FILE = "Target Support Files/FirebaseUI/ResourceBundle-FirebaseAuthUI-FirebaseUI-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -30783,6 +30797,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/FirebaseUI";
+				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				IBSC_MODULE = FirebaseUI;
 				INFOPLIST_FILE = "Target Support Files/FirebaseUI/ResourceBundle-FirebaseAnonymousAuthUI-FirebaseUI-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -30815,6 +30830,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/gRPC-C++";
+				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				IBSC_MODULE = grpcpp;
 				INFOPLIST_FILE = "Target Support Files/gRPC-C++/ResourceBundle-gRPCCertificates-Cpp-gRPC-C++-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;

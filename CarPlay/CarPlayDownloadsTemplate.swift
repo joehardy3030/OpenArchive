@@ -67,6 +67,7 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
         */
     }
     
+    
     func numberOfChildItems(at indexPath: IndexPath) -> Int {
         return 0
     }

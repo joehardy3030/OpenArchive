@@ -19,7 +19,8 @@ class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
         self.interfaceController = interfaceController
         //let nowPlayingTemplate = CPNowPlayingTemplate.shared
         // Hand a reference to the interface controller to CarPlayDownloadsTemplate
-        _ = CarPlayDownloadsTemplate(interfaceController: interfaceController)
+        _ = CarPlayTemplateManager(interfaceController: interfaceController)
+        //_ = CarPlayDownloadsTemplate(interfaceController: interfaceController)
     }
     
     // CarPlay disconnected

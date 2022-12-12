@@ -22,6 +22,7 @@
 		D8449A6824AEF3C200F113F4 /* MonthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8449A6724AEF3C200F113F4 /* MonthViewController.swift */; };
 		D8449A6A24AEF57600F113F4 /* MonthTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8449A6924AEF57600F113F4 /* MonthTableViewCell.swift */; };
 		D845E03924D7642A003381B6 /* ModalPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D845E03824D7642A003381B6 /* ModalPlayerViewController.swift */; };
+		D848521929454EEF00CD3EA4 /* CarPlayTemplateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D848521829454EEF00CD3EA4 /* CarPlayTemplateManager.swift */; };
 		D84A3AAB24E3B02C00A468E0 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84A3AAA24E3B02C00A468E0 /* ShareViewController.swift */; };
 		D84C3D8224CD164C007AF4EE /* ShowDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84C3D8124CD164C007AF4EE /* ShowDetailTableViewCell.swift */; };
 		D84D2B8E24C2925A006C8175 /* DownloadsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84D2B8D24C2925A006C8175 /* DownloadsViewController.swift */; };
@@ -88,6 +89,7 @@
 		D8449A6724AEF3C200F113F4 /* MonthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthViewController.swift; sourceTree = "<group>"; };
 		D8449A6924AEF57600F113F4 /* MonthTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthTableViewCell.swift; sourceTree = "<group>"; };
 		D845E03824D7642A003381B6 /* ModalPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalPlayerViewController.swift; sourceTree = "<group>"; };
+		D848521829454EEF00CD3EA4 /* CarPlayTemplateManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CarPlayTemplateManager.swift; sourceTree = "<group>"; };
 		D84A3AAA24E3B02C00A468E0 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		D84C3D8124CD164C007AF4EE /* ShowDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowDetailTableViewCell.swift; sourceTree = "<group>"; };
 		D84D2B8D24C2925A006C8175 /* DownloadsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadsViewController.swift; sourceTree = "<group>"; };
@@ -297,6 +299,7 @@
 			isa = PBXGroup;
 			children = (
 				D8DCF13325AFFEA200D28837 /* CarPlayDownloadsTemplate.swift */,
+				D848521829454EEF00CD3EA4 /* CarPlayTemplateManager.swift */,
 			);
 			path = CarPlay;
 			sourceTree = "<group>";
@@ -640,6 +643,7 @@
 				7984F98F24A56EFD00989DB8 /* ArchiveAPI.swift in Sources */,
 				791CE1C120B252F100299F76 /* Utils.swift in Sources */,
 				D852C3C724B1219400029EB9 /* ShowsListViewController.swift in Sources */,
+				D848521929454EEF00CD3EA4 /* CarPlayTemplateManager.swift in Sources */,
 				D87A551624D7B6D3005F32BA /* ModalPlayerTableViewCell.swift in Sources */,
 				7984F98D24A4565400989DB8 /* YearViewController.swift in Sources */,
 				D85A4EEF2022D0B600E480FB /* AppDelegate.swift in Sources */,

@@ -59,7 +59,7 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
 
 
     func getDownloadedShows() {
-        network.getAllDownloadDocs() {
+        network.getAllDownloadDocs(decade: nil) {
             (response: [ShowMetadataModel]?) -> Void in
             DispatchQueue.main.async{
                 if let r = response {
@@ -68,8 +68,6 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
                         for s in ss {
                             if !self.checkTracksAndRemove(show: s) {
                                 self.network.removeDownloadDataDoc(docID: s.metadata?.identifier) // use callback
-                               // print(i)
-                                //self.shows?.remove(at: i)
                             }
                         }
                         self.shows = ss.sorted(by: { self.utils.getDateFromDateString(datetime: $0.metadata?.date!)! < self.utils.getDateFromDateString(datetime: $1.metadata?.date!)! })

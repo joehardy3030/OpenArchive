@@ -8,7 +8,7 @@
 
 import UIKit
 import Firebase
-import FirebaseUI
+import FirebaseAuthUI
 
 class ArchiveSuperViewController: UIViewController, FUIAuthDelegate {
     var network: NetworkUtility!

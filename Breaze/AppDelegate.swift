@@ -12,7 +12,8 @@ import CoreData
 import UserNotifications
 import ARKit
 import Firebase
-import FirebaseUI
+import FirebaseAuthUI
+import FirebaseEmailAuthUI
 import CarPlay
 
 @UIApplicationMain

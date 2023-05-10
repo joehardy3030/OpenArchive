@@ -13,8 +13,6 @@ import Firebase
 import FirebaseFirestore
 import MediaPlayer
 
-//, MPPlayableContentDataSource, MPPlayableContentDelegate,
-// MPPlayableContentManager, MPPlayableContentManagerContext
 
 @available(iOS 14.0, *)
 class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
@@ -50,7 +48,7 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
             let item = CPListItem(text: d, detailText: "")
             item.handler = { item, completion in
                 print("Clicked")
-                self.interfaceController?.pushTemplate(self.yearsCPListTemplate(itemText: item.text), animated: true)
+                _ = CarPlayDownloadsTemplate(interfaceController: self.interfaceController, decade: item.text)
                 completion()
             }
             items.append(item)
@@ -59,15 +57,14 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
         let section = CPListSection(items: items)
         let decadesTemplate = CPListTemplate(title: "Decades", sections: [section])
         self.interfaceController?.setRootTemplate(decadesTemplate, animated: true)
-        //self.interfaceController?.pushTemplate(self.yearsCPListTemplate(), animated: true, completion: nil)
     }
     
     
-    private func yearsCPListTemplate(itemText: String?) -> CPListTemplate {
+    private func yearsCPListTemplate(decade: String?) -> CPListTemplate {
         var items = [CPListItem]()
         var yearPrefix: String
         
-        if let t = itemText {
+        if let t = decade {
             print(t)
             switch t {
             case "1960s":
@@ -105,59 +102,21 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
         return yearsTemplate
     }
     
-    
-    /*
-    /// Creates the settings CPListTemplate.
-    private func settingsTemplate() -> CPListTemplate {
-        let musicItem = CPListItem(text: "Use Apple Music", detailText: "Decide whether to enable it.")
-        musicItem.handler = { listItem, completion in
-            let item: CPGridButton!
-            if AppleMusicAPIController.sharedController.useAppleMusic == true {
-                item = CPGridButton(titleVariants: ["Enabled, tap to disable."], image: #imageLiteral(resourceName: "dot_green"), handler: { (button) in
-                    AppleMusicAPIController.sharedController.useAppleMusic = false
-                    self.carplayInterfaceController?.popTemplate(animated: true, completion: nil)
-                })
-            } else {
-                item = CPGridButton(titleVariants: ["Disabled, tap to enable."], image: #imageLiteral(resourceName: "dot_red"), handler: { (button) in
-                    AppleMusicAPIController.sharedController.useAppleMusic = true
-                    self.carplayInterfaceController?.popTemplate(animated: true, completion: nil)
-                })
-            }
-            self.carplayInterfaceController?.pushTemplate(
-                CPGridTemplate(title: "Apple Music", gridButtons: [item]), animated: true, completion: nil)
-            completion()
-        }
-        let musicSection = CPListSection(items: [musicItem], header: "Music", sectionIndexTitle: "Apple Music")
-        
-        let contentItem = CPListItem(text: "Allow Explicit Content", detailText: "Decide whether to enable it.")
-        contentItem.handler = { listItem, completion in
-            let item: CPGridButton!
-            if AppleMusicAPIController.sharedController.allowExplicitContent == true {
-                item = CPGridButton(titleVariants: ["Enabled, tap to disable."], image: #imageLiteral(resourceName: "dot_green"), handler: { (button) in
-                    AppleMusicAPIController.sharedController.allowExplicitContent = false
-                    self.carplayInterfaceController?.popTemplate(animated: true, completion: nil)
-                })
-            } else {
-                item = CPGridButton(titleVariants: ["Disabled, tap to enable."], image: #imageLiteral(resourceName: "dot_red"), handler: { (button) in
-                    AppleMusicAPIController.sharedController.allowExplicitContent = true
-                    self.carplayInterfaceController?.popTemplate(animated: true, completion: nil)
-                })
-            }
-            self.carplayInterfaceController?.pushTemplate(
-                CPGridTemplate(title: "Music Content", gridButtons: [item]), animated: true, completion: nil)
-            completion()
-        }
-        let contentSection = CPListSection(items: [contentItem], header: "Content", sectionIndexTitle: "Music Content")
-        
-        let template = CPListTemplate(title: "Settings", sections: [musicSection, contentSection])
-        template.tabImage = UIImage(systemName: "gear")
-        return template
+    func templateWillAppear(_ aTemplate: CPTemplate, animated: Bool) {
     }
-     */
-    
+
+    func templateDidAppear(_ aTemplate: CPTemplate, animated: Bool) {
+    }
+
+    func templateWillDisappear(_ aTemplate: CPTemplate, animated: Bool) {
+    }
+
+    func templateDidDisappear(_ aTemplate: CPTemplate, animated: Bool) {
+    }
+
 }
 
-
+/*
 @available(iOS 14.0, *)
 extension CarPlayTemplateManager: CPInterfaceControllerDelegate {
     func templateWillAppear(_ aTemplate: CPTemplate, animated: Bool) {
@@ -172,6 +131,7 @@ extension CarPlayTemplateManager: CPInterfaceControllerDelegate {
     func templateDidDisappear(_ aTemplate: CPTemplate, animated: Bool) {
     }
 }
+*/
 
 @available(iOS 14.0, *)
 extension CarPlayTemplateManager: CPSessionConfigurationDelegate {

@@ -8,7 +8,10 @@
 import UIKit
 import ARKit
 import Firebase
-import FirebaseUI
+import FirebaseAuthUI
+import FirebaseAuth
+import FirebaseEmailAuthUI
+
 // import CarPlay
 
 //let sharedPlayer = AudioPlayerArchive()

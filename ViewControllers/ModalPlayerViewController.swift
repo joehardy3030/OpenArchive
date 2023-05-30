@@ -20,6 +20,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     @IBOutlet weak var playButton: UIButton!
     @IBOutlet weak var modalPlayerTableView: UITableView!
     let notificationCenter: NotificationCenter = .default
+    let commandCenter = MPRemoteCommandCenter.shared()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,6 +28,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         self.modalPlayerTableView.dataSource = self
         notificationCenter.addObserver(self, selector: #selector(playbackDidStart), name: .playbackStarted, object: nil)
         notificationCenter.addObserver(self, selector: #selector(playbackDidPause), name: .playbackPaused, object: self.player?.playerQueue)
+        setupCommandCenter()
         initialDefaults()
         setupShow()
     }
@@ -43,6 +45,35 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     @IBAction func forwardButton(_ sender: Any) {
         if let q = player?.playerQueue {
             q.advanceToNextItem()
+        }
+    }
+    
+    @IBAction func backButton(_ sender: Any) {
+        rewindFunctionality()
+    }
+    
+    func rewindFunctionality() {
+        // This operation should probably belong to the player class
+        guard let index = player?.getCurrentTrackIndex() else { return }
+        if let mp3s = self.player?.showMetadataModel?.mp3Array {
+            player?.loadQueuePlayer(tracks: mp3s)
+         }
+        if let mp = self.getMiniPlayerController() {
+            mp.setupShow()
+        }
+        if let p = player {
+            initialDefaults()
+            setupShow()
+            p.rewindToPreviousItem(index: index)
+        }
+    }
+    
+    func setupCommandCenter() {
+        commandCenter.previousTrackCommand.isEnabled = true
+        commandCenter.previousTrackCommand.addTarget { [unowned self] event in
+            rewindFunctionality()
+            //self.rewindToPreviousItem(index: 0)
+            return .success
         }
     }
     

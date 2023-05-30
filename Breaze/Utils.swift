@@ -162,7 +162,7 @@ class Utils {
     
     func getTimerStringSeconds(seconds: Double?) -> String {
         var secondsString: String
-        if let s = seconds {
+        if let s = seconds, !s.isNaN, !s.isInfinite {
             secondsString = String(format: "%02d", Int(s) % 60)
         }
         else {
@@ -173,7 +173,7 @@ class Utils {
 
     func getTimerStringMinutes(seconds: Double?) -> String {
         var minutesString: String
-        if let s = seconds {
+        if let s = seconds, !s.isNaN, !s.isInfinite {
             minutesString = String(format: "%02d", Int(s) / 60)
         }
         //let minutesString = String(format: "%02d", Int(seconds ?? 0) / 60)

@@ -34,6 +34,7 @@ class AudioPlayerArchive: NSObject {
         self.setupCommandCenter()
     }
 
+    
     func setupCommandCenter() {
         // Add a handler for the play command.
         commandCenter.playCommand.isEnabled = true
@@ -61,6 +62,13 @@ class AudioPlayerArchive: NSObject {
                 return .success
             }
             return .commandFailed
+        }
+        
+        commandCenter.previousTrackCommand.isEnabled = true
+        commandCenter.previousTrackCommand.addTarget { [unowned self] event in
+            //rewindFunctionality()
+            //self.rewindToPreviousItem(index: 0)
+            return .success
         }
     }
     
@@ -172,6 +180,19 @@ class AudioPlayerArchive: NSObject {
         playerQueue = AVQueuePlayer(items: playerItems)
     }
     
+    func rewindToPreviousItem(index: Int) {
+        self.pause()
+        if index>0 {
+            for _ in 0..<index-1 {
+                if let q = self.playerQueue {
+                    print("skipped track")
+                    q.advanceToNextItem()
+                }
+            }
+        }
+        self.play()
+    }
+    
 }
 
 extension AudioPlayerArchive {
@@ -254,4 +275,8 @@ extension Notification.Name {
     static var playbackStopped: Notification.Name {
         return .init(rawValue: "AudioPlayer.playbackStopped")
     }
+}
+
+extension AudioPlayerArchive {
+
 }

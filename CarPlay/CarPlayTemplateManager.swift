@@ -26,6 +26,7 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
     fileprivate(set) var authStateListenerHandle: AuthStateDidChangeListenerHandle?
     let decades = ["1960s", "1970s", "1980s", "1990s"]
     let years = ["0","1","2","3","4","5","6","7","8","9"]
+    let commandCenter = MPRemoteCommandCenter.shared()
     
     init(interfaceController: CPInterfaceController?) {
         self.interfaceController = interfaceController

@@ -16,7 +16,7 @@ class StartViewController: ArchiveSuperViewController {
         super.viewDidLoad()
         for childViewController in self.children {
             if let playerHolder = childViewController as? ArchiveSuperViewController {
-                playerHolder.player = self.player
+                //playerHolder.player = self.player
             }
         }
         
@@ -26,18 +26,18 @@ class StartViewController: ArchiveSuperViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let vc = segue.destination as? ArchiveTabBarController {
-            if let p = player {
-                vc.player = p // There needs to be a player already for this to work. Need to inject it.
-            }
+           // if let p = player {
+           //     vc.player = p // There needs to be a player already for this to work. Need to inject it.
+           // }
             if let db = db {
                 vc.db = db
             }
         }
         
         if let mp = segue.destination as? MiniPlayerViewController {
-            if let p = player {
-                mp.player = p // There needs to be a player already for this to work. Need to inject it.
-            }
+//            if let p = player {
+                mp.player = player // There needs to be a player already for this to work. Need to inject it.
+            
         }
     }
 

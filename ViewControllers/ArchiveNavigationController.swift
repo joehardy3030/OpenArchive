@@ -10,7 +10,7 @@ import UIKit
 import Firebase
 
 class ArchiveNavigationController: UINavigationController {
-    var player: AudioPlayerArchive?
+    let player = AudioPlayerArchive.shared
     var db: Firestore!
 
     override func viewDidLoad() {
@@ -23,7 +23,6 @@ class ArchiveNavigationController: UINavigationController {
     
     func distributePlayer() {
         if let tvc = self.topViewController as? ArchiveSuperViewController {
-            tvc.player = self.player
             tvc.db = self.db
         }
     }

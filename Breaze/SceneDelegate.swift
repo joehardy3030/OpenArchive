@@ -51,7 +51,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, FUIAuthDelegate {
 
         
         guard let rvc = self.window?.rootViewController as? ArchiveSuperViewController else {fatalError()}
-        rvc.player = AudioPlayerArchive.shared //sharedPlayer //AudioPlayerArchive()
+        // rvc.player = AudioPlayerArchive.shared //sharedPlayer //AudioPlayerArchive()
         rvc.auth = self.auth
         rvc.authUI = self.authUI
         rvc.db = self.db

@@ -12,6 +12,7 @@ import MediaPlayer
 
 class AudioPlayerArchive: NSObject {
     static let shared = AudioPlayerArchive()
+    //static let playerQueue = AVQueuePlayer()
     var playerQueue: AVQueuePlayer?
     var playerItems = [AVPlayerItem]()
     var nowPlayingInfo = [String : Any]()
@@ -22,13 +23,10 @@ class AudioPlayerArchive: NSObject {
     var showMetadataModel: ShowMetadataModel?
     private let notificationCenter: NotificationCenter
     private var state = State.idle {
-        // We add a property observer on 'state', which lets us
-        // run a function on each value change.
-        // didSet { stateDidChange() }
         didSet { stateDidChange() }
     }
     
-    init(notificationCenter: NotificationCenter = .default) {
+    private init(notificationCenter: NotificationCenter = .default) {
         self.notificationCenter = notificationCenter
         super.init()
         self.setupCommandCenter()
@@ -63,13 +61,14 @@ class AudioPlayerArchive: NSObject {
             }
             return .commandFailed
         }
-        
+        /*
         commandCenter.previousTrackCommand.isEnabled = true
         commandCenter.previousTrackCommand.addTarget { [unowned self] event in
             //rewindFunctionality()
             //self.rewindToPreviousItem(index: 0)
             return .success
         }
+        */
     }
     
     @objc func play() {

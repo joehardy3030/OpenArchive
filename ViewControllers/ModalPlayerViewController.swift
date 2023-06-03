@@ -33,6 +33,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         setupShow()
     }
     
+    // Try "deint" vs viewWillDisappear
     override func viewWillDisappear(_ animated: Bool) {
         notificationCenter.removeObserver(self, name: .playbackStarted, object: nil)
         notificationCenter.removeObserver(self, name: .playbackPaused, object: self.player.playerQueue)
@@ -54,7 +55,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     
     func rewindFunctionality() {
         // This operation should probably belong to the player class
-        var index = player.getCurrentTrackIndex()
+        let index = player.getCurrentTrackIndex()
         if let mp3s = self.player.showMetadataModel?.mp3Array {
             player.loadQueuePlayer(tracks: mp3s)
          }
@@ -150,7 +151,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     }    
    
     func selectCurrentTrack() {
-        var index = player.getCurrentTrackIndex()
+        let index = player.getCurrentTrackIndex()
         let indexPath = IndexPath(item: index, section: 0)
         self.modalPlayerTableView.selectRow(at: indexPath, animated: true, scrollPosition: UITableView.ScrollPosition.middle)
     }

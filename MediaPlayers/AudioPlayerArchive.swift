@@ -22,6 +22,9 @@ class AudioPlayerArchive: NSObject {
     var timerToken: Any?
     var showMetadataModel: ShowMetadataModel?
     private let notificationCenter: NotificationCenter
+    private var playCommandTarget: Any?
+    private var pauseCommandTarget: Any?
+    private var nextTrackCommandTarget: Any?
     private var state = State.idle {
         didSet { stateDidChange() }
     }
@@ -31,12 +34,25 @@ class AudioPlayerArchive: NSObject {
         super.init()
         self.setupCommandCenter()
     }
-
     
+    deinit {
+        if let target = playCommandTarget {
+            commandCenter.playCommand.removeTarget(target)
+        }
+
+        if let target = pauseCommandTarget {
+            commandCenter.pauseCommand.removeTarget(target)
+        }
+
+        if let target = nextTrackCommandTarget {
+            commandCenter.nextTrackCommand.removeTarget(target)
+        }
+    }
+
     func setupCommandCenter() {
         // Add a handler for the play command.
         commandCenter.playCommand.isEnabled = true
-        commandCenter.playCommand.addTarget { [unowned self] event in
+        playCommandTarget = commandCenter.playCommand.addTarget { [unowned self] event in
             if self.playerQueue?.rate == 0.0 {
                 self.play()
                 return .success
@@ -45,7 +61,7 @@ class AudioPlayerArchive: NSObject {
         }
         
         commandCenter.pauseCommand.isEnabled = true
-        commandCenter.pauseCommand.addTarget { [unowned self] event in
+        pauseCommandTarget = commandCenter.pauseCommand.addTarget { [unowned self] event in
             if self.playerQueue?.rate ?? 0.0 > 0.0 {
                 self.pause()
                 return .success
@@ -54,7 +70,7 @@ class AudioPlayerArchive: NSObject {
         }
         
         commandCenter.nextTrackCommand.isEnabled = true
-        commandCenter.nextTrackCommand.addTarget{ [unowned self] event in
+        nextTrackCommandTarget = commandCenter.nextTrackCommand.addTarget{ [unowned self] event in
             if let pq = self.playerQueue {
                 pq.advanceToNextItem()
                 return .success
@@ -64,12 +80,13 @@ class AudioPlayerArchive: NSObject {
         /*
         commandCenter.previousTrackCommand.isEnabled = true
         commandCenter.previousTrackCommand.addTarget { [unowned self] event in
-            //rewindFunctionality()
+            rewindFunctionality()
             //self.rewindToPreviousItem(index: 0)
             return .success
         }
-        */
+         */
     }
+    
     
     @objc func play() {
         self.playerQueue?.play()
@@ -163,7 +180,6 @@ class AudioPlayerArchive: NSObject {
         }
     }
 
-
     func loadQueuePlayerTrack() {
         playerQueue = AVQueuePlayer(items: playerItems)
     }
@@ -179,6 +195,23 @@ class AudioPlayerArchive: NSObject {
         playerQueue = AVQueuePlayer(items: playerItems)
     }
     
+    /*
+    func rewindFunctionality() {
+        // This operation should probably belong to the player class
+        var index = self.getCurrentTrackIndex()
+        if let mp3s = self.showMetadataModel?.mp3Array {
+            self.loadQueuePlayer(tracks: mp3s)
+         }
+        if let mp = self.getMiniPlayerController() {
+            mp.setupShow()
+        }
+
+        initialDefaults()
+        setupShow()
+        self.rewindToPreviousItem(index: index)
+    }
+    */
+    
     func rewindToPreviousItem(index: Int) {
         self.pause()
         if index>0 {
@@ -191,7 +224,7 @@ class AudioPlayerArchive: NSObject {
         }
         self.play()
     }
-    
+
 }
 
 extension AudioPlayerArchive {

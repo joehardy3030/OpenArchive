@@ -77,14 +77,15 @@ class AudioPlayerArchive: NSObject {
             }
             return .commandFailed
         }
-        /*
+        
         commandCenter.previousTrackCommand.isEnabled = true
         commandCenter.previousTrackCommand.addTarget { [unowned self] event in
-            rewindFunctionality()
+            let index = self.getCurrentTrackIndex()
+            self.rewindToPreviousItem()
             //self.rewindToPreviousItem(index: 0)
             return .success
         }
-         */
+        
     }
     
     
@@ -98,12 +99,34 @@ class AudioPlayerArchive: NSObject {
         case .idle, .paused:
             // Don't need to send a signal if it's already paused
             break
-        case .playing:
+        case .playing, .rewind:
             self.playerQueue?.pause()
             state = .paused
         }
     }
-
+    
+    @objc func rewindToPreviousItem() {
+        let index = self.getCurrentTrackIndex()
+        self.pause()
+        if let mp3s = self.showMetadataModel?.mp3Array {
+            self.reLoadQueuePlayer(tracks: mp3s)
+        }
+        
+        // playerQueue.removeAllItems()
+        // playerQueue.insert(newItem, after: nil)
+        print(index)
+        state = .rewind
+        if index>0 {
+            for _ in 0..<index-1 {
+                if let q = self.playerQueue {
+                    print("skipped track")
+                    q.advanceToNextItem()
+                }
+            }
+        }
+        self.play()
+    }
+    
     func getCurrentTrackIndex() -> Int {
         guard let ci = self.playerQueue?.currentItem else { return 0 }
         let destinationURL = ci.asset.value(forKey: "URL") as? URL
@@ -182,6 +205,7 @@ class AudioPlayerArchive: NSObject {
 
     func loadQueuePlayerTrack() {
         playerQueue = AVQueuePlayer(items: playerItems)
+        //print(playerQueue)
     }
 
     func loadQueuePlayer(tracks: [ShowMP3]) {
@@ -193,6 +217,22 @@ class AudioPlayerArchive: NSObject {
             }
         }
         playerQueue = AVQueuePlayer(items: playerItems)
+        //print(playerQueue)
+    }
+
+    func reLoadQueuePlayer(tracks: [ShowMP3]) {
+        //cleanQueue()
+        guard let pq = playerQueue else { return }
+        pq.removeAllItems()
+        for track in tracks {
+            guard let n = track.name else { return }
+            if let url = trackURLfromName(name: n) {
+                prepareToPlay(url: url)
+            }
+        }
+        for item in playerItems {
+            pq.insert(item, after: nil)
+        }
     }
     
     /*
@@ -212,18 +252,7 @@ class AudioPlayerArchive: NSObject {
     }
     */
     
-    func rewindToPreviousItem(index: Int) {
-        self.pause()
-        if index>0 {
-            for _ in 0..<index-1 {
-                if let q = self.playerQueue {
-                    print("skipped track")
-                    q.advanceToNextItem()
-                }
-            }
-        }
-        self.play()
-    }
+
 
 }
 
@@ -279,6 +308,7 @@ private extension AudioPlayerArchive {
         case idle
         case playing
         case paused
+        case rewind
     }
 }
 
@@ -291,6 +321,8 @@ private extension AudioPlayerArchive {
             notificationCenter.post(name: .playbackStarted, object: self.playerQueue)
         case .paused:
             notificationCenter.post(name: .playbackPaused, object: self.playerQueue)
+        case .rewind:
+            notificationCenter.post(name: .playbackRewind, object: self.playerQueue)
         }
     }
 }
@@ -307,6 +339,11 @@ extension Notification.Name {
     static var playbackStopped: Notification.Name {
         return .init(rawValue: "AudioPlayer.playbackStopped")
     }
+    
+    static var playbackRewind: Notification.Name {
+        return .init(rawValue: "AudioPlayer.playbackRewind")
+    }
+
 }
 
 extension AudioPlayerArchive {

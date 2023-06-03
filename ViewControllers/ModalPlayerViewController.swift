@@ -28,17 +28,31 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         self.modalPlayerTableView.dataSource = self
         notificationCenter.addObserver(self, selector: #selector(playbackDidStart), name: .playbackStarted, object: nil)
         notificationCenter.addObserver(self, selector: #selector(playbackDidPause), name: .playbackPaused, object: self.player.playerQueue)
-        setupCommandCenter()
+        notificationCenter.addObserver(self, selector: #selector(playbackDidRewind), name: .playbackRewind, object: self.player.playerQueue)
+
+        //setupCommandCenter()
         initialDefaults()
         setupShow()
     }
     
     // Try "deint" vs viewWillDisappear
+    
     override func viewWillDisappear(_ animated: Bool) {
         notificationCenter.removeObserver(self, name: .playbackStarted, object: nil)
         notificationCenter.removeObserver(self, name: .playbackPaused, object: self.player.playerQueue)
+        notificationCenter.removeObserver(self, name: .playbackRewind, object: self.player.playerQueue)
+        //self.player.playerQueue?.removeObserver(self, forKeyPath: "currentItem.status", context: nil)
     }
     
+    /*
+    deinit {
+        self.player.playerQueue?.removeObserver(self, forKeyPath: "currentItem.status", context: nil)
+        notificationCenter.removeObserver(self, name: .playbackStarted, object: nil)
+        notificationCenter.removeObserver(self, name: .playbackPaused, object: self.player.playerQueue)
+        notificationCenter.removeObserver(self, name: .playbackRewind, object: self.player.playerQueue)
+     }
+     */
+
     @IBAction func playButton(_ sender: Any) {
         playPause()
     }
@@ -50,25 +64,27 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     }
     
     @IBAction func backButton(_ sender: Any) {
-        rewindFunctionality()
+        player.rewindToPreviousItem()
+        //rewindFunctionality()
     }
     
     func rewindFunctionality() {
         // This operation should probably belong to the player class
-        let index = player.getCurrentTrackIndex()
-        if let mp3s = self.player.showMetadataModel?.mp3Array {
-            player.loadQueuePlayer(tracks: mp3s)
-         }
-        if let mp = self.getMiniPlayerController() {
-            mp.setupShow()
-        }
+//        let index = player.getCurrentTrackIndex()
+//        if let mp3s = self.player.showMetadataModel?.mp3Array {
+//            player.loadQueuePlayer(tracks: mp3s)
+//         }
+
+       // if let mp = self.getMiniPlayerController() {
+       //     mp.setupShow()
+       // }
 
         initialDefaults()
         setupShow()
-        player.rewindToPreviousItem(index: index)
-        
+        print("Rewind functionality")
     }
     
+    /*
     func setupCommandCenter() {
         commandCenter.previousTrackCommand.isEnabled = true
         commandCenter.previousTrackCommand.addTarget { [unowned self] event in
@@ -77,6 +93,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
             return .success
         }
     }
+    */
     
     @objc func handleSliderChange() {
         self.player.timerSliderHandler(timerValue: timerSlider.value)
@@ -127,15 +144,17 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
       }
 
     func setupShow() {
-        guard let _ = player.playerQueue else { return }
+        guard let queue = player.playerQueue else { return }
         playPauseButtonImageSetup()
         //player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
-        self.player.playerQueue?.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
-        player.setupTimer()  { (seconds: Double?) -> Void in
+        queue.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
+        print(self.player.playerQueue)
+        self.player.setupTimer()  { (seconds: Double?) -> Void in
              self.timerCallback(seconds: seconds)
         }
         setupSlider()
         setupSong()
+        print("Setup Show")
     }
         
     func setupSong() {
@@ -246,4 +265,14 @@ private extension ModalPlayerViewController {
         }
         print("Item paused -- modal player ")
     }
+    
+    @objc private func playbackDidRewind(_ notification: Notification) {
+        guard let _ = playButton else { return }
+        if #available(iOS 13.0, *) {
+            self.rewindFunctionality()
+            print("Rewind ")
+        }
+        //print("Rewind ")
+    }
+
 }

@@ -111,20 +111,24 @@ class AudioPlayerArchive: NSObject {
         if let mp3s = self.showMetadataModel?.mp3Array {
             self.reLoadQueuePlayer(tracks: mp3s)
         }
-        
-        // playerQueue.removeAllItems()
-        // playerQueue.insert(newItem, after: nil)
         print(index)
-        state = .rewind
         if index>0 {
             for _ in 0..<index-1 {
                 if let q = self.playerQueue {
                     print("skipped track")
                     q.advanceToNextItem()
+                    
                 }
             }
         }
-        self.play()
+        guard let currentItem = self.playerQueue?.currentItem else { return }
+
+        currentItem.seek(to: CMTime.zero, completionHandler: { _ in
+            self.state = .rewind
+            self.play()
+        })
+        //state = .rewind
+        //self.play()
     }
     
     func getCurrentTrackIndex() -> Int {

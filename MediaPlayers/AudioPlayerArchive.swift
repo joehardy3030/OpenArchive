@@ -80,9 +80,7 @@ class AudioPlayerArchive: NSObject {
         
         commandCenter.previousTrackCommand.isEnabled = true
         commandCenter.previousTrackCommand.addTarget { [unowned self] event in
-            let index = self.getCurrentTrackIndex()
             self.rewindToPreviousItem()
-            //self.rewindToPreviousItem(index: 0)
             return .success
         }
         
@@ -127,9 +125,7 @@ class AudioPlayerArchive: NSObject {
             self.state = .rewind
             self.play()
         })
-        //state = .rewind
-        //self.play()
-    }
+   }
     
     func getCurrentTrackIndex() -> Int {
         guard let ci = self.playerQueue?.currentItem else { return 0 }

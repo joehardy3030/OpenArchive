@@ -43,7 +43,7 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
     func checkTracksAndRemove(show: ShowMetadataModel) -> Bool {
         guard let mp3s = show.mp3Array else { return false }
         for song in mp3s {
-            if let trackURL = self.player?.trackURLfromName(name: song.name) {
+            if let trackURL = self.player.trackURLfromName(name: song.name) {
                 do {
                     let _ = try trackURL.checkResourceIsReachable()
                     //print(available)
@@ -59,7 +59,7 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
 
 
     func getDownloadedShows() {
-        network.getAllDownloadDocs() {
+        network.getAllDownloadDocs(decade: nil) {
             (response: [ShowMetadataModel]?) -> Void in
             DispatchQueue.main.async{
                 if let r = response {
@@ -68,8 +68,6 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
                         for s in ss {
                             if !self.checkTracksAndRemove(show: s) {
                                 self.network.removeDownloadDataDoc(docID: s.metadata?.identifier) // use callback
-                               // print(i)
-                                //self.shows?.remove(at: i)
                             }
                         }
                         self.shows = ss.sorted(by: { self.utils.getDateFromDateString(datetime: $0.metadata?.date!)! < self.utils.getDateFromDateString(datetime: $1.metadata?.date!)! })
@@ -83,7 +81,7 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
     func deleteSongs(row: Int) {
         guard let mp3s = self.shows?[row].mp3Array else { return }
         for mp3 in mp3s {
-            if let localURL = self.player?.trackURLfromName(name: mp3.name) {
+            if let localURL = self.player.trackURLfromName(name: mp3.name) {
                 if fileManager.fileExists(atPath: localURL.path) {
                     do {
                         try fileManager.removeItem(atPath: localURL.path)
@@ -151,9 +149,9 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
         if let mp = segue.destination as? MiniPlayerViewController {
             self.miniPlayer = mp
             print("Set the miniplayer")
-            if let p = self.player {
-                mp.player = p // There needs to be a player already for this to work. Need to inject it.
-            }
+            //if let p = self.player {
+                mp.player = self.player // There needs to be a player already for this to work. Need to inject it.
+            //}
         }
         
         guard let indexPath = showListTableView.indexPathForSelectedRow else { return }
@@ -162,7 +160,7 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
             target.showDate = showMDs[indexPath.row].metadata?.date
             target.showMetadataModel = showMDs[indexPath.row]
             target.showType = .downloaded
-            target.player = player
+            // target.player = player
             target.prevController = self
             target.db = db
         }

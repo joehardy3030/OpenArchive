@@ -41,7 +41,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         self.showTableView.delegate = self
         self.showTableView.dataSource = self
         notificationCenter.addObserver(self, selector: #selector(playbackDidStart), name: .playbackStarted, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(playbackDidPause), name: .playbackPaused, object: self.player?.playerQueue)
+        notificationCenter.addObserver(self, selector: #selector(playbackDidPause), name: .playbackPaused, object: self.player.playerQueue)
         self.navigationItem.title = "";
         switch showType {
         case .archive:
@@ -112,16 +112,16 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     }
     
     func playShow() {
-        self.player?.pause()
-        self.player?.showMetadataModel = showMetadataModel // Change showMetadata to showModel for consistency
+        self.player.pause()
+        self.player.showMetadataModel = showMetadataModel // Change showMetadata to showModel for consistency
         self.loadDownloadedShow()  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
-        self.player?.play()
+        self.player.play()
     }
     
     func loadDownloadedShow() {
         // This operation should probably belong to the player class
-        if let mp3s = self.player?.showMetadataModel?.mp3Array {
-            player?.loadQueuePlayer(tracks: mp3s)
+        if let mp3s = self.player.showMetadataModel?.mp3Array {
+            player.loadQueuePlayer(tracks: mp3s)
         }
         if let mp = self.getMiniPlayerController() {
             mp.setupShow()
@@ -182,7 +182,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         }
         else if self.lastShareMetadataModel?.isPlaying == false {
             self.broadcastIsPlaying = false
-            self.player?.pause()
+            self.player.pause()
         }
     }
     
@@ -205,7 +205,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         guard let mp3s = self.showMetadataModel?.mp3Array else { return }
         for f in mp3s {
             let url = archiveAPI.downloadURL(identifier: self.identifier, filename: f.name)
-            guard let localURL = self.player?.trackURLfromName(name: f.name) else { return }
+            guard let localURL = self.player.trackURLfromName(name: f.name) else { return }
             if fileManager.fileExists(atPath: localURL.path) {
                 DispatchQueue.main.async{
                     self.setDownloadComplete(destination: localURL, name: f.name)
@@ -255,17 +255,17 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     func loadAndPlaySong(showMP3: ShowMP3?) {
         guard let mp3 = showMP3 else {return }
         if mp3index == 0 {
-            player?.pause()
-            player?.cleanQueue()
-            player?.showMetadataModel = showMetadataModel // Change showMetadata to showModel for consistency
-            player?.getTrackItemAndPrepareToPlay(track: mp3)
-            player?.loadQueuePlayerTrack()
+            player.pause()
+            player.cleanQueue()
+            player.showMetadataModel = showMetadataModel // Change showMetadata to showModel for consistency
+            player.getTrackItemAndPrepareToPlay(track: mp3)
+            player.loadQueuePlayerTrack()
             if let mp = self.getMiniPlayerController() {
                 mp.setupShow()
             }
         }
         else {
-            player?.getTrackItemAndPrepareToPlay(track: mp3)
+            player.getTrackItemAndPrepareToPlay(track: mp3)
         }
         
     }
@@ -370,12 +370,12 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let indexPath = showTableView.indexPathForSelectedRow else { return }
         let songIndex = indexPath.row
-        player?.showMetadataModel = showMetadataModel
+        player.showMetadataModel = showMetadataModel
         
         DispatchQueue.main.async{
             
-            if let mp3s = self.player?.showMetadataModel?.mp3Array {
-                if let trackURL = self.player?.trackURLfromName(name: mp3s[songIndex].name) {
+            if let mp3s = self.player.showMetadataModel?.mp3Array {
+                if let trackURL = self.player.trackURLfromName(name: mp3s[songIndex].name) {
                     do {
                         let available = try trackURL.checkResourceIsReachable()
                         print(available)

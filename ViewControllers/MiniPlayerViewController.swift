@@ -118,7 +118,7 @@ class MiniPlayerViewController: UIViewController {
     }
 
     func prepareModalPlayer(viewController: ModalPlayerViewController) {
-        viewController.player = player
+        // viewController.player = player
     }
 
     

@@ -12,6 +12,7 @@ import MediaPlayer
 
 class AudioPlayerArchive: NSObject {
     static let shared = AudioPlayerArchive()
+    //static let playerQueue = AVQueuePlayer()
     var playerQueue: AVQueuePlayer?
     var playerItems = [AVPlayerItem]()
     var nowPlayingInfo = [String : Any]()
@@ -21,23 +22,37 @@ class AudioPlayerArchive: NSObject {
     var timerToken: Any?
     var showMetadataModel: ShowMetadataModel?
     private let notificationCenter: NotificationCenter
+    private var playCommandTarget: Any?
+    private var pauseCommandTarget: Any?
+    private var nextTrackCommandTarget: Any?
     private var state = State.idle {
-        // We add a property observer on 'state', which lets us
-        // run a function on each value change.
-        // didSet { stateDidChange() }
         didSet { stateDidChange() }
     }
     
-    init(notificationCenter: NotificationCenter = .default) {
+    private init(notificationCenter: NotificationCenter = .default) {
         self.notificationCenter = notificationCenter
         super.init()
         self.setupCommandCenter()
+    }
+    
+    deinit {
+        if let target = playCommandTarget {
+            commandCenter.playCommand.removeTarget(target)
+        }
+
+        if let target = pauseCommandTarget {
+            commandCenter.pauseCommand.removeTarget(target)
+        }
+
+        if let target = nextTrackCommandTarget {
+            commandCenter.nextTrackCommand.removeTarget(target)
+        }
     }
 
     func setupCommandCenter() {
         // Add a handler for the play command.
         commandCenter.playCommand.isEnabled = true
-        commandCenter.playCommand.addTarget { [unowned self] event in
+        playCommandTarget = commandCenter.playCommand.addTarget { [unowned self] event in
             if self.playerQueue?.rate == 0.0 {
                 self.play()
                 return .success
@@ -46,7 +61,7 @@ class AudioPlayerArchive: NSObject {
         }
         
         commandCenter.pauseCommand.isEnabled = true
-        commandCenter.pauseCommand.addTarget { [unowned self] event in
+        pauseCommandTarget = commandCenter.pauseCommand.addTarget { [unowned self] event in
             if self.playerQueue?.rate ?? 0.0 > 0.0 {
                 self.pause()
                 return .success
@@ -55,14 +70,22 @@ class AudioPlayerArchive: NSObject {
         }
         
         commandCenter.nextTrackCommand.isEnabled = true
-        commandCenter.nextTrackCommand.addTarget{ [unowned self] event in
+        nextTrackCommandTarget = commandCenter.nextTrackCommand.addTarget{ [unowned self] event in
             if let pq = self.playerQueue {
                 pq.advanceToNextItem()
                 return .success
             }
             return .commandFailed
         }
+        
+        commandCenter.previousTrackCommand.isEnabled = true
+        commandCenter.previousTrackCommand.addTarget { [unowned self] event in
+            self.rewindToPreviousItem()
+            return .success
+        }
+        
     }
+    
     
     @objc func play() {
         self.playerQueue?.play()
@@ -74,12 +97,36 @@ class AudioPlayerArchive: NSObject {
         case .idle, .paused:
             // Don't need to send a signal if it's already paused
             break
-        case .playing:
+        case .playing, .rewind:
             self.playerQueue?.pause()
             state = .paused
         }
     }
+    
+    @objc func rewindToPreviousItem() {
+        let index = self.getCurrentTrackIndex()
+        self.pause()
+        if let mp3s = self.showMetadataModel?.mp3Array {
+            self.reLoadQueuePlayer(tracks: mp3s)
+        }
+        print(index)
+        if index>0 {
+            for _ in 0..<index-1 {
+                if let q = self.playerQueue {
+                    print("skipped track")
+                    q.advanceToNextItem()
+                    
+                }
+            }
+        }
+        guard let currentItem = self.playerQueue?.currentItem else { return }
 
+        currentItem.seek(to: CMTime.zero, completionHandler: { _ in
+            self.state = .rewind
+            self.play()
+        })
+   }
+    
     func getCurrentTrackIndex() -> Int {
         guard let ci = self.playerQueue?.currentItem else { return 0 }
         let destinationURL = ci.asset.value(forKey: "URL") as? URL
@@ -156,9 +203,9 @@ class AudioPlayerArchive: NSObject {
         }
     }
 
-
     func loadQueuePlayerTrack() {
         playerQueue = AVQueuePlayer(items: playerItems)
+        //print(playerQueue)
     }
 
     func loadQueuePlayer(tracks: [ShowMP3]) {
@@ -170,8 +217,43 @@ class AudioPlayerArchive: NSObject {
             }
         }
         playerQueue = AVQueuePlayer(items: playerItems)
+        //print(playerQueue)
+    }
+
+    func reLoadQueuePlayer(tracks: [ShowMP3]) {
+        //cleanQueue()
+        guard let pq = playerQueue else { return }
+        pq.removeAllItems()
+        for track in tracks {
+            guard let n = track.name else { return }
+            if let url = trackURLfromName(name: n) {
+                prepareToPlay(url: url)
+            }
+        }
+        for item in playerItems {
+            pq.insert(item, after: nil)
+        }
     }
     
+    /*
+    func rewindFunctionality() {
+        // This operation should probably belong to the player class
+        var index = self.getCurrentTrackIndex()
+        if let mp3s = self.showMetadataModel?.mp3Array {
+            self.loadQueuePlayer(tracks: mp3s)
+         }
+        if let mp = self.getMiniPlayerController() {
+            mp.setupShow()
+        }
+
+        initialDefaults()
+        setupShow()
+        self.rewindToPreviousItem(index: index)
+    }
+    */
+    
+
+
 }
 
 extension AudioPlayerArchive {
@@ -226,6 +308,7 @@ private extension AudioPlayerArchive {
         case idle
         case playing
         case paused
+        case rewind
     }
 }
 
@@ -238,6 +321,8 @@ private extension AudioPlayerArchive {
             notificationCenter.post(name: .playbackStarted, object: self.playerQueue)
         case .paused:
             notificationCenter.post(name: .playbackPaused, object: self.playerQueue)
+        case .rewind:
+            notificationCenter.post(name: .playbackRewind, object: self.playerQueue)
         }
     }
 }
@@ -254,4 +339,13 @@ extension Notification.Name {
     static var playbackStopped: Notification.Name {
         return .init(rawValue: "AudioPlayer.playbackStopped")
     }
+    
+    static var playbackRewind: Notification.Name {
+        return .init(rawValue: "AudioPlayer.playbackRewind")
+    }
+
+}
+
+extension AudioPlayerArchive {
+
 }

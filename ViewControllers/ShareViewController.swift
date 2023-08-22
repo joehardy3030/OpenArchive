@@ -32,9 +32,9 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
     
     @IBAction func playButtonPress(_ sender: Any) {
         guard let showModel = lastShareMetadataModel?.showMetadataModel else { return }
-        player?.showMetadataModel = showModel
+        player.showMetadataModel = showModel
         loadDownloadedShow()  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
-        player?.play()
+        player.play()
         
     }
     
@@ -51,7 +51,7 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
                             if (f.format?.contains("MP3"))! {
                                 let showMP3 = ShowMP3(identifier: id, name: f.name, title: f.title, track: f.track)
                                 self.mp3Array.append(showMP3)
-                                if let localURL = self.player?.trackURLfromName(name: f.name) {
+                                if let localURL = self.player.trackURLfromName(name: f.name) {
                                     let fileManager = FileManager.default
                                     if fileManager.fileExists(atPath: localURL.path) {
                                         DispatchQueue.main.async{
@@ -85,8 +85,8 @@ class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITa
     }
     
     func loadDownloadedShow() {
-        if let mp3s = self.player?.showMetadataModel?.mp3Array {
-            player?.loadQueuePlayer(tracks: mp3s)
+        if let mp3s = self.player.showMetadataModel?.mp3Array {
+            player.loadQueuePlayer(tracks: mp3s)
          }
         if let mp = self.getMiniPlayerController() {
             mp.setupShow()

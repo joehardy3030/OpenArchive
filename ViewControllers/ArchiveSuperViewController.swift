@@ -8,7 +8,7 @@
 
 import UIKit
 import Firebase
-import FirebaseUI
+import FirebaseAuthUI
 
 class ArchiveSuperViewController: UIViewController, FUIAuthDelegate {
     var network: NetworkUtility!
@@ -16,7 +16,7 @@ class ArchiveSuperViewController: UIViewController, FUIAuthDelegate {
     let archiveAPI = ArchiveAPI()
     var prevController: ArchiveSuperViewController?
     var miniPlayer: MiniPlayerViewController?
-    var player: AudioPlayerArchive?
+    let player = AudioPlayerArchive.shared
     var isPlaying = false
     var auth: Auth?
     var authUI: FUIAuth?

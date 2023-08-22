@@ -8,8 +8,11 @@
 import UIKit
 import ARKit
 import Firebase
-import FirebaseUI
-import CarPlay
+import FirebaseAuthUI
+import FirebaseAuth
+import FirebaseEmailAuthUI
+
+// import CarPlay
 
 //let sharedPlayer = AudioPlayerArchive()
 @available(iOS 13.0, *)
@@ -48,7 +51,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, FUIAuthDelegate {
 
         
         guard let rvc = self.window?.rootViewController as? ArchiveSuperViewController else {fatalError()}
-        rvc.player = AudioPlayerArchive.shared //sharedPlayer //AudioPlayerArchive()
+        // rvc.player = AudioPlayerArchive.shared //sharedPlayer //AudioPlayerArchive()
         rvc.auth = self.auth
         rvc.authUI = self.authUI
         rvc.db = self.db

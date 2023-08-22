@@ -102,12 +102,33 @@ class NetworkUtility: NSObject {
         return docID
     }
     
-    func getAllDownloadDocs(completion: @escaping ([ShowMetadataModel]?) -> Void) {
+    func getAllDownloadDocs(decade: String?, completion: @escaping ([ShowMetadataModel]?) -> Void) {
         
         let uuid = getUUID()
         var shows: [ShowMetadataModel] = []
+        var docRef: Query!
+        var yearArray: [String]
         print("called get all downloaded docs")
-        let docRef = db.collection(uuid).document("downloads").collection("shows")
+        if let d = decade {
+            switch d {
+            case "1960s":
+                yearArray = ["1965", "1966", "1967", "1968", "1969"]
+            case "1970s":
+                yearArray = ["1970", "1971", "1972", "1973", "1974", "1975", "1976", "1977", "1978", "1979"]
+            case "1980s":
+                yearArray = ["1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989"]
+            case "1990s":
+                yearArray = ["1990", "1991", "1992", "1993", "1994", "1995"]
+            default:
+                yearArray = [""]
+            }
+            docRef = db.collection(uuid).document("downloads").collection("shows").whereField("metadata.year", in: yearArray)
+        } else {
+            docRef = db.collection(uuid).document("downloads").collection("shows")
+        }
+        // print(docRef!)
+            
+       // let docRef = db.collection(uuid).document("downloads").collection("shows")
         docRef.addSnapshotListener { (querySnapshot, error) in
             if let error = error {
                 print("Error getting documents: \(error)")

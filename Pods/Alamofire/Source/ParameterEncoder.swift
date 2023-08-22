@@ -54,7 +54,6 @@ open class JSONParameterEncoder: ParameterEncoder {
     }
 
     /// Returns an encoder with `JSONEncoder.outputFormatting` set to `.sortedKeys`.
-    @available(macOS 10.13, iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     public static var sortedKeys: JSONParameterEncoder {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .sortedKeys
@@ -89,6 +88,19 @@ open class JSONParameterEncoder: ParameterEncoder {
         }
 
         return request
+    }
+}
+
+extension ParameterEncoder where Self == JSONParameterEncoder {
+    /// Provides a default `JSONParameterEncoder` instance.
+    public static var json: JSONParameterEncoder { JSONParameterEncoder() }
+
+    /// Creates a `JSONParameterEncoder` using the provided `JSONEncoder`.
+    ///
+    /// - Parameter encoder: `JSONEncoder` used to encode parameters. `JSONEncoder()` by default.
+    /// - Returns:           The `JSONParameterEncoder`.
+    public static func json(encoder: JSONEncoder = JSONEncoder()) -> JSONParameterEncoder {
+        JSONParameterEncoder(encoder: encoder)
     }
 }
 
@@ -180,5 +192,21 @@ open class URLEncodedFormParameterEncoder: ParameterEncoder {
         }
 
         return request
+    }
+}
+
+extension ParameterEncoder where Self == URLEncodedFormParameterEncoder {
+    /// Provides a default `URLEncodedFormParameterEncoder` instance.
+    public static var urlEncodedForm: URLEncodedFormParameterEncoder { URLEncodedFormParameterEncoder() }
+
+    /// Creates a `URLEncodedFormParameterEncoder` with the provided encoder and destination.
+    ///
+    /// - Parameters:
+    ///   - encoder:     `URLEncodedFormEncoder` used to encode the parameters. `URLEncodedFormEncoder()` by default.
+    ///   - destination: `Destination` to which to encode the parameters. `.methodDependent` by default.
+    /// - Returns:       The `URLEncodedFormParameterEncoder`.
+    public static func urlEncodedForm(encoder: URLEncodedFormEncoder = URLEncodedFormEncoder(),
+                                      destination: URLEncodedFormParameterEncoder.Destination = .methodDependent) -> URLEncodedFormParameterEncoder {
+        URLEncodedFormParameterEncoder(encoder: encoder, destination: destination)
     }
 }

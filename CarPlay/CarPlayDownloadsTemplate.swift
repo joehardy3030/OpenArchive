@@ -13,8 +13,6 @@ import Firebase
 import FirebaseFirestore
 import MediaPlayer
 
-//, MPPlayableContentDataSource, MPPlayableContentDelegate,
-// MPPlayableContentManager, MPPlayableContentManagerContext
 
 @available(iOS 14.0, *)
 class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableContentDataSource, CPInterfaceControllerDelegate {
@@ -39,34 +37,21 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
     var isPlaying = false
     fileprivate(set) var authStateListenerHandle: AuthStateDidChangeListenerHandle?
 
-    init(interfaceController: CPInterfaceController?) {
+    init(interfaceController: CPInterfaceController?, decade: String?) {
         self.interfaceController = interfaceController
         super.init()
         self.interfaceController?.delegate = self
         self.db = Firestore.firestore()
         self.player = AudioPlayerArchive.shared
         self.network = NetworkUtility(db: db)
-        self.getDownloadedShows()
-        //self.nowPlayingSongManager = MPNowPlayingInfoCenter.default()
+        self.getDownloadedShows(decade: decade)
         playableContentManager = MPPlayableContentManager.shared()
         playableContentManager?.dataSource = self
         playableContentManager?.delegate = self
         notificationCenter.addObserver(self, selector: #selector(playbackDidStart), name: .playbackStarted, object: nil)
         notificationCenter.addObserver(self, selector: #selector(playbackDidPause), name: .playbackPaused, object: self.player?.playerQueue)
-        
-        /*
-        if (self.authStateListenerHandle == nil) {
-            self.authStateListenerHandle = self.auth?.addStateDidChangeListener { (auth, user) in
-                guard user != nil else {
-                    print("Nil user")
-                    return
-                }
-                return
-            }
-        }
-        */
     }
-    
+        
     func numberOfChildItems(at indexPath: IndexPath) -> Int {
         return 0
     }
@@ -77,11 +62,10 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
         return item
     }
     
-    func getDownloadedShows() {
-        network.getAllDownloadDocs() {
+    func getDownloadedShows(decade: String?) {
+        network.getAllDownloadDocs(decade: decade) {
             (response: [ShowMetadataModel]?) -> Void in
             DispatchQueue.main.async{
-              //  self.playableContentManager?.beginUpdates()
                 if let r = response {
                     self.shows = r
                     if let ss = self.shows {
@@ -89,13 +73,11 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
                             if !self.checkTracksAndRemove(show: s) {
                                 self.network.removeDownloadDataDoc(docID: s.metadata?.identifier) // use callback
                                 print(s)
-                                //self.shows?.remove(at: i)
                             }
                         }
                         self.shows = ss.sorted(by: { self.utils.getDateFromDateString(datetime: $0.metadata?.date!)! < self.utils.getDateFromDateString(datetime: $1.metadata?.date!)! })
                     }
                 }
-             //   self.playableContentManager?.endUpdates()
                 self.createDownloadsCPList()
             }
         }
@@ -136,7 +118,8 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
                 
         let section = CPListSection(items: items)
         let listTemplate = CPListTemplate(title: "My Tapes", sections: [section])
-        self.interfaceController?.setRootTemplate(listTemplate, animated: true)
+        self.interfaceController?.pushTemplate(listTemplate, animated: true)
+        //self.interfaceController?.setRootTemplate(listTemplate, animated: true)
     }
     
     func playableContentManager(_ contentManager: MPPlayableContentManager, initiatePlaybackOfContentItemAt indexPath: IndexPath, completionHandler: @escaping (Error?) -> Void) {

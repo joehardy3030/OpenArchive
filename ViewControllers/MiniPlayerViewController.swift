@@ -98,23 +98,23 @@ class MiniPlayerViewController: UIViewController {
     @available(iOS 13.0, *)
     @IBAction func loadFullPlayer(_ sender: Any) {
         if player?.playerQueue != nil {
-        
-        let sbd = UIStoryboard(name: "Main", bundle: nil)
-        guard let vc = sbd.instantiateViewController(withIdentifier: "ModalPlayer") as? ModalPlayerViewController,
-            //let ad = UIApplication.shared.delegate as? AppDelegate
-              //https://stackoverflow.com/questions/56588843/uiapplication-shared-delegate-equivalent-for-scenedelegate-xcode11
-              let sd = self.view.window?.windowScene?.delegate as? SceneDelegate
-            //let sd = UIApplication.shared.delegate as? SceneDelegate
+            
+            let sbd = UIStoryboard(name: "Main", bundle: nil)
+            guard let vc = sbd.instantiateViewController(withIdentifier: "ModalPlayer") as? ModalPlayerViewController,
+                  //let ad = UIApplication.shared.delegate as? AppDelegate
+                  //https://stackoverflow.com/questions/56588843/uiapplication-shared-delegate-equivalent-for-scenedelegate-xcode11
+                    let sd = self.view.window?.windowScene?.delegate as? SceneDelegate
+                    //let sd = UIApplication.shared.delegate as? SceneDelegate
             else { return }
-
-        if let rvc = sd.window?.rootViewController as? StartViewController {
-            prepareModalPlayer(viewController: vc)
-            rvc.show(vc, sender: self)
-        }
-        else {
-            print("no root view")
-        }
+            
+            if let rvc = sd.window?.rootViewController as? StartViewController {
+                prepareModalPlayer(viewController: vc)
+                rvc.show(vc, sender: self)
             }
+            else {
+                print("no root view")
+            }
+        }
     }
 
     func prepareModalPlayer(viewController: ModalPlayerViewController) {

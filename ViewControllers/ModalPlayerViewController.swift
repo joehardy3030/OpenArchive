@@ -34,24 +34,12 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         initialDefaults()
         setupShow()
     }
-    
-    // Try "deint" vs viewWillDisappear
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         notificationCenter.removeObserver(self, name: .playbackStarted, object: nil)
         notificationCenter.removeObserver(self, name: .playbackPaused, object: self.player.playerQueue)
         notificationCenter.removeObserver(self, name: .playbackRewind, object: self.player.playerQueue)
-        //self.player.playerQueue?.removeObserver(self, forKeyPath: "currentItem.status", context: nil)
     }
-    
-    /*
-    deinit {
-        self.player.playerQueue?.removeObserver(self, forKeyPath: "currentItem.status", context: nil)
-        notificationCenter.removeObserver(self, name: .playbackStarted, object: nil)
-        notificationCenter.removeObserver(self, name: .playbackPaused, object: self.player.playerQueue)
-        notificationCenter.removeObserver(self, name: .playbackRewind, object: self.player.playerQueue)
-     }
-     */
 
     @IBAction func playButton(_ sender: Any) {
         playPause()
@@ -65,35 +53,13 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     
     @IBAction func backButton(_ sender: Any) {
         player.rewindToPreviousItem()
-        //rewindFunctionality()
     }
     
     func rewindFunctionality() {
-        // This operation should probably belong to the player class
-//        let index = player.getCurrentTrackIndex()
-//        if let mp3s = self.player.showMetadataModel?.mp3Array {
-//            player.loadQueuePlayer(tracks: mp3s)
-//         }
-
-       // if let mp = self.getMiniPlayerController() {
-       //     mp.setupShow()
-       // }
-
         initialDefaults()
         setupShow()
         print("Rewind functionality")
     }
-    
-    /*
-    func setupCommandCenter() {
-        commandCenter.previousTrackCommand.isEnabled = true
-        commandCenter.previousTrackCommand.addTarget { [unowned self] event in
-            rewindFunctionality()
-            //self.rewindToPreviousItem(index: 0)
-            return .success
-        }
-    }
-    */
     
     @objc func handleSliderChange() {
         self.player.timerSliderHandler(timerValue: timerSlider.value)

@@ -17,7 +17,9 @@ import FirebaseEmailAuthUI
 //let sharedPlayer = AudioPlayerArchive()
 @available(iOS 13.0, *)
 class SceneDelegate: UIResponder, UIWindowSceneDelegate, FUIAuthDelegate {
-
+    
+    let archiveAPI = ArchiveAPI()
+    var launchURL: URL?
     var window: UIWindow?
     let center = UNUserNotificationCenter.current()
     fileprivate(set) var auth: Auth!
@@ -29,6 +31,91 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, FUIAuthDelegate {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
+        
+        //if let url = connectionOptions.urlContexts.first?.url {
+        //    handleDeepLink(url: url)
+       // }
+        sharedSetup(scene: scene)
+    }
+
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        if let url = URLContexts.first?.url {
+            handleDeepLink(url: url)
+        }
+    }
+
+    /*
+    func handleDeepLink(scene: UIScene, url: URL) {
+        //print(identifier)
+        
+        //sharedSetup(scene: scene)
+        // Extract the specific concert identifier from the URL
+        guard let concertIdentifier = url.host else { return }
+            print(concertIdentifier)
+            
+            guard let db = self.db else {
+                return
+            }
+            
+            let url = archiveAPI.metadataURL(identifier: concertIdentifier)
+            print(url)
+            
+            let _ = archiveAPI.getIARequestMetadata(url: url) {
+                (response: ShowMetadataModel) -> Void in
+                
+                DispatchQueue.main.async{
+                    let storyboard = UIStoryboard(name: "Main", bundle: nil) // Replace "Main" with your storyboard name if different
+                    if let showViewController = storyboard.instantiateViewController(withIdentifier: "ShowViewController") as? ShowViewController {
+                        //print(concertIdentifier)
+                        showViewController.identifier = concertIdentifier
+                        showViewController.showDate = response.metadata?.date // Replace with the actual date
+                        showViewController.showType = .archive // Replace with the actual show type if it varies
+                        showViewController.db = db
+                        
+                        // Push the view controller onto the navigation stack
+                        if let rvc = self.window?.rootViewController as? StartViewController
+                        {
+                            print("rvc")
+                            print(rvc)
+                            rvc.navigationController?.pushViewController(showViewController, animated: true)
+                        }
+                    }
+                }
+            }
+
+    }
+     */
+
+    func handleDeepLink(url: URL) {
+        // Extract the specific concert identifier from the URL
+        guard let concertIdentifier = url.host else { return }
+        print(concertIdentifier)
+        
+        guard let db = self.db else {
+            return
+        }
+        
+        let url = archiveAPI.metadataURL(identifier: concertIdentifier)
+        print(url)
+
+        let sbd = UIStoryboard(name: "Main", bundle: nil)
+        guard let vc = sbd.instantiateViewController(withIdentifier: "ShowViewController") as? ShowViewController else { return }
+    
+        if let rvc = self.window?.rootViewController as? StartViewController {
+            vc.identifier = concertIdentifier
+            vc.showDate = "08-02-1982" // Replace with the actual date
+            vc.showType = .archive // Replace with the actual show type if it varies
+            vc.db = db
+            rvc.show(vc, sender: self)
+        }
+        else {
+            print("no root view")
+        }
+
+    }
+
+    
+    func sharedSetup(scene: UIScene) {
         guard let _ = (scene as? UIWindowScene) else { return }
         print(scene)
         // guard if
@@ -48,22 +135,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, FUIAuthDelegate {
           catch {
               print("nope")
           }
-
         
         guard let rvc = self.window?.rootViewController as? ArchiveSuperViewController else {fatalError()}
-        // rvc.player = AudioPlayerArchive.shared //sharedPlayer //AudioPlayerArchive()
+        print(rvc)
         rvc.auth = self.auth
         rvc.authUI = self.authUI
         rvc.db = self.db
-        
-        /*
-        let window = UIWindow(windowScene: windowScene)
-        self.window = window
-        window.makeKeyAndVisible()
-        */
 
     }
-
+    
     func setupFirebase() {
         FirebaseApp.configure()
         self.auth = Auth.auth()

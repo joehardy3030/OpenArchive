@@ -16,28 +16,48 @@ import FirebaseAuthUI
 import FirebaseEmailAuthUI
 import CarPlay
 
+/*
+class DeepLinkManager {
+    static let shared = DeepLinkManager()
+     
+     private init() {}
+     
+     var deepLinkURL: URL?
+}
+*/
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate {
 
     //var window: UIWindow?
     let center = UNUserNotificationCenter.current()
+    let archiveAPI = ArchiveAPI()
     fileprivate(set) var auth: Auth!
     fileprivate(set) var authUI: FUIAuth!
     fileprivate(set) var db: Firestore!
 
-    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        print(url)
-        return true 
-    }
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        
+        print("application did finish")
+        return sharedSetup()
+ 
+    }
+    
+    /*
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+        print("application open with url")
+        return true
+    }
+    */
+    
+    func sharedSetup() -> Bool {
         center.requestAuthorization(options: [.alert, .sound]) { granted, error in }
         do {
               //options: AVAudioSession.CategoryOptions.mixWithOthers
             try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
             try AVAudioSession.sharedInstance().setActive(true)
+            print("AV session")
           }
           catch {
               print("nope")
@@ -45,44 +65,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate {
  
         
         if FirebaseApp.app() == nil {
+            print("Firebase Nil")
             setupFirebase()
         }
         else {
             self.db = Firestore.firestore()
+            
         }
-
-        //
-        /*
-        guard let rvc = self.window?.rootViewController as? ArchiveSuperViewController else {fatalError()}
-        rvc.player = AudioPlayerArchive()
-        rvc.auth = self.auth
-        rvc.authUI = self.authUI
-        rvc.db = self.db
-        */
-        //print(rvc.player)
-        // Dependency injection is fun! Remind me again what's so bad about singeltons?
-        /*
-        if let tbc = window?.rootViewController as? UITabBarController {
-            if let rvc = tbc.viewControllers?[0] as? DownloadsNavigationController {
-                if let vc = rvc.topViewController as? DownloadsViewController {
-                    vc.player = AudioPlayerArchive()
-                }
-            }
-        }
-        */
-
+        
         return true
     }
-    
-    /*
-    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
-        return UISceneConfiguration()
-    }
-    
-    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
-        
-    }
-    */
     
     func setupFirebase() {
         FirebaseApp.configure()

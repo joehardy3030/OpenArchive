@@ -16,6 +16,7 @@ class ArchiveNavigationController: UINavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
         distributePlayer()
+        print("ArchiveNavigationController")
         //navigationController?.delegate = self
         // Do any additional setup after loading the view.
     }

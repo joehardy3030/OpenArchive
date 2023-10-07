@@ -46,6 +46,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         switch showType {
         case .archive:
             self.navigationItem.title = utils.getDateFromDateTimeString(datetime: showDate)
+            print("archive")
             getIAGetShow()
         case .downloaded:
             self.navigationItem.title = showDate

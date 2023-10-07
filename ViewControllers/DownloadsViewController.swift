@@ -22,11 +22,12 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
         self.showListTableView.rowHeight = 135.0
         //self.listFiles()
         self.getDownloadedShows()
-        print("view load")
+        print("DownloadsViewController")
     }
     
     override func viewWillAppear(_ animated: Bool) {
         self.getDownloadedShows()
+      //\  self.title = DeepLinkManager.shared.deepLinkURL?.absoluteString
     }
     
     func listFiles() {

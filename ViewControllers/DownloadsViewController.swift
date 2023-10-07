@@ -27,7 +27,7 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
     
     override func viewWillAppear(_ animated: Bool) {
         self.getDownloadedShows()
-      //  self.title = DeepLinkManager.shared.deepLinkURL?.absoluteString
+      //\  self.title = DeepLinkManager.shared.deepLinkURL?.absoluteString
     }
     
     func listFiles() {

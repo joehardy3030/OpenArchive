@@ -14,15 +14,6 @@ class StartViewController: ArchiveSuperViewController {
         
     override func viewDidLoad() {
         super.viewDidLoad()
-        for childViewController in self.children {
-            print("child")
-            if let playerHolder = childViewController as? ArchiveSuperViewController {
-                //playerHolder.player = self.player
-            }
-        }
-        
-        // Do any additional setup after loading the view.
-    
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

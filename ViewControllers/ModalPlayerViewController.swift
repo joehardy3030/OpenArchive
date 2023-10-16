@@ -40,7 +40,18 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         notificationCenter.removeObserver(self, name: .playbackPaused, object: self.player.playerQueue)
         notificationCenter.removeObserver(self, name: .playbackRewind, object: self.player.playerQueue)
     }
-
+    
+    @IBAction func shareButton(_ sender: Any) {
+        let urlDeepLinkSchema = "chateauarchive://"
+        var url = URL(string: (urlDeepLinkSchema + "gd72-08-21.sbd.hamilton.150.sbeok.shnf"))!
+        if let id = self.player.showMetadataModel?.metadata?.identifier {
+            url = URL(string: urlDeepLinkSchema + id)!
+        }
+        let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+        activityViewController.popoverPresentationController?.sourceView = sender as? UIView
+        present(activityViewController, animated: true, completion: nil)
+    }
+    
     @IBAction func playButton(_ sender: Any) {
         playPause()
     }
@@ -114,7 +125,6 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         playPauseButtonImageSetup()
         //player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
         queue.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
-        print(self.player.playerQueue)
         self.player.setupTimer()  { (seconds: Double?) -> Void in
              self.timerCallback(seconds: seconds)
         }

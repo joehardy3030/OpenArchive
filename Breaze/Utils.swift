@@ -240,6 +240,15 @@ class Utils {
         }
     }
     
+    func urlFromIdentifier(identifier: String?) -> URL {
+        let urlDeepLinkSchema = "chateauarchive://"
+        var url = URL(string: (urlDeepLinkSchema + "gd72-08-21.sbd.hamilton.150.sbeok.shnf"))!
+        if let id = identifier {
+            url = URL(string: urlDeepLinkSchema + id)!
+        }
+        return url
+    }
+    
     /*
     @available(iOS 13.0, *)
     func getMiniPlayerController() -> MiniPlayerViewController? {

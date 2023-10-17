@@ -368,29 +368,32 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         return cell
     }
     
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let indexPath = showTableView.indexPathForSelectedRow else { return }
-        let songIndex = indexPath.row
-        player.showMetadataModel = showMetadataModel
-        
-        DispatchQueue.main.async{
-            
-            if let mp3s = self.player.showMetadataModel?.mp3Array {
-                if let trackURL = self.player.trackURLfromName(name: mp3s[songIndex].name) {
-                    do {
-                        let available = try trackURL.checkResourceIsReachable()
-                        print(available)
-                        
-                    }
-                    catch {
-                        print("No song")
-                    }
+        var songIndex = indexPath.row
+        print(songIndex)
+        if let trackURL = self.player.trackURLfromName(name: showMetadataModel?.mp3Array?[songIndex].name) {
+            do {
+                let _ = try trackURL.checkResourceIsReachable()
+                print("playShow")
+                playShow()
+                if songIndex >= 6 {
+                    songIndex = songIndex - 6
                 }
-                
+                else {
+                    songIndex = 0
+                }
+                for _ in 0..<songIndex {
+                    player.playerQueue?.advanceToNextItem()
+                }
             }
-            
+            catch {
+                print("Track not available")
+            }
         }
     }
+    
 }
 
 @available(iOS 13.0, *)

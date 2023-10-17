@@ -440,7 +440,6 @@
                     <connections>
                         <segue destination="qma-6q-Vhi" kind="relationship" relationship="viewControllers" id="bPN-Lw-dJo"/>
                         <segue destination="iDX-jC-6by" kind="relationship" relationship="viewControllers" id="axA-5o-iN7"/>
-                        <segue destination="yMS-AM-snw" kind="relationship" relationship="viewControllers" id="tuU-lF-QPr"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HuB-VB-40B" sceneMemberID="firstResponder"/>

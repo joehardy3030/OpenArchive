@@ -86,6 +86,12 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     }
     
     @IBAction func shareShow(_ sender: Any) {
+        let url = utils.urlFromIdentifier(identifier: self.player.showMetadataModel?.metadata?.identifier)
+        let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+        activityViewController.popoverPresentationController?.sourceView = sender as? UIView
+        present(activityViewController, animated: true, completion: nil)
+
+        /*
         switch showType {
         case .downloaded:
             print("Share show from Downlaoded")
@@ -99,6 +105,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         default:
             print("Do nothing by default")
         }
+         */
     }
     
     @IBAction func broadcastPlayPause(_ sender: Any) {

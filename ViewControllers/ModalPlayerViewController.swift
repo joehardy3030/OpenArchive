@@ -182,6 +182,14 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         }
     }
     
+    func reloadShow() {
+        // This operation should probably belong to the player class
+        if let mp3s = self.player.showMetadataModel?.mp3Array {
+            player.loadQueuePlayer(tracks: mp3s)
+        }
+        setupShow()
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let c = player.showMetadataModel?.mp3Array?.count {
             return c
@@ -214,6 +222,26 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
 
         return cell
 
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let indexPath = modalPlayerTableView.indexPathForSelectedRow else { return }
+        let songIndex = indexPath.row
+        print(songIndex)
+        if let trackURL = self.player.trackURLfromName(name: player.showMetadataModel?.mp3Array?[songIndex].name) {
+            do {
+                let _ = try trackURL.checkResourceIsReachable()
+                player.pause()
+                reloadShow()
+                for _ in 0..<songIndex {
+                    player.playerQueue?.advanceToNextItem()
+                }
+                player.play()
+            }
+            catch {
+                print("Track not available")
+            }
+        }
     }
     
 

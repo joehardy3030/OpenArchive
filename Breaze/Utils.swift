@@ -148,7 +148,6 @@ class Utils {
     func getDateFromDateString(datetime: String?) -> Date? {
          let dateFormatter = DateFormatter()
         var date: Date?
-        //dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
         dateFormatter.dateFormat = "yyyy-MM-dd"
         dateFormatter.locale = Locale.init(identifier: "en_US")
         
@@ -248,25 +247,5 @@ class Utils {
         }
         return url
     }
-    
-    /*
-    @available(iOS 13.0, *)
-    func getMiniPlayerController() -> MiniPlayerViewController? {
-        guard let sceneDelegate = UIApplication.shared.delegate as? SceneDelegate else { return nil }
-        
-        //guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return nil }
-        //if let vcs = appDelegate.window?.rootViewController?.children
-        
-        if let vcs = sceneDelegate.window?.rootViewController?.children
-        {
-            for vc in vcs {
-                if let mp = vc as? MiniPlayerViewController {
-                    return mp
-                }
-            }
-        }
-        return nil
-    }
-    */
 
 }

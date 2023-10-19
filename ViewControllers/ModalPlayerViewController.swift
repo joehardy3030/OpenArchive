@@ -228,18 +228,20 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         guard let indexPath = modalPlayerTableView.indexPathForSelectedRow else { return }
         let songIndex = indexPath.row
         print(songIndex)
-        if let trackURL = self.player.trackURLfromName(name: player.showMetadataModel?.mp3Array?[songIndex].name) {
-            do {
-                let _ = try trackURL.checkResourceIsReachable()
-                player.pause()
-                reloadShow()
-                for _ in 0..<songIndex {
-                    player.playerQueue?.advanceToNextItem()
+        if let mp3Array = player.showMetadataModel?.mp3Array, songIndex >= 0 && songIndex < mp3Array.count {
+            if let trackURL = self.player.trackURLfromName(name: player.showMetadataModel?.mp3Array?[songIndex].name) {
+                do {
+                    let _ = try trackURL.checkResourceIsReachable()
+                    player.pause()
+                    reloadShow()
+                    for _ in 0..<songIndex {
+                        player.playerQueue?.advanceToNextItem()
+                    }
+                    player.play()
                 }
-                player.play()
-            }
-            catch {
-                print("Track not available")
+                catch {
+                    print("Track not available")
+                }
             }
         }
     }
@@ -270,7 +272,6 @@ private extension ModalPlayerViewController {
             self.rewindFunctionality()
             print("Rewind ")
         }
-        //print("Rewind ")
     }
 
 }

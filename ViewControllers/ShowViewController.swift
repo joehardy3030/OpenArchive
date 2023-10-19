@@ -26,6 +26,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     @IBOutlet weak var broadcastPlayPauseButton: UIButton!
     let notificationCenter: NotificationCenter = .default
     let fileManager = FileManager.default
+    let numRowsBeforeSongs = 6
     var identifier: String?
     var showDate: String?
     var mp3Array = [ShowMP3]()
@@ -123,6 +124,8 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         self.player.pause()
         self.player.showMetadataModel = showMetadataModel // Change showMetadata to showModel for consistency
         self.loadDownloadedShow()  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
+        guard let queue = player.playerQueue else { return }
+        queue.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
         self.player.play()
     }
     
@@ -325,12 +328,46 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         playButtonLabel.setTitle("Play", for: .normal)
     }
     
+    func selectCurrentTrack() {
+        print("select current track")
+        let index = player.getCurrentTrackIndex()
+        let indexPath = IndexPath(item: index+numRowsBeforeSongs, section: 0)
+        self.showTableView.selectRow(at: indexPath, animated: true, scrollPosition: UITableView.ScrollPosition.middle)
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+
+        if keyPath == #keyPath(AVQueuePlayer.currentItem.status) {
+            let status: AVPlayerItem.Status
+            if let statusNumber = change?[.newKey] as? NSNumber {
+                status = AVPlayerItem.Status(rawValue: statusNumber.intValue)!
+            } else {
+                status = .unknown
+            }
+
+            // Switch over status value
+            switch status {
+            case .readyToPlay:
+                selectCurrentTrack()
+                print("ready to play show view controller")
+            case .failed:
+                print("failed ")
+            case .unknown:
+                print("unknown status")
+            default:
+                print("nope")
+            }
+            
+        }
+
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let count = showMetadataModel?.mp3Array?.count {
-            return (6 + count)
+            return (numRowsBeforeSongs + count)
         }
         else {
-            return 6
+            return numRowsBeforeSongs
         }
     }
     
@@ -340,7 +377,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         guard let mp3s = self.showMetadataModel?.mp3Array,
               let m = self.showMetadataModel?.metadata
               else { return UITableViewCell() }
-        let idx = indexPath.row - 6
+        let idx = indexPath.row - numRowsBeforeSongs
         cell.accessoryType = .none
 
         switch indexPath.row {
@@ -379,18 +416,17 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let indexPath = showTableView.indexPathForSelectedRow else { return }
         var songIndex = indexPath.row
-        print(songIndex)
+        if songIndex >= numRowsBeforeSongs {
+            songIndex = songIndex - numRowsBeforeSongs
+        }
+        else {
+            songIndex = 0
+        }
         if let trackURL = self.player.trackURLfromName(name: showMetadataModel?.mp3Array?[songIndex].name) {
             do {
                 let _ = try trackURL.checkResourceIsReachable()
                 print("playShow")
                 playShow()
-                if songIndex >= 6 {
-                    songIndex = songIndex - 6
-                }
-                else {
-                    songIndex = 0
-                }
                 for _ in 0..<songIndex {
                     player.playerQueue?.advanceToNextItem()
                 }

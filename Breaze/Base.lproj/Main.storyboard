@@ -446,11 +446,11 @@
             </objects>
             <point key="canvasLocation" x="-215" y="385"/>
         </scene>
-        <!--Downloads-->
+        <!--My Tapes-->
         <scene sceneID="hye-VL-ux9">
             <objects>
                 <navigationController id="qma-6q-Vhi" customClass="ArchiveNavigationController" customModule="Chateau" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Downloads" image="icloud.and.arrow.down" catalog="system" id="ybK-d2-me3"/>
+                    <tabBarItem key="tabBarItem" title="My Tapes" image="icloud.and.arrow.down" catalog="system" id="ybK-d2-me3"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="QSp-pe-Ack">
                         <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -463,10 +463,10 @@
             </objects>
             <point key="canvasLocation" x="782" y="604"/>
         </scene>
-        <!--Downloads-->
+        <!--My Tapes-->
         <scene sceneID="FK2-Zy-SjW">
             <objects>
-                <viewController storyboardIdentifier="DownloadsViewController" title="Downloads" id="L2H-hS-mP8" customClass="DownloadsViewController" customModule="Chateau" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="DownloadsViewController" title="My Tapes" id="L2H-hS-mP8" customClass="DownloadsViewController" customModule="Chateau" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="vTh-jx-vdV">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -543,7 +543,7 @@
                             <constraint firstItem="rqs-oj-kzh" firstAttribute="leading" secondItem="xav-1z-OSd" secondAttribute="leading" id="lfc-5I-JGm"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Downloads" id="yO0-B5-zGs"/>
+                    <navigationItem key="navigationItem" title="My Tapes" id="yO0-B5-zGs"/>
                     <connections>
                         <outlet property="showListTableView" destination="rqs-oj-kzh" id="UCe-9b-CYr"/>
                     </connections>

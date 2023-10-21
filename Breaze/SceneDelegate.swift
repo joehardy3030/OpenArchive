@@ -73,6 +73,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, FUIAuthDelegate {
                      vc.showDate = "08-02-1982" // Replace with the actual date
                      vc.showType = .archive // Replace with the actual show type if it varies
                      vc.db = db
+                     
                      navController.pushViewController(vc, animated: true)
                  }
              }

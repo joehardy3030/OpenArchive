@@ -58,19 +58,27 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, FUIAuthDelegate {
         let url = archiveAPI.metadataURL(identifier: concertIdentifier)
         print(url)
 
-        let sbd = UIStoryboard(name: "Main", bundle: nil)
-        guard let vc = sbd.instantiateViewController(withIdentifier: "ShowViewController") as? ShowViewController else { return }
-    
+        // let sbd = UIStoryboard(name: "Main", bundle: nil)
+        // guard let vc = sbd.instantiateViewController(withIdentifier: "ShowViewController") as? ShowViewController else { return }
+        
         if let rvc = self.window?.rootViewController as? StartViewController {
-            vc.identifier = concertIdentifier
-            vc.showDate = "08-02-1982" // Replace with the actual date
-            vc.showType = .archive // Replace with the actual show type if it varies
-            vc.db = db
-            rvc.show(vc, sender: self)
-        }
-        else {
-            print("no root view")
-        }
+             if let tbc = rvc.children.first as? UITabBarController {
+                 tbc.selectedIndex = 2
+                 print(tbc.selectedIndex)
+                 
+                 if let navController = tbc.selectedViewController as? UINavigationController {
+                     let sbd = UIStoryboard(name: "Main", bundle: nil)
+                     guard let vc = sbd.instantiateViewController(withIdentifier: "ShowViewController") as? ShowViewController else { return }
+                     vc.identifier = concertIdentifier
+                     vc.showDate = "08-02-1982" // Replace with the actual date
+                     vc.showType = .archive // Replace with the actual show type if it varies
+                     vc.db = db
+                     navController.pushViewController(vc, animated: true)
+                 }
+             }
+         } else {
+             print("no root view")
+         }
 
     }
 

@@ -63,7 +63,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, FUIAuthDelegate {
         
         if let rvc = self.window?.rootViewController as? StartViewController {
              if let tbc = rvc.children.first as? UITabBarController {
-                 tbc.selectedIndex = 2
+                 tbc.selectedIndex = 0
                  print(tbc.selectedIndex)
                  
                  if let navController = tbc.selectedViewController as? UINavigationController {

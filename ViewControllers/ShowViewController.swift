@@ -124,8 +124,8 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         self.player.pause()
         self.player.showMetadataModel = showMetadataModel // Change showMetadata to showModel for consistency
         self.loadDownloadedShow()  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
-        guard let queue = player.playerQueue else { return }
-        queue.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
+        //guard let queue = player.playerQueue else { return }
+        //queue.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
         self.player.play()
     }
     

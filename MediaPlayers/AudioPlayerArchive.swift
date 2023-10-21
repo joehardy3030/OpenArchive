@@ -98,8 +98,12 @@ class AudioPlayerArchive: NSObject {
             // Don't need to send a signal if it's already paused
             break
         case .playing, .rewind:
-            self.playerQueue?.pause()
-            state = .paused
+            if let pq = self.playerQueue {
+                pq.pause()
+                state = .paused
+            }
+            
+            
         }
     }
     

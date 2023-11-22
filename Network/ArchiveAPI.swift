@@ -36,18 +36,20 @@ class ArchiveAPI: NSObject {
     }
     
     func downloadURL(identifier: String?,
-                     filename: String?) -> String {
+                     filename: String?) -> URL? {
         //https://archive.org/download/<identifier>/<filename>
         
-        var url = baseURLString
-        url += "download/"
+        var urlString = baseURLString
+        urlString += "download/"
         if let id = identifier {
-            url += id
+            urlString += id
         }
         if let f = filename {
-            url += "/"
-            url += f
+            urlString += "/"
+            urlString += f
         }
+        let encodedString = urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+        let url = URL(string: encodedString)
         return url
     }
     
@@ -178,9 +180,10 @@ class ArchiveAPI: NSObject {
         }
     }
 
-    func getIADownload(url: String, completion: @escaping (URL?) -> Void) {
+    func getIADownload(url: URL?, completion: @escaping (URL?) -> Void) {
         //https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#downloading-data-to-a-file
         let destination = DownloadRequest.suggestedDownloadDestination(for: .documentDirectory)
+        guard let url = url else { return }
         self.sessionManager.download(url, to: destination)
             .downloadProgress { (progress) in
                 print("Progress: \(progress.fractionCompleted)")

@@ -270,8 +270,11 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     
     ///Download manager class
     func downloadSong(showMP3: ShowMP3?, completion: @escaping (URL?) -> Void) {
+        print(showMP3)
         guard let s = showMP3 else { return }
+        print("Download Song")
         let url = archiveAPI.downloadURL(identifier: self.identifier, filename: s.name)
+        print(url)
         guard let localURL = utils.trackURLfromName(name: s.name) else { return }
         if fileManager.fileExists(atPath: localURL.path) {
             completion(localURL)

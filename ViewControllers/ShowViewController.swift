@@ -87,27 +87,13 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     }
     
     @IBAction func shareShow(_ sender: Any) {
-        let url = utils.urlFromIdentifier(identifier: self.player.showMetadataModel?.metadata?.identifier)
+        let url = utils.urlFromIdentifier(identifier: self.identifier)
+        //let url = utils.urlFromIdentifier(identifier: self.player.showMetadataModel?.metadata?.identifier)
         let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
         activityViewController.popoverPresentationController?.sourceView = sender as? UIView
         present(activityViewController, animated: true, completion: nil)
-
-        /*
-        switch showType {
-        case .downloaded:
-            print("Share show from Downlaoded")
-            shareShow()
-        case .archive:
-            playButtonLabel.setTitle("Sharing", for: .normal)
-            print("Share show from archive")
-            shareShow()
-        case .shared:
-            print("Do nothing, for now")
-        default:
-            print("Do nothing by default")
-        }
-         */
     }
+    
     
     @IBAction func broadcastPlayPause(_ sender: Any) {
         broadcastIsPlaying = !broadcastIsPlaying
@@ -216,7 +202,8 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         guard let mp3s = self.showMetadataModel?.mp3Array else { return }
         for f in mp3s {
             let url = archiveAPI.downloadURL(identifier: self.identifier, filename: f.name)
-            guard let localURL = self.player.trackURLfromName(name: f.name) else { return }
+            //guard let localURL = self.player.trackURLfromName(name: f.name) else { return }
+            guard let localURL = utils.trackURLfromName(name: f.name) else { return }
             if fileManager.fileExists(atPath: localURL.path) {
                 DispatchQueue.main.async{
                     self.setDownloadComplete(destination: localURL, name: f.name)
@@ -377,6 +364,11 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         guard let mp3s = self.showMetadataModel?.mp3Array,
               let m = self.showMetadataModel?.metadata
               else { return UITableViewCell() }
+        //print(self.showMetadataModel?.mp3Array)
+        //print("\n\n")
+        //print(self.showMetadataModel)
+        //print("\n\n")
+        
         let idx = indexPath.row - numRowsBeforeSongs
         cell.accessoryType = .none
 
@@ -388,7 +380,14 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         case 2:
             cell.textLabel?.text = m.coverage
         case 3:
-            cell.textLabel?.text = m.description
+            if let description = m.description {
+                let data = description.data(using: .utf8)!
+                let attributedString = try! NSAttributedString(data: data, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil)
+                cell.textLabel?.text = attributedString.string
+            }
+            else {
+                cell.textLabel?.text = m.description
+            }
         case 4:
             cell.textLabel?.text = m.source
         case 5:
@@ -399,7 +398,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 cell.textLabel?.text = track + " " + title
             }
             else {
-                cell.textLabel?.text = "no song"
+                cell.textLabel?.text = mp3s[idx].name
             }
             
             if let _ = mp3s[idx].destination {

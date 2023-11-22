@@ -165,7 +165,12 @@ class MiniPlayerViewController: UIViewController {
             return
         }
         nowPlayingInfo = [String : Any]()
-        nowPlayingInfo[MPMediaItemPropertyTitle] = mp3s[ct].title
+        if let title = mp3s[ct].title {
+            nowPlayingInfo[MPMediaItemPropertyTitle] = mp3s[ct].title
+        }
+        else {
+            nowPlayingInfo[MPMediaItemPropertyTitle] = mp3s[ct].name
+        }
         nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = String(md.date! + ", " + md.coverage!)
         nowPlayingInfo[MPMediaItemPropertyArtist] = "Grateful Dead"
         nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = CMTimeGetSeconds(ci.duration)

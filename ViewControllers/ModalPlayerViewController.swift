@@ -210,7 +210,13 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
             cell.textLabel?.text = track + " " + title
         }
         else {
-            cell.textLabel?.text = "no song"
+            if let name = mp3s[indexPath.row].name {
+                cell.textLabel?.text = mp3s[indexPath.row].name
+            }
+            else {
+                cell.textLabel?.text = "no song"
+            }
+                
         }
         
         if let _ = mp3s[indexPath.row].destination {

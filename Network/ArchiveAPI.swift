@@ -65,7 +65,7 @@ class ArchiveAPI: NSObject {
         var monthString: String
                 
         url += "services/search/v1/scrape?"
-        url += "fields=date,venue,transferer,source,coverage&"
+        url += "fields=date,venue,transferer,source,coverage,stars,avg_rating,num_reviews&"
         if sbdOnly {
             url += "q=collection%3A%28GratefulDead%20AND%20stream_only%29"
         }
@@ -161,8 +161,10 @@ class ArchiveAPI: NSObject {
         let transferer = json["transferer"].string
         let source = json["source"].string
         let coverage = json["coverage"].string
+        let avg_rating = json["avg_rating"].float
+        let num_reviews = json["num_reviews"].int
         
-        return ShowMetadata(identifier: identifier, title: title, creator: creator, mediatype: mediatype, collection: collection, type: type, description: description, date: date, year: year, venue: venue, transferer: transferer, source: source, coverage: coverage)
+        return ShowMetadata(identifier: identifier, title: title, creator: creator, mediatype: mediatype, collection: collection, type: type, description: description, date: date, year: year, venue: venue, transferer: transferer, source: source, coverage: coverage, avg_rating: avg_rating, num_reviews: num_reviews)
     }
     
     func getIARequestItems(url: String, completion: @escaping ([ShowMetadata]?) -> Void) {
@@ -173,6 +175,7 @@ class ArchiveAPI: NSObject {
                 var showMetadatas = [ShowMetadata]()
                 for i in items {
                     let showMD = self.deserializeMetadata(json: i.1)
+                    print(showMetadatas)
                     showMetadatas.append(showMD)
                 }
                 completion(showMetadatas)

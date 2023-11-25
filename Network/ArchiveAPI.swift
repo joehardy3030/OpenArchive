@@ -175,7 +175,6 @@ class ArchiveAPI: NSObject {
                 var showMetadatas = [ShowMetadata]()
                 for i in items {
                     let showMD = self.deserializeMetadata(json: i.1)
-                    print(showMetadatas)
                     showMetadatas.append(showMD)
                 }
                 completion(showMetadatas)

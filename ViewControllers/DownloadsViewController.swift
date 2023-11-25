@@ -127,6 +127,16 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
             }
             cell.transfererLabel.text = showMDs[indexPath.row].metadata?.transferer
             cell.sourceLabel.text = showMDs[indexPath.row].metadata?.source
+            //print(showMDs[indexPath.row].metadata!)
+            if let s = showMDs[indexPath.row].metadata!.avg_rating {
+                print("Passed this test")
+                var starRating = String(s)
+                starRating = starRating + " stars " + String(showMDs[indexPath.row].metadata!.num_reviews!) + " ratings"
+                cell.starsLabel.text = starRating
+            }
+            else {
+                cell.starsLabel.text = ""
+            }
 
         }
         else {

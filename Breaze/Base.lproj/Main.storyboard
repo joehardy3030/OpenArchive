@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22154" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="b2k-Ru-Tjf">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22155" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="b2k-Ru-Tjf">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22130"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22131"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -131,6 +131,13 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Stars" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="r1k-c3-J5T">
+                                                    <rect key="frame" x="190" y="11" width="169" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="71s-eP-cws" firstAttribute="top" secondItem="Oev-mL-bQs" secondAttribute="bottom" constant="8" id="4T4-OK-Oy1"/>
@@ -151,6 +158,7 @@
                                         <connections>
                                             <outlet property="dateLabel" destination="Qzd-3I-9y5" id="gvk-5e-lCZ"/>
                                             <outlet property="sourceLabel" destination="71s-eP-cws" id="hUZ-zx-Gbp"/>
+                                            <outlet property="starsLabel" destination="r1k-c3-J5T" id="nJN-n3-RSL"/>
                                             <outlet property="transfererLabel" destination="Oev-mL-bQs" id="xtv-VS-VhZ"/>
                                             <outlet property="venueLabel" destination="hyn-dK-WA9" id="7MB-n8-vcj"/>
                                             <segue destination="0wg-q7-zkq" kind="show" id="P7t-lR-Gax"/>
@@ -506,6 +514,13 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Stars" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="B7z-fI-C22">
+                                                    <rect key="frame" x="182" y="11" width="169" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="P7b-3F-7iK" firstAttribute="top" secondItem="dlA-jf-Wxn" secondAttribute="bottom" constant="8" id="0Lk-KJ-cr7"/>
@@ -526,6 +541,7 @@
                                         <connections>
                                             <outlet property="dateLabel" destination="EJg-d4-1za" id="x59-jl-tLS"/>
                                             <outlet property="sourceLabel" destination="uLm-QH-mU0" id="fCX-c7-bdI"/>
+                                            <outlet property="starsLabel" destination="B7z-fI-C22" id="9pZ-YD-sa6"/>
                                             <outlet property="transfererLabel" destination="P7b-3F-7iK" id="1kh-6c-bPL"/>
                                             <outlet property="venueLabel" destination="dlA-jf-Wxn" id="hdb-aX-jrS"/>
                                             <segue destination="0wg-q7-zkq" kind="show" id="wDf-Rk-Vwo"/>

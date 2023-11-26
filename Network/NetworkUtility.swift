@@ -42,7 +42,7 @@ class NetworkUtility: NSObject {
         guard let docID = showMetadataModel?.metadata?.identifier else { return "no id" }
         
         let uuid = getUUID()
-        
+
         let docData = try! FirestoreEncoder().encode(s)
         db.collection(uuid).document("downloads").collection("shows").document(docID).setData(docData) { error in
             if let error = error {

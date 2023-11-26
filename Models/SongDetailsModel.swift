@@ -23,6 +23,9 @@ class SongDetailsModel: Codable {
                 if let songName = sm.mp3Array?[r].title {
                     self.name = songName
                 }
+                else if let songName = sm.mp3Array?[r].name {
+                    self.name = songName
+                }
                 self.date = sm.metadata?.date
                 self.venue = sm.metadata?.venue
                 self.track = r + 1

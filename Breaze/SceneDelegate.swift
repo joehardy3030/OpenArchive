@@ -12,9 +12,7 @@ import FirebaseAuthUI
 import FirebaseAuth
 import FirebaseEmailAuthUI
 
-// import CarPlay
 
-//let sharedPlayer = AudioPlayerArchive()
 @available(iOS 13.0, *)
 class SceneDelegate: UIResponder, UIWindowSceneDelegate, FUIAuthDelegate {
     
@@ -31,11 +29,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, FUIAuthDelegate {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-        
-        //if let url = connectionOptions.urlContexts.first?.url {
-        //    handleDeepLink(url: url)
-       // }
+        // Handle deep link when app was not already running
+
         sharedSetup(scene: scene)
+        
+        if let urlContext = connectionOptions.urlContexts.first {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                self?.handleDeepLink(url: urlContext.url)
+            }
+        }
     }
 
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
@@ -43,48 +45,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, FUIAuthDelegate {
             handleDeepLink(url: url)
         }
     }
-
-    /*
-    func handleDeepLink(scene: UIScene, url: URL) {
-        //print(identifier)
-        
-        //sharedSetup(scene: scene)
-        // Extract the specific concert identifier from the URL
-        guard let concertIdentifier = url.host else { return }
-            print(concertIdentifier)
-            
-            guard let db = self.db else {
-                return
-            }
-            
-            let url = archiveAPI.metadataURL(identifier: concertIdentifier)
-            print(url)
-            
-            let _ = archiveAPI.getIARequestMetadata(url: url) {
-                (response: ShowMetadataModel) -> Void in
-                
-                DispatchQueue.main.async{
-                    let storyboard = UIStoryboard(name: "Main", bundle: nil) // Replace "Main" with your storyboard name if different
-                    if let showViewController = storyboard.instantiateViewController(withIdentifier: "ShowViewController") as? ShowViewController {
-                        //print(concertIdentifier)
-                        showViewController.identifier = concertIdentifier
-                        showViewController.showDate = response.metadata?.date // Replace with the actual date
-                        showViewController.showType = .archive // Replace with the actual show type if it varies
-                        showViewController.db = db
-                        
-                        // Push the view controller onto the navigation stack
-                        if let rvc = self.window?.rootViewController as? StartViewController
-                        {
-                            print("rvc")
-                            print(rvc)
-                            rvc.navigationController?.pushViewController(showViewController, animated: true)
-                        }
-                    }
-                }
-            }
-
-    }
-     */
 
     func handleDeepLink(url: URL) {
         // Extract the specific concert identifier from the URL
@@ -98,19 +58,28 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, FUIAuthDelegate {
         let url = archiveAPI.metadataURL(identifier: concertIdentifier)
         print(url)
 
-        let sbd = UIStoryboard(name: "Main", bundle: nil)
-        guard let vc = sbd.instantiateViewController(withIdentifier: "ShowViewController") as? ShowViewController else { return }
-    
+        // let sbd = UIStoryboard(name: "Main", bundle: nil)
+        // guard let vc = sbd.instantiateViewController(withIdentifier: "ShowViewController") as? ShowViewController else { return }
+        
         if let rvc = self.window?.rootViewController as? StartViewController {
-            vc.identifier = concertIdentifier
-            vc.showDate = "08-02-1982" // Replace with the actual date
-            vc.showType = .archive // Replace with the actual show type if it varies
-            vc.db = db
-            rvc.show(vc, sender: self)
-        }
-        else {
-            print("no root view")
-        }
+             if let tbc = rvc.children.first as? UITabBarController {
+                 tbc.selectedIndex = 0
+                 print(tbc.selectedIndex)
+                 
+                 if let navController = tbc.selectedViewController as? UINavigationController {
+                     let sbd = UIStoryboard(name: "Main", bundle: nil)
+                     guard let vc = sbd.instantiateViewController(withIdentifier: "ShowViewController") as? ShowViewController else { return }
+                     vc.identifier = concertIdentifier
+                     vc.showDate = "08-02-1982" // Replace with the actual date
+                     vc.showType = .archive // Replace with the actual show type if it varies
+                     vc.db = db
+                     
+                     navController.pushViewController(vc, animated: true)
+                 }
+             }
+         } else {
+             print("no root view")
+         }
 
     }
 
@@ -128,7 +97,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, FUIAuthDelegate {
 
         center.requestAuthorization(options: [.alert, .sound]) { granted, error in }
         do {
-              //options: AVAudioSession.CategoryOptions.mixWithOthers
             try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
             try AVAudioSession.sharedInstance().setActive(true)
           }

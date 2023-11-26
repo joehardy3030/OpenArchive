@@ -26,6 +26,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     @IBOutlet weak var broadcastPlayPauseButton: UIButton!
     let notificationCenter: NotificationCenter = .default
     let fileManager = FileManager.default
+    let numRowsBeforeSongs = 6
     var identifier: String?
     var showDate: String?
     var mp3Array = [ShowMP3]()
@@ -86,20 +87,13 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     }
     
     @IBAction func shareShow(_ sender: Any) {
-        switch showType {
-        case .downloaded:
-            print("Share show from Downlaoded")
-            shareShow()
-        case .archive:
-            playButtonLabel.setTitle("Sharing", for: .normal)
-            print("Share show from archive")
-            shareShow()
-        case .shared:
-            print("Do nothing, for now")
-        default:
-            print("Do nothing by default")
-        }
+        let url = utils.urlFromIdentifier(identifier: self.identifier)
+        //let url = utils.urlFromIdentifier(identifier: self.player.showMetadataModel?.metadata?.identifier)
+        let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+        activityViewController.popoverPresentationController?.sourceView = sender as? UIView
+        present(activityViewController, animated: true, completion: nil)
     }
+    
     
     @IBAction func broadcastPlayPause(_ sender: Any) {
         broadcastIsPlaying = !broadcastIsPlaying
@@ -116,6 +110,8 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         self.player.pause()
         self.player.showMetadataModel = showMetadataModel // Change showMetadata to showModel for consistency
         self.loadDownloadedShow()  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
+        //guard let queue = player.playerQueue else { return }
+        //queue.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
         self.player.play()
     }
     
@@ -206,7 +202,8 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         guard let mp3s = self.showMetadataModel?.mp3Array else { return }
         for f in mp3s {
             let url = archiveAPI.downloadURL(identifier: self.identifier, filename: f.name)
-            guard let localURL = self.player.trackURLfromName(name: f.name) else { return }
+            //guard let localURL = self.player.trackURLfromName(name: f.name) else { return }
+            guard let localURL = utils.trackURLfromName(name: f.name) else { return }
             if fileManager.fileExists(atPath: localURL.path) {
                 DispatchQueue.main.async{
                     self.setDownloadComplete(destination: localURL, name: f.name)
@@ -318,12 +315,46 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         playButtonLabel.setTitle("Play", for: .normal)
     }
     
+    func selectCurrentTrack() {
+        print("select current track")
+        let index = player.getCurrentTrackIndex()
+        let indexPath = IndexPath(item: index+numRowsBeforeSongs, section: 0)
+        self.showTableView.selectRow(at: indexPath, animated: true, scrollPosition: UITableView.ScrollPosition.middle)
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+
+        if keyPath == #keyPath(AVQueuePlayer.currentItem.status) {
+            let status: AVPlayerItem.Status
+            if let statusNumber = change?[.newKey] as? NSNumber {
+                status = AVPlayerItem.Status(rawValue: statusNumber.intValue)!
+            } else {
+                status = .unknown
+            }
+
+            // Switch over status value
+            switch status {
+            case .readyToPlay:
+                selectCurrentTrack()
+                print("ready to play show view controller")
+            case .failed:
+                print("failed ")
+            case .unknown:
+                print("unknown status")
+            default:
+                print("nope")
+            }
+            
+        }
+
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let count = showMetadataModel?.mp3Array?.count {
-            return (6 + count)
+            return (numRowsBeforeSongs + count)
         }
         else {
-            return 6
+            return numRowsBeforeSongs
         }
     }
     
@@ -333,7 +364,12 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         guard let mp3s = self.showMetadataModel?.mp3Array,
               let m = self.showMetadataModel?.metadata
               else { return UITableViewCell() }
-        let idx = indexPath.row - 6
+        //print(self.showMetadataModel?.mp3Array)
+        //print("\n\n")
+        //print(self.showMetadataModel)
+        //print("\n\n")
+        
+        let idx = indexPath.row - numRowsBeforeSongs
         cell.accessoryType = .none
 
         switch indexPath.row {
@@ -344,7 +380,14 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         case 2:
             cell.textLabel?.text = m.coverage
         case 3:
-            cell.textLabel?.text = m.description
+            if let description = m.description {
+                let data = description.data(using: .utf8)!
+                let attributedString = try! NSAttributedString(data: data, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil)
+                cell.textLabel?.text = attributedString.string
+            }
+            else {
+                cell.textLabel?.text = m.description
+            }
         case 4:
             cell.textLabel?.text = m.source
         case 5:
@@ -355,7 +398,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 cell.textLabel?.text = track + " " + title
             }
             else {
-                cell.textLabel?.text = "no song"
+                cell.textLabel?.text = mp3s[idx].name
             }
             
             if let _ = mp3s[idx].destination {
@@ -368,29 +411,31 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         return cell
     }
     
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let indexPath = showTableView.indexPathForSelectedRow else { return }
-        let songIndex = indexPath.row
-        player.showMetadataModel = showMetadataModel
-        
-        DispatchQueue.main.async{
-            
-            if let mp3s = self.player.showMetadataModel?.mp3Array {
-                if let trackURL = self.player.trackURLfromName(name: mp3s[songIndex].name) {
-                    do {
-                        let available = try trackURL.checkResourceIsReachable()
-                        print(available)
-                        
-                    }
-                    catch {
-                        print("No song")
-                    }
+        var songIndex = indexPath.row
+        if songIndex >= numRowsBeforeSongs {
+            songIndex = songIndex - numRowsBeforeSongs
+        }
+        else {
+            songIndex = 0
+        }
+        if let trackURL = self.player.trackURLfromName(name: showMetadataModel?.mp3Array?[songIndex].name) {
+            do {
+                let _ = try trackURL.checkResourceIsReachable()
+                print("playShow")
+                playShow()
+                for _ in 0..<songIndex {
+                    player.playerQueue?.advanceToNextItem()
                 }
-                
             }
-            
+            catch {
+                print("Track not available")
+            }
         }
     }
+    
 }
 
 @available(iOS 13.0, *)

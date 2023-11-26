@@ -30,7 +30,6 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         notificationCenter.addObserver(self, selector: #selector(playbackDidPause), name: .playbackPaused, object: self.player.playerQueue)
         notificationCenter.addObserver(self, selector: #selector(playbackDidRewind), name: .playbackRewind, object: self.player.playerQueue)
 
-        //setupCommandCenter()
         initialDefaults()
         setupShow()
     }
@@ -40,7 +39,14 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         notificationCenter.removeObserver(self, name: .playbackPaused, object: self.player.playerQueue)
         notificationCenter.removeObserver(self, name: .playbackRewind, object: self.player.playerQueue)
     }
-
+    
+    @IBAction func shareButton(_ sender: Any) {
+        let url = utils.urlFromIdentifier(identifier: self.player.showMetadataModel?.metadata?.identifier)
+        let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+        activityViewController.popoverPresentationController?.sourceView = sender as? UIView
+        present(activityViewController, animated: true, completion: nil)         
+    }
+    
     @IBAction func playButton(_ sender: Any) {
         playPause()
     }
@@ -112,9 +118,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     func setupShow() {
         guard let queue = player.playerQueue else { return }
         playPauseButtonImageSetup()
-        //player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
         queue.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
-        print(self.player.playerQueue)
         self.player.setupTimer()  { (seconds: Double?) -> Void in
              self.timerCallback(seconds: seconds)
         }
@@ -178,6 +182,14 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         }
     }
     
+    func reloadShow() {
+        // This operation should probably belong to the player class
+        if let mp3s = self.player.showMetadataModel?.mp3Array {
+            player.loadQueuePlayer(tracks: mp3s)
+        }
+        setupShow()
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let c = player.showMetadataModel?.mp3Array?.count {
             return c
@@ -198,7 +210,13 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
             cell.textLabel?.text = track + " " + title
         }
         else {
-            cell.textLabel?.text = "no song"
+            if let name = mp3s[indexPath.row].name {
+                cell.textLabel?.text = mp3s[indexPath.row].name
+            }
+            else {
+                cell.textLabel?.text = "no song"
+            }
+                
         }
         
         if let _ = mp3s[indexPath.row].destination {
@@ -210,6 +228,28 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
 
         return cell
 
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let indexPath = modalPlayerTableView.indexPathForSelectedRow else { return }
+        let songIndex = indexPath.row
+        print(songIndex)
+        if let mp3Array = player.showMetadataModel?.mp3Array, songIndex >= 0 && songIndex < mp3Array.count {
+            if let trackURL = self.player.trackURLfromName(name: player.showMetadataModel?.mp3Array?[songIndex].name) {
+                do {
+                    let _ = try trackURL.checkResourceIsReachable()
+                    player.pause()
+                    reloadShow()
+                    for _ in 0..<songIndex {
+                        player.playerQueue?.advanceToNextItem()
+                    }
+                    player.play()
+                }
+                catch {
+                    print("Track not available")
+                }
+            }
+        }
     }
     
 
@@ -238,7 +278,6 @@ private extension ModalPlayerViewController {
             self.rewindFunctionality()
             print("Rewind ")
         }
-        //print("Rewind ")
     }
 
 }

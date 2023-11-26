@@ -36,18 +36,20 @@ class ArchiveAPI: NSObject {
     }
     
     func downloadURL(identifier: String?,
-                     filename: String?) -> String {
+                     filename: String?) -> URL? {
         //https://archive.org/download/<identifier>/<filename>
         
-        var url = baseURLString
-        url += "download/"
+        var urlString = baseURLString
+        urlString += "download/"
         if let id = identifier {
-            url += id
+            urlString += id
         }
         if let f = filename {
-            url += "/"
-            url += f
+            urlString += "/"
+            urlString += f
         }
+        let encodedString = urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+        let url = URL(string: encodedString)
         return url
     }
     
@@ -63,7 +65,7 @@ class ArchiveAPI: NSObject {
         var monthString: String
                 
         url += "services/search/v1/scrape?"
-        url += "fields=date,venue,transferer,source,coverage&"
+        url += "fields=date,venue,transferer,source,coverage,stars,avg_rating,num_reviews&"
         if sbdOnly {
             url += "q=collection%3A%28GratefulDead%20AND%20stream_only%29"
         }
@@ -159,8 +161,10 @@ class ArchiveAPI: NSObject {
         let transferer = json["transferer"].string
         let source = json["source"].string
         let coverage = json["coverage"].string
+        let avg_rating = json["avg_rating"].float
+        let num_reviews = json["num_reviews"].int
         
-        return ShowMetadata(identifier: identifier, title: title, creator: creator, mediatype: mediatype, collection: collection, type: type, description: description, date: date, year: year, venue: venue, transferer: transferer, source: source, coverage: coverage)
+        return ShowMetadata(identifier: identifier, title: title, creator: creator, mediatype: mediatype, collection: collection, type: type, description: description, date: date, year: year, venue: venue, transferer: transferer, source: source, coverage: coverage, avg_rating: avg_rating, num_reviews: num_reviews)
     }
     
     func getIARequestItems(url: String, completion: @escaping ([ShowMetadata]?) -> Void) {
@@ -178,9 +182,10 @@ class ArchiveAPI: NSObject {
         }
     }
 
-    func getIADownload(url: String, completion: @escaping (URL?) -> Void) {
+    func getIADownload(url: URL?, completion: @escaping (URL?) -> Void) {
         //https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#downloading-data-to-a-file
         let destination = DownloadRequest.suggestedDownloadDestination(for: .documentDirectory)
+        guard let url = url else { return }
         self.sessionManager.download(url, to: destination)
             .downloadProgress { (progress) in
                 print("Progress: \(progress.fractionCompleted)")

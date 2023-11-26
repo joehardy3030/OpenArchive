@@ -51,12 +51,6 @@ class MiniPlayerViewController: UIViewController {
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        //if keyPath == "currentItem.loadedTimeRanges" {
-           // setupSong()
-       // }
-        //if keyPath == "currentItem.status" {
-       //     print("status")
-       // }
         
         if keyPath == #keyPath(AVQueuePlayer.currentItem.status) {
             let status: AVPlayerItem.Status
@@ -118,7 +112,7 @@ class MiniPlayerViewController: UIViewController {
     }
 
     func prepareModalPlayer(viewController: ModalPlayerViewController) {
-        // viewController.player = player
+
     }
 
     
@@ -171,7 +165,12 @@ class MiniPlayerViewController: UIViewController {
             return
         }
         nowPlayingInfo = [String : Any]()
-        nowPlayingInfo[MPMediaItemPropertyTitle] = mp3s[ct].title
+        if let title = mp3s[ct].title {
+            nowPlayingInfo[MPMediaItemPropertyTitle] = mp3s[ct].title
+        }
+        else {
+            nowPlayingInfo[MPMediaItemPropertyTitle] = mp3s[ct].name
+        }
         nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = String(md.date! + ", " + md.coverage!)
         nowPlayingInfo[MPMediaItemPropertyArtist] = "Grateful Dead"
         nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = CMTimeGetSeconds(ci.duration)
@@ -193,19 +192,9 @@ class MiniPlayerViewController: UIViewController {
         guard let q = player?.playerQueue else { return }
         if q.rate > 0.0 {
             player?.pause()
-            //if let _ = playButton {
-            //    if #available(iOS 13.0, *) {
-            //        playButton.setBackgroundImage(UIImage(systemName: "play"), for: .normal)
-            //    }
-            //}
         }
         else {
             player?.play()
-            //if let _ = playButton {
-            //    if #available(iOS 13.0, *) {
-            //        playButton.setBackgroundImage(UIImage(systemName: "pause"), for: .normal)
-            //    }
-            //}
         }
     }
     
@@ -215,8 +204,6 @@ class MiniPlayerViewController: UIViewController {
 extension MiniPlayerViewController: UINavigationControllerDelegate {
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
         if let _ = viewController as? ArchiveSuperViewController {
-            // vc.miniPlayer?.player = player
-            //  vc.prevController = self
         }
     }
 }
@@ -227,7 +214,6 @@ private extension MiniPlayerViewController {
         if #available(iOS 13.0, *) {
             playButton.setBackgroundImage(UIImage(systemName: "pause"), for: .normal)
         }
-        //print("Item playing -- miniplayer")
     }
     
     @objc private func playbackDidPause(_ notification: Notification) {
@@ -235,6 +221,5 @@ private extension MiniPlayerViewController {
         if #available(iOS 13.0, *) {
             playButton.setBackgroundImage(UIImage(systemName: "play"), for: .normal)
         }
-        //print("Item paused -- miniplayer ")
     }
 }

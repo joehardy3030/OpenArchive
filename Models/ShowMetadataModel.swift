@@ -37,6 +37,8 @@ struct ShowMetadata: Codable {
     var transferer: String?
     var source: String?
     var coverage: String?
+    var avg_rating: Float?
+    var num_reviews: Int?
 }
 
 struct ShowFile: Codable {

@@ -94,7 +94,14 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
             }
             cell.transfererLabel.text = showMDs[indexPath.row].transferer
             cell.sourceLabel.text = showMDs[indexPath.row].source
-
+            if let s = showMDs[indexPath.row].avg_rating {
+                var starRating = String(s)
+                starRating = starRating + " stars " + String(showMDs[indexPath.row].num_reviews!) + " ratings"
+                cell.starsLabel.text = starRating
+            }
+            else {
+                cell.starsLabel.text = ""
+            }
         }
         else {
             cell.venueLabel.text = "No show"

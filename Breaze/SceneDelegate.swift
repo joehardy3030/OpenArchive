@@ -55,8 +55,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, FUIAuthDelegate {
             return
         }
         
-        let url = archiveAPI.metadataURL(identifier: concertIdentifier)
-        print(url)
+        //let url = archiveAPI.metadataURL(identifier: concertIdentifier)
+       // print(url)
 
         // let sbd = UIStoryboard(name: "Main", bundle: nil)
         // guard let vc = sbd.instantiateViewController(withIdentifier: "ShowViewController") as? ShowViewController else { return }
@@ -69,7 +69,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, FUIAuthDelegate {
                  if let navController = tbc.selectedViewController as? UINavigationController {
                      let sbd = UIStoryboard(name: "Main", bundle: nil)
                      guard let vc = sbd.instantiateViewController(withIdentifier: "ShowViewController") as? ShowViewController else { return }
-                     let md = ShowMetadata(identifier: concertIdentifier, date: "08-02-1982")
+                     let md = ShowMetadata(identifier: concertIdentifier)
                      vc.showMetadata = md
                      vc.showType = .archive // Replace with the actual show type if it varies
                      vc.db = db

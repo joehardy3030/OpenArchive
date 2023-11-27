@@ -30,6 +30,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     var identifier: String?
     var showDate: String?
     var mp3Array = [ShowMP3]()
+    var showMetadata: ShowMetadata?
     var showMetadataModel: ShowMetadataModel?
     var lastShareMetadataModel: ShareMetadataModel?
     var showType: ShowType? = .shared
@@ -129,11 +130,13 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         
         guard let id = self.identifier else { return }
         let url = archiveAPI.metadataURL(identifier: id)
-        
         archiveAPI.getIARequestMetadata(url: url) {
             (response: ShowMetadataModel) -> Void in
-            
             self.showMetadataModel = response
+            if let ar = self.showMetadata?.avg_rating, let nr = self.showMetadata?.num_reviews {
+                self.showMetadataModel?.metadata?.avg_rating = ar
+                self.showMetadataModel?.metadata?.num_reviews = nr
+            }
             if let files = self.showMetadataModel?.files {
                 var mp3s = [ShowMP3]()
                 for f in files {

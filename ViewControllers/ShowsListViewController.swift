@@ -114,8 +114,8 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
         guard let indexPath = showListTableView.indexPathForSelectedRow else { return }
         if let target = segue.destination as? ShowViewController, let showMDs = self.showMetadatas {
             target.showMetadata = showMDs[indexPath.row]
-            target.identifier = showMDs[indexPath.row].identifier
-            target.showDate = showMDs[indexPath.row].date
+            //target.identifier = showMDs[indexPath.row].identifier
+            //target.showDate = showMDs[indexPath.row].date
             target.showType = .archive
             target.db = db
         }

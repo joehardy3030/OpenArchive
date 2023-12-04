@@ -3,6 +3,8 @@ UpCog.xcworkspace/xcuserdata/*.*
 *.xcuserstate
 *.xcworkspace
 
+Breaze.xcodeproj/xcshareddata/xcschemes/Breaze.xcscheme
+
 **/xcuserdata/*
 xcschememanagement.plist
 

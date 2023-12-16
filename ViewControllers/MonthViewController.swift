@@ -13,7 +13,6 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
     @IBOutlet weak var sbdToggle: UISegmentedControl!
     @IBOutlet weak var monthTableView: UITableView!
     var months: [String] = []
-    //var monthCount: [Int:Int] = [:]
     var monthCount: [String:Int] = [:]
     var year: Int?
     var sbdOnly = true // look at observer pattern
@@ -73,42 +72,13 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
 
     }
 
-    /*
-    func getShows() {
-        if let y = year {
-            for i in 1...12 {
-                print("month \(i)")
-                getIADateRange(year: y, month: i, sbdOnly: sbdOnly)
-            }
-        }
-    }
-     */
-
     func getShows() {
         if let y = year {
             print("year \(String(describing: year))")
             getIADateRangeYear(year: y, sbdOnly: sbdOnly)
         }
     }
-
-    /*
-    func getIADateRangeYear(year: Int, sbdOnly: Bool) {
-        let url = archiveAPI.dateRangeYearURL(year: year, sbdOnly: sbdOnly)
-        
-        archiveAPI.getIARequestItems(url: url) {
-            (response: [ShowMetadata]?) -> Void in
-            
-            DispatchQueue.main.async{
-                if let r = response {
-                    var smd: [ShowMetadata]?
-                    smd = r
-                    let count = smd?.count
-                    print(count)
-                }
-            }
-        }
-    }
-    */
+    
     func getIADateRangeYear(year: Int, sbdOnly: Bool) {
         let url = archiveAPI.dateRangeYearURL(year: year, sbdOnly: sbdOnly)
 
@@ -125,7 +95,6 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
                     for (month, shows) in groupedByMonth {
                         if let month = month { // Ensure month is not nil
                             self.monthCount[month] = shows.count
-                            print(self.monthCount[month])
                         }
                     }
 
@@ -141,36 +110,14 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
         }
     }
     
-
-    /*
-    func getIADateRange(year: Int, month: Int, sbdOnly: Bool) {
-        let url = archiveAPI.dateRangeURL(year: year, month: month, sbdOnly: sbdOnly)
-        
-        archiveAPI.getIARequestItems(url: url) {
-            (response: [ShowMetadata]?) -> Void in
-            
-            DispatchQueue.main.async{
-                if let r = response {
-                    var smd: [ShowMetadata]?
-                    smd = r
-                    let count = smd?.count
-                    self.monthCount[month] = count
-                    self.monthTableView.reloadData()
-                }
-            }
-        }
-    }
-    */
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.months.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-       // var countString: String?
         let cell = monthTableView.dequeueReusableCell(withIdentifier: "MonthCell", for: indexPath) as! MonthTableViewCell
         let month = self.months[indexPath.row]
         print(self.months[indexPath.row])
-        //let count = self.monthCount[self.months[indexPath.row]]
         
         var monthArray = Array(repeating: 0, count: 12) // Array to hold counts for each month
         
@@ -184,7 +131,6 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
             }
         }
 
-        //print(count)
         if let year = self.year {
             let c = monthArray[indexPath.row] 
             if c > 0 {

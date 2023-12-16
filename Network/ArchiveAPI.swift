@@ -98,6 +98,37 @@ class ArchiveAPI: NSObject {
         
         return url
     }
+
+    func dateRangeYearURL(year: Int, sbdOnly: Bool) -> String {
+        // Search in date range
+        //https://archive.org/services/search/v1/scrape?q=collection%3A%28GratefulDead%29%20AND%20date%3A%5B1987-01-01%20TO%201987-12-31%5D
+        //https://archive.org/services/search/v1/scrape?fields=date,venue,transferer,source,collection&q=collection%3A%28GratefulDead%20AND%20stream_only%29%20AND%20date%3A%5B1992-05-01%20TO%201992-05-31%5D
+        //let sbdOnly = true
+        let firstDayMonth = "01-01"
+        let lastDayMonth = "12-31"
+        let andString = "%20AND%20"
+        let dateString = "date%3A%5B"
+        let toString = "%20TO%20"
+        var url = baseURLString
+                
+        url += "services/search/v1/scrape?"
+        url += "fields=date,venue,transferer,source,coverage,stars,avg_rating,num_reviews&"
+        if sbdOnly {
+            url += "q=collection%3A%28GratefulDead%20AND%20stream_only%29"
+        }
+        else {
+            url += "q=collection%3A%28GratefulDead%29"
+        }
+        url += andString
+        url += dateString
+        url += String(year) + "-" + firstDayMonth
+        url += toString
+        url += String(year) + "-" + lastDayMonth
+        url += "%5D"
+        print(url)
+        return url
+    }
+
     
     func getIARequestMetadata(url: String, completion: @escaping (ShowMetadataModel) -> Void) {
         AF.request(url).responseJSON { response in
@@ -167,6 +198,7 @@ class ArchiveAPI: NSObject {
         return ShowMetadata(identifier: identifier, title: title, creator: creator, mediatype: mediatype, collection: collection, type: type, description: description, date: date, year: year, venue: venue, transferer: transferer, source: source, coverage: coverage, avg_rating: avg_rating, num_reviews: num_reviews)
     }
     
+    /*
     func getIARequestItems(url: String, completion: @escaping ([ShowMetadata]?) -> Void) {
         AF.request(url).responseJSON { response in
             if let json = response.value {
@@ -181,7 +213,43 @@ class ArchiveAPI: NSObject {
             }
         }
     }
-
+    */
+    
+    func getIARequestItems(url: String, completion: @escaping ([ShowMetadata]?) -> Void) {
+        
+        AF.request(url).responseJSON { response in
+            switch response.result {
+            case .success(let value):
+                let j = JSON(value)
+                let items = j["items"]
+                var showMetadatas = [ShowMetadata]()
+                for i in items {
+                    let showMD = self.deserializeMetadata(json: i.1)
+                    showMetadatas.append(showMD)
+                }
+                completion(showMetadatas)
+            case .failure(let error):
+                print(error)
+                completion(nil)
+            }
+        }
+    }
+    
+    /*
+    func getIARequestItems(url: String, completion: @escaping ([ShowMetadata]?) -> Void) {
+        AF.request(url).responseDecodable(of: [String: [ShowMetadata]].self) { response in
+            switch response.result {
+            case .success(let responseValue):
+                let showMetadatas = responseValue // Assuming 'ResponseType' has a property 'items' of type '[ShowMetadata]'
+                completion(showMetadatas)
+            case .failure(let error):
+                print("Error: \(error)")
+                completion(nil)
+            }
+        }
+    }
+     */
+    
     func getIADownload(url: URL?, completion: @escaping (URL?) -> Void) {
         //https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#downloading-data-to-a-file
         let destination = DownloadRequest.suggestedDownloadDestination(for: .documentDirectory)

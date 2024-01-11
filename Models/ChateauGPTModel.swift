@@ -18,3 +18,10 @@ struct ChateauGPTModel: Decodable {
 
     let choices: [Choice]?
 }
+
+struct ChateauGPTRequest: Codable {
+    var model: [String:String]
+    var messages: [[String:String]]
+    var stream: [String:Bool]
+    var temperature: [String:Float]
+}

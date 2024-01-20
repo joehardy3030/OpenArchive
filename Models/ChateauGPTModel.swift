@@ -25,3 +25,15 @@ struct ChateauGPTRequest: Codable {
     var stream: [String:Bool]
     var temperature: [String:Float]
 }
+
+struct ChateauGPTParameters: Encodable {
+    var model: String
+    var messages: [ChateauGPTMessage]
+    var temperature: Double
+    var stream: Bool
+}
+
+struct ChateauGPTMessage: Codable {
+    var role: String
+    var content: String
+}

@@ -37,3 +37,16 @@ struct ChateauGPTMessage: Codable {
     var role: String
     var content: String
 }
+
+struct ChateauGPTStreamCompletionResponse: Decodable {
+    let id: String
+    let choices: [ChateauGPTStreamChoice]
+}
+
+struct ChateauGPTStreamChoice: Decodable {
+    let delta: ChateauGPTStreamContent
+}
+
+struct ChateauGPTStreamContent: Decodable {
+    let content: String
+}

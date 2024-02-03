@@ -13,7 +13,7 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
     @IBOutlet weak var sbdToggle: UISegmentedControl!
     @IBOutlet weak var monthTableView: UITableView!
     var months: [String] = []
-    var monthCount: [Int:Int] = [:]
+    var monthCount: [String:Int] = [:]
     var year: Int?
     var sbdOnly = true // look at observer pattern
     
@@ -72,32 +72,39 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
 
     }
 
-    
     func getShows() {
         if let y = year {
-            for i in 1...12 {
-                getIADateRange(year: y, month: i, sbdOnly: sbdOnly)
-            }
+            print("year \(String(describing: year))")
+            getIADateRangeYear(year: y, sbdOnly: sbdOnly)
         }
     }
     
-    func getIADateRange(year: Int, month: Int, sbdOnly: Bool) {
-        let url = archiveAPI.dateRangeURL(year: year, month: month, sbdOnly: sbdOnly)
-        
-        archiveAPI.getIARequestItems(url: url) {
-            (response: [ShowMetadata]?) -> Void in
-            
-            DispatchQueue.main.async{
-                if let r = response {
-                    var smd: [ShowMetadata]?
-                    smd = r
-                    let count = smd?.count
-                    self.monthCount[month] = count
+    func getIADateRangeYear(year: Int, sbdOnly: Bool) {
+        let url = archiveAPI.dateRangeYearURL(year: year, sbdOnly: sbdOnly)
+
+        archiveAPI.getIARequestItems(url: url) { (response: [ShowMetadata]?) -> Void in
+            DispatchQueue.main.async {
+                if let showMetadatas = response {
+                    // Reset the monthCount dictionary for new data
+                    self.monthCount = [:]
+
+                    // Grouping by month
+                    let groupedByMonth = Dictionary(grouping: showMetadatas, by: { $0.month })
+
+                    // Counting and storing in monthCount
+                    for (month, shows) in groupedByMonth {
+                        if let month = month { // Ensure month is not nil
+                            self.monthCount[month] = shows.count
+                        }
+                    }
+
+                    // Optionally, print the results
+                    for (month, count) in self.monthCount.sorted(by: { $0.key < $1.key }) {
+                        print("Month: \(month), Count: \(count)")
+                    }
                     self.monthTableView.reloadData()
-                  //  if let s = self.showMetadatas {
-                  //      self.showMetadatas = s.sorted(by: { $0.date! < $1.date! })
-                  //  }
-                  //  self.showListTableView.reloadData()
+                } else {
+                    print("No data available.")
                 }
             }
         }
@@ -108,13 +115,25 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-       // var countString: String?
         let cell = monthTableView.dequeueReusableCell(withIdentifier: "MonthCell", for: indexPath) as! MonthTableViewCell
         let month = self.months[indexPath.row]
-        let count = self.monthCount[indexPath.row + 1]
-        //print(count)
+        print(self.months[indexPath.row])
+        
+        var monthArray = Array(repeating: 0, count: 12) // Array to hold counts for each month
+        
+        for (monthKey, monthCount) in monthCount {
+            let components = monthKey.split(separator: "-")
+            if let monthString = components.last, let monthIndex = Int(monthString) {
+                let arrayIndex = monthIndex - 1 // Convert to zero-based index
+                if arrayIndex >= 0 && arrayIndex < monthArray.count {
+                    monthArray[arrayIndex] = monthCount
+                }
+            }
+        }
+
         if let year = self.year {
-            if let c = count, c > 0 {
+            let c = monthArray[indexPath.row] 
+            if c > 0 {
                 cell.monthLabel?.text = month + " " + String(year) + " " + "(" + String(c) + " tapes)"
             }
             else {

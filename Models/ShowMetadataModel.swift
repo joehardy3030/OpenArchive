@@ -41,6 +41,14 @@ struct ShowMetadata: Codable {
     var num_reviews: Int?
 }
 
+extension ShowMetadata {
+    var month: String? {
+        guard let date = self.date, date.count >= 7 else { return nil }
+        let index = date.index(date.startIndex, offsetBy: 7)
+        return String(date[..<index]) // Extracts the "yyyy-MM" part
+    }
+}
+
 struct ShowFile: Codable {
     var name: String?
     var source: String?

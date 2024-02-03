@@ -113,8 +113,9 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let indexPath = showListTableView.indexPathForSelectedRow else { return }
         if let target = segue.destination as? ShowViewController, let showMDs = self.showMetadatas {
-            target.identifier = showMDs[indexPath.row].identifier
-            target.showDate = showMDs[indexPath.row].date
+            target.showMetadata = showMDs[indexPath.row]
+            //target.identifier = showMDs[indexPath.row].identifier
+            //target.showDate = showMDs[indexPath.row].date
             target.showType = .archive
             target.db = db
         }

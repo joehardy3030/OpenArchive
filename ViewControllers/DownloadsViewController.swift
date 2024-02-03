@@ -167,8 +167,9 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
         
         guard let indexPath = showListTableView.indexPathForSelectedRow else { return }
         if let target = segue.destination as? ShowViewController, let showMDs = self.shows {
-            target.identifier = showMDs[indexPath.row].metadata?.identifier
-            target.showDate = showMDs[indexPath.row].metadata?.date
+            //target.identifier = showMDs[indexPath.row].metadata?.identifier
+            //target.showDate = showMDs[indexPath.row].metadata?.date
+            target.showMetadata = showMDs[indexPath.row].metadata
             target.showMetadataModel = showMDs[indexPath.row]
             target.showType = .downloaded
             // target.player = player

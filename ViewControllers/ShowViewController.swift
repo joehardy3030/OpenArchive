@@ -27,9 +27,10 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     let notificationCenter: NotificationCenter = .default
     let fileManager = FileManager.default
     let numRowsBeforeSongs = 6
-    var identifier: String?
-    var showDate: String?
+    // var identifier: String?
+    // var showDate: String?
     var mp3Array = [ShowMP3]()
+    var showMetadata: ShowMetadata?
     var showMetadataModel: ShowMetadataModel?
     var lastShareMetadataModel: ShareMetadataModel?
     var showType: ShowType? = .shared
@@ -46,15 +47,15 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         self.navigationItem.title = "";
         switch showType {
         case .archive:
-            self.navigationItem.title = utils.getDateFromDateTimeString(datetime: showDate)
+            self.navigationItem.title = utils.getDateFromDateTimeString(datetime: showMetadata?.date)
             print("archive")
             getIAGetShow()
         case .downloaded:
-            self.navigationItem.title = showDate
+            self.navigationItem.title = showMetadata?.date
             self.downloadButton.isHidden = true
             playButtonLabel.setTitle("Play", for: .normal)
         case .shared:
-            self.navigationItem.title = utils.getDateFromDateTimeString(datetime: showDate)
+            self.navigationItem.title = utils.getDateFromDateTimeString(datetime: showMetadata?.date)
             self.broadcastPlayPauseButton.isHidden = false
             self.shareButton.isHidden = true
             self.downloadButton.isHidden = false
@@ -87,7 +88,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     }
     
     @IBAction func shareShow(_ sender: Any) {
-        let url = utils.urlFromIdentifier(identifier: self.identifier)
+        let url = utils.urlFromIdentifier(identifier: self.showMetadata?.identifier)
         //let url = utils.urlFromIdentifier(identifier: self.player.showMetadataModel?.metadata?.identifier)
         let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
         activityViewController.popoverPresentationController?.sourceView = sender as? UIView
@@ -127,18 +128,20 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     
     func getIAGetShow() {
         
-        guard let id = self.identifier else { return }
+        guard let id = self.showMetadata?.identifier else { return }
         let url = archiveAPI.metadataURL(identifier: id)
-        
         archiveAPI.getIARequestMetadata(url: url) {
             (response: ShowMetadataModel) -> Void in
-            
             self.showMetadataModel = response
+            if let ar = self.showMetadata?.avg_rating, let nr = self.showMetadata?.num_reviews {
+                self.showMetadataModel?.metadata?.avg_rating = ar
+                self.showMetadataModel?.metadata?.num_reviews = nr
+            }
             if let files = self.showMetadataModel?.files {
                 var mp3s = [ShowMP3]()
                 for f in files {
                     if (f.format?.contains("MP3"))! {
-                        let showMP3 = ShowMP3(identifier: self.identifier, name: f.name, title: f.title, track: f.track)
+                        let showMP3 = ShowMP3(identifier: self.showMetadata?.identifier, name: f.name, title: f.title, track: f.track)
                         mp3s.append(showMP3)
                     }
                 }
@@ -160,7 +163,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             if let r = response {
                 self.mp3Array = [ShowMP3]()
                 self.lastShareMetadataModel = r
-                self.identifier = self.lastShareMetadataModel?.showMetadataModel?.metadata?.identifier
+                self.showMetadata?.identifier = self.lastShareMetadataModel?.showMetadataModel?.metadata?.identifier
                 self.getIAGetShow()
             }
             DispatchQueue.main.async {
@@ -201,7 +204,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     func downloadShow() {
         guard let mp3s = self.showMetadataModel?.mp3Array else { return }
         for f in mp3s {
-            let url = archiveAPI.downloadURL(identifier: self.identifier, filename: f.name)
+            let url = archiveAPI.downloadURL(identifier: self.showMetadata?.identifier, filename: f.name)
             //guard let localURL = self.player.trackURLfromName(name: f.name) else { return }
             guard let localURL = utils.trackURLfromName(name: f.name) else { return }
             if fileManager.fileExists(atPath: localURL.path) {
@@ -271,7 +274,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     ///Download manager class
     func downloadSong(showMP3: ShowMP3?, completion: @escaping (URL?) -> Void) {
         guard let s = showMP3 else { return }
-        let url = archiveAPI.downloadURL(identifier: self.identifier, filename: s.name)
+        let url = archiveAPI.downloadURL(identifier: self.showMetadata?.identifier, filename: s.name)
         guard let localURL = utils.trackURLfromName(name: s.name) else { return }
         if fileManager.fileExists(atPath: localURL.path) {
             completion(localURL)

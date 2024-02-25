@@ -28,6 +28,7 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
         sbdToggle.selectedSegmentIndex = getSbdToggle()
     }
     
+    /*
     func getIADateRange() {
         guard let year = self.year, let month = self.month else { return }
         let url = archiveAPI.dateRangeURL(year: year, month: month, sbdOnly: sbdOnly)
@@ -46,7 +47,27 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
             }
         }
     }
+     */
     
+    func getIADateRange() {
+        guard let year = self.year, let month = self.month else { return }
+        let url = archiveAPI.dateRangeURL(year: year, month: month, sbdOnly: sbdOnly)
+
+        archiveAPI.getIARequestItemsDecodable(url: url) {
+            (response: ShowMetadatas?) -> Void in
+            
+             DispatchQueue.main.async{
+                if let r = response {
+                    self.showMetadatas = r.items
+                    if let s = self.showMetadatas {
+                        self.showMetadatas = s.sorted(by: { $0.date! < $1.date! })
+                    }
+                    self.showListTableView.reloadData()
+                }
+            }
+        }
+    }
+
     @IBAction func sbdToggle(_ sender: Any) {
         if sbdToggle.selectedSegmentIndex == 0 {
             sbdOnly = false

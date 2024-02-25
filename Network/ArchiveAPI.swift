@@ -198,22 +198,7 @@ class ArchiveAPI: NSObject {
         return ShowMetadata(identifier: identifier, title: title, creator: creator, mediatype: mediatype, collection: collection, type: type, description: description, date: date, year: year, venue: venue, transferer: transferer, source: source, coverage: coverage, avg_rating: avg_rating, num_reviews: num_reviews)
     }
     
-    /*
-    func getIARequestItems(url: String, completion: @escaping ([ShowMetadata]?) -> Void) {
-        AF.request(url).responseJSON { response in
-            if let json = response.value {
-                let j = JSON(json)
-                let items = j["items"]
-                var showMetadatas = [ShowMetadata]()
-                for i in items {
-                    let showMD = self.deserializeMetadata(json: i.1)
-                    showMetadatas.append(showMD)
-                }
-                completion(showMetadatas)
-            }
-        }
-    }
-    */
+
     
     func getIARequestItems(url: String, completion: @escaping ([ShowMetadata]?) -> Void) {
         
@@ -235,20 +220,22 @@ class ArchiveAPI: NSObject {
         }
     }
     
-    /*
-    func getIARequestItems(url: String, completion: @escaping ([ShowMetadata]?) -> Void) {
-        AF.request(url).responseDecodable(of: [String: [ShowMetadata]].self) { response in
+    
+    func getIARequestItemsDecodable(url: String, completion: @escaping (ShowMetadatas?) -> Void) {
+        
+        // Assuming ShowMetadata conforms to Decodable
+        AF.request(url).responseDecodable(of: ShowMetadatas.self) { response in
             switch response.result {
-            case .success(let responseValue):
-                let showMetadatas = responseValue // Assuming 'ResponseType' has a property 'items' of type '[ShowMetadata]'
+            case .success(let showMetadatas):
+                let s = showMetadatas.items // Assuming `items` is now directly a part of your Decodable structure
                 completion(showMetadatas)
             case .failure(let error):
-                print("Error: \(error)")
+                print(error)
                 completion(nil)
             }
         }
     }
-     */
+     
     
     func getIADownload(url: URL?, completion: @escaping (URL?) -> Void) {
         //https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#downloading-data-to-a-file

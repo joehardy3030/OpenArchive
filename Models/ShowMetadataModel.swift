@@ -49,6 +49,10 @@ extension ShowMetadata {
     }
 }
 
+struct ShowMetadatas:Codable {
+    var items: [ShowMetadata]?
+}
+
 struct ShowFile: Codable {
     var name: String?
     var source: String?

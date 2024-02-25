@@ -14,6 +14,7 @@
 		C1A86AE7CB901E9AE4559733 /* Pods_BreazeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC1F0E4AA282D7B36ED40FA4 /* Pods_BreazeTests.framework */; };
 		CBC5228E1B6761BEF185B8AD /* Pods_Breaze.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A700AD3051D76CBB67400BC /* Pods_Breaze.framework */; };
 		D51C53AE71B1FA9965B4E724 /* Pods_BreazeUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A926AF80C0D08EF375C20D5 /* Pods_BreazeUITests.framework */; };
+		D814AEE32B6F35AF00C58FB3 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D814AEE22B6F35AF00C58FB3 /* SearchViewController.swift */; };
 		D830CC4E25AC026D00BD76A1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D830CC4D25AC026D00BD76A1 /* GoogleService-Info.plist */; };
 		D83EB53E24CE33C60016726C /* ArchiveNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83EB53D24CE33C60016726C /* ArchiveNavigationController.swift */; };
 		D83EB54024CE49880016726C /* StartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83EB53F24CE49880016726C /* StartViewController.swift */; };
@@ -83,6 +84,7 @@
 		9C04CF7422E0CBAEE4822157 /* Pods-BreazeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BreazeTests.debug.xcconfig"; path = "Target Support Files/Pods-BreazeTests/Pods-BreazeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BC1F0E4AA282D7B36ED40FA4 /* Pods_BreazeTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BreazeTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCE8FC1545CF717B71C529A8 /* Pods-BreazeUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BreazeUITests.debug.xcconfig"; path = "Target Support Files/Pods-BreazeUITests/Pods-BreazeUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		D814AEE22B6F35AF00C58FB3 /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		D830CC4D25AC026D00BD76A1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D83EB53D24CE33C60016726C /* ArchiveNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveNavigationController.swift; sourceTree = "<group>"; };
 		D83EB53F24CE49880016726C /* StartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartViewController.swift; sourceTree = "<group>"; };
@@ -252,6 +254,7 @@
 				D852C3C624B1219400029EB9 /* ShowsListViewController.swift */,
 				D84D2B8D24C2925A006C8175 /* DownloadsViewController.swift */,
 				D8EECF552B1BA86100CD3235 /* ChateauGPTViewController.swift */,
+				D814AEE22B6F35AF00C58FB3 /* SearchViewController.swift */,
 				D852C3CA24B1AA1C00029EB9 /* ShowViewController.swift */,
 				D89D789825901D80009324EE /* ArchivePlayerViewController.swift */,
 				D845E03824D7642A003381B6 /* ModalPlayerViewController.swift */,
@@ -646,6 +649,7 @@
 				D83EB54224CE62170016726C /* ArchiveTabBarController.swift in Sources */,
 				D83EB54024CE49880016726C /* StartViewController.swift in Sources */,
 				D852C3C924B121E000029EB9 /* ShowsListTableViewCell.swift in Sources */,
+				D814AEE32B6F35AF00C58FB3 /* SearchViewController.swift in Sources */,
 				D87109F425ABF09D00CA133E /* CarPlaySceneDelegate.swift in Sources */,
 				7984F98F24A56EFD00989DB8 /* ArchiveAPI.swift in Sources */,
 				791CE1C120B252F100299F76 /* Utils.swift in Sources */,

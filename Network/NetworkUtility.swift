@@ -142,6 +142,33 @@ class NetworkUtility: NSObject {
         }
     }
     
+    /*
+    func getDownloadDocsWithSearchTerm(searchTerm: String, completion: @escaping ([ShowMetadataModel]?) -> Void) {
+        
+        let uuid = getUUID()
+        var shows: [ShowMetadataModel] = []
+        var docRef: Query!
+        
+        //guard let s = searchTerm else {return}
+        docRef = db.collection(uuid).document("downloads").collection("shows").whereField("metadata.song", isEqualTo: searchTerm)
+        print(docRef!)
+            
+       // let docRef = db.collection(uuid).document("downloads").collection("shows")
+        docRef.addSnapshotListener { (querySnapshot, error) in
+            if let error = error {
+                print("Error getting documents: \(error)")
+            } else {
+                for document in querySnapshot!.documents {
+                    let show = try! FirestoreDecoder().decode(ShowMetadataModel.self, from: document.data())
+                    shows.append(show)
+                }
+                completion(shows)
+            }
+        }
+    }
+     */
+    
+    
     func getSharedDoc(completion: @escaping ([ShareMetadataModel]?) -> Void) {
         
         print("called shared doc")

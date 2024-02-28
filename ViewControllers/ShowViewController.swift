@@ -130,7 +130,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         
         guard let id = self.showMetadata?.identifier else { return }
         let url = archiveAPI.metadataURL(identifier: id)
-        archiveAPI.getIARequestMetadata(url: url) {
+        archiveAPI.getIARequestMetadataDecodable(url: url) {
             (response: ShowMetadataModel) -> Void in
             self.showMetadataModel = response
             if let ar = self.showMetadata?.avg_rating, let nr = self.showMetadata?.num_reviews {

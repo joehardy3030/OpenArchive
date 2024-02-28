@@ -28,7 +28,7 @@ struct ShowMetadata: Codable {
     var title: String?
     var creator: String?
     var mediatype: String?
-    var collection: String?
+    var collection: [String]?
     var type: String?
     var description: String?
     var date: String?

@@ -129,7 +129,7 @@ class ArchiveAPI: NSObject {
         return url
     }
 
-    
+    /*
     func getIARequestMetadata(url: String, completion: @escaping (ShowMetadataModel) -> Void) {
         AF.request(url).responseJSON { response in
             if let json = response.value {
@@ -140,7 +140,7 @@ class ArchiveAPI: NSObject {
             }
         }
     }
-    
+    */
     
     func getIARequestMetadataDecodable(url: String, completion: @escaping (ShowMetadataModel) -> Void) {
         AF.request(url).responseDecodable(of: ShowMetadataModel.self) { response in
@@ -154,7 +154,7 @@ class ArchiveAPI: NSObject {
         }
     }
 
-    
+    /*
     func deserializeMetadataModel(json: JSON) -> ShowMetadataModel {
         let files_count = json["files_count"].int
         let created = json["created"].int
@@ -166,6 +166,7 @@ class ArchiveAPI: NSObject {
         let files = deserializeFiles(json:fl)
         return ShowMetadataModel(metadata: metadata, files: files, files_count: files_count, created: created, item_size: item_size, dir: dir)
     }
+     */
     
     func deserializeFiles(json: JSON) -> [ShowFile] {
         var fileArray = [ShowFile]()
@@ -192,6 +193,7 @@ class ArchiveAPI: NSObject {
         return fileArray
     }
     
+    /*
     func deserializeMetadata(json: JSON) -> ShowMetadata {
 
         let identifier = json["identifier"].string
@@ -212,7 +214,7 @@ class ArchiveAPI: NSObject {
         
         return ShowMetadata(identifier: identifier, title: title, creator: creator, mediatype: mediatype, collection: collection, type: type, description: description, date: date, year: year, venue: venue, transferer: transferer, source: source, coverage: coverage, avg_rating: avg_rating, num_reviews: num_reviews)
     }
-    
+    */
 
     
     /*

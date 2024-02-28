@@ -154,7 +154,8 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             
         }
     }
-    
+
+
     ///Download manager class
     func getShareSnaptshot() {
         mp3index = 0

@@ -134,11 +134,26 @@ class ArchiveAPI: NSObject {
         AF.request(url).responseJSON { response in
             if let json = response.value {
                 let j = JSON(json)
+                print(j)
                 let showMetadataModel = self.deserializeMetadataModel(json: j)
                 completion(showMetadataModel)
             }
         }
     }
+    
+    
+    func getIARequestMetadataDecodable(url: String, completion: @escaping (ShowMetadataModel) -> Void) {
+        AF.request(url).responseDecodable(of: ShowMetadataModel.self) { response in
+            print(response)
+            switch response.result {
+            case .success(let showMetadataModel):
+                completion(showMetadataModel)
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+
     
     func deserializeMetadataModel(json: JSON) -> ShowMetadataModel {
         let files_count = json["files_count"].int
@@ -200,6 +215,7 @@ class ArchiveAPI: NSObject {
     
 
     
+    /*
     func getIARequestItems(url: String, completion: @escaping ([ShowMetadata]?) -> Void) {
         
         AF.request(url).responseJSON { response in
@@ -219,15 +235,12 @@ class ArchiveAPI: NSObject {
             }
         }
     }
-    
+    */
     
     func getIARequestItemsDecodable(url: String, completion: @escaping (ShowMetadatas?) -> Void) {
-        
-        // Assuming ShowMetadata conforms to Decodable
         AF.request(url).responseDecodable(of: ShowMetadatas.self) { response in
             switch response.result {
             case .success(let showMetadatas):
-                let s = showMetadatas.items // Assuming `items` is now directly a part of your Decodable structure
                 completion(showMetadatas)
             case .failure(let error):
                 print(error)

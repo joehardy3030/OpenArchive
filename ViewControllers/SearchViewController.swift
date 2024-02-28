@@ -54,8 +54,11 @@ class SearchViewController: ArchiveSuperViewController {
     
     @objc func searchButtonTapped() {
         // Implement search functionality here
+        // https://archive.org/search?query=Black+throated+wind
+        // ArchiveAPI.getIARequestItemsDecodable(url: String, completion: @escaping (ShowMetadatas?) -> Void) {
+
         print("Search with Artist: \(artistTextField.text ?? "") Title: \(titleTextField.text ?? "")")
         // Close the modal
-        dismiss(animated: true, completion: nil)
+        // dismiss(animated: true, completion: nil)
     }
 }

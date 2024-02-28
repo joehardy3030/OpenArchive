@@ -168,6 +168,7 @@ class ArchiveAPI: NSObject {
     }
      */
     
+    /*
     func deserializeFiles(json: JSON) -> [ShowFile] {
         var fileArray = [ShowFile]()
         for f in json {
@@ -192,7 +193,8 @@ class ArchiveAPI: NSObject {
         }
         return fileArray
     }
-    
+    */
+     
     /*
     func deserializeMetadata(json: JSON) -> ShowMetadata {
 
@@ -260,7 +262,7 @@ class ArchiveAPI: NSObject {
             .downloadProgress { (progress) in
                 print("Progress: \(progress.fractionCompleted)")
             }
-            .responseJSON { response in
+            .response { response in
                 completion(response.fileURL)
             }
     }

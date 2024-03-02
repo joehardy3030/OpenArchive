@@ -138,6 +138,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 self.showMetadataModel?.metadata?.num_reviews = nr
             }
             if let files = self.showMetadataModel?.files {
+                print(files)
                 var mp3s = [ShowMP3]()
                 for f in files {
                     if (f.format?.contains("MP3"))! {

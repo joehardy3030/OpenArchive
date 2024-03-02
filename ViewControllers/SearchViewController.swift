@@ -14,10 +14,11 @@ class SearchViewController: ArchiveSuperViewController {
     let titleLabel = UILabel()
     let titleTextField = UITextField()
     let searchButton = UIButton()
+    var showMetadatas: ShowMetadatas?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        //view.backgroundColor = .white
         setupUI()
     }
     
@@ -58,7 +59,22 @@ class SearchViewController: ArchiveSuperViewController {
         // ArchiveAPI.getIARequestItemsDecodable(url: String, completion: @escaping (ShowMetadatas?) -> Void) {
 
         print("Search with Artist: \(artistTextField.text ?? "") Title: \(titleTextField.text ?? "")")
+        getIASearchTerm()
         // Close the modal
         // dismiss(animated: true, completion: nil)
+    }
+    
+    func getIASearchTerm() {
+        let url = archiveAPI.searchTermURL(searchTerm: "Dark Star")
+        print(url)
+        archiveAPI.getIARequestItemsDecodable(url: url) {
+            (response: ShowMetadatas?) -> Void in
+             DispatchQueue.main.async{
+                if let r = response {
+                    self.showMetadatas = r
+                    // print(r)
+                }
+            }
+        }
     }
 }

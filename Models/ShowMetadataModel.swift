@@ -63,7 +63,7 @@ struct ShowFile: Codable {
     var bitrate: String?
     var length: String?
     var format: String?
-    var original: String?
+    // var original: String?
     var mtime: String?
     var size: String?
     var md5: String?

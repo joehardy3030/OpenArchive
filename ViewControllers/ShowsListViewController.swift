@@ -58,10 +58,10 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
             
              DispatchQueue.main.async{
                 if let r = response {
-                    self.showMetadatas = r.items
-                    if let s = self.showMetadatas {
-                        self.showMetadatas = s.sorted(by: { $0.date! < $1.date! })
-                    }
+                    //self.showMetadatas = r.items
+                    //if let s = self.showMetadatas {
+                    self.showMetadatas = r.items?.sorted(by: { $0.date! < $1.date! })
+                    //}
                     self.showListTableView.reloadData()
                 }
             }

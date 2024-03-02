@@ -8,71 +8,65 @@
 import UIKit
 
 class SearchViewController: ArchiveSuperViewController {
-    
-    let artistLabel = UILabel()
-    let artistTextField = UITextField()
-    let titleLabel = UILabel()
-    let titleTextField = UITextField()
-    let searchButton = UIButton()
-    var showMetadatas: ShowMetadatas?
+
+     let songLabel = UILabel()
+     let songTextField = UITextField()
+     let startDateTextField = UITextField()
+     let endDateTextField = UITextField()
+     let searchButton = UIButton()
+     var showMetadatas: ShowMetadatas?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        //view.backgroundColor = .white
         setupUI()
     }
     
     private func setupUI() {
-        // Configure labels
-        artistLabel.text = "Artist"
-        titleLabel.text = "Title"
-        
+ 
         // Configure text fields with borders
-        artistTextField.placeholder = "Enter artist name"
-        artistTextField.borderStyle = .roundedRect
-        titleTextField.placeholder = "Enter title name"
-        titleTextField.borderStyle = .roundedRect
+        songTextField.placeholder = "Enter title name"
+        songTextField.borderStyle = .roundedRect
+        startDateTextField.placeholder = "Start Date (YYYY-MM-DD)"
+        startDateTextField.borderStyle = .roundedRect
+        endDateTextField.placeholder = "End Date (YYYY-MM-DD)"
+        endDateTextField.borderStyle = .roundedRect
         
         // Configure button
         searchButton.setTitle("Search", for: .normal)
         searchButton.backgroundColor = .blue
         searchButton.addTarget(self, action: #selector(searchButtonTapped), for: .touchUpInside)
         
-        // Layout your views properly here. This is just a simple setup.
-        artistLabel.frame = CGRect(x: 20, y: 80, width: 200, height: 20)
-        artistTextField.frame = CGRect(x: 20, y: 100, width: 200, height: 40)
-        titleLabel.frame = CGRect(x: 20, y: 150, width: 200, height: 20)
-        titleTextField.frame = CGRect(x: 20, y: 170, width: 200, height: 40)
-        searchButton.frame = CGRect(x: 20, y: 220, width: 200, height: 40)
+        // Layout your views
+        songLabel.frame = CGRect(x: 20, y: 80, width: 200, height: 20)
+        songTextField.frame = CGRect(x: 20, y: 100, width: 200, height: 40)
+        startDateTextField.frame = CGRect(x: 20, y: 150, width: 200, height: 40) // New
+        endDateTextField.frame = CGRect(x: 20, y: 200, width: 200, height: 40) // New
+        searchButton.frame = CGRect(x: 20, y: 250, width: 200, height: 40)
         
         // Add subviews
-        view.addSubview(artistLabel)
-        view.addSubview(artistTextField)
-        view.addSubview(titleLabel)
-        view.addSubview(titleTextField)
+        view.addSubview(songLabel)
+        view.addSubview(songTextField)
+        view.addSubview(startDateTextField)
+        view.addSubview(endDateTextField)
         view.addSubview(searchButton)
     }
     
     @objc func searchButtonTapped() {
-        // Implement search functionality here
-        // https://archive.org/search?query=Black+throated+wind
-        // ArchiveAPI.getIARequestItemsDecodable(url: String, completion: @escaping (ShowMetadatas?) -> Void) {
-
-        print("Search with Artist: \(artistTextField.text ?? "") Title: \(titleTextField.text ?? "")")
         getIASearchTerm()
-        // Close the modal
-        // dismiss(animated: true, completion: nil)
     }
     
     func getIASearchTerm() {
-        let url = archiveAPI.searchTermURL(searchTerm: "Dark Star")
-        print(url)
+        let searchTerm = songTextField.text ?? ""
+        let startDate = startDateTextField.text ?? ""
+        let endDate = endDateTextField.text ?? ""
+        // Construct search URL with date range, assuming your API supports it
+        let url = archiveAPI.searchTermURL(searchTerm: searchTerm, startDate: startDate, endDate: endDate)
+        // print(url)
         archiveAPI.getIARequestItemsDecodable(url: url) {
             (response: ShowMetadatas?) -> Void in
              DispatchQueue.main.async{
                 if let r = response {
                     self.showMetadatas = r
-                    // print(r)
                 }
             }
         }

@@ -130,14 +130,13 @@ class ArchiveAPI: NSObject {
     }
     
 
-    func searchTermURL(searchTerm: String) -> String {
+    func searchTermURL(searchTerm: String, startDate: String?, endDate: String?) -> String {
         // Search in date range
         //https://archive.org/services/search/v1/scrape?q=collection%3A%28GratefulDead%29%20AND%20date%3A%5B1987-01-01%20TO%201987-12-31%5D
         //https://archive.org/services/search/v1/scrape?fields=date,venue,transferer,source,collection&q=collection%3A%28GratefulDead%20AND%20stream_only%29%20AND%20date%3A%5B1992-05-01%20TO%201992-05-31%5D
-        let sbdOnly = true
-        let firstDayMonth = "01-01"
-        let lastDayMonth = "12-31"
-        let year = "1973"
+        //let url = archiveAPI.searchTermURL(searchTerm: searchTerm, startDate: startDate, endDate: endDate)
+        let sd = "1965-01-01"
+        let ed = "1995-12-31"
         let andString = "%20AND%20"
         let dateString = "date%3A%5B"
         let toString = "%20TO%20"
@@ -147,17 +146,22 @@ class ArchiveAPI: NSObject {
         url += "fields=date,venue,transferer,source,coverage,stars,avg_rating,num_reviews&"
         let searchTermPlus = searchTerm.replacingOccurrences(of: " ", with: "+")
         url += "q=" + searchTermPlus + andString
-        if sbdOnly {
-            url += "collection%3A%28GratefulDead%20AND%20stream_only%29"
-        }
-        else {
-            url += "q=collection%3A%28GratefulDead%29"
-        }
+        url += "collection%3A%28GratefulDead%20AND%20stream_only%29"
         url += andString
         url += dateString
-        url += String(year) + "-" + firstDayMonth
+        if let s = startDate {
+            url += "-" + s
+        }
+        else {
+            url += "-" + sd
+        }
         url += toString
-        url += String(year) + "-" + lastDayMonth
+        if let e = endDate {
+            url += "-" + e
+        }
+        else {
+            url += "-" + ed
+        }
         url += "%5D"
         print(url)
         return url

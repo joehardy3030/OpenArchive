@@ -16,6 +16,9 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
     @IBOutlet weak var showListTableView: UITableView!
     var year: Int?
     var month: Int?
+    var startYear: String?
+    var endYear: String?
+    var searchTerm: String?
     var identifiers: [String]?
     var showMetadatas: [ShowMetadata]?
     var sbdOnly = true
@@ -48,6 +51,23 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
         }
     }
      */
+    
+    
+    func getIASearchTerm() {
+        let url = archiveAPI.searchTermURL(searchTerm: self.searchTerm ?? "", startYear: self.startYear, endYear: self.endYear)
+        // print(url)
+        archiveAPI.getIARequestItemsDecodable(url: url) {
+            (response: ShowMetadatas?) -> Void in
+             DispatchQueue.main.async{
+                if let r = response {
+                    self.showMetadatas = r.items?.sorted(by: { $0.date! < $1.date! })
+                    print(r)
+                    self.showListTableView.reloadData()
+                }
+            }
+        }
+    }
+    
     
     func getIADateRange() {
         guard let year = self.year, let month = self.month else { return }

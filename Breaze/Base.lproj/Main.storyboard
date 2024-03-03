@@ -288,7 +288,7 @@
             <objects>
                 <viewController storyboardIdentifier="ShowViewController" title="Show" id="0wg-q7-zkq" customClass="ShowViewController" customModule="Chateau" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Tle-F3-vmG">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EcL-9l-r4I">
@@ -298,7 +298,7 @@
                                 </items>
                             </navigationBar>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="uMI-up-Xte">
-                                <rect key="frame" x="0.0" y="122" width="375" height="425"/>
+                                <rect key="frame" x="0.0" y="122" width="375" height="356"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ShowDetailCell" textLabel="0bd-5U-7kI" rowHeight="44" style="IBUITableViewCellStyleDefault" id="eec-gd-jWv" customClass="ShowDetailTableViewCell" customModule="Chateau" customModuleProvider="target">
@@ -1036,7 +1036,6 @@
         <!--Item-->
         <scene sceneID="qL6-gM-2Vy">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="l4J-M0-uGJ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <navigationController id="iFd-OQ-bOu" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Item" id="GHO-Dv-l9n"/>
                     <navigationItem key="navigationItem" id="j73-jW-xgS"/>
@@ -1049,6 +1048,7 @@
                         <segue destination="NuE-gc-eaG" kind="relationship" relationship="rootViewController" id="AkE-Lu-XJh"/>
                     </connections>
                 </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="l4J-M0-uGJ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="782" y="1953"/>
         </scene>
@@ -1063,6 +1063,9 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
                     <navigationItem key="navigationItem" id="lkK-b6-Nrf"/>
+                    <connections>
+                        <segue destination="VkJ-vg-Mzt" kind="show" identifier="showSearchResults" id="c4F-NP-axA"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dt9-cP-spj" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -1070,7 +1073,8 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="2gD-Gv-5Fs"/>
+        <segue reference="P7t-lR-Gax"/>
+        <segue reference="c4F-NP-axA"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="backward.end.fill" catalog="system" width="128" height="101"/>

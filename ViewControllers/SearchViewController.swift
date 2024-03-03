@@ -14,6 +14,9 @@ class SearchViewController: ArchiveSuperViewController {
      let startDateTextField = UITextField()
      let endDateTextField = UITextField()
      let searchButton = UIButton()
+     var startYear = "1965"
+     var endYear = "1995"
+    var searchTerm: String?
      var showMetadatas: ShowMetadatas?
 
     override func viewDidLoad() {
@@ -54,23 +57,31 @@ class SearchViewController: ArchiveSuperViewController {
     }
     
     @objc func searchButtonTapped() {
-        getIASearchTerm()
+        if let sy = startDateTextField.text {
+            self.startYear = sy
+        }
+        if let ey = endDateTextField.text {
+            self.endYear = ey
+        }
+        self.searchTerm = songTextField.text
+        print(self.startYear)
+        print(self.endYear)
+        print(self.searchTerm!)
+        performSegue(withIdentifier: "showSearchResults", sender: self)
+       // getIASearchTerm()
     }
     
-    func getIASearchTerm() {
-        let searchTerm = songTextField.text ?? ""
-        let startYear = startDateTextField.text ?? ""
-        let endYear = endDateTextField.text ?? ""
-        // Construct search URL with date range, assuming your API supports it
-        let url = archiveAPI.searchTermURL(searchTerm: searchTerm, startYear: startYear, endYear: endYear)
-        // print(url)
-        archiveAPI.getIARequestItemsDecodable(url: url) {
-            (response: ShowMetadatas?) -> Void in
-             DispatchQueue.main.async{
-                if let r = response {
-                    self.showMetadatas = r
-                    print(r)
-                }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showSearchResults" {
+            print("showSearchResults Segue")
+            if let target = segue.destination as? ShowsListViewController {
+                target.startYear = self.startYear
+                target.endYear = self.endYear
+                target.searchTerm = self.searchTerm
+                target.sbdOnly = true
+                target.db = db
+                target.getIASearchTerm()
+
             }
         }
     }

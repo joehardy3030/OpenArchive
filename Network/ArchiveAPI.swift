@@ -127,7 +127,7 @@ class ArchiveAPI: NSObject {
     }
     
 
-    func searchTermURL(searchTerm: String, startYear: String?, endYear: String?) -> String {
+    func searchTermURL(searchTerm: String?, startYear: String?, endYear: String?) -> String {
 
         let startMonthDay = "01-01"
         let endMonthDay = "12-31"
@@ -139,8 +139,13 @@ class ArchiveAPI: NSObject {
                 
         url += "services/search/v1/scrape?"
         url += "fields=date,venue,transferer,source,coverage,stars,avg_rating,num_reviews&"
-        let searchTermPlus = searchTerm.replacingOccurrences(of: " ", with: "+")
-        url += "q=" + searchTermPlus + andString
+        if let st = searchTerm {
+            let searchTermPlus = st.replacingOccurrences(of: " ", with: "+")
+            url += "q=" + searchTermPlus + andString
+        }
+        else {
+            url += "q="
+        }
         url += "collection%3A%28GratefulDead%20AND%20stream_only%29"
         url += andString
         url += dateString

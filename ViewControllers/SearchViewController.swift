@@ -24,11 +24,13 @@ class SearchViewController: ArchiveSuperViewController {
     private func setupUI() {
  
         // Configure text fields with borders
-        songTextField.placeholder = "Enter title name"
+        songTextField.placeholder = "Enter search term"
         songTextField.borderStyle = .roundedRect
-        startDateTextField.placeholder = "Start Date (YYYY-MM-DD)"
+        //startDateTextField.placeholder = "Start Date (YYYY-MM-DD)"
+        startDateTextField.placeholder = "Start Year (YYYY)"
         startDateTextField.borderStyle = .roundedRect
-        endDateTextField.placeholder = "End Date (YYYY-MM-DD)"
+        //endDateTextField.placeholder = "End Date (YYYY-MM-DD)"
+        endDateTextField.placeholder = "End Year (YYYY)"
         endDateTextField.borderStyle = .roundedRect
         
         // Configure button
@@ -57,16 +59,17 @@ class SearchViewController: ArchiveSuperViewController {
     
     func getIASearchTerm() {
         let searchTerm = songTextField.text ?? ""
-        let startDate = startDateTextField.text ?? ""
-        let endDate = endDateTextField.text ?? ""
+        let startYear = startDateTextField.text ?? ""
+        let endYear = endDateTextField.text ?? ""
         // Construct search URL with date range, assuming your API supports it
-        let url = archiveAPI.searchTermURL(searchTerm: searchTerm, startDate: startDate, endDate: endDate)
+        let url = archiveAPI.searchTermURL(searchTerm: searchTerm, startYear: startYear, endYear: endYear)
         // print(url)
         archiveAPI.getIARequestItemsDecodable(url: url) {
             (response: ShowMetadatas?) -> Void in
              DispatchQueue.main.async{
                 if let r = response {
                     self.showMetadatas = r
+                    print(r)
                 }
             }
         }

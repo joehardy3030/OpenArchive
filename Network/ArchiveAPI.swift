@@ -100,10 +100,7 @@ class ArchiveAPI: NSObject {
     }
 
     func dateRangeYearURL(year: Int, sbdOnly: Bool) -> String {
-        // Search in date range
-        //https://archive.org/services/search/v1/scrape?q=collection%3A%28GratefulDead%29%20AND%20date%3A%5B1987-01-01%20TO%201987-12-31%5D
-        //https://archive.org/services/search/v1/scrape?fields=date,venue,transferer,source,collection&q=collection%3A%28GratefulDead%20AND%20stream_only%29%20AND%20date%3A%5B1992-05-01%20TO%201992-05-31%5D
-        //let sbdOnly = true
+
         let firstDayMonth = "01-01"
         let lastDayMonth = "12-31"
         let andString = "%20AND%20"
@@ -130,13 +127,11 @@ class ArchiveAPI: NSObject {
     }
     
 
-    func searchTermURL(searchTerm: String, startDate: String?, endDate: String?) -> String {
-        // Search in date range
-        //https://archive.org/services/search/v1/scrape?q=collection%3A%28GratefulDead%29%20AND%20date%3A%5B1987-01-01%20TO%201987-12-31%5D
-        //https://archive.org/services/search/v1/scrape?fields=date,venue,transferer,source,collection&q=collection%3A%28GratefulDead%20AND%20stream_only%29%20AND%20date%3A%5B1992-05-01%20TO%201992-05-31%5D
-        //let url = archiveAPI.searchTermURL(searchTerm: searchTerm, startDate: startDate, endDate: endDate)
-        let sd = "1965-01-01"
-        let ed = "1995-12-31"
+    func searchTermURL(searchTerm: String, startYear: String?, endYear: String?) -> String {
+
+        let startMonthDay = "01-01"
+        let endMonthDay = "12-31"
+
         let andString = "%20AND%20"
         let dateString = "date%3A%5B"
         let toString = "%20TO%20"
@@ -149,18 +144,18 @@ class ArchiveAPI: NSObject {
         url += "collection%3A%28GratefulDead%20AND%20stream_only%29"
         url += andString
         url += dateString
-        if let s = startDate {
-            url += "-" + s
+        if let sy = startYear {
+            url += sy + "-" + startMonthDay
         }
         else {
-            url += "-" + sd
+            url += "1965-01-01"
         }
         url += toString
-        if let e = endDate {
-            url += "-" + e
+        if let ey = endYear {
+            url += ey + "-" + endMonthDay
         }
         else {
-            url += "-" + ed
+            url += "1995-12-31"
         }
         url += "%5D"
         print(url)

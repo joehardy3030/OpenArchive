@@ -64,11 +64,7 @@ class SearchViewController: ArchiveSuperViewController {
             self.endYear = ey
         }
         self.searchTerm = songTextField.text
-        print(self.startYear)
-        print(self.endYear)
-        print(self.searchTerm!)
         performSegue(withIdentifier: "showSearchResults", sender: self)
-       // getIASearchTerm()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -81,7 +77,6 @@ class SearchViewController: ArchiveSuperViewController {
                 target.sbdOnly = true
                 target.db = db
                 target.getIASearchTerm()
-
             }
         }
     }

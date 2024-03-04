@@ -163,6 +163,8 @@ class ArchiveAPI: NSObject {
             url += "1995-12-31"
         }
         url += "%5D"
+        url += andString
+        url += "avg_rating%3A%5B4.5%20TO%205.0%5D"
         print(url)
         return url
     }

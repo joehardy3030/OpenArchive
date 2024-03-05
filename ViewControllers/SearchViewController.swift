@@ -92,6 +92,7 @@ class SearchViewController: ArchiveSuperViewController {
                 target.searchTerm = self.searchTerm
                 target.minRating = self.minRating
                 target.sbdOnly = true
+                target.resetMonth()
                 target.db = db
                 target.getIASearchTerm()
             }

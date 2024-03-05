@@ -315,6 +315,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     }
     
     private func saveDownloadData() {
+        //print(showMetadataModel)
         let _ = network.addDownloadDataDoc(showMetadataModel: showMetadataModel)
         print("Save download data")
         playButtonLabel.setTitle("Play", for: .normal)

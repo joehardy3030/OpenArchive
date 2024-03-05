@@ -1040,7 +1040,7 @@
         <!--Search-->
         <scene sceneID="qL6-gM-2Vy">
             <objects>
-                <navigationController id="iFd-OQ-bOu" sceneMemberID="viewController">
+                <navigationController id="iFd-OQ-bOu" customClass="ArchiveNavigationController" customModule="Chateau" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Search" id="GHO-Dv-l9n">
                         <imageReference key="image" image="magnifyingglass" catalog="system" symbolScale="default"/>
                         <imageReference key="landscapeImage" image="magnifyingglass" catalog="system" symbolScale="default"/>

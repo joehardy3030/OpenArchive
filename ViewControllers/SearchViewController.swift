@@ -60,8 +60,16 @@ class SearchViewController: ArchiveSuperViewController {
         view.addSubview(endDateTextField)
         view.addSubview(minRatingTextField)
         view.addSubview(searchButton)
+        
+        // Dismiss keyboard when tapping outside the text boxes
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+           view.addGestureRecognizer(tapGesture)
     }
-    
+
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
+    }
+
     @objc func searchButtonTapped() {
         if let sy = startDateTextField.text {
             self.startYear = sy
@@ -71,6 +79,7 @@ class SearchViewController: ArchiveSuperViewController {
         }
         self.searchTerm = songTextField.text
         self.minRating = minRatingTextField.text
+        view.endEditing(true)
         performSegue(withIdentifier: "showSearchResults", sender: self)
     }
     

@@ -126,8 +126,8 @@ class ArchiveAPI: NSObject {
         return url
     }
     
-
-    func searchTermURL(searchTerm: String?, startYear: String?, endYear: String?) -> String {
+    /*
+    func searchTermURL(searchTerm: String?, minRating: String?, startYear: String?, endYear: String?) -> String {
 
         let startMonthDay = "01-01"
         let endMonthDay = "12-31"
@@ -163,10 +163,47 @@ class ArchiveAPI: NSObject {
             url += "1995-12-31"
         }
         url += "%5D"
-        url += andString
-        url += "avg_rating%3A%5B4.5%20TO%205.0%5D"
+        if let mr = minRating {
+            if mr != "" {
+                url += andString
+                url += "avg_rating%3A%5B" + mr + "%20TO%205.0%5D"
+            }
+        }
         print(url)
         return url
+    }
+     */
+    func searchTermURL(searchTerm: String?, minRating: String?, startYear: String?, endYear: String?) -> String {
+        let startMonthDay = "01-01"
+        let endMonthDay = "12-31"
+
+        var components = URLComponents(string: baseURLString)
+        components?.path = "/services/search/v1/scrape"
+
+        var queryItems = [URLQueryItem]()
+
+        // Fields
+        let fields = "date,venue,transferer,source,coverage,stars,avg_rating,num_reviews"
+        queryItems.append(URLQueryItem(name: "fields", value: fields))
+
+        // Query
+        var query = "collection:(GratefulDead AND stream_only)"
+        if let st = searchTerm, !st.isEmpty {
+            query += " AND \(st)"
+        }
+        let startDate = startYear ?? "1965"
+        let endDate = endYear ?? "1995"
+        query += " AND date:[\(startDate)-\(startMonthDay) TO \(endDate)-\(endMonthDay)]"
+        if let mr = minRating, !mr.isEmpty {
+            query += " AND avg_rating:[\(mr) TO 5.0]"
+        }
+        queryItems.append(URLQueryItem(name: "q", value: query))
+
+        components?.queryItems = queryItems
+
+        guard let url = components?.url else { return "" }
+        print(url.absoluteString)
+        return url.absoluteString
     }
      
     

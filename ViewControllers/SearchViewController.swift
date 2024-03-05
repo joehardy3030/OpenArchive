@@ -13,9 +13,11 @@ class SearchViewController: ArchiveSuperViewController {
      let songTextField = UITextField()
      let startDateTextField = UITextField()
      let endDateTextField = UITextField()
+    let minRatingTextField = UITextField()
      let searchButton = UIButton()
      var startYear = "1965"
      var endYear = "1995"
+    var minRating: String?
     var searchTerm: String?
      var showMetadatas: ShowMetadatas?
 
@@ -29,6 +31,8 @@ class SearchViewController: ArchiveSuperViewController {
         // Configure text fields with borders
         songTextField.placeholder = "Enter search term"
         songTextField.borderStyle = .roundedRect
+        minRatingTextField.placeholder = "1-5 stars min"
+        minRatingTextField.borderStyle = .roundedRect
         //startDateTextField.placeholder = "Start Date (YYYY-MM-DD)"
         startDateTextField.placeholder = "Start Year (YYYY)"
         startDateTextField.borderStyle = .roundedRect
@@ -46,13 +50,15 @@ class SearchViewController: ArchiveSuperViewController {
         songTextField.frame = CGRect(x: 20, y: 100, width: 200, height: 40)
         startDateTextField.frame = CGRect(x: 20, y: 150, width: 200, height: 40) // New
         endDateTextField.frame = CGRect(x: 20, y: 200, width: 200, height: 40) // New
-        searchButton.frame = CGRect(x: 20, y: 250, width: 200, height: 40)
+        minRatingTextField.frame = CGRect(x: 20, y: 250, width: 200, height: 40) // New
+        searchButton.frame = CGRect(x: 20, y: 300, width: 200, height: 40)
         
         // Add subviews
         view.addSubview(songLabel)
         view.addSubview(songTextField)
         view.addSubview(startDateTextField)
         view.addSubview(endDateTextField)
+        view.addSubview(minRatingTextField)
         view.addSubview(searchButton)
     }
     
@@ -64,6 +70,7 @@ class SearchViewController: ArchiveSuperViewController {
             self.endYear = ey
         }
         self.searchTerm = songTextField.text
+        self.minRating = minRatingTextField.text
         performSegue(withIdentifier: "showSearchResults", sender: self)
     }
     
@@ -74,6 +81,7 @@ class SearchViewController: ArchiveSuperViewController {
                 target.startYear = self.startYear
                 target.endYear = self.endYear
                 target.searchTerm = self.searchTerm
+                target.minRating = self.minRating
                 target.sbdOnly = true
                 target.db = db
                 target.getIASearchTerm()

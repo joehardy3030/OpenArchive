@@ -19,6 +19,7 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
     var startYear: String?
     var endYear: String?
     var searchTerm: String?
+    var minRating: String?
     var identifiers: [String]?
     var showMetadatas: [ShowMetadata]?
     var sbdOnly = true
@@ -54,7 +55,7 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
     
     
     func getIASearchTerm() {
-        let url = archiveAPI.searchTermURL(searchTerm: self.searchTerm ?? "", startYear: self.startYear, endYear: self.endYear)
+        let url = archiveAPI.searchTermURL(searchTerm: self.searchTerm ?? "", minRating: self.minRating, startYear: self.startYear, endYear: self.endYear)
         // print(url)
         archiveAPI.getIARequestItemsDecodable(url: url) {
             (response: ShowMetadatas?) -> Void in

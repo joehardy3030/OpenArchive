@@ -173,10 +173,10 @@ class ArchiveAPI: NSObject {
         return url
     }
      */
-    func searchTermURL(searchTerm: String?, minRating: String?, startYear: String?, endYear: String?) -> String {
+    func searchTermURL(searchTerm: String?, venue: String?, minRating: String?, startYear: String?, endYear: String?) -> String {
         let startMonthDay = "01-01"
         let endMonthDay = "12-31"
-
+        
         var components = URLComponents(string: baseURLString)
         components?.path = "/services/search/v1/scrape"
 
@@ -189,13 +189,32 @@ class ArchiveAPI: NSObject {
         // Query
         var query = "collection:(GratefulDead AND stream_only)"
         if let st = searchTerm, !st.isEmpty {
-            query += " AND \(st)"
+            let stPlus = st.replacingOccurrences(of: " ", with: "+")
+            query += " AND \(stPlus)"
         }
+        if let sy = startYear, !sy.isEmpty {
+            query += " AND date:[\(sy)-\(startMonthDay) "
+        }
+        else {
+            query += " AND date:[1965-\(startMonthDay) "
+        }
+        if let ey = endYear, !ey.isEmpty {
+            query += "TO \(ey)-\(endMonthDay)]"
+        }
+        else {
+            query += "TO 1995-\(endMonthDay)]"
+        }
+        /*
         let startDate = startYear ?? "1965"
         let endDate = endYear ?? "1995"
         query += " AND date:[\(startDate)-\(startMonthDay) TO \(endDate)-\(endMonthDay)]"
-        if let mr = minRating, !mr.isEmpty {
-            query += " AND avg_rating:[\(mr) TO 5.0]"
+        */
+         if let mr = minRating, !mr.isEmpty {
+            query += " AND (avg_rating:[\(mr) TO 5.0])"
+        }
+        if let vu = venue, !vu.isEmpty {
+            let vuPlus = vu.replacingOccurrences(of: " ", with: "+")
+            query += " AND (venue:\(vuPlus))"
         }
         queryItems.append(URLQueryItem(name: "q", value: query))
 

@@ -100,10 +100,7 @@ class ArchiveAPI: NSObject {
     }
 
     func dateRangeYearURL(year: Int, sbdOnly: Bool) -> String {
-        // Search in date range
-        //https://archive.org/services/search/v1/scrape?q=collection%3A%28GratefulDead%29%20AND%20date%3A%5B1987-01-01%20TO%201987-12-31%5D
-        //https://archive.org/services/search/v1/scrape?fields=date,venue,transferer,source,collection&q=collection%3A%28GratefulDead%20AND%20stream_only%29%20AND%20date%3A%5B1992-05-01%20TO%201992-05-31%5D
-        //let sbdOnly = true
+
         let firstDayMonth = "01-01"
         let lastDayMonth = "12-31"
         let andString = "%20AND%20"
@@ -128,18 +125,137 @@ class ArchiveAPI: NSObject {
         print(url)
         return url
     }
-
     
+    /*
+    func searchTermURL(searchTerm: String?, minRating: String?, startYear: String?, endYear: String?) -> String {
+
+        let startMonthDay = "01-01"
+        let endMonthDay = "12-31"
+
+        let andString = "%20AND%20"
+        let dateString = "date%3A%5B"
+        let toString = "%20TO%20"
+        var url = baseURLString
+                
+        url += "services/search/v1/scrape?"
+        url += "fields=date,venue,transferer,source,coverage,stars,avg_rating,num_reviews&"
+        if let st = searchTerm {
+            let searchTermPlus = st.replacingOccurrences(of: " ", with: "+")
+            url += "q=" + searchTermPlus + andString
+        }
+        else {
+            url += "q="
+        }
+        url += "collection%3A%28GratefulDead%20AND%20stream_only%29"
+        url += andString
+        url += dateString
+        if let sy = startYear {
+            url += sy + "-" + startMonthDay
+        }
+        else {
+            url += "1965-01-01"
+        }
+        url += toString
+        if let ey = endYear {
+            url += ey + "-" + endMonthDay
+        }
+        else {
+            url += "1995-12-31"
+        }
+        url += "%5D"
+        if let mr = minRating {
+            if mr != "" {
+                url += andString
+                url += "avg_rating%3A%5B" + mr + "%20TO%205.0%5D"
+            }
+        }
+        print(url)
+        return url
+    }
+     */
+    func searchTermURL(searchTerm: String?, venue: String?, minRating: String?, startYear: String?, endYear: String?) -> String {
+        let startMonthDay = "01-01"
+        let endMonthDay = "12-31"
+        
+        var components = URLComponents(string: baseURLString)
+        components?.path = "/services/search/v1/scrape"
+
+        var queryItems = [URLQueryItem]()
+
+        // Fields
+        let fields = "date,venue,transferer,source,coverage,stars,avg_rating,num_reviews"
+        queryItems.append(URLQueryItem(name: "fields", value: fields))
+
+        // Query
+        var query = "collection:(GratefulDead AND stream_only)"
+        if let st = searchTerm, !st.isEmpty {
+            let stPlus = st.replacingOccurrences(of: " ", with: "+")
+            query += " AND \(stPlus)"
+        }
+        if let sy = startYear, !sy.isEmpty {
+            query += " AND date:[\(sy)-\(startMonthDay) "
+        }
+        else {
+            query += " AND date:[1965-\(startMonthDay) "
+        }
+        if let ey = endYear, !ey.isEmpty {
+            query += "TO \(ey)-\(endMonthDay)]"
+        }
+        else {
+            query += "TO 1995-\(endMonthDay)]"
+        }
+        /*
+        let startDate = startYear ?? "1965"
+        let endDate = endYear ?? "1995"
+        query += " AND date:[\(startDate)-\(startMonthDay) TO \(endDate)-\(endMonthDay)]"
+        */
+         if let mr = minRating, !mr.isEmpty {
+            query += " AND (avg_rating:[\(mr) TO 5.0])"
+        }
+        if let vu = venue, !vu.isEmpty {
+            let vuPlus = vu.replacingOccurrences(of: " ", with: "+")
+            query += " AND (venue:\(vuPlus))"
+        }
+        queryItems.append(URLQueryItem(name: "q", value: query))
+
+        components?.queryItems = queryItems
+
+        guard let url = components?.url else { return "" }
+        print(url.absoluteString)
+        return url.absoluteString
+    }
+     
+    
+    //  let url = archiveAPI.dateRangeURL(year: 1973, month: 3, sbdOnly: true)
+    //  archiveAPI.getIARequestItemsDecodable(url: url)
+
+
+    /*
     func getIARequestMetadata(url: String, completion: @escaping (ShowMetadataModel) -> Void) {
         AF.request(url).responseJSON { response in
             if let json = response.value {
                 let j = JSON(json)
+                print(j)
                 let showMetadataModel = self.deserializeMetadataModel(json: j)
                 completion(showMetadataModel)
             }
         }
     }
+    */
     
+    func getIARequestMetadataDecodable(url: String, completion: @escaping (ShowMetadataModel) -> Void) {
+        AF.request(url).responseDecodable(of: ShowMetadataModel.self) { response in
+            print(response)
+            switch response.result {
+            case .success(let showMetadataModel):
+                completion(showMetadataModel)
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+
+    /*
     func deserializeMetadataModel(json: JSON) -> ShowMetadataModel {
         let files_count = json["files_count"].int
         let created = json["created"].int
@@ -151,7 +267,9 @@ class ArchiveAPI: NSObject {
         let files = deserializeFiles(json:fl)
         return ShowMetadataModel(metadata: metadata, files: files, files_count: files_count, created: created, item_size: item_size, dir: dir)
     }
+     */
     
+    /*
     func deserializeFiles(json: JSON) -> [ShowFile] {
         var fileArray = [ShowFile]()
         for f in json {
@@ -176,7 +294,9 @@ class ArchiveAPI: NSObject {
         }
         return fileArray
     }
-    
+    */
+     
+    /*
     func deserializeMetadata(json: JSON) -> ShowMetadata {
 
         let identifier = json["identifier"].string
@@ -197,24 +317,10 @@ class ArchiveAPI: NSObject {
         
         return ShowMetadata(identifier: identifier, title: title, creator: creator, mediatype: mediatype, collection: collection, type: type, description: description, date: date, year: year, venue: venue, transferer: transferer, source: source, coverage: coverage, avg_rating: avg_rating, num_reviews: num_reviews)
     }
+    */
+
     
     /*
-    func getIARequestItems(url: String, completion: @escaping ([ShowMetadata]?) -> Void) {
-        AF.request(url).responseJSON { response in
-            if let json = response.value {
-                let j = JSON(json)
-                let items = j["items"]
-                var showMetadatas = [ShowMetadata]()
-                for i in items {
-                    let showMD = self.deserializeMetadata(json: i.1)
-                    showMetadatas.append(showMD)
-                }
-                completion(showMetadatas)
-            }
-        }
-    }
-    */
-    
     func getIARequestItems(url: String, completion: @escaping ([ShowMetadata]?) -> Void) {
         
         AF.request(url).responseJSON { response in
@@ -234,21 +340,20 @@ class ArchiveAPI: NSObject {
             }
         }
     }
+    */
     
-    /*
-    func getIARequestItems(url: String, completion: @escaping ([ShowMetadata]?) -> Void) {
-        AF.request(url).responseDecodable(of: [String: [ShowMetadata]].self) { response in
+    func getIARequestItemsDecodable(url: String, completion: @escaping (ShowMetadatas?) -> Void) {
+        AF.request(url).responseDecodable(of: ShowMetadatas.self) { response in
             switch response.result {
-            case .success(let responseValue):
-                let showMetadatas = responseValue // Assuming 'ResponseType' has a property 'items' of type '[ShowMetadata]'
+            case .success(let showMetadatas):
                 completion(showMetadatas)
             case .failure(let error):
-                print("Error: \(error)")
+                print(error)
                 completion(nil)
             }
         }
     }
-     */
+     
     
     func getIADownload(url: URL?, completion: @escaping (URL?) -> Void) {
         //https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#downloading-data-to-a-file
@@ -258,7 +363,7 @@ class ArchiveAPI: NSObject {
             .downloadProgress { (progress) in
                 print("Progress: \(progress.fractionCompleted)")
             }
-            .responseJSON { response in
+            .response { response in
                 completion(response.fileURL)
             }
     }

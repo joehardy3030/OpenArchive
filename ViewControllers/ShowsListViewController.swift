@@ -16,6 +16,10 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
     @IBOutlet weak var showListTableView: UITableView!
     var year: Int?
     var month: Int?
+    //var startYear: String?
+    //var endYear: String?
+    //var searchTerm: String?
+    //var minRating: String?
     var identifiers: [String]?
     var showMetadatas: [ShowMetadata]?
     var sbdOnly = true
@@ -28,6 +32,7 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
         sbdToggle.selectedSegmentIndex = getSbdToggle()
     }
     
+    /*
     func getIADateRange() {
         guard let year = self.year, let month = self.month else { return }
         let url = archiveAPI.dateRangeURL(year: year, month: month, sbdOnly: sbdOnly)
@@ -46,7 +51,48 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
             }
         }
     }
+     */
     
+    
+    func getIASearchTerm(searchTermsModel: SearchTermsModel) {
+
+        let url = archiveAPI.searchTermURL(searchTerm: searchTermsModel.searchTerm ?? "",
+                                           venue: searchTermsModel.venue,
+                                           minRating: searchTermsModel.minRating,
+                                           startYear: searchTermsModel.startYear,
+                                           endYear: searchTermsModel.endYear)
+        archiveAPI.getIARequestItemsDecodable(url: url) {
+            (response: ShowMetadatas?) -> Void in
+             DispatchQueue.main.async{
+                if let r = response {
+                    self.showMetadatas = r.items?.sorted(by: { $0.date! < $1.date! })
+                    // print(r)
+                    self.showListTableView.reloadData()
+                }
+            }
+        }
+    }
+    
+    
+    func getIADateRange() {
+        guard let year = self.year, let month = self.month else { return }
+        let url = archiveAPI.dateRangeURL(year: year, month: month, sbdOnly: sbdOnly)
+
+        archiveAPI.getIARequestItemsDecodable(url: url) {
+            (response: ShowMetadatas?) -> Void in
+            
+             DispatchQueue.main.async{
+                if let r = response {
+                    //self.showMetadatas = r.items
+                    //if let s = self.showMetadatas {
+                    self.showMetadatas = r.items?.sorted(by: { $0.date! < $1.date! })
+                    //}
+                    self.showListTableView.reloadData()
+                }
+            }
+        }
+    }
+
     @IBAction func sbdToggle(_ sender: Any) {
         if sbdToggle.selectedSegmentIndex == 0 {
             sbdOnly = false

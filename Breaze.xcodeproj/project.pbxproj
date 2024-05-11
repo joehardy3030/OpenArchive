@@ -14,6 +14,7 @@
 		C1A86AE7CB901E9AE4559733 /* Pods_BreazeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC1F0E4AA282D7B36ED40FA4 /* Pods_BreazeTests.framework */; };
 		CBC5228E1B6761BEF185B8AD /* Pods_Breaze.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A700AD3051D76CBB67400BC /* Pods_Breaze.framework */; };
 		D51C53AE71B1FA9965B4E724 /* Pods_BreazeUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A926AF80C0D08EF375C20D5 /* Pods_BreazeUITests.framework */; };
+		D814AEE32B6F35AF00C58FB3 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D814AEE22B6F35AF00C58FB3 /* SearchViewController.swift */; };
 		D830CC4E25AC026D00BD76A1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D830CC4D25AC026D00BD76A1 /* GoogleService-Info.plist */; };
 		D83EB53E24CE33C60016726C /* ArchiveNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83EB53D24CE33C60016726C /* ArchiveNavigationController.swift */; };
 		D83EB54024CE49880016726C /* StartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83EB53F24CE49880016726C /* StartViewController.swift */; };
@@ -22,6 +23,7 @@
 		D8449A6824AEF3C200F113F4 /* MonthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8449A6724AEF3C200F113F4 /* MonthViewController.swift */; };
 		D8449A6A24AEF57600F113F4 /* MonthTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8449A6924AEF57600F113F4 /* MonthTableViewCell.swift */; };
 		D845E03924D7642A003381B6 /* ModalPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D845E03824D7642A003381B6 /* ModalPlayerViewController.swift */; };
+		D8484AA42B97FB4200CEE940 /* SearchTermsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8484AA32B97FB4200CEE940 /* SearchTermsModel.swift */; };
 		D848521929454EEF00CD3EA4 /* CarPlayTemplateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D848521829454EEF00CD3EA4 /* CarPlayTemplateManager.swift */; };
 		D84A3AAB24E3B02C00A468E0 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84A3AAA24E3B02C00A468E0 /* ShareViewController.swift */; };
 		D84C3D8224CD164C007AF4EE /* ShowDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84C3D8124CD164C007AF4EE /* ShowDetailTableViewCell.swift */; };
@@ -83,6 +85,7 @@
 		9C04CF7422E0CBAEE4822157 /* Pods-BreazeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BreazeTests.debug.xcconfig"; path = "Target Support Files/Pods-BreazeTests/Pods-BreazeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BC1F0E4AA282D7B36ED40FA4 /* Pods_BreazeTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BreazeTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCE8FC1545CF717B71C529A8 /* Pods-BreazeUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BreazeUITests.debug.xcconfig"; path = "Target Support Files/Pods-BreazeUITests/Pods-BreazeUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		D814AEE22B6F35AF00C58FB3 /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		D830CC4D25AC026D00BD76A1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D83EB53D24CE33C60016726C /* ArchiveNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveNavigationController.swift; sourceTree = "<group>"; };
 		D83EB53F24CE49880016726C /* StartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartViewController.swift; sourceTree = "<group>"; };
@@ -91,6 +94,7 @@
 		D8449A6724AEF3C200F113F4 /* MonthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthViewController.swift; sourceTree = "<group>"; };
 		D8449A6924AEF57600F113F4 /* MonthTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthTableViewCell.swift; sourceTree = "<group>"; };
 		D845E03824D7642A003381B6 /* ModalPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalPlayerViewController.swift; sourceTree = "<group>"; };
+		D8484AA32B97FB4200CEE940 /* SearchTermsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTermsModel.swift; sourceTree = "<group>"; };
 		D848521829454EEF00CD3EA4 /* CarPlayTemplateManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CarPlayTemplateManager.swift; sourceTree = "<group>"; };
 		D84A3AAA24E3B02C00A468E0 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		D84C3D8124CD164C007AF4EE /* ShowDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowDetailTableViewCell.swift; sourceTree = "<group>"; };
@@ -247,11 +251,12 @@
 				D83EB53F24CE49880016726C /* StartViewController.swift */,
 				D83EB54124CE62170016726C /* ArchiveTabBarController.swift */,
 				D83EB53D24CE33C60016726C /* ArchiveNavigationController.swift */,
-				D8449A6724AEF3C200F113F4 /* MonthViewController.swift */,
 				7984F98C24A4565400989DB8 /* YearViewController.swift */,
+				D8449A6724AEF3C200F113F4 /* MonthViewController.swift */,
 				D852C3C624B1219400029EB9 /* ShowsListViewController.swift */,
 				D84D2B8D24C2925A006C8175 /* DownloadsViewController.swift */,
 				D8EECF552B1BA86100CD3235 /* ChateauGPTViewController.swift */,
+				D814AEE22B6F35AF00C58FB3 /* SearchViewController.swift */,
 				D852C3CA24B1AA1C00029EB9 /* ShowViewController.swift */,
 				D89D789825901D80009324EE /* ArchivePlayerViewController.swift */,
 				D845E03824D7642A003381B6 /* ModalPlayerViewController.swift */,
@@ -268,6 +273,7 @@
 				D8717D37258FE93E00C86954 /* SongDetailsModel.swift */,
 				D850B8FC24B26EAC00E3DC6B /* ShowMetadataModel.swift */,
 				D8ACD2E12B1D6CC30097224B /* ChateauGPTModel.swift */,
+				D8484AA32B97FB4200CEE940 /* SearchTermsModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -646,8 +652,10 @@
 				D83EB54224CE62170016726C /* ArchiveTabBarController.swift in Sources */,
 				D83EB54024CE49880016726C /* StartViewController.swift in Sources */,
 				D852C3C924B121E000029EB9 /* ShowsListTableViewCell.swift in Sources */,
+				D814AEE32B6F35AF00C58FB3 /* SearchViewController.swift in Sources */,
 				D87109F425ABF09D00CA133E /* CarPlaySceneDelegate.swift in Sources */,
 				7984F98F24A56EFD00989DB8 /* ArchiveAPI.swift in Sources */,
+				D8484AA42B97FB4200CEE940 /* SearchTermsModel.swift in Sources */,
 				791CE1C120B252F100299F76 /* Utils.swift in Sources */,
 				D852C3C724B1219400029EB9 /* ShowsListViewController.swift in Sources */,
 				D848521929454EEF00CD3EA4 /* CarPlayTemplateManager.swift in Sources */,
@@ -842,7 +850,7 @@
 				CODE_SIGN_ENTITLEMENTS = Breaze/Breaze.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 35;
+				CURRENT_PROJECT_VERSION = 37;
 				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				INFOPLIST_FILE = Breaze/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Chateau Archive";
@@ -852,7 +860,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.7.1;
+				MARKETING_VERSION = 3.8.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.carquinez.chateau;
 				PRODUCT_NAME = Chateau;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -869,7 +877,7 @@
 				CODE_SIGN_ENTITLEMENTS = Breaze/Breaze.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 35;
+				CURRENT_PROJECT_VERSION = 37;
 				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				INFOPLIST_FILE = Breaze/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Chateau Archive";
@@ -879,7 +887,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.7.1;
+				MARKETING_VERSION = 3.8.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.carquinez.chateau;
 				PRODUCT_NAME = Chateau;
 				PROVISIONING_PROFILE_SPECIFIER = "";

@@ -28,7 +28,7 @@ struct ShowMetadata: Codable {
     var title: String?
     var creator: String?
     var mediatype: String?
-    var collection: String?
+    var collection: [String]?
     var type: String?
     var description: String?
     var date: String?
@@ -49,6 +49,10 @@ extension ShowMetadata {
     }
 }
 
+struct ShowMetadatas:Codable {
+    var items: [ShowMetadata]?
+}
+
 struct ShowFile: Codable {
     var name: String?
     var source: String?
@@ -59,7 +63,7 @@ struct ShowFile: Codable {
     var bitrate: String?
     var length: String?
     var format: String?
-    var original: String?
+    // var original: String?
     var mtime: String?
     var size: String?
     var md5: String?

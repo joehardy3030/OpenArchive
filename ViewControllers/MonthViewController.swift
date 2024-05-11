@@ -79,12 +79,13 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
         }
     }
     
+    
     func getIADateRangeYear(year: Int, sbdOnly: Bool) {
         let url = archiveAPI.dateRangeYearURL(year: year, sbdOnly: sbdOnly)
 
-        archiveAPI.getIARequestItems(url: url) { (response: [ShowMetadata]?) -> Void in
+        archiveAPI.getIARequestItemsDecodable(url: url) { (response: ShowMetadatas?) -> Void in
             DispatchQueue.main.async {
-                if let showMetadatas = response {
+                if let showMetadatas = response?.items {
                     // Reset the monthCount dictionary for new data
                     self.monthCount = [:]
 

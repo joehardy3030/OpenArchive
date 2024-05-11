@@ -130,7 +130,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         
         guard let id = self.showMetadata?.identifier else { return }
         let url = archiveAPI.metadataURL(identifier: id)
-        archiveAPI.getIARequestMetadata(url: url) {
+        archiveAPI.getIARequestMetadataDecodable(url: url) {
             (response: ShowMetadataModel) -> Void in
             self.showMetadataModel = response
             if let ar = self.showMetadata?.avg_rating, let nr = self.showMetadata?.num_reviews {
@@ -138,6 +138,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 self.showMetadataModel?.metadata?.num_reviews = nr
             }
             if let files = self.showMetadataModel?.files {
+                print(files)
                 var mp3s = [ShowMP3]()
                 for f in files {
                     if (f.format?.contains("MP3"))! {
@@ -154,7 +155,8 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             
         }
     }
-    
+
+
     ///Download manager class
     func getShareSnaptshot() {
         mp3index = 0
@@ -313,6 +315,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     }
     
     private func saveDownloadData() {
+        //print(showMetadataModel)
         let _ = network.addDownloadDataDoc(showMetadataModel: showMetadataModel)
         print("Save download data")
         playButtonLabel.setTitle("Play", for: .normal)

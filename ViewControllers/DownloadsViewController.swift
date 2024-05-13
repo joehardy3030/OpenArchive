@@ -24,17 +24,60 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
         //self.listFiles()
         self.getDownloadedShows()
         print("DownloadsViewController")
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Sign out", style: .plain, target: self, action: #selector(signOutTapped))
+
     }
     
+    
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         print("DownloadsViewController")
-        authUI = FUIAuth.defaultAuthUI()
-        if let authVC = self.authUI?.authViewController() {
-            print("authVC")
-            self.show(authVC, sender: self)
-        }
+        
         self.getDownloadedShows()
+        
+        // Check if a user is not logged in before showing the authVC
+        if Auth.auth().currentUser == nil {
+            authUI = FUIAuth.defaultAuthUI()
+            if let authVC = self.authUI?.authViewController() {
+                print("authVC presented for logged out user")
+                self.present(authVC, animated: true, completion: nil)
+            }
+        } else {
+            print("User is already logged in")
+        }
+    }
+
+    /*
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        print("DownloadsViewController")
+        self.getDownloadedShows()
+        if let authVC = self.authUI?.authViewController() {
+            authUI = FUIAuth.defaultAuthUI()
+            if let authVC = self.authUI?.authViewController() {
+                print("authVC")
+                self.present(authVC, animated: true, completion: nil)
+                // self.show(authVC, sender: self)
+            }
+            else {
+                print("User is already logged in")
+            }
+        }
+        
       //\  self.title = DeepLinkManager.shared.deepLinkURL?.absoluteString
+    }
+    */
+    
+    
+    @objc func signOutTapped() {
+        let firebaseAuth = Auth.auth()
+        do {
+            try firebaseAuth.signOut()
+            // After sign out, perhaps return to the login screen or perform other appropriate actions
+            print("User signed out successfully")
+        } catch let signOutError as NSError {
+            print("Error signing out: %@", signOutError)
+        }
     }
     
     func listFiles() {

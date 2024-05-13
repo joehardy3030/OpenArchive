@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FirebaseAuthUI
 
 @available(iOS 13.0, *)
 class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
@@ -26,6 +27,12 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        print("DownloadsViewController")
+        authUI = FUIAuth.defaultAuthUI()
+        if let authVC = self.authUI?.authViewController() {
+            print("authVC")
+            self.show(authVC, sender: self)
+        }
         self.getDownloadedShows()
       //\  self.title = DeepLinkManager.shared.deepLinkURL?.absoluteString
     }

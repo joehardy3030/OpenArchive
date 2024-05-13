@@ -77,6 +77,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, FUIAuthDelegate {
                      navController.pushViewController(vc, animated: true)
                  }
              }
+            
          } else {
              print("no root view")
          }
@@ -114,6 +115,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, FUIAuthDelegate {
     
     func setupFirebase() {
         FirebaseApp.configure()
+        print("Configure Firesbase in Scene Delegate")
         self.auth = Auth.auth()
         self.authUI = FUIAuth.defaultAuthUI()
         // You need to adopt a FUIAuthDelegate protocol to receive callback

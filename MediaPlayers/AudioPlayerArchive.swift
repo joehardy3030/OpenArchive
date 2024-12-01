@@ -138,7 +138,7 @@ class AudioPlayerArchive: NSObject {
         if let mp3s = showMetadataModel?.mp3Array {
             if mp3s.count > 0 {
                 for i in 0...(mp3s.count - 1) {
-                    if mp3s[i].name == name {
+                    if mp3s[i].name == name?.removingPercentEncoding {
                         return i
                         }
                 }

@@ -33,6 +33,7 @@ struct ChateauGPTParameters: Encodable {
     var stream: Bool
 }
 
+
 struct ChateauGPTMessage: Codable {
     var role: String
     var content: String

@@ -83,6 +83,6 @@ node_modules/
 .env
 
 #Don't include the GoogleInfo
-GoogleServices-Info.plist
+Breaze/GoogleServices-Info.plist
 
 *.mobileprovision

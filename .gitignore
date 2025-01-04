@@ -81,3 +81,8 @@ node_modules/
 
 # dotenv environment variables file
 .env
+
+#Don't include the GoogleInfo
+GoogleServices-Info.plist
+
+*.mobileprovision

@@ -12,13 +12,15 @@ import CarPlay
 @available(iOS 14.0, *)
 class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
     var interfaceController: CPInterfaceController?
+    var templateManager: CarPlayTemplateManager?
     
     // CarPlay connected
     func templateApplicationScene(_ templateApplicationScene: CPTemplateApplicationScene,
                                   didConnect interfaceController: CPInterfaceController) {
         self.interfaceController = interfaceController
         // Hand a reference to the interface controller to CarPlayDownloadsTemplate
-        _ = CarPlayTemplateManager(interfaceController: interfaceController)
+        self.templateManager = CarPlayTemplateManager(interfaceController: interfaceController)
+        print("CarPlayTemplateManager initialized in scene delegate")
     }
     
     // CarPlay disconnected

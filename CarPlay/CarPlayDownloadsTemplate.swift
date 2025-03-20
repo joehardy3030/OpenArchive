@@ -37,14 +37,14 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
     var isPlaying = false
     fileprivate(set) var authStateListenerHandle: AuthStateDidChangeListenerHandle?
 
-    init(interfaceController: CPInterfaceController?, decade: String?) {
+    init(interfaceController: CPInterfaceController?, decade: String?, year: String?) {
         self.interfaceController = interfaceController
         super.init()
         self.interfaceController?.delegate = self
         self.db = Firestore.firestore()
         self.player = AudioPlayerArchive.shared
         self.network = NetworkUtility(db: db)
-        self.getDownloadedShows(decade: decade)
+        self.getDownloadedShows(decade: decade, year: year)
         playableContentManager = MPPlayableContentManager.shared()
         playableContentManager?.dataSource = self
         playableContentManager?.delegate = self
@@ -62,12 +62,25 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
         return item
     }
     
-    func getDownloadedShows(decade: String?) {
+    func getDownloadedShows(decade: String?, year: String?) {
         network.getAllDownloadDocs(decade: decade) {
             (response: [ShowMetadataModel]?) -> Void in
             DispatchQueue.main.async{
                 if let r = response {
-                    self.shows = r
+                    // Filter by year if specified
+                    if let year = year {
+                        self.shows = r.filter { show in
+                            if let dateString = show.metadata?.date {
+                                let date = self.utils.getDateFromDateString(datetime: dateString)
+                                let calendar = Calendar.current
+                                let showYear = calendar.component(.year, from: date ?? Date())
+                                return String(showYear) == year
+                            }
+                            return false
+                        }
+                    } else {
+                        self.shows = r
+                    }
                     if let ss = self.shows {
                         for s in ss {
                             if !self.checkTracksAndRemove(show: s) {

@@ -31,6 +31,11 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
     init(interfaceController: CPInterfaceController?) {
         self.interfaceController = interfaceController
         super.init()
+        if interfaceController == nil {
+            print("WARNING: interfaceController is nil!")
+        } else {
+            print("interfaceController initialized successfully")
+        }
         self.interfaceController?.delegate = self
         self.db = Firestore.firestore()
         self.player = AudioPlayerArchive.shared
@@ -47,9 +52,19 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
         
         for d in decades {
             let item = CPListItem(text: d, detailText: "")
-            item.handler = { item, completion in
-                print("Clicked")
-                _ = CarPlayDownloadsTemplate(interfaceController: self.interfaceController, decade: item.text)
+            item.handler = { [weak self] item, completion in
+                if let self = self {
+                    print("Selected decade: \(String(describing: item.text))")
+                    let yearsTemplate = self.yearsCPListTemplate(decade: item.text)
+                    print("Created years template for decade: \(String(describing: item.text))")
+                    print("About to push years template")
+                    self.interfaceController?.pushTemplate(yearsTemplate, animated: true) { success, error in
+                        print("Push template success: \(success)")
+                        if let error = error {
+                            print("Push template error: \(error)")
+                        }
+                    }
+                }
                 completion()
             }
             items.append(item)
@@ -57,7 +72,13 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
                 
         let section = CPListSection(items: items)
         let decadesTemplate = CPListTemplate(title: "Decades", sections: [section])
-        self.interfaceController?.setRootTemplate(decadesTemplate, animated: true)
+        print("About to set root template")
+        self.interfaceController?.setRootTemplate(decadesTemplate, animated: true) { success, error in
+            print("Set root template success: \(success)")
+            if let error = error {
+                print("Set root template error: \(error)")
+            }
+        }
     }
     
     
@@ -66,7 +87,7 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
         var yearPrefix: String
         
         if let t = decade {
-            print(t)
+            print("Creating years template for decade: \(t)")
             switch t {
             case "1960s":
                 yearPrefix = "196"
@@ -85,20 +106,22 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
         }
         
         for y in years {
-            let item = CPListItem(text: yearPrefix+y, detailText: "")
-            /*
-            item.handler = { [unowned self] (item, completion: () -> Void) in
-                
-                //self.interfaceController?.pushTemplate(CPNowPlayingTemplate.shared, animated: true)
-                // This is where we refer to the Years template and push that
-                //self.interfaceController?.pushTemplate(downloadsTemplate, animated: true)
+            let yearText = yearPrefix + y
+            let item = CPListItem(text: yearText, detailText: "")
+            item.handler = { [weak self] item, completion in
+                if let self = self {
+                    print("Selected year: \(String(describing: item.text))")
+                    // Here we'll create a new template for shows in the selected year
+                    _ = CarPlayDownloadsTemplate(interfaceController: self.interfaceController, decade: decade, year: item.text)
+                }
                 completion()
             }
-            */
             items.append(item)
         }
+        
         let section = CPListSection(items: items)
-        let yearsTemplate = CPListTemplate(title: "Years", sections: [section])
+        let yearsTemplate = CPListTemplate(title: decade ?? "Years", sections: [section])
+        print("Created years template with \(items.count) items")
         
         return yearsTemplate
     }

@@ -15,6 +15,7 @@ class ShowsListTableViewCell: UITableViewCell {
     @IBOutlet weak var transfererLabel: UILabel!
     @IBOutlet weak var sourceLabel: UILabel!
     @IBOutlet weak var starsLabel: UILabel!
+    @IBOutlet weak var collectionLabel: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()

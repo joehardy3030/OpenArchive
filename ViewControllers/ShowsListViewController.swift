@@ -29,7 +29,7 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
         super.viewDidLoad()
         self.showListTableView.delegate = self
         self.showListTableView.dataSource = self
-        self.showListTableView.rowHeight = 135.0
+        self.showListTableView.rowHeight = 170.0
         sbdToggle.selectedSegmentIndex = getSbdToggle()
     }
     
@@ -142,6 +142,11 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
             }
             cell.transfererLabel.text = showMDs[indexPath.row].transferer
             cell.sourceLabel.text = showMDs[indexPath.row].source
+            if let collections = showMDs[indexPath.row].collection {
+                cell.collectionLabel.text = collections.joined(separator: ", ")
+            } else {
+                cell.collectionLabel.text = ""
+            }
             if let s = showMDs[indexPath.row].avg_rating {
                 var starRating = String(s)
                 starRating = starRating + " stars " + String(showMDs[indexPath.row].num_reviews!) + " ratings"

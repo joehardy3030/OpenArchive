@@ -11,7 +11,8 @@ import AVKit
 import AVFoundation
 
 class CollectionViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
-    let collections = ["Grateful Dead", "BMFS"]
+    let collectionsText = ["Grateful Dead", "BMFS"]
+    let collections = ["GratefulDead","BillyStrings","PhilLeshandFriends","GooseBand","Furthur","TheOtherOnes"]
     var selectedCollection: String?
     
     @IBOutlet weak var tableView: UITableView! // Connect this in your storyboard
@@ -25,30 +26,26 @@ class CollectionViewController: ArchiveSuperViewController, UITableViewDelegate,
     // MARK: - TableView DataSource
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return collections.count
+        return collectionsText.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CollectionCell", for: indexPath)
-        cell.textLabel?.text = collections[indexPath.row]
-        print("got to here")
-        print(cell)
+        cell.textLabel?.text = collectionsText[indexPath.row]
         return cell
     }
-
-    // MARK: - TableView Delegate
-
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        selectedCollection = collections[indexPath.row]
-      //  performSegue(withIdentifier: "CollectionToYearsSegue", sender: self)
-    }
+    
 
     // MARK: - Navigation
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "CollectionToYearsSegue" {
+            guard let indexPath = tableView.indexPathForSelectedRow else { return }
+            print(indexPath)
             if let destinationVC = segue.destination as? YearViewController {
-                destinationVC.selectedCollection = selectedCollection
+                destinationVC.selectedCollection = collections[indexPath.row]
+                print(indexPath.row)
+                print(destinationVC.selectedCollection as Any)
                 destinationVC.db = db
             }
         }

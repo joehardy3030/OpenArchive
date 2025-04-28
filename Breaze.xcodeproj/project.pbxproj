@@ -49,6 +49,7 @@
 		D8A5324C24A9AFF2002379CF /* ArchiveCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A5324B24A9AFF2002379CF /* ArchiveCell.swift */; };
 		D8ACD2E22B1D6CC30097224B /* ChateauGPTModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8ACD2E12B1D6CC30097224B /* ChateauGPTModel.swift */; };
 		D8B65F0024C54A5500F57355 /* DownloadPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B65EFF24C54A5500F57355 /* DownloadPlayerViewController.swift */; };
+		D8C8A2072DBF30E0002896F2 /* CollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C8A2062DBF30CD002896F2 /* CollectionViewController.swift */; };
 		D8DCF13425AFFEA200D28837 /* CarPlayDownloadsTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DCF13325AFFEA200D28837 /* CarPlayDownloadsTemplate.swift */; };
 		D8EECF562B1BA86100CD3235 /* ChateauGPTViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EECF552B1BA86100CD3235 /* ChateauGPTViewController.swift */; };
 /* End PBXBuildFile section */
@@ -124,6 +125,7 @@
 		D8A5324B24A9AFF2002379CF /* ArchiveCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveCell.swift; sourceTree = "<group>"; };
 		D8ACD2E12B1D6CC30097224B /* ChateauGPTModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChateauGPTModel.swift; sourceTree = "<group>"; };
 		D8B65EFF24C54A5500F57355 /* DownloadPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadPlayerViewController.swift; sourceTree = "<group>"; };
+		D8C8A2062DBF30CD002896F2 /* CollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewController.swift; sourceTree = "<group>"; };
 		D8DCF13325AFFEA200D28837 /* CarPlayDownloadsTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarPlayDownloadsTemplate.swift; sourceTree = "<group>"; };
 		D8EECF552B1BA86100CD3235 /* ChateauGPTViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChateauGPTViewController.swift; sourceTree = "<group>"; };
 		E24D8A6E14FB1F7F63E0D1DD /* Pods-Breaze.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Breaze.debug.xcconfig"; path = "Target Support Files/Pods-Breaze/Pods-Breaze.debug.xcconfig"; sourceTree = "<group>"; };
@@ -251,6 +253,7 @@
 				D83EB53F24CE49880016726C /* StartViewController.swift */,
 				D83EB54124CE62170016726C /* ArchiveTabBarController.swift */,
 				D83EB53D24CE33C60016726C /* ArchiveNavigationController.swift */,
+				D8C8A2062DBF30CD002896F2 /* CollectionViewController.swift */,
 				7984F98C24A4565400989DB8 /* YearViewController.swift */,
 				D8449A6724AEF3C200F113F4 /* MonthViewController.swift */,
 				D852C3C624B1219400029EB9 /* ShowsListViewController.swift */,
@@ -644,6 +647,7 @@
 				D84D6E2824BEB5140022A058 /* NetworkUtility.swift in Sources */,
 				D892BBA024CBBCF5008E4960 /* ArchiveSuperViewController.swift in Sources */,
 				D8EECF562B1BA86100CD3235 /* ChateauGPTViewController.swift in Sources */,
+				D8C8A2072DBF30E0002896F2 /* CollectionViewController.swift in Sources */,
 				D845E03924D7642A003381B6 /* ModalPlayerViewController.swift in Sources */,
 				D85B4AFB25AD75A800A786DB /* SceneDelegate.swift in Sources */,
 				D8449A6824AEF3C200F113F4 /* MonthViewController.swift in Sources */,
@@ -850,7 +854,7 @@
 				CODE_SIGN_ENTITLEMENTS = Breaze/Breaze.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 58;
+				CURRENT_PROJECT_VERSION = 60;
 				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				INFOPLIST_FILE = Breaze/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Chateau Archive";
@@ -877,7 +881,7 @@
 				CODE_SIGN_ENTITLEMENTS = Breaze/Breaze.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 58;
+				CURRENT_PROJECT_VERSION = 60;
 				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				INFOPLIST_FILE = Breaze/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Chateau Archive";

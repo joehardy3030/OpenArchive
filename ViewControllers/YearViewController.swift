@@ -15,6 +15,7 @@ class YearViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     @IBOutlet weak var yearTableView: UITableView!
    // let utils = Utils()
    // var archiveAPI = ArchiveAPI()
+    var selectedCollection: String?
     var years: [Int] = []
     
     override func viewDidLoad() {

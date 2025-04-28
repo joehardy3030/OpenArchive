@@ -180,30 +180,36 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Stars" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="r1k-c3-J5T">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Stars" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="r1k-c3-J5T">
                                                     <rect key="frame" x="190" y="11" width="169" height="21"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="169" id="hGW-kn-HuM"/>
+                                                    </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Collection" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YGC-U4-g5E">
-                                                    <rect key="frame" x="25" y="127" width="334" height="21"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Collection" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YGC-U4-g5E">
+                                                    <rect key="frame" x="25" y="127" width="335" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
                                             <constraints>
+                                                <constraint firstItem="YGC-U4-g5E" firstAttribute="top" secondItem="71s-eP-cws" secondAttribute="bottom" constant="8" id="0mI-3w-sm2"/>
                                                 <constraint firstItem="71s-eP-cws" firstAttribute="top" secondItem="Oev-mL-bQs" secondAttribute="bottom" constant="8" id="4T4-OK-Oy1"/>
                                                 <constraint firstItem="71s-eP-cws" firstAttribute="leading" secondItem="Oev-mL-bQs" secondAttribute="leading" id="4xN-O7-QmK"/>
                                                 <constraint firstAttribute="trailing" secondItem="71s-eP-cws" secondAttribute="trailing" constant="15" id="7co-6C-jtg"/>
                                                 <constraint firstItem="Qzd-3I-9y5" firstAttribute="leading" secondItem="rEz-gG-TFf" secondAttribute="leading" constant="25" id="G8a-CC-phu"/>
                                                 <constraint firstAttribute="trailing" secondItem="Oev-mL-bQs" secondAttribute="trailing" constant="15" id="Hf1-Ke-FLw"/>
                                                 <constraint firstItem="Qzd-3I-9y5" firstAttribute="top" secondItem="rEz-gG-TFf" secondAttribute="top" constant="11" id="J6C-NR-zIZ"/>
+                                                <constraint firstItem="r1k-c3-J5T" firstAttribute="baseline" secondItem="Qzd-3I-9y5" secondAttribute="baseline" id="UQF-g8-GFo"/>
+                                                <constraint firstItem="r1k-c3-J5T" firstAttribute="trailing" secondItem="rEz-gG-TFf" secondAttribute="trailingMargin" id="VFM-8G-v39"/>
                                                 <constraint firstItem="Oev-mL-bQs" firstAttribute="leading" secondItem="Qzd-3I-9y5" secondAttribute="leading" id="YRB-g0-PrZ"/>
+                                                <constraint firstItem="YGC-U4-g5E" firstAttribute="leading" secondItem="71s-eP-cws" secondAttribute="leading" id="bwm-GY-hZU"/>
                                                 <constraint firstItem="hyn-dK-WA9" firstAttribute="leading" secondItem="rEz-gG-TFf" secondAttribute="leading" constant="25" id="etV-EO-6kn"/>
+                                                <constraint firstItem="YGC-U4-g5E" firstAttribute="trailing" secondItem="71s-eP-cws" secondAttribute="trailing" id="gYM-YB-fzg"/>
                                                 <constraint firstItem="Oev-mL-bQs" firstAttribute="top" secondItem="hyn-dK-WA9" secondAttribute="bottom" constant="8" id="j6X-DA-17g"/>
                                                 <constraint firstAttribute="trailing" secondItem="hyn-dK-WA9" secondAttribute="trailing" constant="15" id="jE4-og-cyO"/>
                                                 <constraint firstAttribute="trailing" secondItem="Qzd-3I-9y5" secondAttribute="trailing" constant="15" id="qNB-6k-UgM"/>

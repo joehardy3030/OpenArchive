@@ -29,7 +29,7 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
         super.viewDidLoad()
         self.showListTableView.delegate = self
         self.showListTableView.dataSource = self
-        self.showListTableView.rowHeight = 170.0
+        self.showListTableView.rowHeight = 165.0
         sbdToggle.selectedSegmentIndex = getSbdToggle()
     }
     

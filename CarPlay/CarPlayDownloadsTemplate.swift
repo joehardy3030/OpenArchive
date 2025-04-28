@@ -79,7 +79,7 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
                             return false
                         }
                     } else {
-                        self.shows = r
+                    self.shows = r
                     }
                     if let ss = self.shows {
                         for s in ss {

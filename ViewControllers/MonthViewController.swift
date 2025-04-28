@@ -22,6 +22,12 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
         super.viewDidLoad()
         self.monthTableView.delegate = self
         self.monthTableView.dataSource = self
+        if selectedCollection == "GratefulDead" {
+            sbdOnly = true // look at observer pattern
+        }
+        else {
+            sbdOnly = false
+        }
         sbdToggle.selectedSegmentIndex = getSbdToggle()
         self.months = ["Jan",
                   "Feb",

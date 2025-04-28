@@ -16,6 +16,7 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
     var monthCount: [String:Int] = [:]
     var year: Int?
     var sbdOnly = true // look at observer pattern
+    var selectedCollection: String = "GratefulDead"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -81,7 +82,7 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
     
     
     func getIADateRangeYear(year: Int, sbdOnly: Bool) {
-        let url = archiveAPI.dateRangeYearURL(year: year, sbdOnly: sbdOnly)
+        let url = archiveAPI.dateRangeYearURL(year: year, sbdOnly: sbdOnly, collection: selectedCollection)
         print(url)
         archiveAPI.getIARequestItemsDecodable(url: url) { (response: ShowMetadatas?) -> Void in
             DispatchQueue.main.async {
@@ -160,6 +161,7 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
             else {
                 target.sbdOnly = true
             }
+            target.selectedCollection = selectedCollection
             target.resetMonth()
             target.db = db
         }

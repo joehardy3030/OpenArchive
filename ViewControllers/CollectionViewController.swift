@@ -11,7 +11,7 @@ import AVKit
 import AVFoundation
 
 class CollectionViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
-    let collectionsText = ["Grateful Dead", "BMFS"]
+    let collectionsText = ["Grateful Dead", "BMFS", "Phil Lesh and Friends", "Goose", "Further", "The Other Ones"]
     let collections = ["GratefulDead","BillyStrings","PhilLeshandFriends","GooseBand","Furthur","TheOtherOnes"]
     var selectedCollection: String?
     

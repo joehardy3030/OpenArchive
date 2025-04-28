@@ -23,6 +23,7 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
     var identifiers: [String]?
     var showMetadatas: [ShowMetadata]?
     var sbdOnly = true
+    var selectedCollection: String = "GratefulDead"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -60,7 +61,8 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
                                            venue: searchTermsModel.venue,
                                            minRating: searchTermsModel.minRating,
                                            startYear: searchTermsModel.startYear,
-                                           endYear: searchTermsModel.endYear)
+                                           endYear: searchTermsModel.endYear,
+                                           collection: selectedCollection)
         archiveAPI.getIARequestItemsDecodable(url: url) {
             (response: ShowMetadatas?) -> Void in
              DispatchQueue.main.async{
@@ -76,7 +78,7 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
     
     func getIADateRange() {
         guard let year = self.year, let month = self.month else { return }
-        let url = archiveAPI.dateRangeURL(year: year, month: month, sbdOnly: sbdOnly)
+        let url = archiveAPI.dateRangeURL(year: year, month: month, sbdOnly: sbdOnly, collection: selectedCollection)
 
         archiveAPI.getIARequestItemsDecodable(url: url) {
             (response: ShowMetadatas?) -> Void in

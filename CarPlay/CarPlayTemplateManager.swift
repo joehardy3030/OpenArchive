@@ -24,7 +24,7 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
     var db: Firestore!
     var isPlaying = false
     fileprivate(set) var authStateListenerHandle: AuthStateDidChangeListenerHandle?
-    let decades = ["1960s", "1970s", "1980s", "1990s"]
+    let decades = ["1960s", "1970s", "1980s", "1990s", "2000s", "2010s", "2020s"]
     let years = ["0","1","2","3","4","5","6","7","8","9"]
     let commandCenter = MPRemoteCommandCenter.shared()
     
@@ -97,6 +97,12 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
                 yearPrefix = "198"
             case "1990s":
                 yearPrefix = "199"
+            case "2000s":
+                yearPrefix = "200"
+            case "2010s":
+                yearPrefix = "201"
+            case "2020s":
+                yearPrefix = "202"
             default:
                 yearPrefix = "200"
             }

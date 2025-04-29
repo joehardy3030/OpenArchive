@@ -582,8 +582,8 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Stars" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="B7z-fI-C22">
-                                                    <rect key="frame" x="182" y="11" width="169" height="21"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Stars" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="B7z-fI-C22">
+                                                    <rect key="frame" x="190" y="11" width="169" height="21"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="169" id="WTL-Wx-vja"/>
                                                     </constraints>
@@ -601,9 +601,8 @@
                                             <constraints>
                                                 <constraint firstItem="P7b-3F-7iK" firstAttribute="top" secondItem="dlA-jf-Wxn" secondAttribute="bottom" constant="8" id="0Lk-KJ-cr7"/>
                                                 <constraint firstAttribute="trailing" secondItem="EJg-d4-1za" secondAttribute="trailing" constant="15" id="2Gf-LE-ii7"/>
-                                                <constraint firstItem="UpG-CD-bph" firstAttribute="centerX" secondItem="P3W-YC-adQ" secondAttribute="centerX" id="3gS-xC-LGW"/>
                                                 <constraint firstItem="B7z-fI-C22" firstAttribute="baseline" secondItem="EJg-d4-1za" secondAttribute="baseline" id="44P-ed-bCz"/>
-                                                <constraint firstItem="UpG-CD-bph" firstAttribute="leading" secondItem="P3W-YC-adQ" secondAttribute="leadingMargin" constant="7" id="4zN-l3-0WR"/>
+                                                <constraint firstItem="UpG-CD-bph" firstAttribute="leading" secondItem="EJg-d4-1za" secondAttribute="leadingMargin" constant="-8" id="4zN-l3-0WR"/>
                                                 <constraint firstItem="uLm-QH-mU0" firstAttribute="leading" secondItem="P7b-3F-7iK" secondAttribute="leading" id="AAG-Je-LUd"/>
                                                 <constraint firstItem="dlA-jf-Wxn" firstAttribute="top" secondItem="EJg-d4-1za" secondAttribute="bottom" constant="8" id="CoX-ZP-8Q9"/>
                                                 <constraint firstItem="dlA-jf-Wxn" firstAttribute="leading" secondItem="EJg-d4-1za" secondAttribute="leading" id="EK7-7T-nl9"/>
@@ -615,6 +614,7 @@
                                                 <constraint firstItem="uLm-QH-mU0" firstAttribute="top" secondItem="P7b-3F-7iK" secondAttribute="bottom" constant="8" id="VNs-Hp-y4h"/>
                                                 <constraint firstAttribute="trailing" secondItem="P7b-3F-7iK" secondAttribute="trailing" constant="15" id="aDo-7x-mF3"/>
                                                 <constraint firstAttribute="trailing" secondItem="uLm-QH-mU0" secondAttribute="trailing" constant="15" id="amR-Sr-jo8"/>
+                                                <constraint firstItem="B7z-fI-C22" firstAttribute="trailing" secondItem="P3W-YC-adQ" secondAttribute="trailingMargin" id="fGm-tv-GcA"/>
                                                 <constraint firstItem="EJg-d4-1za" firstAttribute="top" secondItem="P3W-YC-adQ" secondAttribute="top" constant="11" id="hHC-kg-a6x"/>
                                                 <constraint firstItem="UpG-CD-bph" firstAttribute="trailing" secondItem="B7z-fI-C22" secondAttribute="trailing" id="o45-VH-9Ie"/>
                                             </constraints>
@@ -1156,7 +1156,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="wDf-Rk-Vwo"/>
+        <segue reference="P7t-lR-Gax"/>
         <segue reference="hJg-m6-Ivq"/>
     </inferredMetricsTieBreakers>
     <resources>

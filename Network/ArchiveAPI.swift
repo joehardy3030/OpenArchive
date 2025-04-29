@@ -65,7 +65,7 @@ class ArchiveAPI: NSObject {
         var monthString: String
                 
         url += "services/search/v1/scrape?"
-        url += "fields=identifier,date,venue,transferer,source,coverage,stars,avg_rating,num_reviews,collection&"
+        url += "fields=identifier,date,venue,transferer,source,coverage,stars,avg_rating,num_reviews,collection,creator&"
         if sbdOnly {
             url += "q=collection%3A%28" + collection + "%20AND%20stream_only%29"
         }
@@ -109,7 +109,7 @@ class ArchiveAPI: NSObject {
         var url = baseURLString
                 
         url += "services/search/v1/scrape?"
-        url += "fields=identifier,date,venue,transferer,source,coverage,stars,avg_rating,num_reviews,collection&"
+        url += "fields=identifier,date,venue,transferer,source,coverage,stars,avg_rating,num_reviews,collection,creator&"
         if sbdOnly {
             url += "q=collection%3A%28" + collection + "%20AND%20stream_only%29"
         }
@@ -183,7 +183,7 @@ class ArchiveAPI: NSObject {
         var queryItems = [URLQueryItem]()
 
         // Fields
-        let fields = "identifier,date,venue,transferer,source,coverage,stars,avg_rating,num_reviews,collection"
+        let fields = "identifier,date,venue,transferer,source,coverage,stars,avg_rating,num_reviews,collection,creator"
         queryItems.append(URLQueryItem(name: "fields", value: fields))
 
         // Query

@@ -142,7 +142,9 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
             }
             cell.transfererLabel.text = showMDs[indexPath.row].transferer
             cell.sourceLabel.text = showMDs[indexPath.row].source
-            if let collections = showMDs[indexPath.row].collection {
+            if let creator = showMDs[indexPath.row].creator {
+                cell.collectionLabel.text = creator
+            } else if let collections = showMDs[indexPath.row].collection {
                 cell.collectionLabel.text = collections.joined(separator: ", ")
             } else {
                 cell.collectionLabel.text = ""

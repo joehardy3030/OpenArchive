@@ -177,13 +177,13 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
             }
             cell.transfererLabel.text = showMDs[indexPath.row].metadata?.transferer
             cell.sourceLabel.text = showMDs[indexPath.row].metadata?.source
-            if let collections = showMDs[indexPath.row].metadata?.collection {
+            if let creator = showMDs[indexPath.row].metadata?.creator {
+                cell.collectionLabel.text = creator
+            } else if let collections = showMDs[indexPath.row].metadata?.collection {
                 cell.collectionLabel.text = collections.joined(separator: ", ")
             } else {
                 cell.collectionLabel.text = ""
             }
-             
-            //print(showMDs[indexPath.row].metadata!)
             if let s = showMDs[indexPath.row].metadata!.avg_rating {
                 print("Passed this test")
                 var starRating = String(s)

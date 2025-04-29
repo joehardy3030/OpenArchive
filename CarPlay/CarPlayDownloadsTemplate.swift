@@ -196,7 +196,13 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
         nowPlayingInfo = [String : Any]()
         nowPlayingInfo[MPMediaItemPropertyTitle] = mp3s[ct].title
         nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = String(md.date! + ", " + md.coverage!)
-        nowPlayingInfo[MPMediaItemPropertyArtist] = md.collection?[0]
+        if let creator = md.creator {
+            nowPlayingInfo[MPMediaItemPropertyArtist] = creator
+        } else if let collections = md.collection {
+            nowPlayingInfo[MPMediaItemPropertyArtist] = collections[0]
+        } else {
+            nowPlayingInfo[MPMediaItemPropertyArtist] = ""
+        }
         nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = CMTimeGetSeconds(ci.duration)
         if let seconds = player?.playerQueue?.currentTime().seconds {
             nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = seconds

@@ -21,8 +21,8 @@ class SearchViewController: ArchiveSuperViewController {
     var searchTermsModel = SearchTermsModel()
     
     // Collection options
-    let collectionsText = ["Grateful Dead", "BMFS", "Phil Lesh and Friends", "Goose", "Furthur", "The Other Ones"]
-    let collections = ["GratefulDead", "BillyStrings", "PhilLeshandFriends", "GooseBand", "Furthur", "TheOtherOnes"]
+    let collectionsText = ["Grateful Dead", "BMFS", "Phil Lesh and Friends", "Goose", "Furthur", "The Other Ones", "Dead And Company"]
+    let collections = ["GratefulDead", "BillyStrings", "PhilLeshandFriends", "GooseBand", "Furthur", "TheOtherOnes", "DeadAndCompany"]
     
     override func viewDidLoad() {
         super.viewDidLoad()

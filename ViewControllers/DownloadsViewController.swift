@@ -20,7 +20,7 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
         super.viewDidLoad()
         self.showListTableView.delegate = self
         self.showListTableView.dataSource = self
-        self.showListTableView.rowHeight = 135.0
+        self.showListTableView.rowHeight = 165.0
         //self.listFiles()
         self.getDownloadedShows()
         print("DownloadsViewController")
@@ -177,7 +177,13 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
             }
             cell.transfererLabel.text = showMDs[indexPath.row].metadata?.transferer
             cell.sourceLabel.text = showMDs[indexPath.row].metadata?.source
-            //print(showMDs[indexPath.row].metadata!)
+            if let creator = showMDs[indexPath.row].metadata?.creator {
+                cell.collectionLabel.text = creator
+            } else if let collections = showMDs[indexPath.row].metadata?.collection {
+                cell.collectionLabel.text = collections.joined(separator: ", ")
+            } else {
+                cell.collectionLabel.text = ""
+            }
             if let s = showMDs[indexPath.row].metadata!.avg_rating {
                 print("Passed this test")
                 var starRating = String(s)

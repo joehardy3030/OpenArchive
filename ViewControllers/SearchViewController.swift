@@ -16,12 +16,41 @@ class SearchViewController: ArchiveSuperViewController {
     let minRatingTextField = UITextField()
     let venueTextField = UITextField()
     let searchButton = UIButton()
+    let collectionPicker = UIPickerView()
+    let collectionTextField = UITextField()
     var searchTermsModel = SearchTermsModel()
-    // var showMetadatas: ShowMetadatas?
+    
+    // Collection options
+    let collectionsText = ["Grateful Dead", "BMFS", "Phil Lesh and Friends", "Goose", "Furthur", "The Other Ones", "Dead And Company"]
+    let collections = ["GratefulDead", "BillyStrings", "PhilLeshandFriends", "GooseBand", "Furthur", "TheOtherOnes", "DeadAndCompany"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        setupCollectionPicker()
+    }
+    
+    private func setupCollectionPicker() {
+        collectionPicker.delegate = self
+        collectionPicker.dataSource = self
+        
+        // Configure collection text field
+        collectionTextField.placeholder = "Select Collection"
+        collectionTextField.borderStyle = .roundedRect
+        collectionTextField.inputView = collectionPicker
+        collectionTextField.text = collectionsText[0] // Set default value
+        
+        // Add toolbar with Done button
+        let toolbar = UIToolbar()
+        toolbar.sizeToFit()
+        let doneButton = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(donePicker))
+        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        toolbar.items = [flexSpace, doneButton]
+        collectionTextField.inputAccessoryView = toolbar
+    }
+    
+    @objc func donePicker() {
+        view.endEditing(true)
     }
     
     private func setupUI() {
@@ -52,7 +81,8 @@ class SearchViewController: ArchiveSuperViewController {
         startDateTextField.frame = CGRect(x: 20, y: 200, width: 200, height: 40) // New
         endDateTextField.frame = CGRect(x: 20, y: 250, width: 200, height: 40) // New
         minRatingTextField.frame = CGRect(x: 20, y: 300, width: 200, height: 40) // New
-        searchButton.frame = CGRect(x: 20, y: 350, width: 200, height: 40)
+        collectionTextField.frame = CGRect(x: 20, y: 350, width: 200, height: 40)
+        searchButton.frame = CGRect(x: 20, y: 400, width: 200, height: 40)
         
         // Add subviews
         view.addSubview(songLabel)
@@ -61,6 +91,7 @@ class SearchViewController: ArchiveSuperViewController {
         view.addSubview(startDateTextField)
         view.addSubview(endDateTextField)
         view.addSubview(minRatingTextField)
+        view.addSubview(collectionTextField)
         view.addSubview(searchButton)
         
         // Dismiss keyboard when tapping outside the text boxes
@@ -73,7 +104,6 @@ class SearchViewController: ArchiveSuperViewController {
     }
     
     @objc func searchButtonTapped() {
-        
         self.searchTermsModel.venue = venueTextField.text
         if let sy = startDateTextField.text {
             self.searchTermsModel.startYear = sy
@@ -83,6 +113,12 @@ class SearchViewController: ArchiveSuperViewController {
         }
         self.searchTermsModel.searchTerm = songTextField.text
         self.searchTermsModel.minRating = minRatingTextField.text
+        
+        // Set the selected collection
+        if let selectedIndex = collectionsText.firstIndex(of: collectionTextField.text ?? "") {
+            self.searchTermsModel.collection = collections[selectedIndex]
+        }
+        
         view.endEditing(true)
         performSegue(withIdentifier: "showSearchResults", sender: self)
     }
@@ -96,5 +132,24 @@ class SearchViewController: ArchiveSuperViewController {
                 target.getIASearchTerm(searchTermsModel: self.searchTermsModel)
             }
         }
+    }
+}
+
+// MARK: - UIPickerViewDelegate & UIPickerViewDataSource
+extension SearchViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return collectionsText.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return collectionsText[row]
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        collectionTextField.text = collectionsText[row]
     }
 }

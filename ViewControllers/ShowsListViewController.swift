@@ -23,12 +23,13 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
     var identifiers: [String]?
     var showMetadatas: [ShowMetadata]?
     var sbdOnly = true
+    var selectedCollection: String = "GratefulDead"
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.showListTableView.delegate = self
         self.showListTableView.dataSource = self
-        self.showListTableView.rowHeight = 135.0
+        self.showListTableView.rowHeight = 165.0
         sbdToggle.selectedSegmentIndex = getSbdToggle()
     }
     
@@ -60,7 +61,8 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
                                            venue: searchTermsModel.venue,
                                            minRating: searchTermsModel.minRating,
                                            startYear: searchTermsModel.startYear,
-                                           endYear: searchTermsModel.endYear)
+                                           endYear: searchTermsModel.endYear,
+                                           collection: selectedCollection)
         archiveAPI.getIARequestItemsDecodable(url: url) {
             (response: ShowMetadatas?) -> Void in
              DispatchQueue.main.async{
@@ -76,7 +78,7 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
     
     func getIADateRange() {
         guard let year = self.year, let month = self.month else { return }
-        let url = archiveAPI.dateRangeURL(year: year, month: month, sbdOnly: sbdOnly)
+        let url = archiveAPI.dateRangeURL(year: year, month: month, sbdOnly: sbdOnly, collection: selectedCollection)
 
         archiveAPI.getIARequestItemsDecodable(url: url) {
             (response: ShowMetadatas?) -> Void in
@@ -140,6 +142,13 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
             }
             cell.transfererLabel.text = showMDs[indexPath.row].transferer
             cell.sourceLabel.text = showMDs[indexPath.row].source
+            if let creator = showMDs[indexPath.row].creator {
+                cell.collectionLabel.text = creator
+            } else if let collections = showMDs[indexPath.row].collection {
+                cell.collectionLabel.text = collections.joined(separator: ", ")
+            } else {
+                cell.collectionLabel.text = ""
+            }
             if let s = showMDs[indexPath.row].avg_rating {
                 var starRating = String(s)
                 starRating = starRating + " stars " + String(showMDs[indexPath.row].num_reviews!) + " ratings"

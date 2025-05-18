@@ -15,13 +15,31 @@ class YearViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     @IBOutlet weak var yearTableView: UITableView!
    // let utils = Utils()
    // var archiveAPI = ArchiveAPI()
+    var selectedCollection: String?
     var years: [Int] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.yearTableView.delegate = self
         self.yearTableView.dataSource = self
-        self.years += 1965...1995
+        switch selectedCollection {
+        case "GratefulDead":
+            self.years += 1965...1995
+        case "BillyStrings":
+            self.years += 2015...2025
+        case "PhilLeshandFriends":
+            self.years += 1996...2025
+        case "GooseBand":
+            self.years += 2015...2025
+        case "Furthur":
+            self.years += 1996...2015
+        case "TheOtherOnes":
+            self.years += 1996...2015
+        case "DeadAndCompany":
+            self.years += 2015...2025
+        default:
+            self.years += 1965...1995
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -41,6 +59,7 @@ class YearViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             let year = self.years[indexPath.row]
             target.year = year
             target.db = db
+            target.selectedCollection = selectedCollection ?? "GratefulDead"
         }
     }
 }

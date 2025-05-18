@@ -53,7 +53,7 @@ class ArchiveAPI: NSObject {
         return url
     }
     
-    func dateRangeURL(year: Int, month: Int, sbdOnly: Bool) -> String {
+    func dateRangeURL(year: Int, month: Int, sbdOnly: Bool, collection: String = "GratefulDead") -> String {
         // Search in date range
         //https://archive.org/services/search/v1/scrape?q=collection%3A%28GratefulDead%29%20AND%20date%3A%5B1987-03-01%20TO%201987-03-31%5D
         //https://archive.org/services/search/v1/scrape?fields=date,venue,transferer,source,collection&q=collection%3A%28GratefulDead%20AND%20stream_only%29%20AND%20date%3A%5B1992-05-01%20TO%201992-05-31%5D
@@ -65,12 +65,12 @@ class ArchiveAPI: NSObject {
         var monthString: String
                 
         url += "services/search/v1/scrape?"
-        url += "fields=identifier,date,venue,transferer,source,coverage,stars,avg_rating,num_reviews&"
+        url += "fields=identifier,date,venue,transferer,source,coverage,stars,avg_rating,num_reviews,collection,creator&"
         if sbdOnly {
-            url += "q=collection%3A%28GratefulDead%20AND%20stream_only%29"
+            url += "q=collection%3A%28" + collection + "%20AND%20stream_only%29"
         }
         else {
-            url += "q=collection%3A%28GratefulDead%29"
+            url += "q=collection%3A%28" + collection + "%29"
         }
         url += andString
         url += dateString
@@ -99,7 +99,7 @@ class ArchiveAPI: NSObject {
         return url
     }
 
-    func dateRangeYearURL(year: Int, sbdOnly: Bool) -> String {
+    func dateRangeYearURL(year: Int, sbdOnly: Bool, collection: String = "GratefulDead") -> String {
 
         let firstDayMonth = "01-01"
         let lastDayMonth = "12-31"
@@ -109,12 +109,12 @@ class ArchiveAPI: NSObject {
         var url = baseURLString
                 
         url += "services/search/v1/scrape?"
-        url += "fields=identifier,date,venue,transferer,source,coverage,stars,avg_rating,num_reviews&"
+        url += "fields=identifier,date,venue,transferer,source,coverage,stars,avg_rating,num_reviews,collection,creator&"
         if sbdOnly {
-            url += "q=collection%3A%28GratefulDead%20AND%20stream_only%29"
+            url += "q=collection%3A%28" + collection + "%20AND%20stream_only%29"
         }
         else {
-            url += "q=collection%3A%28GratefulDead%29"
+            url += "q=collection%3A%28" + collection + "%29"
         }
         url += andString
         url += dateString
@@ -173,7 +173,7 @@ class ArchiveAPI: NSObject {
         return url
     }
      */
-    func searchTermURL(searchTerm: String?, venue: String?, minRating: String?, startYear: String?, endYear: String?) -> String {
+    func searchTermURL(searchTerm: String?, venue: String?, minRating: String?, startYear: String?, endYear: String?, collection: String = "GratefulDead") -> String {
         let startMonthDay = "01-01"
         let endMonthDay = "12-31"
         
@@ -183,11 +183,11 @@ class ArchiveAPI: NSObject {
         var queryItems = [URLQueryItem]()
 
         // Fields
-        let fields = "identifier,date,venue,transferer,source,coverage,stars,avg_rating,num_reviews"
+        let fields = "identifier,date,venue,transferer,source,coverage,stars,avg_rating,num_reviews,collection,creator"
         queryItems.append(URLQueryItem(name: "fields", value: fields))
 
         // Query
-        var query = "collection:(GratefulDead AND stream_only)"
+        var query = "collection:(" + collection + " AND stream_only)"
         if let st = searchTerm, !st.isEmpty {
             let stPlus = st.replacingOccurrences(of: " ", with: "+")
             query += " AND \(stPlus)"

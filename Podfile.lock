@@ -803,6 +803,9 @@ PODS:
     - GoogleUtilities/Logger
   - GoogleUtilities/UserDefaults (7.11.1):
     - GoogleUtilities/Logger
+  - GRDB.swift (6.24.1):
+    - GRDB.swift/standard (= 6.24.1)
+  - GRDB.swift/standard (6.24.1)
   - "gRPC-C++ (1.44.0)":
     - "gRPC-C++/Implementation (= 1.44.0)"
     - "gRPC-C++/Interface (= 1.44.0)"
@@ -895,6 +898,7 @@ DEPENDENCIES:
   - Firebase/Storage
   - FirebaseUI
   - FirebaseUI/Email
+  - GRDB.swift (~> 6.0)
   - PromiseKit
   - Signals
   - SwiftyJSON
@@ -936,6 +940,7 @@ SPEC REPOS:
     - GoogleAppMeasurement
     - GoogleSignIn
     - GoogleUtilities
+    - GRDB.swift
     - "gRPC-C++"
     - gRPC-Core
     - GTMAppAuth
@@ -985,6 +990,7 @@ SPEC CHECKSUMS:
   GoogleAppMeasurement: 373bcbead1bb6a85be7a64d5d8f96284b762ea9c
   GoogleSignIn: 5651ce3a61e56ca864160e79b484cd9ed3f49b7a
   GoogleUtilities: 9aa0ad5a7bc171f8bae016300bfcfa3fb8425749
+  GRDB.swift: 136dcb5d8dddca50aae3ba7d77475f79e7232cd8
   "gRPC-C++": 9675f953ace2b3de7c506039d77be1f2e77a8db2
   gRPC-Core: 943e491cb0d45598b0b0eb9e910c88080369290b
   GTMAppAuth: 0ff230db599948a9ad7470ca667337803b3fc4dd
@@ -998,6 +1004,6 @@ SPEC CHECKSUMS:
   Signals: f8e5c979e93c35273f8dfe55ee7f47213d3e8fe8
   SwiftyJSON: 2f33a42c6fbc52764d96f13368585094bfd8aa5e
 
-PODFILE CHECKSUM: 74b3ea80fa5670666257390b233f282db147ba22
+PODFILE CHECKSUM: 5230f266964e399122147ef6a88c410066b0effd
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2

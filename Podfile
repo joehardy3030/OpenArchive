@@ -17,6 +17,7 @@ target 'Breaze' do
   pod 'Firebase/Storage'
   pod 'FirebaseUI' 
   pod 'FirebaseUI/Email'
+  pod 'GRDB.swift', '~> 6.0'
 
   target 'BreazeTests' do
     inherit! :search_paths

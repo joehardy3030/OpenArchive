@@ -9,9 +9,8 @@
 import UIKit
 import AVFoundation
 import CarPlay
-import Firebase
-import FirebaseFirestore
 import MediaPlayer
+import FirebaseFirestore
 
 
 @available(iOS 14.0, *)
@@ -32,10 +31,8 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
     var prevController: ArchiveSuperViewController?
     var miniPlayer: MiniPlayerViewController?
     var player: AudioPlayerArchive?
-    var auth: Auth?
     var db: Firestore!
     var isPlaying = false
-    fileprivate(set) var authStateListenerHandle: AuthStateDidChangeListenerHandle?
 
     init(interfaceController: CPInterfaceController?, decade: String?, year: String?) {
         self.interfaceController = interfaceController

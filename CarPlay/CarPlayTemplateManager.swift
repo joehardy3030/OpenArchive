@@ -9,9 +9,8 @@
 import UIKit
 import AVFoundation
 import CarPlay
-import Firebase
-import FirebaseFirestore
 import MediaPlayer
+import FirebaseFirestore
 
 
 @available(iOS 14.0, *)
@@ -19,11 +18,9 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
 
     let interfaceController: CPInterfaceController?
     var player: AudioPlayerArchive?
-    var auth: Auth?
     var network: NetworkUtility!
     var db: Firestore!
     var isPlaying = false
-    fileprivate(set) var authStateListenerHandle: AuthStateDidChangeListenerHandle?
     let decades = ["1960s", "1970s", "1980s", "1990s", "2000s", "2010s", "2020s"]
     let years = ["0","1","2","3","4","5","6","7","8","9"]
     let commandCenter = MPRemoteCommandCenter.shared()

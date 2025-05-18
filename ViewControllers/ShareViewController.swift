@@ -9,7 +9,6 @@
 import UIKit
 import AVKit
 import FirebaseFirestore
-import CodableFirebase
 
 @available(iOS 13.0, *)
 class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {

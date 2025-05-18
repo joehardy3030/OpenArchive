@@ -8,20 +8,16 @@
 import UIKit
 import ARKit
 import Firebase
-import FirebaseAuthUI
-import FirebaseAuth
-import FirebaseEmailAuthUI
-
+import FirebaseFirestore
+// Firebase authentication imports removed
 
 @available(iOS 13.0, *)
-class SceneDelegate: UIResponder, UIWindowSceneDelegate, FUIAuthDelegate {
+class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     let archiveAPI = ArchiveAPI()
     var launchURL: URL?
     var window: UIWindow?
     let center = UNUserNotificationCenter.current()
-    fileprivate(set) var auth: Auth!
-    fileprivate(set) var authUI: FUIAuth!
     fileprivate(set) var db: Firestore!
 
 
@@ -90,11 +86,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, FUIAuthDelegate {
         print(scene)
         // guard if
         if FirebaseApp.app() == nil {
-            setupFirebase()
+            FirebaseApp.configure()
         }
-        else {
-            self.db = Firestore.firestore()
-        }
+        self.db = Firestore.firestore()
 
         center.requestAuthorization(options: [.alert, .sound]) { granted, error in }
         do {
@@ -107,25 +101,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, FUIAuthDelegate {
         
         guard let rvc = self.window?.rootViewController as? ArchiveSuperViewController else {fatalError()}
         print(rvc)
-        rvc.auth = self.auth
-        rvc.authUI = self.authUI
         rvc.db = self.db
 
-    }
-    
-    func setupFirebase() {
-        FirebaseApp.configure()
-        print("Configure Firesbase in Scene Delegate")
-        self.auth = Auth.auth()
-        self.authUI = FUIAuth.defaultAuthUI()
-        // You need to adopt a FUIAuthDelegate protocol to receive callback
-        authUI.delegate = self
-        let providers: [FUIAuthProvider] = [
-            //FUIPhoneAuth(authUI:authUI),
-            FUIEmailAuth()
-        ]
-        authUI.providers = providers
-        self.db = Firestore.firestore()
     }
     
     func sceneDidDisconnect(_ scene: UIScene) {

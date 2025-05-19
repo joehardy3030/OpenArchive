@@ -134,19 +134,64 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
     }
     
     func playShow() {
+        guard let show = selectedShow else {
+            print("No show selected")
+            return
+        }
+        
+        // Remove any existing observers first
+        player?.playerQueue?.removeObserver(self, forKeyPath: "currentItem.status")
+        
         player?.pause()
-        player?.showMetadataModel = selectedShow // Change showMetadata to showModel for consistency
-        loadDownloadedShow()  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
-        self.player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
+        player?.showMetadataModel = show
+        
+        // Verify the show has tracks before proceeding
+        guard let mp3s = show.mp3Array, !mp3s.isEmpty else {
+            print("Show has no tracks")
+            return
+        }
+        
+        // Verify at least one track is accessible
+        var hasAccessibleTrack = false
+        for song in mp3s {
+            if let trackURL = player?.trackURLfromName(name: song.name) {
+                do {
+                    let isReachable = try trackURL.checkResourceIsReachable()
+                    if isReachable {
+                        hasAccessibleTrack = true
+                        break
+                    }
+                } catch {
+                    print("Track not accessible: \(error)")
+                }
+            }
+        }
+        
+        guard hasAccessibleTrack else {
+            print("No accessible tracks found")
+            return
+        }
+        
+        loadDownloadedShow()
+        player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
         player?.play()
         print("player nominally playing")
     }
     
     func loadDownloadedShow() {
-        if let mp3s = self.player?.showMetadataModel?.mp3Array {
-            player?.loadQueuePlayer(tracks: mp3s)
-            print("Got here")
+        guard let player = player,
+              let mp3s = player.showMetadataModel?.mp3Array,
+              !mp3s.isEmpty else {
+            print("Cannot load show: invalid player or no tracks")
+            return
         }
+        
+        // Clear existing queue
+        player.playerQueue?.removeAllItems()
+        
+        // Load new tracks
+        player.loadQueuePlayer(tracks: mp3s)
+        print("Loaded \(mp3s.count) tracks into queue")
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {

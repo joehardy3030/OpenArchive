@@ -41,6 +41,9 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
     private var nextTrackCommandTarget: Any?
     private var previousTrackCommandTarget: Any?
     
+    private var timerToken: Any?
+    private weak var timerTokenPlayer: AVQueuePlayer?
+    
     init(interfaceController: CPInterfaceController?, decade: String?, year: String?) {
         self.interfaceController = interfaceController
         super.init()
@@ -455,6 +458,28 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
             print("unknown status (CarPlay)")
         @unknown default:
             print("nope (CarPlay)")
+        }
+    }
+    
+    func setupTimer(completion: @escaping (_ seconds: Double?) -> Void) {
+        removePeriodicTimeObserver() // Always remove any existing observer first
+        let interval = CMTime(value: 1, timescale: 2)
+        if let player = self.player?.playerQueue {
+            let timerObserverToken = player.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { [weak self] (progressTime) in
+                if let s = self?.player?.playerQueue?.currentTime().seconds {
+                    completion(s)
+                }
+            }
+            self.timerToken = timerObserverToken
+            self.timerTokenPlayer = player
+        }
+    }
+    
+    func removePeriodicTimeObserver() {
+        if let token = self.timerToken, let player = self.timerTokenPlayer {
+            player.removeTimeObserver(token)
+            self.timerToken = nil
+            self.timerTokenPlayer = nil
         }
     }
 }

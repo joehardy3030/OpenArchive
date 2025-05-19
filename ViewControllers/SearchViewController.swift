@@ -127,7 +127,6 @@ class SearchViewController: ArchiveSuperViewController {
         if segue.identifier == "showSearchResults" {
             print("showSearchResults Segue")
             if let target = segue.destination as? ShowsListViewController {
-                target.db = db
                 target.resetMonth()
                 target.getIASearchTerm(searchTermsModel: self.searchTermsModel)
             }

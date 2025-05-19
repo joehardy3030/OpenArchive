@@ -10,8 +10,6 @@ import UIKit
 import AVFoundation
 import CarPlay
 import MediaPlayer
-import FirebaseFirestore
-
 
 @available(iOS 14.0, *)
 class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableContentDataSource, CPInterfaceControllerDelegate {
@@ -31,16 +29,14 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
     var prevController: ArchiveSuperViewController?
     var miniPlayer: MiniPlayerViewController?
     var player: AudioPlayerArchive?
-    var db: Firestore!
     var isPlaying = false
 
     init(interfaceController: CPInterfaceController?, decade: String?, year: String?) {
         self.interfaceController = interfaceController
         super.init()
         self.interfaceController?.delegate = self
-        self.db = Firestore.firestore()
         self.player = AudioPlayerArchive.shared
-        self.network = NetworkUtility(db: db)
+        self.network = NetworkUtility()
         self.getDownloadedShows(decade: decade, year: year)
         playableContentManager = MPPlayableContentManager.shared()
         playableContentManager?.dataSource = self

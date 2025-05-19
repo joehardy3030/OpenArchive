@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import FirebaseFirestore
 
 class ArchiveSuperViewController: UIViewController {
     var network: NetworkUtility!
@@ -17,13 +16,10 @@ class ArchiveSuperViewController: UIViewController {
     var miniPlayer: MiniPlayerViewController?
     let player = AudioPlayerArchive.shared
     var isPlaying = false
-    var db: Firestore!
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        if db != nil {
-            network = NetworkUtility(db: db)
-        }
+        network = NetworkUtility()
         navigationController?.delegate = self
     }
 }

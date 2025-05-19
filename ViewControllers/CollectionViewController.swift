@@ -46,7 +46,6 @@ class CollectionViewController: ArchiveSuperViewController, UITableViewDelegate,
                 destinationVC.selectedCollection = collections[indexPath.row]
                 print(indexPath.row)
                 print(destinationVC.selectedCollection as Any)
-                destinationVC.db = db
             }
         }
     }

@@ -8,7 +8,6 @@
 
 import UIKit
 import AVKit
-import FirebaseFirestore
 
 @available(iOS 13.0, *)
 class ShareViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {

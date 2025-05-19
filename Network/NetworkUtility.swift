@@ -7,15 +7,12 @@
 //
 
 import UIKit
-import FirebaseFirestore
 import GRDB
 
 class NetworkUtility: NSObject {
-    var db: Firestore?
     private let dbQueue: DatabaseQueue
     
-    init(db: Firestore? = nil) {
-        self.db = db
+    override init() {
         self.dbQueue = LocalDatabase.shared.dbQueue
         super.init()
     }

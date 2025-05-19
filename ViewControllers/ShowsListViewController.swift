@@ -173,7 +173,6 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
             //target.identifier = showMDs[indexPath.row].identifier
             //target.showDate = showMDs[indexPath.row].date
             target.showType = .archive
-            target.db = db
         }
     }
     

@@ -183,7 +183,6 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
             target.showType = .downloaded
             // target.player = player
             target.prevController = self
-            target.db = db
         }
         
         else {

@@ -7,9 +7,7 @@
 
 import UIKit
 import ARKit
-import Firebase
-import FirebaseFirestore
-// Firebase authentication imports removed
+// Firebase removed
 
 @available(iOS 13.0, *)
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -18,7 +16,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var launchURL: URL?
     var window: UIWindow?
     let center = UNUserNotificationCenter.current()
-    fileprivate(set) var db: Firestore!
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -47,16 +44,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let concertIdentifier = url.host else { return }
         print(concertIdentifier)
         
-        guard let db = self.db else {
-            return
-        }
-        
-        //let url = archiveAPI.metadataURL(identifier: concertIdentifier)
-       // print(url)
-
-        // let sbd = UIStoryboard(name: "Main", bundle: nil)
-        // guard let vc = sbd.instantiateViewController(withIdentifier: "ShowViewController") as? ShowViewController else { return }
-        
         if let rvc = self.window?.rootViewController as? StartViewController {
              if let tbc = rvc.children.first as? UITabBarController {
                  tbc.selectedIndex = 0
@@ -68,7 +55,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                      let md = ShowMetadata(identifier: concertIdentifier)
                      vc.showMetadata = md
                      vc.showType = .archive // Replace with the actual show type if it varies
-                     vc.db = db
                      
                      navController.pushViewController(vc, animated: true)
                  }
@@ -84,13 +70,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sharedSetup(scene: UIScene) {
         guard let _ = (scene as? UIWindowScene) else { return }
         print(scene)
-        // guard if
-        if FirebaseApp.app() == nil {
-            FirebaseApp.configure()
-        }
-        self.db = Firestore.firestore()
-
-        center.requestAuthorization(options: [.alert, .sound]) { granted, error in }
         do {
             try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
             try AVAudioSession.sharedInstance().setActive(true)
@@ -101,8 +80,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         guard let rvc = self.window?.rootViewController as? ArchiveSuperViewController else {fatalError()}
         print(rvc)
-        rvc.db = self.db
-
     }
     
     func sceneDidDisconnect(_ scene: UIScene) {

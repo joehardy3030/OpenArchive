@@ -14,7 +14,7 @@ import Alamofire
 class ChateauGPTViewController: ArchiveSuperViewController {
     // UI Components
     
-    //var streamCompletionResponses = [ChateauGPTStreamCompletionResponse]()
+    let API_key = ""
     var displayText = String()
     
     let introTextView: UITextView = {
@@ -150,14 +150,7 @@ class ChateauGPTViewController: ArchiveSuperViewController {
     
     private func getChatGPTResponse(prompt: String, completion: @escaping (String) -> Void) {
         let url = "https://api.openai.com/v1/chat/completions"
-        
-        /*
-         guard let API_key = ProcessInfo.processInfo.environment["OPENAI_API_KEY"] else {
-         completion("No API key")
-         return
-         }
-         */
-        let API_key = ""
+        let API_key = self.API_key
 
         let headers: HTTPHeaders = [
             "Authorization": "Bearer " + API_key,
@@ -189,9 +182,7 @@ class ChateauGPTViewController: ArchiveSuperViewController {
     
     private func getChatGPTStreamResponse(prompt: String) -> DataStreamRequest {
         let url = "https://api.openai.com/v1/chat/completions"
-        
-        let API_key = ""
-        print(API_key)
+        let API_key = self.API_key
         
         let headers: HTTPHeaders = [
             "Authorization": "Bearer \(API_key)",

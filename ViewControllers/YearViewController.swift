@@ -13,8 +13,6 @@ import AVFoundation
 class YearViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var yearTableView: UITableView!
-   // let utils = Utils()
-   // var archiveAPI = ArchiveAPI()
     var selectedCollection: String?
     var years: [Int] = []
     

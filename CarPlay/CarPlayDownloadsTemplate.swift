@@ -41,6 +41,8 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
     private var nextTrackCommandTarget: Any?
     private var previousTrackCommandTarget: Any?
     
+    private weak var observedPlayerQueue: AVQueuePlayer?
+    
     init(interfaceController: CPInterfaceController?, decade: String?, year: String?) {
         self.interfaceController = interfaceController
         super.init()
@@ -82,6 +84,10 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
         }
         if let target = previousTrackCommandTarget {
             commandCenter.previousTrackCommand.removeTarget(target)
+        }
+        
+        if let observedQueue = observedPlayerQueue {
+            observedQueue.removeObserver(self, forKeyPath: "currentItem.status", context: nil)
         }
         
         selfRetainer = nil // Release self reference
@@ -183,8 +189,11 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
             return
         }
         
-        // Remove any existing observers first
-        player?.playerQueue?.removeObserver(self, forKeyPath: "currentItem.status")
+        // Remove observer from previous queue if needed
+        if let oldQueue = observedPlayerQueue {
+            oldQueue.removeObserver(self, forKeyPath: "currentItem.status", context: nil)
+            observedPlayerQueue = nil
+        }
         
         player?.pause()
         player?.showMetadataModel = show
@@ -217,7 +226,10 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
         }
         
         // Setup all observers and handlers before loading the show
-        player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
+        if let newQueue = player?.playerQueue {
+            newQueue.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
+            observedPlayerQueue = newQueue
+        }
         setupRemoteCommandHandlers()
         startNowPlayingInfoUpdates()
         

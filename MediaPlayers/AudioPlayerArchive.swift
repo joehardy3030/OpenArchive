@@ -12,7 +12,6 @@ import MediaPlayer
 
 class AudioPlayerArchive: NSObject {
     static let shared = AudioPlayerArchive()
-    //static let playerQueue = AVQueuePlayer()
     var playerQueue: AVQueuePlayer?
     var playerItems = [AVPlayerItem]()
     var nowPlayingInfo = [String : Any]()
@@ -238,26 +237,6 @@ class AudioPlayerArchive: NSObject {
             pq.insert(item, after: nil)
         }
     }
-    
-    /*
-    func rewindFunctionality() {
-        // This operation should probably belong to the player class
-        var index = self.getCurrentTrackIndex()
-        if let mp3s = self.showMetadataModel?.mp3Array {
-            self.loadQueuePlayer(tracks: mp3s)
-         }
-        if let mp = self.getMiniPlayerController() {
-            mp.setupShow()
-        }
-
-        initialDefaults()
-        setupShow()
-        self.rewindToPreviousItem(index: index)
-    }
-    */
-    
-
-
 }
 
 extension AudioPlayerArchive {

@@ -20,10 +20,6 @@ class SearchViewController: ArchiveSuperViewController {
     let collectionTextField = UITextField()
     var searchTermsModel = SearchTermsModel()
     
-    // Collection options
-    let collectionsText = ["Grateful Dead", "BMFS", "Phil Lesh and Friends", "Goose", "Furthur", "The Other Ones", "Dead And Company"]
-    let collections = ["GratefulDead", "BillyStrings", "PhilLeshandFriends", "GooseBand", "Furthur", "TheOtherOnes", "DeadAndCompany"]
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -38,7 +34,7 @@ class SearchViewController: ArchiveSuperViewController {
         collectionTextField.placeholder = "Select Collection"
         collectionTextField.borderStyle = .roundedRect
         collectionTextField.inputView = collectionPicker
-        collectionTextField.text = collectionsText[0] // Set default value
+        collectionTextField.text = CollectionConfig.collectionsText[0] // Set default value
         
         // Add toolbar with Done button
         let toolbar = UIToolbar()
@@ -115,8 +111,8 @@ class SearchViewController: ArchiveSuperViewController {
         self.searchTermsModel.minRating = minRatingTextField.text
         
         // Set the selected collection
-        if let selectedIndex = collectionsText.firstIndex(of: collectionTextField.text ?? "") {
-            self.searchTermsModel.collection = collections[selectedIndex]
+        if let selectedIndex = CollectionConfig.collectionsText.firstIndex(of: collectionTextField.text ?? "") {
+            self.searchTermsModel.collection = CollectionConfig.collections[selectedIndex]
         }
         
         view.endEditing(true)
@@ -141,14 +137,14 @@ extension SearchViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return collectionsText.count
+        return CollectionConfig.collectionsText.count
     }
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return collectionsText[row]
+        return CollectionConfig.collectionsText[row]
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        collectionTextField.text = collectionsText[row]
+        collectionTextField.text = CollectionConfig.collectionsText[row]
     }
 }

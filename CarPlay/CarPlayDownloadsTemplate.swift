@@ -30,10 +30,14 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
     var miniPlayer: MiniPlayerViewController?
     var player: AudioPlayerArchive?
     var isPlaying = false
-
+    
+    // Keep a strong reference to self while active
+    private var selfRetainer: CarPlayDownloadsTemplate?
+    
     init(interfaceController: CPInterfaceController?, decade: String?, year: String?) {
         self.interfaceController = interfaceController
         super.init()
+        self.selfRetainer = self // Retain self while active
         self.interfaceController?.delegate = self
         self.player = AudioPlayerArchive.shared
         self.network = NetworkUtility()
@@ -43,6 +47,15 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
         playableContentManager?.delegate = self
         notificationCenter.addObserver(self, selector: #selector(playbackDidStart), name: .playbackStarted, object: nil)
         notificationCenter.addObserver(self, selector: #selector(playbackDidPause), name: .playbackPaused, object: self.player?.playerQueue)
+    }
+    
+    deinit {
+        // Clean up observers
+        notificationCenter.removeObserver(self)
+        player?.playerQueue?.removeObserver(self, forKeyPath: "currentItem.status")
+        playableContentManager?.dataSource = nil
+        playableContentManager?.delegate = nil
+        selfRetainer = nil // Release self reference
     }
         
     func numberOfChildItems(at indexPath: IndexPath) -> Int {
@@ -112,7 +125,11 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
         
         for s in shows {
             let item = CPListItem(text: s.metadata?.date, detailText: s.metadata?.coverage)
-            item.handler = { [unowned self] (item, completion: () -> Void) in
+            item.handler = { [weak self] (item, completion: () -> Void) in
+                guard let self = self else {
+                    completion()
+                    return
+                }
                 print(item.description)
                 self.selectedShow = s
                 self.playShow()

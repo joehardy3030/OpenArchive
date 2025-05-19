@@ -16,6 +16,7 @@
 		B5C3A8D3CBD83ACBD863E369 /* Pods_BreazeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EBF20D287E48F03823653E6 /* Pods_BreazeTests.framework */; };
 		D814AEE32B6F35AF00C58FB3 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D814AEE22B6F35AF00C58FB3 /* SearchViewController.swift */; };
 		D82C59192DDAA5ED0013BAC5 /* LocalDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82C59172DDAA5ED0013BAC5 /* LocalDatabase.swift */; };
+		D82C591B2DDAC1460013BAC5 /* CollectionConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82C591A2DDAC1460013BAC5 /* CollectionConfig.swift */; };
 		D830CC4E25AC026D00BD76A1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D830CC4D25AC026D00BD76A1 /* GoogleService-Info.plist */; };
 		D83EB53E24CE33C60016726C /* ArchiveNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83EB53D24CE33C60016726C /* ArchiveNavigationController.swift */; };
 		D83EB54024CE49880016726C /* StartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83EB53F24CE49880016726C /* StartViewController.swift */; };
@@ -87,6 +88,7 @@
 		C9D58EED31CE81FB1690A28E /* Pods_BreazeUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BreazeUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D814AEE22B6F35AF00C58FB3 /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		D82C59172DDAA5ED0013BAC5 /* LocalDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalDatabase.swift; sourceTree = "<group>"; };
+		D82C591A2DDAC1460013BAC5 /* CollectionConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionConfig.swift; sourceTree = "<group>"; };
 		D830CC4D25AC026D00BD76A1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D83EB53D24CE33C60016726C /* ArchiveNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveNavigationController.swift; sourceTree = "<group>"; };
 		D83EB53F24CE49880016726C /* StartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartViewController.swift; sourceTree = "<group>"; };
@@ -288,6 +290,7 @@
 				D850B8FC24B26EAC00E3DC6B /* ShowMetadataModel.swift */,
 				D8ACD2E12B1D6CC30097224B /* ChateauGPTModel.swift */,
 				D8484AA32B97FB4200CEE940 /* SearchTermsModel.swift */,
+				D82C591A2DDAC1460013BAC5 /* CollectionConfig.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -645,6 +648,7 @@
 				D8B65F0024C54A5500F57355 /* DownloadPlayerViewController.swift in Sources */,
 				D84D2B8E24C2925A006C8175 /* DownloadsViewController.swift in Sources */,
 				D8449A6A24AEF57600F113F4 /* MonthTableViewCell.swift in Sources */,
+				D82C591B2DDAC1460013BAC5 /* CollectionConfig.swift in Sources */,
 				D850B8FD24B26EAC00E3DC6B /* ShowMetadataModel.swift in Sources */,
 				D89D789925901D80009324EE /* ArchivePlayerViewController.swift in Sources */,
 				D8A5324C24A9AFF2002379CF /* ArchiveCell.swift in Sources */,

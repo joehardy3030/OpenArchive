@@ -30,7 +30,8 @@ class AudioPlayerArchive: NSObject {
     let commandCenter = MPRemoteCommandCenter.shared()
     let utils = Utils()
     var songDetailsModel = SongDetailsModel()
-    var timerToken: Any?
+    private var timerToken: Any?
+    private weak var timerTokenPlayer: AVQueuePlayer?
     var showMetadataModel: ShowMetadataModel?
     private let notificationCenter: NotificationCenter
     private var playCommandTarget: Any?
@@ -258,21 +259,24 @@ class AudioPlayerArchive: NSObject {
 extension AudioPlayerArchive {
         
     func setupTimer(completion: @escaping (_ seconds: Double?) -> Void) {
-        //removePeriodicTimeObserver()
+        removePeriodicTimeObserver()
         let interval = CMTime(value: 1, timescale: 2)
-        
-        let timerObserverToken = self.playerQueue?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { [weak self] (progressTime) in
-            if let s = self?.playerQueue?.currentTime().seconds {
-                completion(s)
+        if let player = self.playerQueue {
+            let timerObserverToken = player.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { [weak self] (progressTime) in
+                if let s = self?.playerQueue?.currentTime().seconds {
+                    completion(s)
+                }
             }
+            self.timerToken = timerObserverToken
+            self.timerTokenPlayer = player
         }
-        self.timerToken = timerObserverToken
     }
     
     func removePeriodicTimeObserver() {
-        // If a time observer exists, remove it
-        if let token = self.timerToken {
-            self.playerQueue?.removeTimeObserver(token)
+        if let token = self.timerToken, let player = self.timerTokenPlayer {
+            player.removeTimeObserver(token)
+            self.timerToken = nil
+            self.timerTokenPlayer = nil
         }
     }
     

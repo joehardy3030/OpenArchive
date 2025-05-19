@@ -15,6 +15,7 @@ class ChateauGPTViewController: ArchiveSuperViewController {
     // UI Components
     
     let API_key = ""
+    let model = "gpt-4.1"
     var displayText = String()
     
     let introTextView: UITextView = {
@@ -110,7 +111,7 @@ class ChateauGPTViewController: ArchiveSuperViewController {
             responseTextView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -125)
         ])
         
-        introTextView.text = "Ask any question you want about the Grateful Dead and their music."
+        introTextView.text = "Ask any question you want about your favorite jam bands and their music."
     }
     
     @available(iOS 16.0, *)
@@ -158,8 +159,8 @@ class ChateauGPTViewController: ArchiveSuperViewController {
         ]
         let content = prompt + "Resond in JSON format."
         
-        let parameters: [String: Any] = ["model": "gpt-4o",
-                                         "messages": [["role": "system", "content": "You tell people about the Grateful Dead. You know a lot about the band, and the various shows they played. You can help the user identify which shows to listen to if they have a particular song they want to hear or vibe they want to listen to. Please use MM-DD-YYYY format when listing dates."], ["role": "user", "content": content]],
+        let parameters: [String: Any] = ["model": self.model,
+                                         "messages": [["role": "system", "content": "You tell people about jam bands, like the Grateful Dead, Phish, Widespread Panic, Billy Strings, and Goose. You know a lot about the bands, and the various shows they played. You can help the user identify which shows to listen to if they have a particular song they want to hear or vibe they want to listen to. Please use MM-DD-YYYY format when listing dates."], ["role": "user", "content": content]],
                                          "temperature": 0.7]
         
         AF.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
@@ -191,7 +192,7 @@ class ChateauGPTViewController: ArchiveSuperViewController {
         //let content = prompt + "Resond in JSON format."
         let content = prompt + "Please write all dates in YYYY-mm-dd format."
         
-        let parameters = ChateauGPTParameters(model: "gpt-4o",
+        let parameters = ChateauGPTParameters(model: self.model,
                                               messages: [ChateauGPTMessage(role: "assistant", content: "You tell people about the Grateful Dead. You know a lot about the band, and the various shows they played. You can help the user identify which shows to listen to if they have a particular song they want to hear or vibe they want to listen to."),
                                                          ChateauGPTMessage(role: "user", content: content)],
                                               temperature: 0.7,

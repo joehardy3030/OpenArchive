@@ -12,7 +12,19 @@ import MediaPlayer
 
 class AudioPlayerArchive: NSObject {
     static let shared = AudioPlayerArchive()
-    var playerQueue: AVQueuePlayer?
+    var playerQueue: AVQueuePlayer? {
+        didSet {
+            // Remove observer from old queue
+            if let oldQueue = oldValue {
+                oldQueue.removeObserver(self, forKeyPath: "currentItem.status", context: &playerQueueKVOContext)
+            }
+            // Add observer to new queue
+            if let newQueue = playerQueue {
+                newQueue.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: &playerQueueKVOContext)
+            }
+        }
+    }
+    private var playerQueueKVOContext = 0
     var playerItems = [AVPlayerItem]()
     var nowPlayingInfo = [String : Any]()
     let commandCenter = MPRemoteCommandCenter.shared()
@@ -45,6 +57,10 @@ class AudioPlayerArchive: NSObject {
 
         if let target = nextTrackCommandTarget {
             commandCenter.nextTrackCommand.removeTarget(target)
+        }
+
+        if let queue = playerQueue {
+            queue.removeObserver(self, forKeyPath: "currentItem.status", context: &playerQueueKVOContext)
         }
     }
 
@@ -327,6 +343,23 @@ extension Notification.Name {
         return .init(rawValue: "AudioPlayer.playbackRewind")
     }
 
+    static let playerQueueItemStatusChanged = Notification.Name("AudioPlayerArchive.playerQueueItemStatusChanged")
+}
+
+extension AudioPlayerArchive {
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if context == &playerQueueKVOContext && keyPath == "currentItem.status" {
+            let status: AVPlayerItem.Status
+            if let statusNumber = change?[.newKey] as? NSNumber {
+                status = AVPlayerItem.Status(rawValue: statusNumber.intValue) ?? .unknown
+            } else {
+                status = .unknown
+            }
+            NotificationCenter.default.post(name: .playerQueueItemStatusChanged, object: playerQueue?.currentItem, userInfo: ["status": status])
+        } else {
+            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+        }
+    }
 }
 
 extension AudioPlayerArchive {

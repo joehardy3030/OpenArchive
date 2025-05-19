@@ -41,8 +41,6 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
     private var nextTrackCommandTarget: Any?
     private var previousTrackCommandTarget: Any?
     
-    private weak var observedPlayerQueue: AVQueuePlayer?
-    
     init(interfaceController: CPInterfaceController?, decade: String?, year: String?) {
         self.interfaceController = interfaceController
         super.init()
@@ -56,19 +54,16 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
         playableContentManager?.delegate = self
         notificationCenter.addObserver(self, selector: #selector(playbackDidStart), name: .playbackStarted, object: nil)
         notificationCenter.addObserver(self, selector: #selector(playbackDidPause), name: .playbackPaused, object: self.player?.playerQueue)
-        
+        notificationCenter.addObserver(self, selector: #selector(playerQueueItemStatusChanged(_:)), name: .playerQueueItemStatusChanged, object: nil)
         // Setup remote command handlers
         setupRemoteCommandHandlers()
     }
     
     deinit {
-        // Clean up observers and command handlers
         notificationCenter.removeObserver(self)
-        player?.playerQueue?.removeObserver(self, forKeyPath: "currentItem.status")
         playableContentManager?.dataSource = nil
         playableContentManager?.delegate = nil
         nowPlayingInfoUpdateTimer?.invalidate()
-        
         // Remove command handlers
         if let target = playCommandTarget {
             commandCenter.playCommand.removeTarget(target)
@@ -85,11 +80,6 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
         if let target = previousTrackCommandTarget {
             commandCenter.previousTrackCommand.removeTarget(target)
         }
-        
-        if let observedQueue = observedPlayerQueue {
-            observedQueue.removeObserver(self, forKeyPath: "currentItem.status", context: nil)
-        }
-        
         selfRetainer = nil // Release self reference
     }
         
@@ -188,22 +178,13 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
             print("No show selected")
             return
         }
-        
-        // Remove observer from previous queue if needed
-        if let oldQueue = observedPlayerQueue {
-            oldQueue.removeObserver(self, forKeyPath: "currentItem.status", context: nil)
-            observedPlayerQueue = nil
-        }
-        
         player?.pause()
         player?.showMetadataModel = show
-        
         // Verify the show has tracks before proceeding
         guard let mp3s = show.mp3Array, !mp3s.isEmpty else {
             print("Show has no tracks")
             return
         }
-        
         // Verify at least one track is accessible
         var hasAccessibleTrack = false
         for song in mp3s {
@@ -219,27 +200,15 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
                 }
             }
         }
-        
         guard hasAccessibleTrack else {
             print("No accessible tracks found")
             return
         }
-        
-        // Setup all observers and handlers before loading the show
-        if let newQueue = player?.playerQueue {
-            newQueue.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
-            observedPlayerQueue = newQueue
-        }
         setupRemoteCommandHandlers()
         startNowPlayingInfoUpdates()
-        
-        // Now load and play the show
         loadDownloadedShow()
-        
-        // Push the now playing template before starting playback
         self.interfaceController?.pushTemplate(CPNowPlayingTemplate.shared, animated: true) { [weak self] success, error in
             if success {
-                // Only start playback after the template is pushed
                 self?.player?.play()
                 print("player nominally playing")
             } else if let error = error {
@@ -450,10 +419,7 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
         // Update the now playing info
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
     }
-}
-
-@available(iOS 14.0, *)
-private extension CarPlayDownloadsTemplate {
+    
     @objc private func playbackDidStart(_ notification: Notification) {
         print("Item playing")
         // Force an immediate play state update
@@ -472,6 +438,24 @@ private extension CarPlayDownloadsTemplate {
         MPNowPlayingInfoCenter.default().nowPlayingInfo = info
         // Then update all other info
         updateNowPlayingInfo()
+    }
+    
+    @objc private func playerQueueItemStatusChanged(_ notification: Notification) {
+        guard let status = notification.userInfo?["status"] as? AVPlayerItem.Status else { return }
+        switch status {
+        case .readyToPlay:
+            print("ready to play (CarPlay)")
+            updateNowPlayingInfo()
+            var info = MPNowPlayingInfoCenter.default().nowPlayingInfo ?? [:]
+            info[MPNowPlayingInfoPropertyPlaybackRate] = 1.0
+            MPNowPlayingInfoCenter.default().nowPlayingInfo = info
+        case .failed:
+            print("failed (CarPlay)")
+        case .unknown:
+            print("unknown status (CarPlay)")
+        @unknown default:
+            print("nope (CarPlay)")
+        }
     }
 }
 

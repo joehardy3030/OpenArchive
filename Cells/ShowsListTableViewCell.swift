@@ -109,6 +109,25 @@ class ShowsListTableViewCell: UITableViewCell {
             starsLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             starsLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8)
         ])
+        
+        // Set content hugging and compression resistance priorities
+        collectionLabel.setContentHuggingPriority(.required, for: .vertical)
+        collectionLabel.setContentCompressionResistancePriority(.required, for: .vertical)
+        
+        dateLabel.setContentHuggingPriority(.required, for: .vertical)
+        dateLabel.setContentCompressionResistancePriority(.required, for: .vertical)
+        
+        venueLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        venueLabel.setContentCompressionResistancePriority(.required, for: .vertical)
+        
+        transfererLabel.setContentHuggingPriority(.required, for: .vertical)
+        transfererLabel.setContentCompressionResistancePriority(.required, for: .vertical)
+        
+        sourceLabel.setContentHuggingPriority(.required, for: .vertical)
+        sourceLabel.setContentCompressionResistancePriority(.required, for: .vertical)
+        
+        starsLabel.setContentHuggingPriority(.required, for: .vertical)
+        starsLabel.setContentCompressionResistancePriority(.required, for: .vertical)
     }
     
     // MARK: - Configuration

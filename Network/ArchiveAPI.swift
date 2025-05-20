@@ -125,54 +125,8 @@ class ArchiveAPI: NSObject {
         print(url)
         return url
     }
+
     
-    /*
-    func searchTermURL(searchTerm: String?, minRating: String?, startYear: String?, endYear: String?) -> String {
-
-        let startMonthDay = "01-01"
-        let endMonthDay = "12-31"
-
-        let andString = "%20AND%20"
-        let dateString = "date%3A%5B"
-        let toString = "%20TO%20"
-        var url = baseURLString
-                
-        url += "services/search/v1/scrape?"
-        url += "fields=date,venue,transferer,source,coverage,stars,avg_rating,num_reviews&"
-        if let st = searchTerm {
-            let searchTermPlus = st.replacingOccurrences(of: " ", with: "+")
-            url += "q=" + searchTermPlus + andString
-        }
-        else {
-            url += "q="
-        }
-        url += "collection%3A%28GratefulDead%20AND%20stream_only%29"
-        url += andString
-        url += dateString
-        if let sy = startYear {
-            url += sy + "-" + startMonthDay
-        }
-        else {
-            url += "1965-01-01"
-        }
-        url += toString
-        if let ey = endYear {
-            url += ey + "-" + endMonthDay
-        }
-        else {
-            url += "1995-12-31"
-        }
-        url += "%5D"
-        if let mr = minRating {
-            if mr != "" {
-                url += andString
-                url += "avg_rating%3A%5B" + mr + "%20TO%205.0%5D"
-            }
-        }
-        print(url)
-        return url
-    }
-     */
     func searchTermURL(searchTerm: String?, venue: String?, minRating: String?, startYear: String?, endYear: String?, collection: String = "GratefulDead") -> String {
         let startMonthDay = "01-01"
         let endMonthDay = "12-31"
@@ -204,12 +158,8 @@ class ArchiveAPI: NSObject {
         else {
             query += "TO 1995-\(endMonthDay)]"
         }
-        /*
-        let startDate = startYear ?? "1965"
-        let endDate = endYear ?? "1995"
-        query += " AND date:[\(startDate)-\(startMonthDay) TO \(endDate)-\(endMonthDay)]"
-        */
-         if let mr = minRating, !mr.isEmpty {
+ 
+        if let mr = minRating, !mr.isEmpty {
             query += " AND (avg_rating:[\(mr) TO 5.0])"
         }
         if let vu = venue, !vu.isEmpty {
@@ -226,23 +176,6 @@ class ArchiveAPI: NSObject {
     }
      
     
-    //  let url = archiveAPI.dateRangeURL(year: 1973, month: 3, sbdOnly: true)
-    //  archiveAPI.getIARequestItemsDecodable(url: url)
-
-
-    /*
-    func getIARequestMetadata(url: String, completion: @escaping (ShowMetadataModel) -> Void) {
-        AF.request(url).responseJSON { response in
-            if let json = response.value {
-                let j = JSON(json)
-                print(j)
-                let showMetadataModel = self.deserializeMetadataModel(json: j)
-                completion(showMetadataModel)
-            }
-        }
-    }
-    */
-    
     func getIARequestMetadataDecodable(url: String, completion: @escaping (ShowMetadataModel) -> Void) {
         AF.request(url).responseDecodable(of: ShowMetadataModel.self) { response in
             print(response)
@@ -255,92 +188,6 @@ class ArchiveAPI: NSObject {
         }
     }
 
-    /*
-    func deserializeMetadataModel(json: JSON) -> ShowMetadataModel {
-        let files_count = json["files_count"].int
-        let created = json["created"].int
-        let item_size = json["item_size"].int
-        let dir = json["dir"].string
-        let md = json["metadata"]
-        let metadata = deserializeMetadata(json: md)
-        let fl = json["files"]
-        let files = deserializeFiles(json:fl)
-        return ShowMetadataModel(metadata: metadata, files: files, files_count: files_count, created: created, item_size: item_size, dir: dir)
-    }
-     */
-    
-    /*
-    func deserializeFiles(json: JSON) -> [ShowFile] {
-        var fileArray = [ShowFile]()
-        for f in json {
-            let name = f.1["name"].string
-            let source = f.1["source"].string
-            let creator = f.1["creator"].string
-            let title = f.1["title"].string
-            let track = f.1["track"].string
-            let album = f.1["album"].string
-            let bitrate = f.1["bitrate"].string
-            let length = f.1["length"].string
-            let format = f.1["format"].string
-            let original = f.1["orginal"].string
-            let mtime = f.1["mtime"].string
-            let size = f.1["size"].string
-            let md5 = f.1["md5"].string
-            let crc32 = f.1["crc32"].string
-            let sha1 = f.1["sha1"].string
-            
-            let sf = ShowFile(name: name, source: source, creator: creator, title: title, track: track, album: album, bitrate: bitrate, length: length, format: format, original: original, mtime: mtime, size: size, md5: md5, crc32: crc32, sha1: sha1)
-            fileArray.append(sf)
-        }
-        return fileArray
-    }
-    */
-     
-    /*
-    func deserializeMetadata(json: JSON) -> ShowMetadata {
-
-        let identifier = json["identifier"].string
-        let title = json["title"].string
-        let creator = json["creator"].string
-        let mediatype = json["mediatype"].string
-        let collection = json["collection"].string
-        let type = json["type"].string
-        let description = json["description"].string
-        let date = json["date"].string
-        let year = json["year"].string
-        let venue = json["venue"].string
-        let transferer = json["transferer"].string
-        let source = json["source"].string
-        let coverage = json["coverage"].string
-        let avg_rating = json["avg_rating"].float
-        let num_reviews = json["num_reviews"].int
-        
-        return ShowMetadata(identifier: identifier, title: title, creator: creator, mediatype: mediatype, collection: collection, type: type, description: description, date: date, year: year, venue: venue, transferer: transferer, source: source, coverage: coverage, avg_rating: avg_rating, num_reviews: num_reviews)
-    }
-    */
-
-    
-    /*
-    func getIARequestItems(url: String, completion: @escaping ([ShowMetadata]?) -> Void) {
-        
-        AF.request(url).responseJSON { response in
-            switch response.result {
-            case .success(let value):
-                let j = JSON(value)
-                let items = j["items"]
-                var showMetadatas = [ShowMetadata]()
-                for i in items {
-                    let showMD = self.deserializeMetadata(json: i.1)
-                    showMetadatas.append(showMD)
-                }
-                completion(showMetadatas)
-            case .failure(let error):
-                print(error)
-                completion(nil)
-            }
-        }
-    }
-    */
     
     func getIARequestItemsDecodable(url: String, completion: @escaping (ShowMetadatas?) -> Void) {
         AF.request(url).responseDecodable(of: ShowMetadatas.self) { response in

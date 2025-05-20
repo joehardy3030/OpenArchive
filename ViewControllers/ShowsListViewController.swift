@@ -16,10 +16,6 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
     @IBOutlet weak var showListTableView: UITableView!
     var year: Int?
     var month: Int?
-    //var startYear: String?
-    //var endYear: String?
-    //var searchTerm: String?
-    //var minRating: String?
     var identifiers: [String]?
     var showMetadatas: [ShowMetadata]?
     var sbdOnly = true

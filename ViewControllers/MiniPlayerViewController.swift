@@ -23,7 +23,7 @@ class MiniPlayerViewController: UIViewController {
     var nowPlayingInfo = [String : Any]()
     var player: AudioPlayerArchive?
     var currentTrackIndex = 0
-    //private var playerItemContext = 0
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,7 +33,6 @@ class MiniPlayerViewController: UIViewController {
         notificationCenter.addObserver(self, selector: #selector(playbackDidStart), name: .playbackStarted, object: nil)
         notificationCenter.addObserver(self, selector: #selector(playbackDidPause), name: .playbackPaused, object: self.player?.playerQueue)
         initialDefaults()
-        //setupQueueCallback()
     }
         
     @IBAction func playButton(_ sender: Any) {
@@ -95,10 +94,7 @@ class MiniPlayerViewController: UIViewController {
             
             let sbd = UIStoryboard(name: "Main", bundle: nil)
             guard let vc = sbd.instantiateViewController(withIdentifier: "ModalPlayer") as? ModalPlayerViewController,
-                  //let ad = UIApplication.shared.delegate as? AppDelegate
-                  //https://stackoverflow.com/questions/56588843/uiapplication-shared-delegate-equivalent-for-scenedelegate-xcode11
                     let sd = self.view.window?.windowScene?.delegate as? SceneDelegate
-                    //let sd = UIApplication.shared.delegate as? SceneDelegate
             else { return }
             
             if let rvc = sd.window?.rootViewController as? StartViewController {
@@ -125,7 +121,6 @@ class MiniPlayerViewController: UIViewController {
         
     func setupShow () {
         guard let _ = player?.playerQueue else { return }
-        //self.player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
         self.player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
         setupQueueTimerCallback()
         setupSlider()
@@ -198,6 +193,9 @@ class MiniPlayerViewController: UIViewController {
         }
     }
     
+    deinit {
+        player?.playerQueue?.removeObserver(self, forKeyPath: "currentItem.status")
+    }
 }
 
 

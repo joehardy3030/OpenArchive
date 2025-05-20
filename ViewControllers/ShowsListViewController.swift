@@ -29,7 +29,9 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
         super.viewDidLoad()
         self.showListTableView.delegate = self
         self.showListTableView.dataSource = self
-        self.showListTableView.rowHeight = 165.0
+        self.showListTableView.rowHeight = UITableView.automaticDimension
+        self.showListTableView.estimatedRowHeight = 165.0
+        self.showListTableView.register(ShowsListTableViewCell.self, forCellReuseIdentifier: "ShowListCell")
         sbdToggle.selectedSegmentIndex = getSbdToggle()
     }
     
@@ -133,46 +135,20 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = showListTableView.dequeueReusableCell(withIdentifier: "ShowListCell", for: indexPath) as! ShowsListTableViewCell
         if let showMDs = self.showMetadatas {
-            cell.dateLabel.text = utils.getDateFromDateTimeString(datetime: showMDs[indexPath.row].date)
-            if let v = showMDs[indexPath.row].venue, let c = showMDs[indexPath.row].coverage {
-                cell.venueLabel.text = v + ", " + c
-            }
-            else {
-                cell.venueLabel.text = showMDs[indexPath.row].venue
-            }
-            cell.transfererLabel.text = showMDs[indexPath.row].transferer
-            cell.sourceLabel.text = showMDs[indexPath.row].source
-            if let creator = showMDs[indexPath.row].creator {
-                cell.collectionLabel.text = creator
-            } else if let collections = showMDs[indexPath.row].collection {
-                cell.collectionLabel.text = collections.joined(separator: ", ")
-            } else {
-                cell.collectionLabel.text = ""
-            }
-            if let s = showMDs[indexPath.row].avg_rating {
-                var starRating = String(s)
-                starRating = starRating + " stars " + String(showMDs[indexPath.row].num_reviews!) + " ratings"
-                cell.starsLabel.text = starRating
-            }
-            else {
-                cell.starsLabel.text = ""
-            }
+            cell.configure(with: showMDs[indexPath.row])
         }
-        else {
-            cell.venueLabel.text = "No show"
-        }
-        
         return cell
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard let indexPath = showListTableView.indexPathForSelectedRow else { return }
-        if let target = segue.destination as? ShowViewController, let showMDs = self.showMetadatas {
-            target.showMetadata = showMDs[indexPath.row]
-            //print(showMDs[indexPath.row].identifier)
-            //target.identifier = showMDs[indexPath.row].identifier
-            //target.showDate = showMDs[indexPath.row].date
-            target.showType = .archive
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if let showMDs = self.showMetadatas {
+            let show = showMDs[indexPath.row]
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            if let showVC = storyboard.instantiateViewController(withIdentifier: "ShowViewController") as? ShowViewController {
+                showVC.showMetadata = show
+                showVC.showType = .archive
+                navigationController?.pushViewController(showVC, animated: true)
+            }
         }
     }
     

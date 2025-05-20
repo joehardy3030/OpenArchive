@@ -19,8 +19,9 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
         super.viewDidLoad()
         self.showListTableView.delegate = self
         self.showListTableView.dataSource = self
-        self.showListTableView.rowHeight = 165.0
-        //self.listFiles()
+        self.showListTableView.rowHeight = UITableView.automaticDimension
+        self.showListTableView.estimatedRowHeight = 165.0
+        self.showListTableView.register(ShowsListTableViewCell.self, forCellReuseIdentifier: "ShowListCell")
         self.getDownloadedShows()
         print("DownloadsViewController")
     }
@@ -118,42 +119,25 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = showListTableView.dequeueReusableCell(withIdentifier: "ShowListCell", for: indexPath) as! ShowsListTableViewCell
-
         if let showMDs = self.shows {
-            cell.dateLabel.text = showMDs[indexPath.row].metadata?.date
-            
-            if let v = showMDs[indexPath.row].metadata?.venue, let c = showMDs[indexPath.row].metadata?.coverage {
-                cell.venueLabel.text = v + ", " + c
-            }
-            else {
-                cell.venueLabel.text = showMDs[indexPath.row].metadata?.venue
-            }
-            cell.transfererLabel.text = showMDs[indexPath.row].metadata?.transferer
-            cell.sourceLabel.text = showMDs[indexPath.row].metadata?.source
-            if let creator = showMDs[indexPath.row].metadata?.creator {
-                cell.collectionLabel.text = creator
-            } else if let collections = showMDs[indexPath.row].metadata?.collection {
-                cell.collectionLabel.text = collections.joined(separator: ", ")
-            } else {
-                cell.collectionLabel.text = ""
-            }
-            if let s = showMDs[indexPath.row].metadata!.avg_rating {
-                print("Passed this test")
-                var starRating = String(s)
-                starRating = starRating + " stars " + String(showMDs[indexPath.row].metadata!.num_reviews!) + " ratings"
-                cell.starsLabel.text = starRating
-            }
-            else {
-                cell.starsLabel.text = ""
-            }
-
+            cell.configure(with: showMDs[indexPath.row])
         }
-        else {
-            cell.venueLabel.text = "No show"
-        }
-        
         return cell
-  }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if let shows = self.shows {
+            let show = shows[indexPath.row]
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            if let showVC = storyboard.instantiateViewController(withIdentifier: "ShowViewController") as? ShowViewController {
+                showVC.showMetadata = show.metadata
+                showVC.showMetadataModel = show
+                showVC.showType = .downloaded
+                showVC.prevController = self
+                navigationController?.pushViewController(showVC, animated: true)
+            }
+        }
+    }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {

@@ -54,13 +54,15 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             self.navigationItem.title = showMetadata?.date
             self.downloadButton.isHidden = true
             playButtonLabel.setTitle("Play", for: .normal)
+        /*
         case .shared:
             self.navigationItem.title = utils.getDateFromDateTimeString(datetime: showMetadata?.date)
             self.broadcastPlayPauseButton.isHidden = false
             self.shareButton.isHidden = true
             self.downloadButton.isHidden = false
             getShareSnaptshot()
-        default:
+        */
+         default:
             print("No show type")
         }
     }
@@ -95,11 +97,12 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         present(activityViewController, animated: true, completion: nil)
     }
     
-    
+    /*
     @IBAction func broadcastPlayPause(_ sender: Any) {
         broadcastIsPlaying = !broadcastIsPlaying
         network.updateSharedPlayPause(broadcastIsPlaying: broadcastIsPlaying)
     }
+    */
     
     @IBAction func playButton(_ sender: Any) {
         if playButtonLabel.currentTitle == "Play" {
@@ -156,7 +159,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         }
     }
 
-
+    /*
     ///Download manager class
     func getShareSnaptshot() {
         mp3index = 0
@@ -201,6 +204,8 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         print("Add share doc response: \(String(describing: response))")
         //playButtonLabel.setTitle("Play", for: .normal)
     }
+    */
+    
     
     ///Download manager class
     func downloadShow() {

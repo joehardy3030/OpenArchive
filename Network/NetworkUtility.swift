@@ -56,6 +56,7 @@ class NetworkUtility: NSObject {
         }
     }
     
+    /*
     func addShareDataDoc(shareMetadataModel: ShareMetadataModel?) -> String? {
         guard let model = shareMetadataModel else { return nil }
         do {
@@ -90,7 +91,8 @@ class NetworkUtility: NSObject {
             print("GRDB update share error: \(error)")
         }
     }
-    
+    */
+
     func getDownloadDoc(identifier: String?) -> String? {
         return identifier
     }
@@ -132,6 +134,7 @@ class NetworkUtility: NSObject {
         }
     }
     
+    /*
     func getSharedDoc(completion: @escaping ([ShareMetadataModel]?) -> Void) {
         DispatchQueue.global(qos: .userInitiated).async {
             do {
@@ -171,6 +174,7 @@ class NetworkUtility: NSObject {
             }
         }
     }
+    */
 }
 
 

@@ -138,6 +138,7 @@ class MiniPlayerViewController: UIViewController {
         player?.songDetailsModel.songDetailsFromMetadata(row: player?.getCurrentTrackIndex(), showModel: player?.showMetadataModel)
         songLabel.text = player?.songDetailsModel.name
         venueLabel.text = player?.songDetailsModel.venue
+        showLabel.text = player?.showMetadataModel?.metadata?.creator
     }
     
     func timerCallback(seconds: Double?) {

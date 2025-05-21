@@ -147,7 +147,7 @@ class ShowsListTableViewCell: UITableViewCell {
     
     func configure(with show: ShowMetadata) {
         if let creator = show.creator {
-            collectionLabel.text = creator
+            collectionLabel.text = creator.stringValue
         } else if let collections = show.collection {
             collectionLabel.text = collections.joined(separator: ", ")
         } else {
@@ -175,7 +175,7 @@ class ShowsListTableViewCell: UITableViewCell {
         guard let metadata = showModel.metadata else { return }
         
         if let creator = metadata.creator {
-            collectionLabel.text = creator
+            collectionLabel.text = creator.stringValue
         } else if let collections = metadata.collection {
             collectionLabel.text = collections.joined(separator: ", ")
         } else {

@@ -1,8 +1,8 @@
 import Foundation
 
 struct CollectionConfig {
-    static let collectionsText = ["Grateful Dead", "Phil Lesh and Friends", "The Other Ones", "Further", "Dead And Company", "Billy Strings", "Goose"]
-    static let collections = ["GratefulDead", "PhilLeshandFriends", "TheOtherOnes", "Furthur", "DeadAndCompany", "BillyStrings", "GooseBand"]
+    static let collectionsText = ["Grateful Dead", "Phil Lesh and Friends", "The Other Ones", "Further", "Dead And Company", "Billy Strings", "Goose", "None"]
+    static let collections = ["GratefulDead", "PhilLeshandFriends", "TheOtherOnes", "Furthur", "DeadAndCompany", "BillyStrings", "GooseBand",""]
     
     static func getCollection(for displayName: String) -> String? {
         guard let index = collectionsText.firstIndex(of: displayName) else { return nil }

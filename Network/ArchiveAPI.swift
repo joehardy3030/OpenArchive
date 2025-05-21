@@ -127,7 +127,8 @@ class ArchiveAPI: NSObject {
     }
 
     
-    func searchTermURL(searchTerm: String?, venue: String?, minRating: String?, startYear: String?, endYear: String?, collection: String = "GratefulDead") -> String {
+    func searchTermURL(searchTerm: String?, venue: String?, minRating: String?, startYear: String?, endYear: String?, collection: String?) -> String {
+        print("searchTermURL")
         let startMonthDay = "01-01"
         let endMonthDay = "12-31"
         
@@ -141,11 +142,31 @@ class ArchiveAPI: NSObject {
         queryItems.append(URLQueryItem(name: "fields", value: fields))
 
         // Query
-        var query = "collection:(" + collection + " AND stream_only)"
+        var query = ""
+        if let col = collection {
+            print(col)
+            if col == "GratefulDead" {
+                query += "collection:(" + col + " AND stream_only)"
+            }
+            else if col == "" {
+                
+            }
+            else
+            {
+                query += "collection:" + col
+            }
+        }
+        
         if let st = searchTerm, !st.isEmpty {
             let stPlus = st.replacingOccurrences(of: " ", with: "+")
-            query += " AND \(stPlus)"
+            if collection == "" {
+                query += stPlus
+            }
+            else {
+                query += " AND \(stPlus)"
+            }
         }
+
         if let sy = startYear, !sy.isEmpty {
             query += " AND date:[\(sy)-\(startMonthDay) "
         }
@@ -156,7 +177,7 @@ class ArchiveAPI: NSObject {
             query += "TO \(ey)-\(endMonthDay)]"
         }
         else {
-            query += "TO 1995-\(endMonthDay)]"
+            query += "TO 2025-\(endMonthDay)]"
         }
  
         if let mr = minRating, !mr.isEmpty {

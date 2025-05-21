@@ -26,7 +26,7 @@ struct ShowMetadataModel: Codable {
 struct ShowMetadata: Codable {
     var identifier: String?
     var title: String?
-    var creator: String?
+    var creator: StringOrArray?
     var mediatype: String?
     var collection: [String]?
     var type: String?
@@ -39,6 +39,42 @@ struct ShowMetadata: Codable {
     var coverage: String?
     var avg_rating: Float?
     var num_reviews: Int?
+}
+
+// Custom type to handle both String and [String] for creator field
+enum StringOrArray: Codable {
+    case string(String)
+    case array([String])
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if let string = try? container.decode(String.self) {
+            self = .string(string)
+        } else if let array = try? container.decode([String].self) {
+            self = .array(array)
+        } else {
+            throw DecodingError.typeMismatch(StringOrArray.self, DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Expected String or [String]"))
+        }
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case .string(let string):
+            try container.encode(string)
+        case .array(let array):
+            try container.encode(array)
+        }
+    }
+    
+    var stringValue: String {
+        switch self {
+        case .string(let string):
+            return string
+        case .array(let array):
+            return array.joined(separator: ", ")
+        }
+    }
 }
 
 extension ShowMetadata {

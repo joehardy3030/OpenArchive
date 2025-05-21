@@ -24,7 +24,7 @@ class CollectionViewController: ArchiveSuperViewController, UITableViewDelegate,
     // MARK: - TableView DataSource
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return CollectionConfig.collectionsText.count
+        return CollectionConfig.collectionsText.count - 1  // Exclude the last item
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

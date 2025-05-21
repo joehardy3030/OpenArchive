@@ -15,6 +15,6 @@ struct SearchTermsModel: Codable {
     var endYear: String?
     var minRating: String?
     var sbdOnly: Bool?
-    var collection: String = "GratefulDead"
+    var collection: String?
 }
 

@@ -54,12 +54,10 @@ class SearchViewController: ArchiveSuperViewController {
         // Configure text fields with borders
         songTextField.placeholder = "Enter search term"
         songTextField.borderStyle = .roundedRect
-        //startDateTextField.placeholder = "Start Date (YYYY-MM-DD)"
         venueTextField.placeholder = "Venue"
         venueTextField.borderStyle = .roundedRect
         startDateTextField.placeholder = "Start Year (YYYY)"
         startDateTextField.borderStyle = .roundedRect
-        //endDateTextField.placeholder = "End Date (YYYY-MM-DD)"
         endDateTextField.placeholder = "End Year (YYYY)"
         endDateTextField.borderStyle = .roundedRect
         minRatingTextField.placeholder = "1-5 stars min"
@@ -111,8 +109,11 @@ class SearchViewController: ArchiveSuperViewController {
         self.searchTermsModel.minRating = minRatingTextField.text
         
         // Set the selected collection
-        if let selectedIndex = CollectionConfig.collectionsText.firstIndex(of: collectionTextField.text ?? "") {
+        if let selectedText = collectionTextField.text,
+           let selectedIndex = CollectionConfig.collectionsText.firstIndex(of: selectedText) {
             self.searchTermsModel.collection = CollectionConfig.collections[selectedIndex]
+        } else {
+            self.searchTermsModel.collection = ""  // Default to empty string if nothing selected
         }
         
         view.endEditing(true)

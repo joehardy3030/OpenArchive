@@ -338,7 +338,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     
     func setupSongDetails() {
         player.songDetailsModel.songDetailsFromMetadata(row: player.getCurrentTrackIndex(), showModel: player.showMetadataModel)
-        creatorLabel.text = player.showMetadataModel?.metadata?.creator
+        creatorLabel.text = player.showMetadataModel?.metadata?.creator?.stringValue
         songLabel.text = player.songDetailsModel.name
         dateLabel.text = player.songDetailsModel.date
         venueLabel.text = player.songDetailsModel.venue

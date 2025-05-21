@@ -149,7 +149,7 @@ class ArchiveAPI: NSObject {
                 query += "collection:(" + col + " AND stream_only)"
             }
             else if col == "" {
-                
+                query += "mediatype:audio  AND "
             }
             else
             {

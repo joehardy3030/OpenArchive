@@ -92,10 +92,8 @@ class MiniPlayerViewController: UIViewController {
     @IBAction func loadFullPlayer(_ sender: Any) {
         if player?.playerQueue != nil {
             
-            let sbd = UIStoryboard(name: "Main", bundle: nil)
-            guard let vc = sbd.instantiateViewController(withIdentifier: "ModalPlayer") as? ModalPlayerViewController,
-                    let sd = self.view.window?.windowScene?.delegate as? SceneDelegate
-            else { return }
+            guard let sd = self.view.window?.windowScene?.delegate as? SceneDelegate else { return }
+            let vc = ModalPlayerViewController()
             
             if let rvc = sd.window?.rootViewController as? StartViewController {
                 prepareModalPlayer(viewController: vc)

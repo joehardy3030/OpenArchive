@@ -194,20 +194,35 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         playerControlsStack.spacing = 12
         playerControlsStack.translatesAutoresizingMaskIntoConstraints = false
 
+        // Container view for border
+        let containerView = UIView()
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        containerView.layer.borderWidth = 1
+        containerView.layer.borderColor = UIColor.separator.cgColor
+        containerView.layer.cornerRadius = 12
+        containerView.backgroundColor = .secondarySystemBackground
+
         view.addSubview(modalPlayerTableView)
-        view.addSubview(playerControlsStack)
+        view.addSubview(containerView)
+        containerView.addSubview(playerControlsStack)
 
         NSLayoutConstraint.activate([
             // Table view at top
             modalPlayerTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             modalPlayerTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             modalPlayerTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            modalPlayerTableView.bottomAnchor.constraint(equalTo: playerControlsStack.topAnchor, constant: -12),
+            modalPlayerTableView.bottomAnchor.constraint(equalTo: containerView.topAnchor, constant: -12),
 
-            // Player controls at bottom
-            playerControlsStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            playerControlsStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            playerControlsStack.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -12),
+            // Container view at bottom
+            containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            containerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -12),
+
+            // Player controls inside container
+            playerControlsStack.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 16),
+            playerControlsStack.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
+            playerControlsStack.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
+            playerControlsStack.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -16),
 
             // Play button size
             playButton.widthAnchor.constraint(equalToConstant: 60),

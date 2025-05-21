@@ -515,7 +515,6 @@
                         <segue destination="qma-6q-Vhi" kind="relationship" relationship="viewControllers" id="bPN-Lw-dJo"/>
                         <segue destination="iDX-jC-6by" kind="relationship" relationship="viewControllers" id="axA-5o-iN7"/>
                         <segue destination="iFd-OQ-bOu" kind="relationship" relationship="viewControllers" id="N2W-s4-MoT"/>
-                        <segue destination="ipy-Jw-O50" kind="relationship" relationship="viewControllers" id="Y6l-WR-uGG"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HuB-VB-40B" sceneMemberID="firstResponder"/>
@@ -673,7 +672,7 @@
             <objects>
                 <viewController id="6k2-M9-Sln" customClass="ChateauGPTViewController" customModule="Chateau" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="eV2-b4-X9M">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="en8-oZ-VMu"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>

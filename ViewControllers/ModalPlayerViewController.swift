@@ -134,6 +134,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     // MARK: - Other Properties
     private let notificationCenter: NotificationCenter = .default
     private let commandCenter = MPRemoteCommandCenter.shared()
+    private var isObservingPlayer = false  // Add flag to track observer state
 
     // MARK: - Life-cycle
     override func viewDidLoad() {
@@ -155,12 +156,19 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
 
     deinit {
         notificationCenter.removeObserver(self)
-        player.playerQueue?.removeObserver(self, forKeyPath: "currentItem.status")
+        if isObservingPlayer, let queue = player.playerQueue {
+            queue.removeObserver(self, forKeyPath: "currentItem.status")
+            isObservingPlayer = false
+        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         notificationCenter.removeObserver(self)
+        if isObservingPlayer, let queue = player.playerQueue {
+            queue.removeObserver(self, forKeyPath: "currentItem.status")
+            isObservingPlayer = false
+        }
     }
 
     // MARK: - UI Setup
@@ -311,7 +319,10 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     func setupShow() {
         guard let queue = player.playerQueue else { return }
         playPauseButtonImageSetup()
-        queue.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
+        if !isObservingPlayer {
+            queue.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
+            isObservingPlayer = true
+        }
         self.player.setupTimer()  { (seconds: Double?) -> Void in
              self.timerCallback(seconds: seconds)
         }

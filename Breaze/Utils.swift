@@ -126,13 +126,11 @@ class Utils {
     func getDateFromDateTimeString(datetime: String?) -> String? {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
-        dateFormatter.locale = Locale.init(identifier: "en_US")
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)  // Use UTC
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         
         if let d = datetime {
-            if var dateObj = dateFormatter.date(from: d) {
-                var dayComponent  = DateComponents()
-                dayComponent.day = 1 // For removing one day (yesterday): -1
-                dateObj = Calendar.current.date(byAdding: dayComponent, to: dateObj)!
+            if let dateObj = dateFormatter.date(from: d) {
                 dateFormatter.dateFormat = "MM-dd-yyyy"
                 let newDate = dateFormatter.string(from: dateObj)
                 return newDate
@@ -146,16 +144,16 @@ class Utils {
     }
 
     func getDateFromDateString(datetime: String?) -> Date? {
-         let dateFormatter = DateFormatter()
-        var date: Date?
+        let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
-        dateFormatter.locale = Locale.init(identifier: "en_US")
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)  // Use UTC
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         
         if let d = datetime {
-            date = dateFormatter.date(from: d)
+            return dateFormatter.date(from: d)
         }
         
-        return date
+        return nil
     }
 
     

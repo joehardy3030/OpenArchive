@@ -135,6 +135,9 @@ class ShowsListTableViewCell: UITableViewCell {
         guard let dateString = dateString else { return "" }
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)  // Use UTC
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        
         if let date = dateFormatter.date(from: dateString) {
             dateFormatter.dateFormat = "yyyy-MM-dd"
             return dateFormatter.string(from: date)

@@ -59,11 +59,11 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
         case 1:
             cell.textLabel?.text = m.venue
         case 2:
-            cell.textLabel?.text = m.coverage
+            cell.textLabel?.text = m.coverage?.stringValue
         case 3:
             cell.textLabel?.text = m.description
         case 4:
-            cell.textLabel?.text = m.source
+            cell.textLabel?.text = m.source?.stringValue
         case 5:
             cell.textLabel?.text = m.transferer
         default:

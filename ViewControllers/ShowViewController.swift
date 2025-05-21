@@ -389,7 +389,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         case 1:
             cell.textLabel?.text = m.venue
         case 2:
-            cell.textLabel?.text = m.coverage
+            cell.textLabel?.text = m.coverage?.stringValue
         case 3:
             if let description = m.description {
                 let data = description.data(using: .utf8)!
@@ -400,7 +400,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 cell.textLabel?.text = m.description
             }
         case 4:
-            cell.textLabel?.text = m.source
+            cell.textLabel?.text = m.source?.stringValue
         case 5:
             cell.textLabel?.text = m.transferer
         default:

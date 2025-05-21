@@ -157,12 +157,12 @@ class ShowsListTableViewCell: UITableViewCell {
         dateLabel.text = formatDate(show.date)
         
         if let venue = show.venue, let coverage = show.coverage {
-            venueLabel.text = "\(venue), \(coverage)"
+            venueLabel.text = "\(venue), \(coverage.stringValue)"
         } else {
             venueLabel.text = show.venue
         }
         transfererLabel.text = show.transferer
-        sourceLabel.text = show.source
+        sourceLabel.text = show.source?.stringValue
         
         if let rating = show.avg_rating, let reviews = show.num_reviews {
             starsLabel.text = "\(rating) stars \(reviews) ratings"
@@ -185,12 +185,12 @@ class ShowsListTableViewCell: UITableViewCell {
         dateLabel.text = formatDate(metadata.date)
         
         if let venue = metadata.venue, let coverage = metadata.coverage {
-            venueLabel.text = "\(venue), \(coverage)"
+            venueLabel.text = "\(venue), \(coverage.stringValue)"
         } else {
             venueLabel.text = metadata.venue
         }
         transfererLabel.text = metadata.transferer
-        sourceLabel.text = metadata.source
+        sourceLabel.text = metadata.source?.stringValue
         
         if let rating = metadata.avg_rating, let reviews = metadata.num_reviews {
             starsLabel.text = "\(rating) stars \(reviews) ratings"

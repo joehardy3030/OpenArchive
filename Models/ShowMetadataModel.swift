@@ -35,8 +35,8 @@ struct ShowMetadata: Codable {
     var year: String?
     var venue: String?
     var transferer: String?
-    var source: String?
-    var coverage: String?
+    var source: StringOrArray?
+    var coverage: StringOrArray?
     var avg_rating: Float?
     var num_reviews: Int?
 }
@@ -91,7 +91,7 @@ struct ShowMetadatas:Codable {
 
 struct ShowFile: Codable {
     var name: String?
-    var source: String?
+    var source: StringOrArray?
     var creator: String?
     var title: String?
     var track: String?

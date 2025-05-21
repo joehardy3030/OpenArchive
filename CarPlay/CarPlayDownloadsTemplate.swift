@@ -152,7 +152,7 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
         guard let shows = self.shows else { return }
         
         for s in shows {
-            let item = CPListItem(text: s.metadata?.date, detailText: s.metadata?.coverage)
+            let item = CPListItem(text: s.metadata?.date, detailText: s.metadata?.coverage?.stringValue)
             item.handler = { [weak self] (item, completion: () -> Void) in
                 guard let self = self else {
                     completion()
@@ -279,7 +279,7 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
         }
         nowPlayingInfo = [String : Any]()
         nowPlayingInfo[MPMediaItemPropertyTitle] = mp3s[ct].title
-        nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = String(md.date! + ", " + md.coverage!)
+        nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = String(md.date! + ", " + md.coverage!.stringValue)
         if let creator = md.creator {
             nowPlayingInfo[MPMediaItemPropertyArtist] = creator
         } else if let collections = md.collection {
@@ -400,7 +400,7 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
         
         // Basic track info
         nowPlayingInfo[MPMediaItemPropertyTitle] = mp3s[currentIndex].title
-        nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = String(md.date! + ", " + md.coverage!)
+        nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = String(md.date! + ", " + md.coverage!.stringValue)
         if let creator = md.creator {
             nowPlayingInfo[MPMediaItemPropertyArtist] = creator
         } else if let collections = md.collection {

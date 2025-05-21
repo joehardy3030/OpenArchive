@@ -127,6 +127,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         let tv = UITableView()
         tv.translatesAutoresizingMaskIntoConstraints = false
         tv.tableFooterView = UIView()
+        tv.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 0)
         return tv
     }()
 
@@ -187,24 +188,38 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         controlsRow.distribution = .equalCentering
         controlsRow.translatesAutoresizingMaskIntoConstraints = false
 
-        // Container stack
-        let containerStack = UIStackView(arrangedSubviews: [labelsStack, sliderRow, controlsRow])
-        containerStack.axis = .vertical
-        containerStack.spacing = 12
-        containerStack.translatesAutoresizingMaskIntoConstraints = false
+        // Player controls container
+        let playerControlsStack = UIStackView(arrangedSubviews: [labelsStack, sliderRow, controlsRow])
+        playerControlsStack.axis = .vertical
+        playerControlsStack.spacing = 12
+        playerControlsStack.translatesAutoresizingMaskIntoConstraints = false
 
-        view.addSubview(containerStack)
         view.addSubview(modalPlayerTableView)
+        view.addSubview(playerControlsStack)
 
         NSLayoutConstraint.activate([
-            containerStack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 12),
-            containerStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            containerStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-
-            modalPlayerTableView.topAnchor.constraint(equalTo: containerStack.bottomAnchor, constant: 12),
+            // Table view at top
+            modalPlayerTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             modalPlayerTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             modalPlayerTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            modalPlayerTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            modalPlayerTableView.bottomAnchor.constraint(equalTo: playerControlsStack.topAnchor, constant: -12),
+
+            // Player controls at bottom
+            playerControlsStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            playerControlsStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            playerControlsStack.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -12),
+
+            // Play button size
+            playButton.widthAnchor.constraint(equalToConstant: 60),
+            playButton.heightAnchor.constraint(equalToConstant: 60),
+            
+            // Other control buttons size
+            backButton.widthAnchor.constraint(equalToConstant: 40),
+            backButton.heightAnchor.constraint(equalToConstant: 40),
+            forwardButton.widthAnchor.constraint(equalToConstant: 40),
+            forwardButton.heightAnchor.constraint(equalToConstant: 40),
+            shareButton.widthAnchor.constraint(equalToConstant: 40),
+            shareButton.heightAnchor.constraint(equalToConstant: 40)
         ])
     }
 

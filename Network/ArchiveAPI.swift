@@ -163,7 +163,7 @@ class ArchiveAPI: NSObject {
             query += "TO \(ey)-\(endMonthDay)]"
         }
         else {
-            query += "TO 1995-\(endMonthDay)]"
+            query += "TO 2025-\(endMonthDay)]"
         }
  
         if let mr = minRating, !mr.isEmpty {

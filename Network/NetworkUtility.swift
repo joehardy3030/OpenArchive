@@ -55,43 +55,7 @@ class NetworkUtility: NSObject {
             print("GRDB delete error: \(error)")
         }
     }
-    
-    /*
-    func addShareDataDoc(shareMetadataModel: ShareMetadataModel?) -> String? {
-        guard let model = shareMetadataModel else { return nil }
-        do {
-            let jsonData = try JSONEncoder().encode(model)
-            let jsonString = String(data: jsonData, encoding: .utf8)!
-            try dbQueue.write { db in
-                try db.execute(sql: "INSERT OR REPLACE INTO share (id, data) VALUES ('shareShow', ?)", arguments: [jsonString])
-            }
-            return "shared"
-        } catch {
-            print("GRDB write share error: \(error)")
-            return nil
-        }
-    }
-    
-    func updateSharedPlayPause(broadcastIsPlaying: Bool?) {
-        guard let isPlaying = broadcastIsPlaying else { return }
-        do {
-            let share: ShareMetadataModel? = try dbQueue.read { db in
-                if let row = try Row.fetchOne(db, sql: "SELECT data FROM share WHERE id = 'shareShow'") {
-                    if let jsonString: String = row["data"],
-                       let data = jsonString.data(using: .utf8) {
-                        return try JSONDecoder().decode(ShareMetadataModel.self, from: data)
-                    }
-                }
-                return nil
-            }
-            var updated = share ?? ShareMetadataModel()
-            updated.isPlaying = isPlaying
-            _ = addShareDataDoc(shareMetadataModel: updated)
-        } catch {
-            print("GRDB update share error: \(error)")
-        }
-    }
-    */
+
 
     func getDownloadDoc(identifier: String?) -> String? {
         return identifier
@@ -133,48 +97,6 @@ class NetworkUtility: NSObject {
             }
         }
     }
-    
-    /*
-    func getSharedDoc(completion: @escaping ([ShareMetadataModel]?) -> Void) {
-        DispatchQueue.global(qos: .userInitiated).async {
-            do {
-                let shareModel: ShareMetadataModel? = try self.dbQueue.read { db in
-                    if let row = try Row.fetchOne(db, sql: "SELECT data FROM share WHERE id = 'shareShow'") {
-                        if let jsonString: String = row["data"],
-                           let data = jsonString.data(using: .utf8) {
-                            return try JSONDecoder().decode(ShareMetadataModel.self, from: data)
-                        }
-                    }
-                    return nil
-                }
-                completion(shareModel != nil ? [shareModel!] : nil)
-            } catch {
-                print("GRDB shared fetch error: \(error)")
-                completion(nil)
-            }
-        }
-    }
-    
-    func getShareSnapshot(completion: @escaping (ShareMetadataModel?) -> Void) {
-        DispatchQueue.global(qos: .userInitiated).async {
-            do {
-                let shareModel: ShareMetadataModel? = try self.dbQueue.read { db in
-                    if let row = try Row.fetchOne(db, sql: "SELECT data FROM share WHERE id = 'shareShow'") {
-                        if let jsonString: String = row["data"],
-                           let data = jsonString.data(using: .utf8) {
-                            return try JSONDecoder().decode(ShareMetadataModel.self, from: data)
-                        }
-                    }
-                    return nil
-                }
-                completion(shareModel)
-            } catch {
-                print("GRDB shared snapshot error: \(error)")
-                completion(nil)
-            }
-        }
-    }
-    */
 }
 
 

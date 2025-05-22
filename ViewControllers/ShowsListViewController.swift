@@ -33,19 +33,17 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
     
     
     func getIASearchTerm(searchTermsModel: SearchTermsModel) {
-
         let url = archiveAPI.searchTermURL(searchTerm: searchTermsModel.searchTerm ?? "",
                                            venue: searchTermsModel.venue,
                                            minRating: searchTermsModel.minRating,
                                            startYear: searchTermsModel.startYear,
                                            endYear: searchTermsModel.endYear,
-                                           collection: selectedCollection)
+                                           collection: searchTermsModel.collection)
         archiveAPI.getIARequestItemsDecodable(url: url) {
             (response: ShowMetadatas?) -> Void in
              DispatchQueue.main.async{
                 if let r = response {
                     self.showMetadatas = r.items?.sorted(by: { $0.date! < $1.date! })
-                    // print(r)
                     self.showListTableView.reloadData()
                 }
             }

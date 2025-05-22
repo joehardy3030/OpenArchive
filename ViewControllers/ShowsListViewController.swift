@@ -38,6 +38,7 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
                                            minRating: searchTermsModel.minRating,
                                            startYear: searchTermsModel.startYear,
                                            endYear: searchTermsModel.endYear,
+                                           sbdOnly: searchTermsModel.sbdOnly,
                                            collection: searchTermsModel.collection)
         archiveAPI.getIARequestItemsDecodable(url: url) {
             (response: ShowMetadatas?) -> Void in

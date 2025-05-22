@@ -34,15 +34,21 @@ class SearchViewController: ArchiveSuperViewController {
         collectionTextField.placeholder = "Select Collection"
         collectionTextField.borderStyle = .roundedRect
         collectionTextField.inputView = collectionPicker
-        collectionTextField.text = CollectionConfig.collectionsText[0] // Set default value
         
         // Add toolbar with Done button
-        let toolbar = UIToolbar()
+        let toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 44))
+        toolbar.barStyle = .default
+        toolbar.isTranslucent = true
         toolbar.sizeToFit()
-        let doneButton = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(donePicker))
+        
         let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let doneButton = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(donePicker))
+        
         toolbar.items = [flexSpace, doneButton]
+        toolbar.isUserInteractionEnabled = true
+        
         collectionTextField.inputAccessoryView = toolbar
+        collectionTextField.text = CollectionConfig.collectionsText[0] // Set default value
     }
     
     @objc func donePicker() {
@@ -109,6 +115,8 @@ class SearchViewController: ArchiveSuperViewController {
         }
         self.searchTermsModel.searchTerm = songTextField.text
         self.searchTermsModel.minRating = minRatingTextField.text
+        
+        //self.searchTermsModel.sbdOnly = sbdOnly?.toggle()
         
         // Set the selected collection
         if let selectedIndex = CollectionConfig.collectionsText.firstIndex(of: collectionTextField.text ?? "") {

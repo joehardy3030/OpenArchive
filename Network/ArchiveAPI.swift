@@ -127,7 +127,7 @@ class ArchiveAPI: NSObject {
     }
 
     
-    func searchTermURL(searchTerm: String?, venue: String?, minRating: String?, startYear: String?, endYear: String?, collection: String = "GratefulDead") -> String {
+    func searchTermURL(searchTerm: String?, venue: String?, minRating: String?, startYear: String?, endYear: String?, sbdOnly: Bool?, collection: String = "GratefulDead") -> String {
         let startMonthDay = "01-01"
         let endMonthDay = "12-31"
         
@@ -141,7 +141,14 @@ class ArchiveAPI: NSObject {
         queryItems.append(URLQueryItem(name: "fields", value: fields))
 
         // Query
-        var query = "collection:(" + collection + " AND stream_only)"
+        var query = ""
+        if let _ = sbdOnly {
+            query += "collection:(" + collection + "%20AND%20stream_only)"
+        }
+        else {
+            query += "collection:" + collection
+        }
+        
         if let st = searchTerm, !st.isEmpty {
             let stPlus = st.replacingOccurrences(of: " ", with: "+")
             query += " AND \(stPlus)"

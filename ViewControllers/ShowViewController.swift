@@ -54,14 +54,6 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             self.navigationItem.title = showMetadata?.date
             self.downloadButton.isHidden = true
             playButtonLabel.setTitle("Play", for: .normal)
-        /*
-        case .shared:
-            self.navigationItem.title = utils.getDateFromDateTimeString(datetime: showMetadata?.date)
-            self.broadcastPlayPauseButton.isHidden = false
-            self.shareButton.isHidden = true
-            self.downloadButton.isHidden = false
-            getShareSnaptshot()
-        */
          default:
             print("No show type")
         }

@@ -12,14 +12,26 @@ import MediaPlayer
 
 class AudioPlayerArchive: NSObject {
     static let shared = AudioPlayerArchive()
-    //static let playerQueue = AVQueuePlayer()
-    var playerQueue: AVQueuePlayer?
+    var playerQueue: AVQueuePlayer? {
+        didSet {
+            // Remove observer from old queue
+            if let oldQueue = oldValue {
+                oldQueue.removeObserver(self, forKeyPath: "currentItem.status", context: &playerQueueKVOContext)
+            }
+            // Add observer to new queue
+            if let newQueue = playerQueue {
+                newQueue.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: &playerQueueKVOContext)
+            }
+        }
+    }
+    private var playerQueueKVOContext = 0
     var playerItems = [AVPlayerItem]()
     var nowPlayingInfo = [String : Any]()
     let commandCenter = MPRemoteCommandCenter.shared()
     let utils = Utils()
     var songDetailsModel = SongDetailsModel()
-    var timerToken: Any?
+    private var timerToken: Any?
+    private weak var timerTokenPlayer: AVQueuePlayer?
     var showMetadataModel: ShowMetadataModel?
     private let notificationCenter: NotificationCenter
     private var playCommandTarget: Any?
@@ -46,6 +58,10 @@ class AudioPlayerArchive: NSObject {
 
         if let target = nextTrackCommandTarget {
             commandCenter.nextTrackCommand.removeTarget(target)
+        }
+
+        if let queue = playerQueue {
+            queue.removeObserver(self, forKeyPath: "currentItem.status", context: &playerQueueKVOContext)
         }
     }
 
@@ -238,46 +254,29 @@ class AudioPlayerArchive: NSObject {
             pq.insert(item, after: nil)
         }
     }
-    
-    /*
-    func rewindFunctionality() {
-        // This operation should probably belong to the player class
-        var index = self.getCurrentTrackIndex()
-        if let mp3s = self.showMetadataModel?.mp3Array {
-            self.loadQueuePlayer(tracks: mp3s)
-         }
-        if let mp = self.getMiniPlayerController() {
-            mp.setupShow()
-        }
-
-        initialDefaults()
-        setupShow()
-        self.rewindToPreviousItem(index: index)
-    }
-    */
-    
-
-
 }
 
 extension AudioPlayerArchive {
         
     func setupTimer(completion: @escaping (_ seconds: Double?) -> Void) {
-        //removePeriodicTimeObserver()
+        removePeriodicTimeObserver()
         let interval = CMTime(value: 1, timescale: 2)
-        
-        let timerObserverToken = self.playerQueue?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { [weak self] (progressTime) in
-            if let s = self?.playerQueue?.currentTime().seconds {
-                completion(s)
+        if let player = self.playerQueue {
+            let timerObserverToken = player.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { [weak self] (progressTime) in
+                if let s = self?.playerQueue?.currentTime().seconds {
+                    completion(s)
+                }
             }
+            self.timerToken = timerObserverToken
+            self.timerTokenPlayer = player
         }
-        self.timerToken = timerObserverToken
     }
     
     func removePeriodicTimeObserver() {
-        // If a time observer exists, remove it
-        if let token = self.timerToken {
-            self.playerQueue?.removeTimeObserver(token)
+        if let token = self.timerToken, let player = self.timerTokenPlayer {
+            player.removeTimeObserver(token)
+            self.timerToken = nil
+            self.timerTokenPlayer = nil
         }
     }
     
@@ -348,6 +347,23 @@ extension Notification.Name {
         return .init(rawValue: "AudioPlayer.playbackRewind")
     }
 
+    static let playerQueueItemStatusChanged = Notification.Name("AudioPlayerArchive.playerQueueItemStatusChanged")
+}
+
+extension AudioPlayerArchive {
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if context == &playerQueueKVOContext && keyPath == "currentItem.status" {
+            let status: AVPlayerItem.Status
+            if let statusNumber = change?[.newKey] as? NSNumber {
+                status = AVPlayerItem.Status(rawValue: statusNumber.intValue) ?? .unknown
+            } else {
+                status = .unknown
+            }
+            NotificationCenter.default.post(name: .playerQueueItemStatusChanged, object: playerQueue?.currentItem, userInfo: ["status": status])
+        } else {
+            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+        }
+    }
 }
 
 extension AudioPlayerArchive {

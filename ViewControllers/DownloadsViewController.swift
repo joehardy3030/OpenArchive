@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import FirebaseAuthUI
 
 @available(iOS 13.0, *)
 class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
@@ -20,12 +19,11 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
         super.viewDidLoad()
         self.showListTableView.delegate = self
         self.showListTableView.dataSource = self
-        self.showListTableView.rowHeight = 165.0
-        //self.listFiles()
+        self.showListTableView.rowHeight = UITableView.automaticDimension
+        self.showListTableView.estimatedRowHeight = 165.0
+        self.showListTableView.register(ShowsListTableViewCell.self, forCellReuseIdentifier: "ShowListCell")
         self.getDownloadedShows()
         print("DownloadsViewController")
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Sign out", style: .plain, target: self, action: #selector(signOutTapped))
-
     }
     
     
@@ -34,52 +32,8 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
         print("DownloadsViewController")
         
         self.getDownloadedShows()
-        
-        // Check if a user is not logged in before showing the authVC
-        if Auth.auth().currentUser == nil {
-            authUI = FUIAuth.defaultAuthUI()
-            if let authVC = self.authUI?.authViewController() {
-                print("authVC presented for logged out user")
-                self.present(authVC, animated: true, completion: nil)
-            }
-        } else {
-            print("User is already logged in")
-        }
     }
 
-    /*
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        print("DownloadsViewController")
-        self.getDownloadedShows()
-        if let authVC = self.authUI?.authViewController() {
-            authUI = FUIAuth.defaultAuthUI()
-            if let authVC = self.authUI?.authViewController() {
-                print("authVC")
-                self.present(authVC, animated: true, completion: nil)
-                // self.show(authVC, sender: self)
-            }
-            else {
-                print("User is already logged in")
-            }
-        }
-        
-      //\  self.title = DeepLinkManager.shared.deepLinkURL?.absoluteString
-    }
-    */
-    
-    
-    @objc func signOutTapped() {
-        let firebaseAuth = Auth.auth()
-        do {
-            try firebaseAuth.signOut()
-            // After sign out, perhaps return to the login screen or perform other appropriate actions
-            print("User signed out successfully")
-        } catch let signOutError as NSError {
-            print("Error signing out: %@", signOutError)
-        }
-    }
-    
     func listFiles() {
         do {
             let urls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
@@ -165,42 +119,25 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = showListTableView.dequeueReusableCell(withIdentifier: "ShowListCell", for: indexPath) as! ShowsListTableViewCell
-
         if let showMDs = self.shows {
-            cell.dateLabel.text = showMDs[indexPath.row].metadata?.date
-            
-            if let v = showMDs[indexPath.row].metadata?.venue, let c = showMDs[indexPath.row].metadata?.coverage {
-                cell.venueLabel.text = v + ", " + c
-            }
-            else {
-                cell.venueLabel.text = showMDs[indexPath.row].metadata?.venue
-            }
-            cell.transfererLabel.text = showMDs[indexPath.row].metadata?.transferer
-            cell.sourceLabel.text = showMDs[indexPath.row].metadata?.source
-            if let creator = showMDs[indexPath.row].metadata?.creator {
-                cell.collectionLabel.text = creator
-            } else if let collections = showMDs[indexPath.row].metadata?.collection {
-                cell.collectionLabel.text = collections.joined(separator: ", ")
-            } else {
-                cell.collectionLabel.text = ""
-            }
-            if let s = showMDs[indexPath.row].metadata!.avg_rating {
-                print("Passed this test")
-                var starRating = String(s)
-                starRating = starRating + " stars " + String(showMDs[indexPath.row].metadata!.num_reviews!) + " ratings"
-                cell.starsLabel.text = starRating
-            }
-            else {
-                cell.starsLabel.text = ""
-            }
-
+            cell.configure(with: showMDs[indexPath.row])
         }
-        else {
-            cell.venueLabel.text = "No show"
-        }
-        
         return cell
-  }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if let shows = self.shows {
+            let show = shows[indexPath.row]
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            if let showVC = storyboard.instantiateViewController(withIdentifier: "ShowViewController") as? ShowViewController {
+                showVC.showMetadata = show.metadata
+                showVC.showMetadataModel = show
+                showVC.showType = .downloaded
+                showVC.prevController = self
+                navigationController?.pushViewController(showVC, animated: true)
+            }
+        }
+    }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
@@ -230,7 +167,6 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
             target.showType = .downloaded
             // target.player = player
             target.prevController = self
-            target.db = db
         }
         
         else {

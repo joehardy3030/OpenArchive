@@ -7,25 +7,14 @@
 //
 
 import UIKit
-import Firebase
 
 class ArchiveNavigationController: UINavigationController {
     let player = AudioPlayerArchive.shared
-    var db: Firestore!
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        distributePlayer()
         print("ArchiveNavigationController")
         //navigationController?.delegate = self
         // Do any additional setup after loading the view.
     }
-    
-    
-    func distributePlayer() {
-        if let tvc = self.topViewController as? ArchiveSuperViewController {
-            tvc.db = self.db
-        }
-    }
-
 }

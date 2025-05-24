@@ -54,13 +54,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             self.navigationItem.title = showMetadata?.date
             self.downloadButton.isHidden = true
             playButtonLabel.setTitle("Play", for: .normal)
-        case .shared:
-            self.navigationItem.title = utils.getDateFromDateTimeString(datetime: showMetadata?.date)
-            self.broadcastPlayPauseButton.isHidden = false
-            self.shareButton.isHidden = true
-            self.downloadButton.isHidden = false
-            getShareSnaptshot()
-        default:
+         default:
             print("No show type")
         }
     }
@@ -95,11 +89,12 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         present(activityViewController, animated: true, completion: nil)
     }
     
-    
+    /*
     @IBAction func broadcastPlayPause(_ sender: Any) {
         broadcastIsPlaying = !broadcastIsPlaying
         network.updateSharedPlayPause(broadcastIsPlaying: broadcastIsPlaying)
     }
+    */
     
     @IBAction func playButton(_ sender: Any) {
         if playButtonLabel.currentTitle == "Play" {
@@ -156,51 +151,6 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         }
     }
 
-
-    ///Download manager class
-    func getShareSnaptshot() {
-        mp3index = 0
-        network.getShareSnapshot() {
-            (response: ShareMetadataModel?) -> Void in
-            if let r = response {
-                self.mp3Array = [ShowMP3]()
-                self.lastShareMetadataModel = r
-                self.showMetadata?.identifier = self.lastShareMetadataModel?.showMetadataModel?.metadata?.identifier
-                self.getIAGetShow()
-            }
-            DispatchQueue.main.async {
-                print("download complete")
-                self.navigationItem.title = self.lastShareMetadataModel?.showMetadataModel?.metadata?.date
-                self.sharePlayPause()
-                self.showTableView.reloadData()
-            }
-        }
-    }
-    
-    func sharePlayPause() {
-        if self.lastShareMetadataModel?.isPlaying == true {
-            self.broadcastIsPlaying = true
-            self.playShow()
-        }
-        else if self.lastShareMetadataModel?.isPlaying == false {
-            self.broadcastIsPlaying = false
-            self.player.pause()
-        }
-    }
-    
-    func shareShow() {
-        self.broadcastIsPlaying = false
-        saveShareData()
-    }
-    
-    private func saveShareData() {
-        var saveShareMetadataModel = ShareMetadataModel()
-        saveShareMetadataModel.isPlaying = broadcastIsPlaying
-        saveShareMetadataModel.showMetadataModel = showMetadataModel
-        let response = network.addShareDataDoc(shareMetadataModel: saveShareMetadataModel)
-        print("Add share doc response: \(String(describing: response))")
-        //playButtonLabel.setTitle("Play", for: .normal)
-    }
     
     ///Download manager class
     func downloadShow() {
@@ -454,25 +404,3 @@ private extension ShowViewController {
         print("Item paused")
     }
 }
-/*
-@available(iOS 13.0, *)
-private extension ShowViewController {
-    func getMiniPlayerController() -> MiniPlayerViewController? {
-        guard let sceneDelegate = self.view.window?.windowScene?.delegate as? SceneDelegate else { return nil }
-        //guard let sceneDelegate = UIApplication.shared.delegate as? SceneDelegate else { return nil }
-        
-        //guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return nil }
-        //if let vcs = appDelegate.window?.rootViewController?.children
-        
-        if let vcs = sceneDelegate.window?.rootViewController?.children
-        {
-            for vc in vcs {
-                if let mp = vc as? MiniPlayerViewController {
-                    return mp
-                }
-            }
-        }
-        return nil
-    }
-}
-*/

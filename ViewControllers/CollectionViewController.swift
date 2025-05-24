@@ -11,8 +11,6 @@ import AVKit
 import AVFoundation
 
 class CollectionViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
-    let collectionsText = ["Grateful Dead", "BMFS", "Phil Lesh and Friends", "Goose", "Further", "The Other Ones", "Dead And Company"]
-    let collections = ["GratefulDead","BillyStrings","PhilLeshandFriends","GooseBand","Furthur","TheOtherOnes", "DeadAndCompany"]
     var selectedCollection: String?
     
     @IBOutlet weak var tableView: UITableView! // Connect this in your storyboard
@@ -26,12 +24,12 @@ class CollectionViewController: ArchiveSuperViewController, UITableViewDelegate,
     // MARK: - TableView DataSource
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return collectionsText.count
+        return CollectionConfig.collectionsText.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CollectionCell", for: indexPath)
-        cell.textLabel?.text = collectionsText[indexPath.row]
+        cell.textLabel?.text = CollectionConfig.collectionsText[indexPath.row]
         return cell
     }
     
@@ -43,10 +41,9 @@ class CollectionViewController: ArchiveSuperViewController, UITableViewDelegate,
             guard let indexPath = tableView.indexPathForSelectedRow else { return }
             print(indexPath)
             if let destinationVC = segue.destination as? YearViewController {
-                destinationVC.selectedCollection = collections[indexPath.row]
+                destinationVC.selectedCollection = CollectionConfig.collections[indexPath.row]
                 print(indexPath.row)
                 print(destinationVC.selectedCollection as Any)
-                destinationVC.db = db
             }
         }
     }

@@ -7,16 +7,9 @@ target 'Breaze' do
 
   # Pods for Breaze
   pod 'Alamofire'
-  pod 'CodableFirebase'
   pod 'SwiftyJSON'
   pod 'Signals'
-  pod 'PromiseKit'
-  pod 'Firebase/Core'
-  pod 'Firebase/Firestore'
-  pod 'Firebase/Database'
-  pod 'Firebase/Storage'
-  pod 'FirebaseUI' 
-  pod 'FirebaseUI/Email'
+  pod 'GRDB.swift', '~> 6.0'
 
   target 'BreazeTests' do
     inherit! :search_paths

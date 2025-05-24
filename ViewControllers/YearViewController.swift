@@ -13,8 +13,6 @@ import AVFoundation
 class YearViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var yearTableView: UITableView!
-   // let utils = Utils()
-   // var archiveAPI = ArchiveAPI()
     var selectedCollection: String?
     var years: [Int] = []
     
@@ -37,6 +35,8 @@ class YearViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             self.years += 1996...2015
         case "DeadAndCompany":
             self.years += 2015...2025
+        case "Radiators":
+            self.years += 1983...2025
         default:
             self.years += 1965...1995
         }
@@ -58,7 +58,6 @@ class YearViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         if let target = segue.destination as? MonthViewController {
             let year = self.years[indexPath.row]
             target.year = year
-            target.db = db
             target.selectedCollection = selectedCollection ?? "GratefulDead"
         }
     }

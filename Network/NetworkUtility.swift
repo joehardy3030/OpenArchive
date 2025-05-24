@@ -7,19 +7,14 @@
 //
 
 import UIKit
-import FirebaseAuth
-import FirebaseCore
-import FirebaseDatabase
-import FirebaseFirestore
-import FirebaseStorage
-import CodableFirebase
-import PromiseKit
+import GRDB
 
 class NetworkUtility: NSObject {
-    var db: Firestore!
+    private let dbQueue: DatabaseQueue
     
-    init(db: Firestore) {
-        self.db = db
+    override init() {
+        self.dbQueue = LocalDatabase.shared.dbQueue
+        super.init()
     }
     
     enum NetworkError: Error {
@@ -27,189 +22,81 @@ class NetworkUtility: NSObject {
         case notFullProfile
     }
     
-    func getUUID() -> String {
-        if let uuid = UIDevice.current.identifierForVendor?.uuidString {
-            return uuid
-        }
-        else {
-            return ""
-        }
+    private func getUUID() -> String {
+        UIDevice.current.identifierForVendor?.uuidString ?? ""
     }
     
     func addDownloadDataDoc(showMetadataModel: ShowMetadataModel?) -> String? {
-        
-        guard let s = showMetadataModel else { return "no data" }
-        guard let docID = showMetadataModel?.metadata?.identifier else { return "no id" }
-        
-        let uuid = getUUID()
-
-        let docData = try! FirestoreEncoder().encode(s)
-        db.collection(uuid).document("downloads").collection("shows").document(docID).setData(docData) { error in
-            if let error = error {
-                print("Error writing document: \(error)")
-            } else {
-                print("Document successfully written!")
-            }
+        guard let model = showMetadataModel,
+              let identifier = model.metadata?.identifier else {
+            return nil
         }
-        return docID
+        do {
+            let jsonData = try JSONEncoder().encode(model)
+            let jsonString = String(data: jsonData, encoding: .utf8)!
+            try dbQueue.write { db in
+                try db.execute(sql: "INSERT OR REPLACE INTO downloads (identifier, data) VALUES (?, ?)",
+                               arguments: [identifier, jsonString])
+            }
+            return identifier
+        } catch {
+            print("GRDB write error: \(error)")
+            return nil
+        }
     }
 
     func removeDownloadDataDoc(docID: String?) {
         guard let docID = docID else { return }
-        let uuid = getUUID()
-        db.collection(uuid).document("downloads").collection("shows").document(docID).delete() { err in
-            if let err = err {
-                print("Error removing document: \(err)")
-            } else {
-                print("Document successfully removed!")
+        do {
+            try dbQueue.write { db in
+                try db.execute(sql: "DELETE FROM downloads WHERE identifier = ?", arguments: [docID])
             }
+        } catch {
+            print("GRDB delete error: \(error)")
         }
     }
-    
-    func addShareDataDoc(shareMetadataModel: ShareMetadataModel?) -> String? {
-        
-        guard let s = shareMetadataModel else { return "no data" }
-        let docData = try! FirestoreEncoder().encode(s)
-        db.collection("share").document("shareShow").setData(docData) { error in
-            if let error = error {
-                print("Error writing document: \(error)")
-            } else {
-                print("Document successfully written!")
-            }
-        }
-        return "shared"
-    }
-    
-    func updateSharedPlayPause(broadcastIsPlaying: Bool?) {
-        guard let p = broadcastIsPlaying else { return }
-        db.collection("share").document("shareShow").updateData([
-            "isPlaying": p
-        ])
-    }
-    
+
+
     func getDownloadDoc(identifier: String?) -> String? {
-        
-        guard let docID = identifier else { return "no id" }
-        let uuid = getUUID()
-        db.collection(uuid).document("downloads").collection("shows").document(docID).addSnapshotListener { document, error in
-            if let document = document {
-                let _ = try! FirestoreDecoder().decode(ShowMetadataModel.self, from: document.data()!)
-            } else {
-                print("Document does not exist")
-            }
-        }
-        
-        return docID
+        return identifier
     }
     
     func getAllDownloadDocs(decade: String?, completion: @escaping ([ShowMetadataModel]?) -> Void) {
-        
-        let uuid = getUUID()
-        var shows: [ShowMetadataModel] = []
-        var docRef: Query!
-        var yearArray: [String]
-        print("called get all downloaded docs")
-        if let d = decade {
-            switch d {
-            case "1960s":
-                yearArray = ["1965", "1966", "1967", "1968", "1969"]
-            case "1970s":
-                yearArray = ["1970", "1971", "1972", "1973", "1974", "1975", "1976", "1977", "1978", "1979"]
-            case "1980s":
-                yearArray = ["1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989"]
-            case "1990s":
-                yearArray = ["1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998", "1999"]
-            case "2000s":
-                yearArray = ["2000", "2001", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008"]
-            case "2010s":
-                yearArray = ["2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019"]
-            case "2020s":
-                yearArray = ["2020", "2021", "2022", "2023", "2024", "2025"]
-
-            default:
-                yearArray = [""]
-            }
-            docRef = db.collection(uuid).document("downloads").collection("shows").whereField("metadata.year", in: yearArray)
-        } else {
-            docRef = db.collection(uuid).document("downloads").collection("shows")
-        }
-        // print(docRef!)
-            
-       // let docRef = db.collection(uuid).document("downloads").collection("shows")
-        docRef.addSnapshotListener { (querySnapshot, error) in
-            if let error = error {
-                print("Error getting documents: \(error)")
-            } else {
-                for document in querySnapshot!.documents {
-                    let show = try! FirestoreDecoder().decode(ShowMetadataModel.self, from: document.data())
-                    shows.append(show)
+        DispatchQueue.global(qos: .userInitiated).async {
+            do {
+                var shows: [ShowMetadataModel] = []
+                try self.dbQueue.read { db in
+                    let rows = try Row.fetchAll(db, sql: "SELECT data FROM downloads")
+                    for row in rows {
+                        if let jsonString: String = row["data"],
+                           let data = jsonString.data(using: .utf8) {
+                            if let show = try? JSONDecoder().decode(ShowMetadataModel.self, from: data) {
+                                shows.append(show)
+                            }
+                        }
+                    }
+                }
+                if let decade = decade {
+                    let allowedYears: [String]
+                    switch decade {
+                    case "1960s": allowedYears = ["1965","1966","1967","1968","1969"]
+                    case "1970s": allowedYears = ["1970","1971","1972","1973","1974","1975","1976","1977","1978","1979"]
+                    case "1980s": allowedYears = ["1980","1981","1982","1983","1984","1985","1986","1987","1988","1989"]
+                    case "1990s": allowedYears = ["1990","1991","1992","1993","1994","1995","1996","1997","1998","1999"]
+                    case "2000s": allowedYears = ["2000","2001","2002","2003","2004","2005","2006","2007","2008","2009"]
+                    case "2010s": allowedYears = ["2010","2011","2012","2013","2014","2015","2016","2017","2018","2019"]
+                    case "2020s": allowedYears = ["2020","2021","2022","2023","2024","2025"]
+                    default: allowedYears = []
+                    }
+                    shows = shows.filter { allowedYears.contains($0.metadata?.year ?? "") }
                 }
                 completion(shows)
+            } catch {
+                print("GRDB fetch error: \(error)")
+                completion(nil)
             }
         }
     }
-    
-    /*
-    func getDownloadDocsWithSearchTerm(searchTerm: String, completion: @escaping ([ShowMetadataModel]?) -> Void) {
-        
-        let uuid = getUUID()
-        var shows: [ShowMetadataModel] = []
-        var docRef: Query!
-        
-        //guard let s = searchTerm else {return}
-        docRef = db.collection(uuid).document("downloads").collection("shows").whereField("metadata.song", isEqualTo: searchTerm)
-        print(docRef!)
-            
-       // let docRef = db.collection(uuid).document("downloads").collection("shows")
-        docRef.addSnapshotListener { (querySnapshot, error) in
-            if let error = error {
-                print("Error getting documents: \(error)")
-            } else {
-                for document in querySnapshot!.documents {
-                    let show = try! FirestoreDecoder().decode(ShowMetadataModel.self, from: document.data())
-                    shows.append(show)
-                }
-                completion(shows)
-            }
-        }
-    }
-     */
-    
-    
-    func getSharedDoc(completion: @escaping ([ShareMetadataModel]?) -> Void) {
-        
-        print("called shared doc")
-        var shows: [ShareMetadataModel] = []
-        let docRef = db.collection("share").document("shareShow")
-        docRef.addSnapshotListener { (document, error) in
-            print("snapshot")
-            if let error = error {
-                print("Error getting documents: \(error)")
-            } else {
-                guard let data = document?.data() else { return }
-                let show = try! FirestoreDecoder().decode(ShareMetadataModel.self, from: data)
-                shows.append(show)
-            }
-            completion(shows)
-        }
-    }
-    
-    func getShareSnapshot(completion: @escaping (ShareMetadataModel?) -> Void) {
-        print("called shared doc")
-        let docRef = db.collection("share").document("shareShow")
-        docRef.addSnapshotListener { (document, error) in
-            print("snapshot")
-            if let error = error {
-                print("Error getting documents: \(error)")
-            } else {
-                guard let data = document?.data() else { return }
-                let show = try! FirestoreDecoder().decode(ShareMetadataModel.self, from: data)
-                completion(show)
-            }
-        }
-        
-    }
-    
 }
 
 

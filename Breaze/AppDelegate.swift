@@ -13,15 +13,6 @@ import UserNotifications
 import ARKit
 import CarPlay
 
-/*
-class DeepLinkManager {
-    static let shared = DeepLinkManager()
-     
-     private init() {}
-     
-     var deepLinkURL: URL?
-}
-*/
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

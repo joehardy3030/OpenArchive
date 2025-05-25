@@ -213,7 +213,8 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     private func setDownloadComplete(destination: URL?, name: String?) {
         var counter = 0
         if let d = destination {
-            for i in 0...(self.showMetadataModel?.mp3Array?.count ?? 0 - 1) {
+            let count = (self.showMetadataModel?.mp3Array?.count ?? 0)
+            for i in 0..<count {
                 if self.showMetadataModel?.mp3Array?[i].name == name {
                     self.showMetadataModel?.mp3Array?[i].destination = d
                 }

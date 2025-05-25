@@ -13,7 +13,6 @@ import AVFoundation
 enum ShowType {
     case archive
     case downloaded
-    case shared
 }
 
 @available(iOS 13.0, *)
@@ -27,13 +26,10 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     let notificationCenter: NotificationCenter = .default
     let fileManager = FileManager.default
     let numRowsBeforeSongs = 6
-    // var identifier: String?
-    // var showDate: String?
     var mp3Array = [ShowMP3]()
     var showMetadata: ShowMetadata?
     var showMetadataModel: ShowMetadataModel?
-    var lastShareMetadataModel: ShareMetadataModel?
-    var showType: ShowType? = .shared
+    var showType: ShowType? = .archive
     var broadcastIsPlaying: Bool = false
     var mp3index: Int = 0
     
@@ -69,32 +65,10 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 downloadSyncRun()
                 playButtonLabel.setTitle("Downloading", for: .normal)
             }
-        case .shared:
-            if playButtonLabel.currentTitle == "Available" {
-                mp3index = 0
-                downloadSyncRun()
-                playButtonLabel.setTitle("Downloading", for: .normal)
-            }
         default:
             print("Do nothing by default")
         }
-
     }
-    
-    @IBAction func shareShow(_ sender: Any) {
-        let url = utils.urlFromIdentifier(identifier: self.showMetadata?.identifier)
-        //let url = utils.urlFromIdentifier(identifier: self.player.showMetadataModel?.metadata?.identifier)
-        let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-        activityViewController.popoverPresentationController?.sourceView = sender as? UIView
-        present(activityViewController, animated: true, completion: nil)
-    }
-    
-    /*
-    @IBAction func broadcastPlayPause(_ sender: Any) {
-        broadcastIsPlaying = !broadcastIsPlaying
-        network.updateSharedPlayPause(broadcastIsPlaying: broadcastIsPlaying)
-    }
-    */
     
     @IBAction func playButton(_ sender: Any) {
         if playButtonLabel.currentTitle == "Play" {
@@ -250,20 +224,11 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                     counter += 1
                 }
             }
-            if self.mp3Array.count == counter {
-                if (showType == .shared) {
-                    self.lastShareMetadataModel?.showMetadataModel?.mp3Array = self.mp3Array
-                    self.showMetadataModel = self.lastShareMetadataModel?.showMetadataModel
-                }
-                //self.showMetadataModel?.mp3Array = self.mp3Array
-                saveDownloadData()
-            }
         }
         print("Set download complete")
     }
     
     private func saveDownloadData() {
-        //print(showMetadataModel)
         let _ = network.addDownloadDataDoc(showMetadataModel: showMetadataModel)
         print("Save download data")
         playButtonLabel.setTitle("Play", for: .normal)
@@ -318,10 +283,6 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         guard let mp3s = self.showMetadataModel?.mp3Array,
               let m = self.showMetadataModel?.metadata
               else { return UITableViewCell() }
-        //print(self.showMetadataModel?.mp3Array)
-        //print("\n\n")
-        //print(self.showMetadataModel)
-        //print("\n\n")
         
         let idx = indexPath.row - numRowsBeforeSongs
         cell.accessoryType = .none

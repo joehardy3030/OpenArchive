@@ -838,7 +838,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 6.1.0;
+				MARKETING_VERSION = 6.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.carquinez.chateau;
 				PRODUCT_NAME = Chateau;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -865,7 +865,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 6.1.0;
+				MARKETING_VERSION = 6.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.carquinez.chateau;
 				PRODUCT_NAME = Chateau;
 				PROVISIONING_PROFILE_SPECIFIER = "";

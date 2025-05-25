@@ -26,7 +26,6 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     let notificationCenter: NotificationCenter = .default
     let fileManager = FileManager.default
     let numRowsBeforeSongs = 6
-    var mp3Array = [ShowMP3]()
     var showMetadata: ShowMetadata?
     var showMetadataModel: ShowMetadataModel?
     var showType: ShowType? = .archive
@@ -114,7 +113,6 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                     }
                 }
                 self.showMetadataModel?.mp3Array = mp3s
-                self.mp3Array = mp3s
             }
             DispatchQueue.main.async{
                 self.showTableView.reloadData()
@@ -215,12 +213,11 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     private func setDownloadComplete(destination: URL?, name: String?) {
         var counter = 0
         if let d = destination {
-            for i in 0...(self.mp3Array.count - 1) {
-                if self.mp3Array[i].name == name {
-                    self.mp3Array[i].destination = d
+            for i in 0...(self.showMetadataModel?.mp3Array?.count ?? 0 - 1) {
+                if self.showMetadataModel?.mp3Array?[i].name == name {
                     self.showMetadataModel?.mp3Array?[i].destination = d
                 }
-                if self.mp3Array[i].destination != nil {
+                if self.showMetadataModel?.mp3Array?[i].destination != nil {
                     counter += 1
                 }
             }

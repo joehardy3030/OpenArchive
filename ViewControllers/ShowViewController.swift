@@ -44,6 +44,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         case .archive:
             self.navigationItem.title = utils.getDateFromDateTimeString(datetime: showMetadata?.date)
             print("archive")
+            playButtonLabel.setTitle("Stream", for: .normal)
             getIAGetShow()
         case .downloaded:
             self.navigationItem.title = showMetadata?.date
@@ -59,7 +60,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         case .downloaded:
             print("Do nothing, for now")
         case .archive:
-            if playButtonLabel.currentTitle == "Available" {
+            if playButtonLabel.currentTitle == "Stream" {
                 mp3index = 0
                 downloadSyncRun()
                 playButtonLabel.setTitle("Downloading", for: .normal)

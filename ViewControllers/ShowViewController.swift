@@ -349,13 +349,14 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         }
     }
     
+    /*
     func configure(with showMetadata: ShowMetadata, mp3s: [ShowMP3]) {
         self.showMetadata = showMetadata
         self.showMetadataModel = ShowMetadataModel()
         self.showMetadataModel?.mp3Array = mp3s
         // Set other properties as needed
     }
-    
+    */
 }
 
 @available(iOS 13.0, *)

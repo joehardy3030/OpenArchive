@@ -15,6 +15,11 @@ enum ShowType {
     case downloaded
 }
 
+enum FileLocation {
+    case internet
+    case local
+}
+
 @available(iOS 13.0, *)
 class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
     
@@ -50,7 +55,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             self.navigationItem.title = showMetadata?.date
             self.downloadButton.isHidden = true
             playButtonLabel.setTitle("Play", for: .normal)
-         default:
+        default:
             print("No show type")
         }
     }
@@ -74,13 +79,33 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         if playButtonLabel.currentTitle == "Play" {
             playShow()
         }
+        else if playButtonLabel.currentTitle == "Stream" {
+            streamShow()
+        }
     }
-    
+
+    func streamShow() {
+        self.player.pause()
+        self.player.showMetadataModel = showMetadataModel // Change showMetadata to showModel for consistency
+        self.loadStreamingShow()  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
+        self.player.play()
+    }
+
     func playShow() {
         self.player.pause()
         self.player.showMetadataModel = showMetadataModel // Change showMetadata to showModel for consistency
         self.loadDownloadedShow()  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
         self.player.play()
+    }
+
+    func loadStreamingShow() {
+        // This operation should probably belong to the player class
+        if let _ = self.player.showMetadataModel?.mp3Array {
+            player.loadStreamingQueuePlayer()
+        }
+        if let mp = self.getMiniPlayerController() {
+            mp.setupShow()
+        }
     }
     
     func loadDownloadedShow() {
@@ -121,7 +146,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             
         }
     }
-
+    
     
     ///Download manager class
     func downloadShow() {
@@ -209,7 +234,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             }
         }
     }
-                
+    
     ///Download manager class
     private func setDownloadComplete(destination: URL?, name: String?) {
         var counter = 0
@@ -241,7 +266,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-
+        
         if keyPath == #keyPath(AVQueuePlayer.currentItem.status) {
             let status: AVPlayerItem.Status
             if let statusNumber = change?[.newKey] as? NSNumber {
@@ -249,7 +274,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             } else {
                 status = .unknown
             }
-
+            
             // Switch over status value
             switch status {
             case .readyToPlay:
@@ -264,7 +289,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             }
             
         }
-
+        
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -281,11 +306,11 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         
         guard let mp3s = self.showMetadataModel?.mp3Array,
               let m = self.showMetadataModel?.metadata
-              else { return UITableViewCell() }
+        else { return UITableViewCell() }
         
         let idx = indexPath.row - numRowsBeforeSongs
         cell.accessoryType = .none
-
+        
         switch indexPath.row {
         case 0:
             cell.textLabel?.text = m.date
@@ -335,7 +360,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         else {
             songIndex = 0
         }
-        if let trackURL = self.player.trackURLfromName(name: showMetadataModel?.mp3Array?[songIndex].name) {
+        if let trackURL = utils.trackURLfromName(name: showMetadataModel?.mp3Array?[songIndex].name) {
             do {
                 let _ = try trackURL.checkResourceIsReachable()
                 print("playShow")

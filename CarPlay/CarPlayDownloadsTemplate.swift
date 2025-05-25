@@ -133,7 +133,7 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
     func checkTracksAndRemove(show: ShowMetadataModel) -> Bool {
         guard let mp3s = show.mp3Array else { return false }
         for song in mp3s {
-            if let trackURL = self.player?.trackURLfromName(name: song.name) {
+            if let trackURL = utils.trackURLfromName(name: song.name) {
                 do {
                     let _ = try trackURL.checkResourceIsReachable()
                     //print(available)
@@ -191,7 +191,7 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
         // Verify at least one track is accessible
         var hasAccessibleTrack = false
         for song in mp3s {
-            if let trackURL = player?.trackURLfromName(name: song.name) {
+            if let trackURL = utils.trackURLfromName(name: song.name) {
                 do {
                     let isReachable = try trackURL.checkResourceIsReachable()
                     if isReachable {

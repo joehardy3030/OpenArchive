@@ -183,12 +183,21 @@ class AudioPlayerArchive: NSObject {
     }
 
 
-    func trackURLfromName(name: String?) -> URL? {
-        guard let d = utils.getDocumentsDirectory(), let n = name else { return nil }
-        let url = d.appendingPathComponent(n)
-        return url
+    /*
+    func trackURLfromName(name: String?, location: FileLocation) -> URL? {
+        guard let n = name else { return nil }
+        
+        switch location {
+        case .local:
+            guard let d = utils.getDocumentsDirectory() else { return nil }
+            let url = d.appendingPathComponent(n)
+            return url
+        case .internet:
+            return nil
+        }
     }
-
+    */
+    
     func trackNameFromURL(url: URL?) -> String? {
         guard let d = utils.getDocumentsDirectory(), let u = url else { return nil }
         let stringD = d.absoluteString
@@ -218,7 +227,7 @@ class AudioPlayerArchive: NSObject {
 
     func getTrackItemAndPrepareToPlay(track: ShowMP3) {
         guard let n = track.name else { return }
-        if let url = trackURLfromName(name: n) {
+        if let url = utils.trackURLfromName(name: n) {
             prepareToPlaySong(url: url)
         }
     }
@@ -232,7 +241,22 @@ class AudioPlayerArchive: NSObject {
         cleanQueue()
         for track in tracks {
             guard let n = track.name else { return }
-            if let url = trackURLfromName(name: n) {
+            if let url = utils.trackURLfromName(name: n) {
+                prepareToPlay(url: url)
+            }
+        }
+        playerQueue = AVQueuePlayer(items: playerItems)
+        //print(playerQueue)
+    }
+    
+    func loadStreamingQueuePlayer() {
+        print("streaming")
+        cleanQueue()
+        guard let tracks = self.showMetadataModel?.mp3Array, let id = self.showMetadataModel?.metadata?.identifier else { return }
+        for track in tracks {
+            guard let n = track.name else { return }
+            
+            if let url = utils.trackStreamingURLfromNameAndIdentifier(identifier: id, name: n) {
                 prepareToPlay(url: url)
             }
         }
@@ -246,7 +270,7 @@ class AudioPlayerArchive: NSObject {
         pq.removeAllItems()
         for track in tracks {
             guard let n = track.name else { return }
-            if let url = trackURLfromName(name: n) {
+            if let url = utils.trackURLfromName(name: n) {
                 prepareToPlay(url: url)
             }
         }

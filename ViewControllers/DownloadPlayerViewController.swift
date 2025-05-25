@@ -100,7 +100,7 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
             DispatchQueue.main.async{
                 
                 if let mp3s = self.player.showMetadataModel?.mp3Array {
-                    if let trackURL = self.player.trackURLfromName(name: mp3s[songIndex].name) {
+                    if let trackURL = self.utils.trackURLfromName(name: mp3s[songIndex].name) {
                         do {
                             let available = try trackURL.checkResourceIsReachable()
                             print(available)

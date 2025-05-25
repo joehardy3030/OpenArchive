@@ -429,7 +429,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         let songIndex = indexPath.row
         print(songIndex)
         if let mp3Array = player.showMetadataModel?.mp3Array, songIndex >= 0 && songIndex < mp3Array.count {
-            if let trackURL = self.player.trackURLfromName(name: player.showMetadataModel?.mp3Array?[songIndex].name) {
+            if let trackURL = utils.trackURLfromName(name: player.showMetadataModel?.mp3Array?[songIndex].name) {
                 do {
                     let _ = try trackURL.checkResourceIsReachable()
                     player.pause()

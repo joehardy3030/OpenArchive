@@ -153,10 +153,10 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         if mp3index < mp3s.count {
             downloadSync(showMP3: mp3s[mp3index])
             print(mp3index)
-        }  ///  mp3index += mp3index
-    
-        else {
+        } else {
             print("all done here")
+            // Save the download data when all tracks are downloaded
+            saveDownloadData()
         }
     }
     

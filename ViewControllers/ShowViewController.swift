@@ -360,17 +360,28 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         else {
             songIndex = 0
         }
-        if let trackURL = utils.trackURLfromName(name: showMetadataModel?.mp3Array?[songIndex].name) {
-            do {
-                let _ = try trackURL.checkResourceIsReachable()
-                print("playShow")
-                playShow()
-                for _ in 0..<songIndex {
-                    player.playerQueue?.advanceToNextItem()
-                }
+        
+        // Check if we're streaming or playing downloaded files
+        if playButtonLabel.currentTitle == "Stream" {
+            // For streaming, just play the show starting from selected track
+            streamShow()
+            for _ in 0..<songIndex {
+                player.playerQueue?.advanceToNextItem()
             }
-            catch {
-                print("Track not available")
+        } else {
+            // For downloaded files, check if track exists locally
+            if let trackURL = utils.trackURLfromName(name: showMetadataModel?.mp3Array?[songIndex].name) {
+                do {
+                    let _ = try trackURL.checkResourceIsReachable()
+                    print("playShow")
+                    playShow()
+                    for _ in 0..<songIndex {
+                        player.playerQueue?.advanceToNextItem()
+                    }
+                }
+                catch {
+                    print("Track not available")
+                }
             }
         }
     }

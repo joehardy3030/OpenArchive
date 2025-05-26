@@ -386,7 +386,11 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     func reloadShow() {
         // This operation should probably belong to the player class
         if let mp3s = self.player.showMetadataModel?.mp3Array {
-            player.loadQueuePlayer(tracks: mp3s)
+            if player.isStreaming {
+                player.loadStreamingQueuePlayer()
+            } else {
+                player.loadQueuePlayer(tracks: mp3s)
+            }
         }
         setupShow()
     }
@@ -429,18 +433,29 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         let songIndex = indexPath.row
         print(songIndex)
         if let mp3Array = player.showMetadataModel?.mp3Array, songIndex >= 0 && songIndex < mp3Array.count {
-            if let trackURL = utils.trackURLfromName(name: player.showMetadataModel?.mp3Array?[songIndex].name) {
-                do {
-                    let _ = try trackURL.checkResourceIsReachable()
-                    player.pause()
-                    reloadShow()
-                    for _ in 0..<songIndex {
-                        player.playerQueue?.advanceToNextItem()
-                    }
-                    player.play()
+            if player.isStreaming {
+                // For streaming, just reload and advance to selected track
+                player.pause()
+                reloadShow()
+                for _ in 0..<songIndex {
+                    player.playerQueue?.advanceToNextItem()
                 }
-                catch {
-                    print("Track not available")
+                player.play()
+            } else {
+                // For downloaded files, check if track exists locally
+                if let trackURL = utils.trackURLfromName(name: player.showMetadataModel?.mp3Array?[songIndex].name) {
+                    do {
+                        let _ = try trackURL.checkResourceIsReachable()
+                        player.pause()
+                        reloadShow()
+                        for _ in 0..<songIndex {
+                            player.playerQueue?.advanceToNextItem()
+                        }
+                        player.play()
+                    }
+                    catch {
+                        print("Track not available")
+                    }
                 }
             }
         }

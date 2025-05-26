@@ -33,6 +33,7 @@ class AudioPlayerArchive: NSObject {
     private var timerToken: Any?
     private weak var timerTokenPlayer: AVQueuePlayer?
     var showMetadataModel: ShowMetadataModel?
+    var isStreaming: Bool = false  // Track whether we're streaming or playing local files
     private let notificationCenter: NotificationCenter
     private var playCommandTarget: Any?
     private var pauseCommandTarget: Any?
@@ -127,7 +128,11 @@ class AudioPlayerArchive: NSObject {
         let index = self.getCurrentTrackIndex()
         self.pause()
         if let mp3s = self.showMetadataModel?.mp3Array {
-            self.reLoadQueuePlayer(tracks: mp3s)
+            if isStreaming {
+                self.reLoadStreamingQueuePlayer(tracks: mp3s)
+            } else {
+                self.reLoadQueuePlayer(tracks: mp3s)
+            }
         }
         print(index)
         if index>0 {
@@ -150,13 +155,19 @@ class AudioPlayerArchive: NSObject {
     func getCurrentTrackIndex() -> Int {
         guard let ci = self.playerQueue?.currentItem else { return 0 }
         let destinationURL = ci.asset.value(forKey: "URL") as? URL
-        let name = trackNameFromURL(url: destinationURL)
+        
+        // Extract filename from URL, handling both local and streaming URLs
+        var filename: String?
+        if let url = destinationURL {
+            filename = url.lastPathComponent
+        }
+        
         if let mp3s = showMetadataModel?.mp3Array {
             if mp3s.count > 0 {
                 for i in 0...(mp3s.count - 1) {
-                    if mp3s[i].name == name?.removingPercentEncoding {
+                    if mp3s[i].name == filename || mp3s[i].name == filename?.removingPercentEncoding {
                         return i
-                        }
+                    }
                 }
             }
         }
@@ -197,7 +208,8 @@ class AudioPlayerArchive: NSObject {
         }
     }
     */
-    
+     
+     /*
     func trackNameFromURL(url: URL?) -> String? {
         guard let d = utils.getDocumentsDirectory(), let u = url else { return nil }
         let stringD = d.absoluteString
@@ -207,6 +219,7 @@ class AudioPlayerArchive: NSObject {
         let name = String(stringU.suffix(lengthStringU-lengthStringD))
         return name
     }
+    */
     
     func prepareToPlay(url: URL) {
         let asset = AVAsset(url: url)
@@ -239,6 +252,7 @@ class AudioPlayerArchive: NSObject {
 
     func loadQueuePlayer(tracks: [ShowMP3]) {
         cleanQueue()
+        isStreaming = false  // Set flag for local playback
         for track in tracks {
             guard let n = track.name else { return }
             if let url = utils.trackURLfromName(name: n) {
@@ -252,6 +266,7 @@ class AudioPlayerArchive: NSObject {
     func loadStreamingQueuePlayer() {
         print("streaming")
         cleanQueue()
+        isStreaming = true  // Set flag for streaming playback
         guard let tracks = self.showMetadataModel?.mp3Array, let id = self.showMetadataModel?.metadata?.identifier else { return }
         for track in tracks {
             guard let n = track.name else { return }
@@ -271,6 +286,22 @@ class AudioPlayerArchive: NSObject {
         for track in tracks {
             guard let n = track.name else { return }
             if let url = utils.trackURLfromName(name: n) {
+                prepareToPlay(url: url)
+            }
+        }
+        for item in playerItems {
+            pq.insert(item, after: nil)
+        }
+    }
+    
+    func reLoadStreamingQueuePlayer(tracks: [ShowMP3]) {
+        guard let pq = playerQueue, let id = self.showMetadataModel?.metadata?.identifier else { return }
+        pq.removeAllItems()
+        playerItems = []  // Clear the items array
+        
+        for track in tracks {
+            guard let n = track.name else { return }
+            if let url = utils.trackStreamingURLfromNameAndIdentifier(identifier: id, name: n) {
                 prepareToPlay(url: url)
             }
         }

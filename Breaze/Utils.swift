@@ -217,6 +217,12 @@ class Utils {
         return name
     }
     
+    func trackNameFromAnyURL(url: URL?) -> String? {
+        // This method handles both streaming and local URLs
+        guard let u = url else { return nil }
+        return u.lastPathComponent
+    }
+    
     func getMemory() {
         var pagesize: vm_size_t = 0
 

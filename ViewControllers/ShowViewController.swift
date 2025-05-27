@@ -321,8 +321,16 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         case 3:
             if let description = m.description {
                 let data = description.data(using: .utf8)!
-                let attributedString = try! NSAttributedString(data: data, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil)
-                cell.textLabel?.text = attributedString.string
+                do {
+                    let attributedString = try NSAttributedString(data: data, 
+                        options: [.documentType: NSAttributedString.DocumentType.html,
+                                .characterEncoding: String.Encoding.utf8.rawValue], 
+                        documentAttributes: nil)
+                    cell.textLabel?.text = attributedString.string
+                } catch {
+                    print("Error parsing HTML: \(error)")
+                    cell.textLabel?.text = description
+                }
             }
             else {
                 cell.textLabel?.text = m.description

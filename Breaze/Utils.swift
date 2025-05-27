@@ -199,6 +199,30 @@ class Utils {
         return url
     }
     
+    func trackStreamingURLfromNameAndIdentifier(identifier: String?, name: String?) -> URL? {
+        let baseURLString =  "https://archive.org/download/"
+        guard let id = identifier, let nm = name, let bURL = URL(string: baseURLString) else { return nil }
+        var url = bURL.appendingPathComponent(id)
+        url = url.appendingPathComponent(nm)
+        return url
+    }
+
+    func trackNameFromURL(url: URL?) -> String? {
+        guard let d = getDocumentsDirectory(), let u = url else { return nil }
+        let stringD = d.absoluteString
+        let lengthStringD = stringD.count
+        let stringU = u.absoluteString
+        let lengthStringU = stringU.count
+        let name = String(stringU.suffix(lengthStringU-lengthStringD))
+        return name
+    }
+    
+    func trackNameFromAnyURL(url: URL?) -> String? {
+        // This method handles both streaming and local URLs
+        guard let u = url else { return nil }
+        return u.lastPathComponent
+    }
+    
     func getMemory() {
         var pagesize: vm_size_t = 0
 

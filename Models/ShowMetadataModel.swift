@@ -39,6 +39,42 @@ struct ShowMetadata: Codable {
     var coverage: String?
     var avg_rating: Float?
     var num_reviews: Int?
+    
+    init(identifier: String) {
+        self.identifier = identifier
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case identifier, title, creator, mediatype, collection, type, description
+        case date, year, venue, transferer, source, coverage, avg_rating, num_reviews
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        identifier = try container.decodeIfPresent(String.self, forKey: .identifier)
+        title = try container.decodeIfPresent(String.self, forKey: .title)
+        creator = try container.decodeIfPresent(String.self, forKey: .creator)
+        mediatype = try container.decodeIfPresent(String.self, forKey: .mediatype)
+        type = try container.decodeIfPresent(String.self, forKey: .type)
+        description = try container.decodeIfPresent(String.self, forKey: .description)
+        date = try container.decodeIfPresent(String.self, forKey: .date)
+        year = try container.decodeIfPresent(String.self, forKey: .year)
+        venue = try container.decodeIfPresent(String.self, forKey: .venue)
+        transferer = try container.decodeIfPresent(String.self, forKey: .transferer)
+        source = try container.decodeIfPresent(String.self, forKey: .source)
+        coverage = try container.decodeIfPresent(String.self, forKey: .coverage)
+        avg_rating = try container.decodeIfPresent(Float.self, forKey: .avg_rating)
+        num_reviews = try container.decodeIfPresent(Int.self, forKey: .num_reviews)
+        
+        // Handle collection field that could be either a string or array
+        if let collectionArray = try? container.decodeIfPresent([String].self, forKey: .collection) {
+            collection = collectionArray
+        } else if let collectionString = try? container.decodeIfPresent(String.self, forKey: .collection) {
+            collection = [collectionString]
+        } else {
+            collection = nil
+        }
+    }
 }
 
 extension ShowMetadata {

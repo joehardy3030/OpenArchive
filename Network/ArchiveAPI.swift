@@ -66,12 +66,19 @@ class ArchiveAPI: NSObject {
                 
         url += "services/search/v1/scrape?"
         url += "fields=identifier,date,venue,transferer,source,coverage,stars,avg_rating,num_reviews,collection,creator&"
-        if sbdOnly {
-            url += "q=collection%3A%28" + collection + "%20AND%20stream_only%29"
+        
+        // Check if this is a creator-based search
+        if CollectionConfig.isCreatorBased(collection: collection) {
+                url += "q=creator%3A%22" + collection + "%22"
+        } else {
+            // Original collection-based search
+            if sbdOnly {
+                url += "q=collection%3A%28" + collection + "%20AND%20stream_only%29"
+            } else {
+                url += "q=collection%3A%28" + collection + "%29"
+            }
         }
-        else {
-            url += "q=collection%3A%28" + collection + "%29"
-        }
+        
         url += andString
         url += dateString
         if month <= 9 {
@@ -95,7 +102,7 @@ class ArchiveAPI: NSObject {
         
         url += String(year) + "-" + monthString + "-31"
         url += "%5D"
-        
+        print(url)
         return url
     }
 
@@ -110,12 +117,19 @@ class ArchiveAPI: NSObject {
                 
         url += "services/search/v1/scrape?"
         url += "fields=identifier,date,venue,transferer,source,coverage,stars,avg_rating,num_reviews,collection,creator&"
-        if sbdOnly {
-            url += "q=collection%3A%28" + collection + "%20AND%20stream_only%29"
+        
+        // Check if this is a creator-based search
+        if CollectionConfig.isCreatorBased(collection: collection) {
+                url += "q=creator%3A%22" + collection + "%22"
+        } else {
+            // Original collection-based search
+            if sbdOnly {
+                url += "q=collection%3A%28" + collection + "%20AND%20stream_only%29"
+            } else {
+                url += "q=collection%3A%28" + collection + "%29"
+            }
         }
-        else {
-            url += "q=collection%3A%28" + collection + "%29"
-        }
+        
         url += andString
         url += dateString
         url += String(year) + "-" + firstDayMonth
@@ -142,11 +156,21 @@ class ArchiveAPI: NSObject {
 
         // Query
         var query = ""
-        if let _ = sbdOnly {
-            query += "collection:(" + collection + "%20AND%20stream_only)"
-        }
-        else {
-            query += "collection:" + collection
+        
+        // Check if this is a creator-based search
+        if CollectionConfig.isCreatorBased(collection: collection) {
+            if let _ = sbdOnly {
+                query += "creator:\"" + collection + "\" AND collection:stream_only"
+            } else {
+                query += "creator:\"" + collection + "\""
+            }
+        } else {
+            // Original collection-based search
+            if let _ = sbdOnly {
+                query += "collection:(" + collection + "%20AND%20stream_only)"
+            } else {
+                query += "collection:" + collection
+            }
         }
         
         if let st = searchTerm, !st.isEmpty {

@@ -48,7 +48,7 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
     func checkTracksAndRemove(show: ShowMetadataModel) -> Bool {
         guard let mp3s = show.mp3Array else { return false }
         for song in mp3s {
-            if let trackURL = self.player.trackURLfromName(name: song.name) {
+            if let trackURL = utils.trackURLfromName(name: song.name) {
                 do {
                     let _ = try trackURL.checkResourceIsReachable()
                     //print(available)
@@ -86,7 +86,7 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
     func deleteSongs(row: Int) {
         guard let mp3s = self.shows?[row].mp3Array else { return }
         for mp3 in mp3s {
-            if let localURL = self.player.trackURLfromName(name: mp3.name) {
+            if let localURL = utils.trackURLfromName(name: mp3.name) {
                 if fileManager.fileExists(atPath: localURL.path) {
                     do {
                         try fileManager.removeItem(atPath: localURL.path)
@@ -160,12 +160,9 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
         
         guard let indexPath = showListTableView.indexPathForSelectedRow else { return }
         if let target = segue.destination as? ShowViewController, let showMDs = self.shows {
-            //target.identifier = showMDs[indexPath.row].metadata?.identifier
-            //target.showDate = showMDs[indexPath.row].metadata?.date
             target.showMetadata = showMDs[indexPath.row].metadata
             target.showMetadataModel = showMDs[indexPath.row]
             target.showType = .downloaded
-            // target.player = player
             target.prevController = self
         }
         

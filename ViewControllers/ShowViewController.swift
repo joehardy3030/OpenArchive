@@ -75,6 +75,14 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         }
     }
     
+    @IBAction func shareShow(_ sender: Any) {
+        let url = utils.urlFromIdentifier(identifier: self.showMetadata?.identifier)
+        //let url = utils.urlFromIdentifier(identifier: self.player.showMetadataModel?.metadata?.identifier)
+        let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+        activityViewController.popoverPresentationController?.sourceView = sender as? UIView
+        present(activityViewController, animated: true, completion: nil)
+    }
+
     @IBAction func playButton(_ sender: Any) {
         if playButtonLabel.currentTitle == "Play" {
             playShow()

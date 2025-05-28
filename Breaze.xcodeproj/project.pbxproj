@@ -17,7 +17,6 @@
 		D814AEE32B6F35AF00C58FB3 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D814AEE22B6F35AF00C58FB3 /* SearchViewController.swift */; };
 		D82C59192DDAA5ED0013BAC5 /* LocalDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82C59172DDAA5ED0013BAC5 /* LocalDatabase.swift */; };
 		D82C591B2DDAC1460013BAC5 /* CollectionConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82C591A2DDAC1460013BAC5 /* CollectionConfig.swift */; };
-		D830CC4E25AC026D00BD76A1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D830CC4D25AC026D00BD76A1 /* GoogleService-Info.plist */; };
 		D83EB53E24CE33C60016726C /* ArchiveNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83EB53D24CE33C60016726C /* ArchiveNavigationController.swift */; };
 		D83EB54024CE49880016726C /* StartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83EB53F24CE49880016726C /* StartViewController.swift */; };
 		D83EB54224CE62170016726C /* ArchiveTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83EB54124CE62170016726C /* ArchiveTabBarController.swift */; };
@@ -88,7 +87,6 @@
 		D814AEE22B6F35AF00C58FB3 /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		D82C59172DDAA5ED0013BAC5 /* LocalDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalDatabase.swift; sourceTree = "<group>"; };
 		D82C591A2DDAC1460013BAC5 /* CollectionConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionConfig.swift; sourceTree = "<group>"; };
-		D830CC4D25AC026D00BD76A1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D83EB53D24CE33C60016726C /* ArchiveNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveNavigationController.swift; sourceTree = "<group>"; };
 		D83EB53F24CE49880016726C /* StartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartViewController.swift; sourceTree = "<group>"; };
 		D83EB54124CE62170016726C /* ArchiveTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveTabBarController.swift; sourceTree = "<group>"; };
@@ -224,7 +222,6 @@
 		D85A4EED2022D0B500E480FB /* Breaze */ = {
 			isa = PBXGroup;
 			children = (
-				D830CC4D25AC026D00BD76A1 /* GoogleService-Info.plist */,
 				799C3C8E2345582E00D9341E /* Breaze.entitlements */,
 				D85A4EEE2022D0B600E480FB /* AppDelegate.swift */,
 				D85B4AFA25AD75A800A786DB /* SceneDelegate.swift */,
@@ -456,7 +453,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D85A4EFB2022D0B600E480FB /* LaunchScreen.storyboard in Resources */,
-				D830CC4E25AC026D00BD76A1 /* GoogleService-Info.plist in Resources */,
 				D85A4EF82022D0B600E480FB /* Assets.xcassets in Resources */,
 				D85A4EF62022D0B600E480FB /* Main.storyboard in Resources */,
 			);
@@ -828,7 +824,7 @@
 				CODE_SIGN_ENTITLEMENTS = Breaze/Breaze.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 22;
+				CURRENT_PROJECT_VERSION = 24;
 				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				INFOPLIST_FILE = Breaze/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Chateau Archive";
@@ -838,7 +834,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 6.2.2;
+				MARKETING_VERSION = 6.2.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.carquinez.chateau;
 				PRODUCT_NAME = Chateau;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -855,7 +851,7 @@
 				CODE_SIGN_ENTITLEMENTS = Breaze/Breaze.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 22;
+				CURRENT_PROJECT_VERSION = 24;
 				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				INFOPLIST_FILE = Breaze/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Chateau Archive";
@@ -865,7 +861,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 6.2.2;
+				MARKETING_VERSION = 6.2.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.carquinez.chateau;
 				PRODUCT_NAME = Chateau;
 				PROVISIONING_PROFILE_SPECIFIER = "";

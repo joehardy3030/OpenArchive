@@ -17,9 +17,7 @@ class MiniPlayerViewController: UIViewController {
             currentTimeLabel.textAlignment = .right
             currentTimeLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
             currentTimeLabel.widthAnchor.constraint(equalToConstant: 60).isActive = true
-            if let font = UIFont.monospacedDigitSystemFont(ofSize: currentTimeLabel.font.pointSize, weight: .medium) {
-                currentTimeLabel.font = font
-            }
+            currentTimeLabel.font = UIFont.monospacedDigitSystemFont(ofSize: currentTimeLabel.font.pointSize, weight: .medium)
         }
     }
     @IBOutlet weak var totalTimeLabel: UILabel! {
@@ -27,9 +25,7 @@ class MiniPlayerViewController: UIViewController {
             totalTimeLabel.textAlignment = .left
             totalTimeLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
             totalTimeLabel.widthAnchor.constraint(equalToConstant: 60).isActive = true
-            if let font = UIFont.monospacedDigitSystemFont(ofSize: totalTimeLabel.font.pointSize, weight: .medium) {
-                totalTimeLabel.font = font
-            }
+            totalTimeLabel.font = UIFont.monospacedDigitSystemFont(ofSize: totalTimeLabel.font.pointSize, weight: .medium)
         }
     }
     @IBOutlet weak var timeSlider: UISlider! {

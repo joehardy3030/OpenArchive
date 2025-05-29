@@ -54,22 +54,22 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     
     private let currentTimeLabel: UILabel = {
         let lbl = UILabel()
-        lbl.font = .systemFont(ofSize: 12, weight: .medium)
+        lbl.font = .monospacedDigitSystemFont(ofSize: 12, weight: .medium)
         lbl.text = "0:00"
         lbl.textAlignment = .right
         lbl.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-        lbl.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        lbl.widthAnchor.constraint(equalToConstant: 60).isActive = true
         lbl.translatesAutoresizingMaskIntoConstraints = false
         return lbl
     }()
     
     private let totalTimeLabel: UILabel = {
         let lbl = UILabel()
-        lbl.font = .systemFont(ofSize: 12, weight: .medium)
+        lbl.font = .monospacedDigitSystemFont(ofSize: 12, weight: .medium)
         lbl.text = "0:00"
         lbl.textAlignment = .left
         lbl.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-        lbl.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        lbl.widthAnchor.constraint(equalToConstant: 60).isActive = true
         lbl.translatesAutoresizingMaskIntoConstraints = false
         return lbl
     }()

@@ -16,14 +16,20 @@ class MiniPlayerViewController: UIViewController {
         didSet {
             currentTimeLabel.textAlignment = .right
             currentTimeLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-            currentTimeLabel.widthAnchor.constraint(equalToConstant: 50).isActive = true
+            currentTimeLabel.widthAnchor.constraint(equalToConstant: 60).isActive = true
+            if let font = UIFont.monospacedDigitSystemFont(ofSize: currentTimeLabel.font.pointSize, weight: .medium) {
+                currentTimeLabel.font = font
+            }
         }
     }
     @IBOutlet weak var totalTimeLabel: UILabel! {
         didSet {
             totalTimeLabel.textAlignment = .left
             totalTimeLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-            totalTimeLabel.widthAnchor.constraint(equalToConstant: 50).isActive = true
+            totalTimeLabel.widthAnchor.constraint(equalToConstant: 60).isActive = true
+            if let font = UIFont.monospacedDigitSystemFont(ofSize: totalTimeLabel.font.pointSize, weight: .medium) {
+                totalTimeLabel.font = font
+            }
         }
     }
     @IBOutlet weak var timeSlider: UISlider! {

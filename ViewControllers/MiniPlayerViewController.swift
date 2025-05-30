@@ -12,9 +12,27 @@ import MediaPlayer
 class MiniPlayerViewController: UIViewController {
 
     @IBOutlet weak var playButton: UIButton!
-    @IBOutlet weak var currentTimeLabel: UILabel!
-    @IBOutlet weak var totalTimeLabel: UILabel!
-    @IBOutlet weak var timeSlider: UISlider!
+    @IBOutlet weak var currentTimeLabel: UILabel! {
+        didSet {
+            currentTimeLabel.textAlignment = .right
+            currentTimeLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+            currentTimeLabel.widthAnchor.constraint(equalToConstant: 60).isActive = true
+            currentTimeLabel.font = UIFont.monospacedDigitSystemFont(ofSize: currentTimeLabel.font.pointSize, weight: .medium)
+        }
+    }
+    @IBOutlet weak var totalTimeLabel: UILabel! {
+        didSet {
+            totalTimeLabel.textAlignment = .left
+            totalTimeLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+            totalTimeLabel.widthAnchor.constraint(equalToConstant: 60).isActive = true
+            totalTimeLabel.font = UIFont.monospacedDigitSystemFont(ofSize: totalTimeLabel.font.pointSize, weight: .medium)
+        }
+    }
+    @IBOutlet weak var timeSlider: UISlider! {
+        didSet {
+            timeSlider.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        }
+    }
     @IBOutlet weak var showLabel: UILabel!
     @IBOutlet weak var venueLabel: UILabel!
     @IBOutlet weak var songLabel: UILabel!

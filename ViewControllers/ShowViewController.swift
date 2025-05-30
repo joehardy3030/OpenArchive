@@ -319,6 +319,12 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         let idx = indexPath.row - numRowsBeforeSongs
         cell.accessoryType = .none
         
+        if indexPath.row < numRowsBeforeSongs {
+            cell.selectionStyle = .none
+        } else {
+            cell.selectionStyle = .default
+        }
+        
         switch indexPath.row {
         case 0:
             cell.textLabel?.text = m.date
@@ -400,6 +406,11 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 }
             }
         }
+    }
+
+    func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+        // Only allow selection for rows after the first 6
+        return indexPath.row < numRowsBeforeSongs ? nil : indexPath
     }
 }
 

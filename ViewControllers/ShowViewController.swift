@@ -34,6 +34,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     var showMetadata: ShowMetadata?
     var showMetadataModel: ShowMetadataModel?
     var showType: ShowType? = .archive
+    var fileLocation: FileLocation?
     var broadcastIsPlaying: Bool = false
     var mp3index: Int = 0
     

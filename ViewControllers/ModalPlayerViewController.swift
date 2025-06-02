@@ -130,6 +130,20 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         return btn
     }()
 
+    private let showInfoButton: UIButton = {
+        let btn = UIButton(type: .system)
+        if #available(iOS 13.0, *) {
+            btn.setBackgroundImage(UIImage(systemName: "info.circle"), for: .normal)
+        } else {
+            btn.setTitle("Info", for: .normal)
+        }
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.tintColor = .label
+        btn.contentVerticalAlignment = .fill
+        btn.contentHorizontalAlignment = .fill
+        return btn
+    }()
+
     private let modalPlayerTableView: UITableView = {
         let tv = UITableView()
         tv.translatesAutoresizingMaskIntoConstraints = false
@@ -220,6 +234,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         view.addSubview(modalPlayerTableView)
         view.addSubview(containerView)
         containerView.addSubview(playerControlsStack)
+        containerView.addSubview(showInfoButton)
 
         NSLayoutConstraint.activate([
             // Table view at top
@@ -249,7 +264,13 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
             forwardButton.widthAnchor.constraint(equalToConstant: 40),
             forwardButton.heightAnchor.constraint(equalToConstant: 40),
             shareButton.widthAnchor.constraint(equalToConstant: 40),
-            shareButton.heightAnchor.constraint(equalToConstant: 40)
+            shareButton.heightAnchor.constraint(equalToConstant: 40),
+
+            // Show info button floating in upper-right
+            showInfoButton.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 8),
+            showInfoButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -8),
+            showInfoButton.widthAnchor.constraint(equalToConstant: 36),
+            showInfoButton.heightAnchor.constraint(equalToConstant: 36)
         ])
     }
 
@@ -259,6 +280,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         backButton.addTarget(self, action: #selector(handleBackButton), for: .touchUpInside)
         shareButton.addTarget(self, action: #selector(handleShareButton(_:)), for: .touchUpInside)
         timerSlider.addTarget(self, action: #selector(handleSliderChange), for: .valueChanged)
+        showInfoButton.addTarget(self, action: #selector(handleShowInfoButton), for: .touchUpInside)
     }
 
     // MARK: - Actions
@@ -276,6 +298,27 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     // MARK: - Slider Handling
     @objc private func handleSliderChange() {
         player.timerSliderHandler(timerValue: timerSlider.value)
+    }
+
+    @objc private func handleShowInfoButton() {
+        // Get the window scene and root view controller
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window = windowScene.windows.first,
+              let rvc = window.rootViewController as? StartViewController,
+              let tbc = rvc.children.first as? UITabBarController else {
+            print("Navigation structure not found")
+            return
+        }
+        
+        tbc.selectedIndex = 1 // Use tab index 1 as requested
+        if let navController = tbc.selectedViewController as? UINavigationController {
+            let sbd = UIStoryboard(name: "Main", bundle: nil)
+            guard let showVC = sbd.instantiateViewController(withIdentifier: "ShowViewController") as? ShowViewController else { return }
+            showVC.showMetadataModel = self.player.showMetadataModel
+            // Optionally set showMetadata and showType if needed
+            // showVC.showType = .archive
+            navController.pushViewController(showVC, animated: true)
+        }
     }
 
     // MARK: - Existing Methods (unchanged below)

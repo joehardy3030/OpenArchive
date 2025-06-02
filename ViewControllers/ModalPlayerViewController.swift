@@ -310,7 +310,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
             return
         }
         
-        tbc.selectedIndex = 1 // Use tab index 1 as requested
+        //tbc.selectedIndex = 1 // Use tab index 1 as requested
         if let navController = tbc.selectedViewController as? UINavigationController {
             let sbd = UIStoryboard(name: "Main", bundle: nil)
             guard let showVC = sbd.instantiateViewController(withIdentifier: "ShowViewController") as? ShowViewController else { return }
@@ -323,6 +323,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
                 showVC.fileLocation = .local
             }
             navController.pushViewController(showVC, animated: true)
+            self.dismiss(animated: true, completion: nil)
         }
     }
 

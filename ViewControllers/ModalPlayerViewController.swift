@@ -315,8 +315,13 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
             let sbd = UIStoryboard(name: "Main", bundle: nil)
             guard let showVC = sbd.instantiateViewController(withIdentifier: "ShowViewController") as? ShowViewController else { return }
             showVC.showMetadataModel = self.player.showMetadataModel
-            // Optionally set showMetadata and showType if needed
-            // showVC.showType = .archive
+            if player.isStreaming {
+                showVC.showType = .archive
+                showVC.fileLocation = .internet
+            } else {
+                showVC.showType = .downloaded
+                showVC.fileLocation = .local
+            }
             navController.pushViewController(showVC, animated: true)
         }
     }

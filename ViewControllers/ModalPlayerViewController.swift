@@ -3,7 +3,7 @@
 //  Breaze
 //
 //  Created by Joseph Hardy on 8/2/20.
-//  Copyright © 2020 Carquinez. All rights reserved.
+//  Copyright 2020 Carquinez. All rights reserved.
 //
 
 import UIKit
@@ -152,6 +152,15 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         return tv
     }()
 
+    // Add new UI element for swipe handle indicator
+    private let pullIndicatorView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemGray3
+        view.layer.cornerRadius = 2.5
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+
     // MARK: - Other Properties
     private let notificationCenter: NotificationCenter = .default
     private let commandCenter = MPRemoteCommandCenter.shared()
@@ -196,6 +205,15 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     private func setupUI() {
         view.backgroundColor = .systemBackground
 
+        // Add pull indicator at the top
+        view.addSubview(pullIndicatorView)
+        NSLayoutConstraint.activate([
+            pullIndicatorView.topAnchor.constraint(equalTo: view.topAnchor, constant: 8),
+            pullIndicatorView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            pullIndicatorView.widthAnchor.constraint(equalToConstant: 36),
+            pullIndicatorView.heightAnchor.constraint(equalToConstant: 5)
+        ])
+        
         // Labels Stack
         let labelsStack = UIStackView(arrangedSubviews: [creatorLabel, songLabel, venueLabel, dateLabel])
         labelsStack.axis = .vertical
@@ -238,7 +256,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
 
         NSLayoutConstraint.activate([
             // Table view at top
-            modalPlayerTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            modalPlayerTableView.topAnchor.constraint(equalTo: pullIndicatorView.bottomAnchor, constant: 12),
             modalPlayerTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             modalPlayerTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             modalPlayerTableView.bottomAnchor.constraint(equalTo: containerView.topAnchor, constant: -12),

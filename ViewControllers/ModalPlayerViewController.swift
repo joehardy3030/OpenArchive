@@ -189,19 +189,13 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
 
     deinit {
         notificationCenter.removeObserver(self)
-        if isObservingPlayer, let queue = player.playerQueue {
-            queue.removeObserver(self, forKeyPath: "currentItem.status")
-            isObservingPlayer = false
-        }
+        removePlayerObserver()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         notificationCenter.removeObserver(self)
-        if isObservingPlayer, let queue = player.playerQueue {
-            queue.removeObserver(self, forKeyPath: "currentItem.status")
-            isObservingPlayer = false
-        }
+        removePlayerObserver()
     }
 
     // MARK: - UI Setup
@@ -487,6 +481,12 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     }
     
     func reloadShow() {
+        // Remove observer before reloading the queue to avoid crashes
+        if isObservingPlayer, let queue = player.playerQueue {
+            // Safely remove observer
+            removePlayerObserver()
+        }
+        
         // This operation should probably belong to the player class
         if let mp3s = self.player.showMetadataModel?.mp3Array {
             if player.isStreaming {
@@ -498,6 +498,22 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         setupShow()
     }
     
+    // Add a helper method to safely remove observers
+    private func removePlayerObserver() {
+        if isObservingPlayer, let queue = player.playerQueue {
+            // Use try-catch to handle potential exceptions when removing observers
+            do {
+                queue.removeObserver(self, forKeyPath: "currentItem.status")
+                isObservingPlayer = false
+            } catch {
+                print("Failed to remove observer: \(error)")
+                // Reset the flag anyway to avoid future issues
+                isObservingPlayer = false
+            }
+        }
+    }
+
+    // MARK: - Table View Data Source
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let c = player.showMetadataModel?.mp3Array?.count {
             return c

@@ -3,7 +3,7 @@
 //  Breaze
 //
 //  Created by Joseph Hardy on 8/2/20.
-//  Copyright © 2020 Carquinez. All rights reserved.
+//  Copyright 2020 Carquinez. All rights reserved.
 //
 
 import UIKit
@@ -148,7 +148,8 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         let tv = UITableView()
         tv.translatesAutoresizingMaskIntoConstraints = false
         tv.tableFooterView = UIView()
-        tv.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 0)
+        tv.contentInset = UIEdgeInsets(top: 16, left: 0, bottom: 0, right: 0)
+        tv.scrollIndicatorInsets = UIEdgeInsets(top: 16, left: 0, bottom: 0, right: 0)
         return tv
     }()
 

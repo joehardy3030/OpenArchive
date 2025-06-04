@@ -3,7 +3,7 @@
 //  Breaze
 //
 //  Created by Joseph Hardy on 8/2/20.
-//  Copyright 2020 Carquinez. All rights reserved.
+//  Copyright © 2020 Carquinez. All rights reserved.
 //
 
 import UIKit
@@ -165,12 +165,14 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     private let notificationCenter: NotificationCenter = .default
     private let commandCenter = MPRemoteCommandCenter.shared()
     private var isObservingPlayer = false  // Add flag to track observer state
+    private var feedbackGenerator: UIImpactFeedbackGenerator?
 
     // MARK: - Life-cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         setupActions()
+        setupGestures()
 
         modalPlayerTableView.delegate = self
         modalPlayerTableView.dataSource = self
@@ -299,6 +301,32 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         shareButton.addTarget(self, action: #selector(handleShareButton(_:)), for: .touchUpInside)
         timerSlider.addTarget(self, action: #selector(handleSliderChange), for: .valueChanged)
         showInfoButton.addTarget(self, action: #selector(handleShowInfoButton), for: .touchUpInside)
+    }
+
+    private func setupGestures() {
+        // Initialize feedback generator
+        feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+        feedbackGenerator?.prepare()
+        
+        // Add pan gesture recognizer to detect swipe down
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
+        view.addGestureRecognizer(panGesture)
+    }
+    
+    @objc private func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
+        let translation = gesture.translation(in: view)
+        
+        // Only respond to downward swipes
+        if translation.y > 0 {
+            // Generate impact feedback
+            feedbackGenerator?.impactOccurred()
+            
+            // Dismiss the modal
+            dismiss(animated: true, completion: nil)
+        }
+        
+        // Reset translation
+        gesture.setTranslation(.zero, in: view)
     }
 
     // MARK: - Actions

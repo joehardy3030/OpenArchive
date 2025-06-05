@@ -30,7 +30,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     @IBOutlet weak var broadcastPlayPauseButton: UIButton!
     let notificationCenter: NotificationCenter = .default
     let fileManager = FileManager.default
-    let numRowsBeforeSongs = 5 // date, venue, coverage, source, transferer
+    let numRowsBeforeSongs = 4 // date, venue, coverage, transferer
     var showMetadata: ShowMetadata?
     var showMetadataModel: ShowMetadataModel?
     var showType: ShowType? = .archive
@@ -310,11 +310,11 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: // Info
-            return numRowsBeforeSongs
-        case 1: // Taper's Notes (collapsible)
-            return isDescriptionExpanded ? 1 : 0
-        case 2: // Tracks
+        case 0: // Info Section
+            return 4 // Date, Venue, Coverage, Transferer
+        case 1: // Taper's Notes Section
+            return isDescriptionExpanded ? 2 : 0 // 2 rows (Source, Description) if expanded, 0 if not
+        case 2: // Tracks Section
             return showMetadataModel?.mp3Array?.count ?? 0
         default:
             return 0
@@ -338,28 +338,32 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 cell.textLabel?.text = m.venue
             case 2:
                 cell.textLabel?.text = m.coverage
-            case 3:
-                cell.textLabel?.text = m.source
-            case 4:
+            // case 3 was m.source, now moved
+            case 3: // Was case 4
                 cell.textLabel?.text = m.transferer
             default:
                 break
             }
-        case 1: // Taper's Notes Section
-            if let description = m.description {
-                let data = description.data(using: .utf8)!
-                do {
-                    let attributedString = try NSAttributedString(data: data,
-                        options: [.documentType: NSAttributedString.DocumentType.html,
-                                .characterEncoding: String.Encoding.utf8.rawValue],
-                        documentAttributes: nil)
-                    cell.textLabel?.text = attributedString.string
-                } catch {
-                    print("Error parsing HTML: \(error)")
-                    cell.textLabel?.text = description
+        case 1: // Taper's Notes Section (only reached if isDescriptionExpanded is true)
+            if indexPath.row == 0 { // Source row
+                cell.textLabel?.text = m.source
+            } else if indexPath.row == 1 { // Description row
+                if let description = m.description {
+                    let data = description.data(using: .utf8)!
+                    do {
+                        let attributedString = try NSAttributedString(data: data,
+                            options: [.documentType: NSAttributedString.DocumentType.html,
+                                    .characterEncoding: String.Encoding.utf8.rawValue],
+                            documentAttributes: nil)
+                        cell.textLabel?.text = attributedString.string
+                    } catch {
+                        print("Error parsing HTML: \(error)")
+                        cell.textLabel?.text = description
+                    }
+                } else {
+                    cell.textLabel?.text = "No description available."
                 }
-            } else {
-                cell.textLabel?.text = "No description available."
+                cell.textLabel?.applyTextStyle(AppFonts.bodyPrimary)
             }
         case 2: // Tracks Section
             cell.selectionStyle = .default

@@ -1066,7 +1066,7 @@
             </objects>
             <point key="canvasLocation" x="782" y="1953"/>
         </scene>
-        <!--Search View Controller-->
+        <!--Search-->
         <scene sceneID="ats-Wc-dPv">
             <objects>
                 <viewController id="NuE-gc-eaG" customClass="SearchViewController" customModule="Chateau" customModuleProvider="target" sceneMemberID="viewController">
@@ -1076,7 +1076,7 @@
                         <viewLayoutGuide key="safeArea" id="mq5-op-hZy"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
-                    <navigationItem key="navigationItem" id="lkK-b6-Nrf"/>
+                    <navigationItem key="navigationItem" title="Search" id="lkK-b6-Nrf"/>
                     <connections>
                         <segue destination="VkJ-vg-Mzt" kind="show" identifier="showSearchResults" id="c4F-NP-axA"/>
                     </connections>
@@ -1087,8 +1087,8 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="P7t-lR-Gax"/>
-        <segue reference="hJg-m6-Ivq"/>
+        <segue reference="wDf-Rk-Vwo"/>
+        <segue reference="c4F-NP-axA"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="backward.end.fill" catalog="system" width="128" height="97"/>

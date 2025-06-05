@@ -386,11 +386,10 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         if section == 1 { // Taper's Notes Header
             let headerView = UIView()
-            // headerView.backgroundColor = .systemGroupedBackground // Or your preferred background
+            headerView.backgroundColor = .systemBackground // Set opaque background
             
             let button = UIButton(type: .system)
             button.setTitle(isDescriptionExpanded ? "Hide Notes" : "Notes", for: .normal)
-            //button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .bold)
             button.titleLabel?.applyTextStyle(AppFonts.button)
             button.addTarget(self, action: #selector(toggleNotesSection), for: .touchUpInside)
             button.translatesAutoresizingMaskIntoConstraints = false
@@ -398,7 +397,6 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             
             let topPadding: CGFloat = 0.0
 
-            // Separator View
             let separatorView = UIView()
             separatorView.backgroundColor = UIColor.separator
             separatorView.translatesAutoresizingMaskIntoConstraints = false
@@ -408,8 +406,6 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 // Button constraints
                 button.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16),
                 button.topAnchor.constraint(equalTo: headerView.topAnchor, constant: topPadding),
-                // Assuming button's intrinsic height is used. If specific height is needed, add: 
-                // button.heightAnchor.constraint(equalToConstant: 22.0),
 
                 // Separator constraints
                 separatorView.leadingAnchor.constraint(equalTo: headerView.leadingAnchor),

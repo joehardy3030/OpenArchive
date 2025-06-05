@@ -391,7 +391,13 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
                 setupSong()
                 print("ready to play")
             case .failed:
-                print("failed ")
+                self.player.pause()
+                if let error = self.player.playerQueue?.currentItem?.error {
+                    print("Player item error: \(error.localizedDescription)")
+                }
+                let alert = UIAlertController(title: "Playback Error", message: "Could not stream the track. Please check your internet connection and try again.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
             case .unknown:
                 print("unknown status")
             default:

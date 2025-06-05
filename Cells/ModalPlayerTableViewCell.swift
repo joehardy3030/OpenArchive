@@ -30,7 +30,7 @@ class ModalPlayerTableViewCell: UITableViewCell {
     private func commonInit() {
         // Ensure the style allows for a textLabel if you're relying on the default one.
         // If you're using a custom style from a XIB without a textLabel outlet, this might be nil.
-        textLabel?.font = AppFonts.bodyFont // Using AppFonts.bodyFont as requested
+        textLabel?.applyTextStyle(AppFonts.bodyPrimary)
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

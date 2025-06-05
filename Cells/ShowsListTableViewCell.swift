@@ -12,23 +12,21 @@ class ShowsListTableViewCell: UITableViewCell {
     // MARK: - UI Elements
     private let collectionLabel: UILabel = {
         let label = UILabel()
-        label.font = AppFonts.titleFont
+        label.applyTextStyle(AppFonts.title)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     private let dateLabel: UILabel = {
         let label = UILabel()
-        label.font = AppFonts.subtitleBoldFont
-        //label.textColor = .secondaryLabel
+        label.applyTextStyle(AppFonts.subtitleBold)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     private let venueLabel: UILabel = {
         let label = UILabel()
-        label.font = AppFonts.bodyFont
-        label.textColor = .secondaryLabel
+        label.applyTextStyle(AppFonts.bodySecondary)
         //label.numberOfLines = 2
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -36,24 +34,21 @@ class ShowsListTableViewCell: UITableViewCell {
     
     private let transfererLabel: UILabel = {
         let label = UILabel()
-        label.font = AppFonts.captionFont
-        label.textColor = .secondaryLabel
+        label.applyTextStyle(AppFonts.captionSecondary)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     private let sourceLabel: UILabel = {
         let label = UILabel()
-        label.font = AppFonts.captionFont
-        label.textColor = .secondaryLabel
+        label.applyTextStyle(AppFonts.captionSecondary)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     private let starsLabel: UILabel = {
         let label = UILabel()
-        label.font = AppFonts.bodyFont
-        label.textColor = .secondaryLabel
+        label.applyTextStyle(AppFonts.bodySecondary)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -197,5 +192,13 @@ class ShowsListTableViewCell: UITableViewCell {
         } else {
             starsLabel.text = ""
         }
+    }
+}
+
+// MARK: - UILabel Extension for TextStyle
+extension UILabel {
+    func applyTextStyle(_ style: AppFonts.TextStyle) {
+        self.font = style.font
+        self.textColor = style.color
     }
 }

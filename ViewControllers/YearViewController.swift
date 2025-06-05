@@ -1,5 +1,5 @@
 //
-//  ArchiveViewController.swift
+//  YearViewController.swift
 //  Breaze
 //
 //  Created by Joe Hardy on 6/24/20.
@@ -52,6 +52,7 @@ class YearViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         let cell = yearTableView.dequeueReusableCell(withIdentifier: "ArchiveCell", for: indexPath) as! ArchiveCell
         let year = self.years[indexPath.row]
         cell.titleLabel?.text = String(year)
+        cell.titleLabel?.applyTextStyle(AppFonts.bodyPrimary)
         return cell
     }
     

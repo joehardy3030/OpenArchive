@@ -3,7 +3,7 @@
 //  Breaze
 //
 //  Created by Joseph Hardy on 7/4/20.
-//  Copyright © 2020 Carquinez. All rights reserved.
+//  Copyright 2020 Carquinez. All rights reserved.
 //
 
 import UIKit
@@ -382,19 +382,21 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         if section == 1 { // Taper's Notes Header
             let headerView = UIView()
-            headerView.backgroundColor = .systemGroupedBackground
-            
+            // headerView.backgroundColor = .systemGroupedBackground // Or your preferred background
+
             let button = UIButton(type: .system)
             button.setTitle(isDescriptionExpanded ? "Hide Notes" : "Show Notes", for: .normal)
             button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .bold)
             button.addTarget(self, action: #selector(toggleNotesSection), for: .touchUpInside)
             button.translatesAutoresizingMaskIntoConstraints = false
-            
             headerView.addSubview(button)
             
+            // Adjust topAnchor constant for desired padding from the top
+            let topPadding: CGFloat = 0.0 // Adjusted for closer to top
+
             NSLayoutConstraint.activate([
                 button.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16),
-                button.centerYAnchor.constraint(equalTo: headerView.centerYAnchor)
+                button.topAnchor.constraint(equalTo: headerView.topAnchor, constant: topPadding)
             ])
             
             return headerView

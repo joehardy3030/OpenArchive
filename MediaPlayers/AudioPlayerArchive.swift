@@ -430,7 +430,7 @@ extension AudioPlayerArchive {
                 print("Player item failed")
                 self.pause()
                 let error = self.playerQueue?.currentItem?.error
-                notificationCenter.post(name: .playbackFailed, object: self, userInfo: ["error": error as Any])
+                notificationCenter.post(name: .playbackFailed, object: self, userInfo: ["error": error as Any, "isStreaming": self.isStreaming])
             case .unknown:
                 print("Player item status unknown")
             default:

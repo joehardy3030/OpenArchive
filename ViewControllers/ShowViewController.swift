@@ -431,7 +431,9 @@ private extension ShowViewController {
         if let error = notification.userInfo?["error"] as? Error {
             print("Playback failed with error: \(error.localizedDescription)")
         }
-        let alert = UIAlertController(title: "Playback Error", message: "Could not stream the track. Please check your internet connection and try again.", preferredStyle: .alert)
+        let isStreaming = notification.userInfo?["isStreaming"] as? Bool ?? false
+        let message = isStreaming ? "Could not stream the track. Please check your internet connection and try again." : "Could not play the downloaded track. The file may be corrupt or missing."
+        let alert = UIAlertController(title: "Playback Error", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         present(alert, animated: true, completion: nil)
     }

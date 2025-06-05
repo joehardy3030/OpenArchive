@@ -3,7 +3,7 @@
 //  Breaze
 //
 //  Created by Joseph Hardy on 7/4/20.
-//  Copyright © 2020 Carquinez. All rights reserved.
+//  Copyright 2020 Carquinez. All rights reserved.
 //
 
 import UIKit
@@ -12,14 +12,14 @@ class ShowsListTableViewCell: UITableViewCell {
     // MARK: - UI Elements
     private let collectionLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 18, weight: .bold)
+        label.font = AppFonts.titleFont
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     private let dateLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 16, weight: .bold)
+        label.font = AppFonts.subtitleBoldFont
         //label.textColor = .secondaryLabel
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -27,7 +27,7 @@ class ShowsListTableViewCell: UITableViewCell {
     
     private let venueLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 15)
+        label.font = AppFonts.bodyFont
         label.textColor = .secondaryLabel
         //label.numberOfLines = 2
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -36,7 +36,7 @@ class ShowsListTableViewCell: UITableViewCell {
     
     private let transfererLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 14)
+        label.font = AppFonts.captionFont
         label.textColor = .secondaryLabel
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -44,7 +44,7 @@ class ShowsListTableViewCell: UITableViewCell {
     
     private let sourceLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 14)
+        label.font = AppFonts.captionFont
         label.textColor = .secondaryLabel
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -52,7 +52,7 @@ class ShowsListTableViewCell: UITableViewCell {
     
     private let starsLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 15)
+        label.font = AppFonts.bodyFont
         label.textColor = .secondaryLabel
         label.translatesAutoresizingMaskIntoConstraints = false
         return label

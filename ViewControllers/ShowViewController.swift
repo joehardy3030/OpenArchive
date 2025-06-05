@@ -30,11 +30,12 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     @IBOutlet weak var broadcastPlayPauseButton: UIButton!
     let notificationCenter: NotificationCenter = .default
     let fileManager = FileManager.default
-    let numRowsBeforeSongs = 6
+    let numRowsBeforeSongs = 5 // date, venue, coverage, source, transferer
     var showMetadata: ShowMetadata?
     var showMetadataModel: ShowMetadataModel?
     var showType: ShowType? = .archive
     var fileLocation: FileLocation?
+    var isDescriptionExpanded: Bool = false
     var broadcastIsPlaying: Bool = false
     var mp3index: Int = 0
     
@@ -303,88 +304,120 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         
     }
     
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 3
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let count = showMetadataModel?.mp3Array?.count {
-            return (numRowsBeforeSongs + count)
-        }
-        else {
+        switch section {
+        case 0: // Info
             return numRowsBeforeSongs
+        case 1: // Taper's Notes (collapsible)
+            return isDescriptionExpanded ? 1 : 0
+        case 2: // Tracks
+            return showMetadataModel?.mp3Array?.count ?? 0
+        default:
+            return 0
         }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = showTableView.dequeueReusableCell(withIdentifier: "ShowDetailCell", for: indexPath) as! ShowDetailTableViewCell
         
-        guard let mp3s = self.showMetadataModel?.mp3Array,
-              let m = self.showMetadataModel?.metadata
-        else { return UITableViewCell() }
+        guard let m = self.showMetadataModel?.metadata else { return UITableViewCell() }
         
-        let idx = indexPath.row - numRowsBeforeSongs
         cell.accessoryType = .none
-        
-        if indexPath.row < numRowsBeforeSongs {
-            cell.selectionStyle = .none
-        } else {
-            cell.selectionStyle = .default
-        }
-        
-        switch indexPath.row {
-        case 0:
-            cell.textLabel?.text = m.date
-        case 1:
-            cell.textLabel?.text = m.venue
-        case 2:
-            cell.textLabel?.text = m.coverage
-        case 3:
+        cell.selectionStyle = .none
+
+        switch indexPath.section {
+        case 0: // Info Section
+            switch indexPath.row {
+            case 0:
+                cell.textLabel?.text = m.date
+            case 1:
+                cell.textLabel?.text = m.venue
+            case 2:
+                cell.textLabel?.text = m.coverage
+            case 3:
+                cell.textLabel?.text = m.source
+            case 4:
+                cell.textLabel?.text = m.transferer
+            default:
+                break
+            }
+        case 1: // Taper's Notes Section
             if let description = m.description {
                 let data = description.data(using: .utf8)!
                 do {
-                    let attributedString = try NSAttributedString(data: data, 
+                    let attributedString = try NSAttributedString(data: data,
                         options: [.documentType: NSAttributedString.DocumentType.html,
-                                .characterEncoding: String.Encoding.utf8.rawValue], 
+                                .characterEncoding: String.Encoding.utf8.rawValue],
                         documentAttributes: nil)
                     cell.textLabel?.text = attributedString.string
                 } catch {
                     print("Error parsing HTML: \(error)")
                     cell.textLabel?.text = description
                 }
+            } else {
+                cell.textLabel?.text = "No description available."
             }
-            else {
-                cell.textLabel?.text = m.description
+        case 2: // Tracks Section
+            cell.selectionStyle = .default
+            if let mp3s = self.showMetadataModel?.mp3Array {
+                let track = mp3s[indexPath.row]
+                if let title = track.title, let trackNum = track.track {
+                    cell.textLabel?.text = trackNum + " " + title
+                } else {
+                    cell.textLabel?.text = track.name
+                }
+                cell.accessoryType = (track.destination != nil) ? .checkmark : .none
             }
-        case 4:
-            cell.textLabel?.text = m.source
-        case 5:
-            cell.textLabel?.text = m.transferer
         default:
-            if let title = mp3s[idx].title,
-               let track = mp3s[idx].track {
-                cell.textLabel?.text = track + " " + title
-            }
-            else {
-                cell.textLabel?.text = mp3s[idx].name
-            }
-            
-            if let _ = mp3s[idx].destination {
-                cell.accessoryType = .checkmark
-            }
-            else {
-                cell.accessoryType = .none
-            }
+            break
         }
+        
         return cell
     }
-    
+
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        if section == 1 { // Taper's Notes Header
+            let headerView = UIView()
+            headerView.backgroundColor = .systemGroupedBackground
+            
+            let button = UIButton(type: .system)
+            button.setTitle(isDescriptionExpanded ? "Hide Notes" : "Show Notes", for: .normal)
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .bold)
+            button.addTarget(self, action: #selector(toggleNotesSection), for: .touchUpInside)
+            button.translatesAutoresizingMaskIntoConstraints = false
+            
+            headerView.addSubview(button)
+            
+            NSLayoutConstraint.activate([
+                button.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16),
+                button.centerYAnchor.constraint(equalTo: headerView.centerYAnchor)
+            ])
+            
+            return headerView
+        }
+        return nil
+    }
+
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if section == 1 {
+            return 44
+        }
+        return 0
+    }
+
+    @objc func toggleNotesSection() {
+        isDescriptionExpanded.toggle()
+        showTableView.reloadSections(IndexSet(integer: 1), with: .automatic)
+    }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let indexPath = showTableView.indexPathForSelectedRow else { return }
-        var songIndex = indexPath.row
-        if songIndex >= numRowsBeforeSongs {
-            songIndex = songIndex - numRowsBeforeSongs
-        }
-        else {
-            songIndex = 0
-        }
+        guard indexPath.section == 2 else { return } // Only handle track selection
+        
+        let songIndex = indexPath.row
         
         // Check if we're streaming or playing downloaded files
         if playButtonLabel.currentTitle == "Stream" {
@@ -412,8 +445,8 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     }
 
     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        // Only allow selection for rows after the first 6
-        return indexPath.row < numRowsBeforeSongs ? nil : indexPath
+        // Only allow selection for track rows
+        return indexPath.section == 2 ? indexPath : nil
     }
 }
 

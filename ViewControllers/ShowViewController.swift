@@ -45,6 +45,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         self.showTableView.dataSource = self
         notificationCenter.addObserver(self, selector: #selector(playbackDidStart), name: .playbackStarted, object: nil)
         notificationCenter.addObserver(self, selector: #selector(playbackDidPause), name: .playbackPaused, object: self.player.playerQueue)
+        notificationCenter.addObserver(self, selector: #selector(playbackDidFail), name: .playbackFailed, object: nil)
         self.navigationItem.title = "";
         switch showType {
         case .archive:
@@ -290,13 +291,8 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 selectCurrentTrack()
                 print("ready to play show view controller")
             case .failed:
-                self.player.pause()
-                if let error = self.player.playerQueue?.currentItem?.error {
-                    print("Player item error: \(error.localizedDescription)")
-                }
-                let alert = UIAlertController(title: "Playback Error", message: "Could not stream the track. Please check your internet connection and try again.", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                self.present(alert, animated: true, completion: nil)
+                // This is now handled by the .playbackFailed notification
+                break
             case .unknown:
                 print("unknown status")
             default:
@@ -429,5 +425,14 @@ private extension ShowViewController {
     
     @objc private func playbackDidPause(_ notification: Notification) {
         print("Item paused")
+    }
+    
+    @objc private func playbackDidFail(_ notification: Notification) {
+        if let error = notification.userInfo?["error"] as? Error {
+            print("Playback failed with error: \(error.localizedDescription)")
+        }
+        let alert = UIAlertController(title: "Playback Error", message: "Could not stream the track. Please check your internet connection and try again.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
     }
 }

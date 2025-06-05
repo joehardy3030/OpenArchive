@@ -182,6 +182,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         notificationCenter.addObserver(self, selector: #selector(playbackDidStart), name: .playbackStarted, object: nil)
         notificationCenter.addObserver(self, selector: #selector(playbackDidPause), name: .playbackPaused, object: self.player.playerQueue)
         notificationCenter.addObserver(self, selector: #selector(playbackDidRewind), name: .playbackRewind, object: self.player.playerQueue)
+        notificationCenter.addObserver(self, selector: #selector(playbackDidFail), name: .playbackFailed, object: nil)
 
         initialDefaults()
         setupShow()
@@ -391,13 +392,8 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
                 setupSong()
                 print("ready to play")
             case .failed:
-                self.player.pause()
-                if let error = self.player.playerQueue?.currentItem?.error {
-                    print("Player item error: \(error.localizedDescription)")
-                }
-                let alert = UIAlertController(title: "Playback Error", message: "Could not stream the track. Please check your internet connection and try again.", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                self.present(alert, animated: true, completion: nil)
+                // This is now handled by the .playbackFailed notification
+                break
             case .unknown:
                 print("unknown status")
             default:
@@ -602,6 +598,15 @@ private extension ModalPlayerViewController {
             playButton.setBackgroundImage(UIImage(systemName: "play.circle.fill"), for: .normal)
         }
         print("Item paused -- modal player ")
+    }
+    
+    @objc private func playbackDidFail(_ notification: Notification) {
+        if let error = notification.userInfo?["error"] as? Error {
+            print("Playback failed with error: \(error.localizedDescription)")
+        }
+        let alert = UIAlertController(title: "Playback Error", message: "Could not stream the track. Please check your internet connection and try again.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
     }
     
     @objc private func playbackDidRewind(_ notification: Notification) {

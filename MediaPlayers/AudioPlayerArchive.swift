@@ -403,20 +403,39 @@ extension Notification.Name {
     }
 
     static let playerQueueItemStatusChanged = Notification.Name("AudioPlayerArchive.playerQueueItemStatusChanged")
+    static let playbackFailed = Notification.Name("playbackFailed")
 }
 
 extension AudioPlayerArchive {
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if context == &playerQueueKVOContext && keyPath == "currentItem.status" {
+        guard context == &playerQueueKVOContext else {
+            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+            return
+        }
+        
+        if keyPath == #keyPath(AVQueuePlayer.currentItem.status) {
             let status: AVPlayerItem.Status
             if let statusNumber = change?[.newKey] as? NSNumber {
-                status = AVPlayerItem.Status(rawValue: statusNumber.intValue) ?? .unknown
+                status = AVPlayerItem.Status(rawValue: statusNumber.intValue)!
             } else {
                 status = .unknown
             }
-            NotificationCenter.default.post(name: .playerQueueItemStatusChanged, object: playerQueue?.currentItem, userInfo: ["status": status])
-        } else {
-            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+
+            // Switch over status value
+            switch status {
+            case .readyToPlay:
+                // Potentially do something here if needed, but VCs also observe this.
+                print("Player ready to play")
+            case .failed:
+                print("Player item failed")
+                self.pause()
+                let error = self.playerQueue?.currentItem?.error
+                notificationCenter.post(name: .playbackFailed, object: self, userInfo: ["error": error as Any])
+            case .unknown:
+                print("Player item status unknown")
+            default:
+                break
+            }
         }
     }
 }

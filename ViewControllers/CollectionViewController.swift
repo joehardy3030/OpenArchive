@@ -3,7 +3,7 @@
 //  Breaze
 //
 //  Created by Joseph Hardy on 4/27/25.
-//  Copyright © 2025 Carquinez. All rights reserved.
+//  Copyright 2025 Carquinez. All rights reserved.
 //
 
 import UIKit
@@ -30,6 +30,7 @@ class CollectionViewController: ArchiveSuperViewController, UITableViewDelegate,
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CollectionCell", for: indexPath)
         cell.textLabel?.text = CollectionConfig.collectionsText[indexPath.row]
+        cell.textLabel?.applyTextStyle(AppFonts.title)
         return cell
     }
     

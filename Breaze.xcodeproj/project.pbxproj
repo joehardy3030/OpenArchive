@@ -7,13 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		183B25F5A89C93BF012411B3 /* Pods_Breaze.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA40D6B8D9FFEE08A048EACE /* Pods_Breaze.framework */; };
-		791CE1C120B252F100299F76 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791CE1C020B252F100299F76 /* Utils.swift */; };
+		470C3CAB5266848EDAC45437 /* Pods_BreazeUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E4EB6CDC1317DBD625F9C33 /* Pods_BreazeUITests.framework */; };
 		7984F98D24A4565400989DB8 /* YearViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7984F98C24A4565400989DB8 /* YearViewController.swift */; };
 		7984F98F24A56EFD00989DB8 /* ArchiveAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7984F98E24A56EFD00989DB8 /* ArchiveAPI.swift */; };
 		799C3C902345582F00D9341E /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C3C8F2345582F00D9341E /* HealthKit.framework */; };
-		9D7A3DC2BE26E90A8FE391D0 /* Pods_BreazeUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9D58EED31CE81FB1690A28E /* Pods_BreazeUITests.framework */; };
-		B5C3A8D3CBD83ACBD863E369 /* Pods_BreazeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EBF20D287E48F03823653E6 /* Pods_BreazeTests.framework */; };
+		865CFD4260A5AC698FDDFEBE /* Pods_Breaze.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21BE7494B79F3ED441F22360 /* Pods_Breaze.framework */; };
 		D814AEE32B6F35AF00C58FB3 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D814AEE22B6F35AF00C58FB3 /* SearchViewController.swift */; };
 		D82C59192DDAA5ED0013BAC5 /* LocalDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82C59172DDAA5ED0013BAC5 /* LocalDatabase.swift */; };
 		D82C591B2DDAC1460013BAC5 /* CollectionConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82C591A2DDAC1460013BAC5 /* CollectionConfig.swift */; };
@@ -50,8 +48,11 @@
 		D8ACD2E22B1D6CC30097224B /* ChateauGPTModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8ACD2E12B1D6CC30097224B /* ChateauGPTModel.swift */; };
 		D8B65F0024C54A5500F57355 /* DownloadPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B65EFF24C54A5500F57355 /* DownloadPlayerViewController.swift */; };
 		D8C8A2072DBF30E0002896F2 /* CollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C8A2062DBF30CD002896F2 /* CollectionViewController.swift */; };
+		D8D96C922DF127D0003E58BF /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D96C902DF127D0003E58BF /* Utils.swift */; };
+		D8D96C932DF127D0003E58BF /* AppFonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D96C8F2DF127D0003E58BF /* AppFonts.swift */; };
 		D8DCF13425AFFEA200D28837 /* CarPlayDownloadsTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DCF13325AFFEA200D28837 /* CarPlayDownloadsTemplate.swift */; };
 		D8EECF562B1BA86100CD3235 /* ChateauGPTViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EECF552B1BA86100CD3235 /* ChateauGPTViewController.swift */; };
+		EE831377BDCE6DA21AEFB9D0 /* Pods_BreazeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6E516EE7B6C080AE80F41D3 /* Pods_BreazeTests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,18 +73,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		7113B147C27353071FE30CE2 /* Pods-Breaze.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Breaze.release.xcconfig"; path = "Target Support Files/Pods-Breaze/Pods-Breaze.release.xcconfig"; sourceTree = "<group>"; };
-		791CE1C020B252F100299F76 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		21BE7494B79F3ED441F22360 /* Pods_Breaze.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Breaze.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		26A3899C27D21F9A6BF827A6 /* Pods-Breaze.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Breaze.debug.xcconfig"; path = "Target Support Files/Pods-Breaze/Pods-Breaze.debug.xcconfig"; sourceTree = "<group>"; };
+		3589BDBB74338C238118B9B8 /* Pods-BreazeUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BreazeUITests.release.xcconfig"; path = "Target Support Files/Pods-BreazeUITests/Pods-BreazeUITests.release.xcconfig"; sourceTree = "<group>"; };
+		4E4EB6CDC1317DBD625F9C33 /* Pods_BreazeUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BreazeUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7984F98C24A4565400989DB8 /* YearViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearViewController.swift; sourceTree = "<group>"; };
 		7984F98E24A56EFD00989DB8 /* ArchiveAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveAPI.swift; sourceTree = "<group>"; };
 		799C3C8E2345582E00D9341E /* Breaze.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Breaze.entitlements; sourceTree = "<group>"; };
 		799C3C8F2345582F00D9341E /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
-		7EBF20D287E48F03823653E6 /* Pods_BreazeTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BreazeTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		8FBCB92D59AB9274CE58047B /* Pods-BreazeUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BreazeUITests.debug.xcconfig"; path = "Target Support Files/Pods-BreazeUITests/Pods-BreazeUITests.debug.xcconfig"; sourceTree = "<group>"; };
-		ABA5BEA386E29B37365374C6 /* Pods-BreazeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BreazeTests.release.xcconfig"; path = "Target Support Files/Pods-BreazeTests/Pods-BreazeTests.release.xcconfig"; sourceTree = "<group>"; };
-		BA40D6B8D9FFEE08A048EACE /* Pods_Breaze.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Breaze.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		BD90CD3FAF3DBFB84C42E535 /* Pods-BreazeUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BreazeUITests.release.xcconfig"; path = "Target Support Files/Pods-BreazeUITests/Pods-BreazeUITests.release.xcconfig"; sourceTree = "<group>"; };
-		C9D58EED31CE81FB1690A28E /* Pods_BreazeUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BreazeUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		817CFC4EBF2612E235DD62ED /* Pods-Breaze.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Breaze.release.xcconfig"; path = "Target Support Files/Pods-Breaze/Pods-Breaze.release.xcconfig"; sourceTree = "<group>"; };
+		8BB90AAE8774EC35932D6A9E /* Pods-BreazeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BreazeTests.debug.xcconfig"; path = "Target Support Files/Pods-BreazeTests/Pods-BreazeTests.debug.xcconfig"; sourceTree = "<group>"; };
+		BFE15DBD6AF9F070C6B6B939 /* Pods-BreazeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BreazeTests.release.xcconfig"; path = "Target Support Files/Pods-BreazeTests/Pods-BreazeTests.release.xcconfig"; sourceTree = "<group>"; };
+		CAF8D81E20547210F0C71CCA /* Pods-BreazeUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BreazeUITests.debug.xcconfig"; path = "Target Support Files/Pods-BreazeUITests/Pods-BreazeUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		D814AEE22B6F35AF00C58FB3 /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		D82C59172DDAA5ED0013BAC5 /* LocalDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalDatabase.swift; sourceTree = "<group>"; };
 		D82C591A2DDAC1460013BAC5 /* CollectionConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionConfig.swift; sourceTree = "<group>"; };
@@ -126,10 +127,11 @@
 		D8ACD2E12B1D6CC30097224B /* ChateauGPTModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChateauGPTModel.swift; sourceTree = "<group>"; };
 		D8B65EFF24C54A5500F57355 /* DownloadPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadPlayerViewController.swift; sourceTree = "<group>"; };
 		D8C8A2062DBF30CD002896F2 /* CollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewController.swift; sourceTree = "<group>"; };
+		D8D96C8F2DF127D0003E58BF /* AppFonts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFonts.swift; sourceTree = "<group>"; };
+		D8D96C902DF127D0003E58BF /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		D8DCF13325AFFEA200D28837 /* CarPlayDownloadsTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarPlayDownloadsTemplate.swift; sourceTree = "<group>"; };
 		D8EECF552B1BA86100CD3235 /* ChateauGPTViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChateauGPTViewController.swift; sourceTree = "<group>"; };
-		E24D8A6E14FB1F7F63E0D1DD /* Pods-Breaze.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Breaze.debug.xcconfig"; path = "Target Support Files/Pods-Breaze/Pods-Breaze.debug.xcconfig"; sourceTree = "<group>"; };
-		EEB1C82C04A1C7AE0A653AD7 /* Pods-BreazeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BreazeTests.debug.xcconfig"; path = "Target Support Files/Pods-BreazeTests/Pods-BreazeTests.debug.xcconfig"; sourceTree = "<group>"; };
+		E6E516EE7B6C080AE80F41D3 /* Pods_BreazeTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BreazeTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -138,7 +140,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				799C3C902345582F00D9341E /* HealthKit.framework in Frameworks */,
-				183B25F5A89C93BF012411B3 /* Pods_Breaze.framework in Frameworks */,
+				865CFD4260A5AC698FDDFEBE /* Pods_Breaze.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -146,7 +148,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B5C3A8D3CBD83ACBD863E369 /* Pods_BreazeTests.framework in Frameworks */,
+				EE831377BDCE6DA21AEFB9D0 /* Pods_BreazeTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -154,7 +156,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9D7A3DC2BE26E90A8FE391D0 /* Pods_BreazeUITests.framework in Frameworks */,
+				470C3CAB5266848EDAC45437 /* Pods_BreazeUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -171,6 +173,7 @@
 				D892BBA224CBBDF4008E4960 /* Models */,
 				D892BBA624CBBF58008E4960 /* Network */,
 				D82C59182DDAA5ED0013BAC5 /* Database */,
+				D8D96C912DF127D0003E58BF /* Utilities */,
 			);
 			name = Archive;
 			path = ..;
@@ -179,12 +182,12 @@
 		8C539CAA670F9CFD521CA7FB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				E24D8A6E14FB1F7F63E0D1DD /* Pods-Breaze.debug.xcconfig */,
-				7113B147C27353071FE30CE2 /* Pods-Breaze.release.xcconfig */,
-				EEB1C82C04A1C7AE0A653AD7 /* Pods-BreazeTests.debug.xcconfig */,
-				ABA5BEA386E29B37365374C6 /* Pods-BreazeTests.release.xcconfig */,
-				8FBCB92D59AB9274CE58047B /* Pods-BreazeUITests.debug.xcconfig */,
-				BD90CD3FAF3DBFB84C42E535 /* Pods-BreazeUITests.release.xcconfig */,
+				26A3899C27D21F9A6BF827A6 /* Pods-Breaze.debug.xcconfig */,
+				817CFC4EBF2612E235DD62ED /* Pods-Breaze.release.xcconfig */,
+				8BB90AAE8774EC35932D6A9E /* Pods-BreazeTests.debug.xcconfig */,
+				BFE15DBD6AF9F070C6B6B939 /* Pods-BreazeTests.release.xcconfig */,
+				CAF8D81E20547210F0C71CCA /* Pods-BreazeUITests.debug.xcconfig */,
+				3589BDBB74338C238118B9B8 /* Pods-BreazeUITests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -227,7 +230,6 @@
 				D85B4AFA25AD75A800A786DB /* SceneDelegate.swift */,
 				D87109F325ABF09D00CA133E /* CarPlaySceneDelegate.swift */,
 				D85A4EF92022D0B600E480FB /* LaunchScreen.storyboard */,
-				791CE1C020B252F100299F76 /* Utils.swift */,
 				D85A4EF42022D0B600E480FB /* Main.storyboard */,
 				7984F98924A4556400989DB8 /* Archive */,
 				D85A4EF72022D0B600E480FB /* Assets.xcassets */,
@@ -318,6 +320,15 @@
 			path = Network;
 			sourceTree = "<group>";
 		};
+		D8D96C912DF127D0003E58BF /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				D8D96C8F2DF127D0003E58BF /* AppFonts.swift */,
+				D8D96C902DF127D0003E58BF /* Utils.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
 		D8DCF13225AFFE6D00D28837 /* CarPlay */ = {
 			isa = PBXGroup;
 			children = (
@@ -331,9 +342,9 @@
 			isa = PBXGroup;
 			children = (
 				799C3C8F2345582F00D9341E /* HealthKit.framework */,
-				BA40D6B8D9FFEE08A048EACE /* Pods_Breaze.framework */,
-				7EBF20D287E48F03823653E6 /* Pods_BreazeTests.framework */,
-				C9D58EED31CE81FB1690A28E /* Pods_BreazeUITests.framework */,
+				21BE7494B79F3ED441F22360 /* Pods_Breaze.framework */,
+				E6E516EE7B6C080AE80F41D3 /* Pods_BreazeTests.framework */,
+				4E4EB6CDC1317DBD625F9C33 /* Pods_BreazeUITests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -345,11 +356,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D85A4F152022D0B600E480FB /* Build configuration list for PBXNativeTarget "Breaze" */;
 			buildPhases = (
-				F7FED7BE6C8978E2B3F37EE2 /* [CP] Check Pods Manifest.lock */,
+				4517C0E1BCBBBA42C9A9E522 /* [CP] Check Pods Manifest.lock */,
 				D85A4EE72022D0B500E480FB /* Sources */,
 				D85A4EE82022D0B500E480FB /* Frameworks */,
 				D85A4EE92022D0B500E480FB /* Resources */,
-				698DE67C1E1063997D8048EC /* [CP] Embed Pods Frameworks */,
+				425C54E5777BE12D3D38B69D /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -364,7 +375,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D85A4F182022D0B600E480FB /* Build configuration list for PBXNativeTarget "BreazeTests" */;
 			buildPhases = (
-				5028705F5E559F19CB3E90E8 /* [CP] Check Pods Manifest.lock */,
+				67EF43B5C1C380289539824F /* [CP] Check Pods Manifest.lock */,
 				D85A4EFD2022D0B600E480FB /* Sources */,
 				D85A4EFE2022D0B600E480FB /* Frameworks */,
 				D85A4EFF2022D0B600E480FB /* Resources */,
@@ -383,7 +394,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D85A4F1B2022D0B600E480FB /* Build configuration list for PBXNativeTarget "BreazeUITests" */;
 			buildPhases = (
-				36CF314FCBF43EB9B3CC2926 /* [CP] Check Pods Manifest.lock */,
+				5DFE20BF8C11633A7B883F87 /* [CP] Check Pods Manifest.lock */,
 				D85A4F082022D0B600E480FB /* Sources */,
 				D85A4F092022D0B600E480FB /* Frameworks */,
 				D85A4F0A2022D0B600E480FB /* Resources */,
@@ -406,7 +417,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 0920;
-				LastUpgradeCheck = 1430;
+				LastUpgradeCheck = 1640;
 				ORGANIZATIONNAME = Carquinez;
 				TargetAttributes = {
 					D85A4EEA2022D0B500E480FB = {
@@ -475,51 +486,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		36CF314FCBF43EB9B3CC2926 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-BreazeUITests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		5028705F5E559F19CB3E90E8 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-BreazeTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		698DE67C1E1063997D8048EC /* [CP] Embed Pods Frameworks */ = {
+		425C54E5777BE12D3D38B69D /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -543,7 +510,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Breaze/Pods-Breaze-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		F7FED7BE6C8978E2B3F37EE2 /* [CP] Check Pods Manifest.lock */ = {
+		4517C0E1BCBBBA42C9A9E522 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -565,6 +532,50 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		5DFE20BF8C11633A7B883F87 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-BreazeUITests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		67EF43B5C1C380289539824F /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-BreazeTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -578,6 +589,8 @@
 				D8EECF562B1BA86100CD3235 /* ChateauGPTViewController.swift in Sources */,
 				D8C8A2072DBF30E0002896F2 /* CollectionViewController.swift in Sources */,
 				D845E03924D7642A003381B6 /* ModalPlayerViewController.swift in Sources */,
+				D8D96C922DF127D0003E58BF /* Utils.swift in Sources */,
+				D8D96C932DF127D0003E58BF /* AppFonts.swift in Sources */,
 				D85B4AFB25AD75A800A786DB /* SceneDelegate.swift in Sources */,
 				D8449A6824AEF3C200F113F4 /* MonthViewController.swift in Sources */,
 				D8ACD2E22B1D6CC30097224B /* ChateauGPTModel.swift in Sources */,
@@ -589,7 +602,6 @@
 				D87109F425ABF09D00CA133E /* CarPlaySceneDelegate.swift in Sources */,
 				7984F98F24A56EFD00989DB8 /* ArchiveAPI.swift in Sources */,
 				D8484AA42B97FB4200CEE940 /* SearchTermsModel.swift in Sources */,
-				791CE1C120B252F100299F76 /* Utils.swift in Sources */,
 				D82C59192DDAA5ED0013BAC5 /* LocalDatabase.swift in Sources */,
 				D852C3C724B1219400029EB9 /* ShowsListViewController.swift in Sources */,
 				D848521929454EEF00CD3EA4 /* CarPlayTemplateManager.swift in Sources */,
@@ -697,8 +709,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -757,8 +771,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -778,14 +794,13 @@
 		};
 		D85A4F162022D0B600E480FB /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E24D8A6E14FB1F7F63E0D1DD /* Pods-Breaze.debug.xcconfig */;
+			baseConfigurationReference = 26A3899C27D21F9A6BF827A6 /* Pods-Breaze.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Breaze/Breaze.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 4;
-				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				INFOPLIST_FILE = Breaze/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Chateau Archive";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
@@ -805,14 +820,13 @@
 		};
 		D85A4F172022D0B600E480FB /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7113B147C27353071FE30CE2 /* Pods-Breaze.release.xcconfig */;
+			baseConfigurationReference = 817CFC4EBF2612E235DD62ED /* Pods-Breaze.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Breaze/Breaze.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 4;
-				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				INFOPLIST_FILE = Breaze/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Chateau Archive";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
@@ -832,12 +846,10 @@
 		};
 		D85A4F192022D0B600E480FB /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EEB1C82C04A1C7AE0A653AD7 /* Pods-BreazeTests.debug.xcconfig */;
+			baseConfigurationReference = 8BB90AAE8774EC35932D6A9E /* Pods-BreazeTests.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				INFOPLIST_FILE = BreazeTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -855,12 +867,10 @@
 		};
 		D85A4F1A2022D0B600E480FB /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = ABA5BEA386E29B37365374C6 /* Pods-BreazeTests.release.xcconfig */;
+			baseConfigurationReference = BFE15DBD6AF9F070C6B6B939 /* Pods-BreazeTests.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				INFOPLIST_FILE = BreazeTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -878,11 +888,9 @@
 		};
 		D85A4F1C2022D0B600E480FB /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8FBCB92D59AB9274CE58047B /* Pods-BreazeUITests.debug.xcconfig */;
+			baseConfigurationReference = CAF8D81E20547210F0C71CCA /* Pods-BreazeUITests.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				INFOPLIST_FILE = BreazeUITests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -900,11 +908,9 @@
 		};
 		D85A4F1D2022D0B600E480FB /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BD90CD3FAF3DBFB84C42E535 /* Pods-BreazeUITests.release.xcconfig */;
+			baseConfigurationReference = 3589BDBB74338C238118B9B8 /* Pods-BreazeUITests.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 9HA3P2ES79;
 				INFOPLIST_FILE = BreazeUITests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (

@@ -3,7 +3,7 @@
 //  Breaze
 //
 //  Created by Joseph Hardy on 7/2/20.
-//  Copyright © 2020 Carquinez. All rights reserved.
+//  Copyright 2020 Carquinez. All rights reserved.
 //
 
 import UIKit
@@ -141,10 +141,10 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
         if let year = self.year {
             let c = monthArray[indexPath.row] 
             if c > 0 {
-                cell.monthLabel?.text = month + " " + String(year) + " " + "(" + String(c) + " tapes)"
+                cell.monthLabel?.text = "\(month) \(year) (\(c) tapes)"
             }
             else {
-                cell.monthLabel?.text = month + " " + String(year)
+                cell.monthLabel?.text = "\(month) \(year)"
             }
         }
         else {

@@ -92,7 +92,6 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="titleLabel" destination="LTW-wf-yTz" id="8IB-id-EGy"/>
                                             <segue destination="W8K-G7-Whv" kind="show" id="p6r-qY-M68"/>
                                         </connections>
                                     </tableViewCell>
@@ -218,12 +217,6 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="collectionLabel" destination="YGC-U4-g5E" id="GNq-Az-xrI"/>
-                                            <outlet property="dateLabel" destination="Qzd-3I-9y5" id="gvk-5e-lCZ"/>
-                                            <outlet property="sourceLabel" destination="71s-eP-cws" id="hUZ-zx-Gbp"/>
-                                            <outlet property="starsLabel" destination="r1k-c3-J5T" id="nJN-n3-RSL"/>
-                                            <outlet property="transfererLabel" destination="Oev-mL-bQs" id="xtv-VS-VhZ"/>
-                                            <outlet property="venueLabel" destination="hyn-dK-WA9" id="7MB-n8-vcj"/>
                                             <segue destination="0wg-q7-zkq" kind="show" id="P7t-lR-Gax"/>
                                         </connections>
                                     </tableViewCell>
@@ -299,7 +292,6 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="monthLabel" destination="zNP-8O-O75" id="ENC-Uo-IQw"/>
                                             <segue destination="VkJ-vg-Mzt" kind="show" id="hJg-m6-Ivq"/>
                                         </connections>
                                     </tableViewCell>
@@ -619,12 +611,6 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="collectionLabel" destination="UpG-CD-bph" id="vLZ-va-90H"/>
-                                            <outlet property="dateLabel" destination="EJg-d4-1za" id="x59-jl-tLS"/>
-                                            <outlet property="sourceLabel" destination="uLm-QH-mU0" id="fCX-c7-bdI"/>
-                                            <outlet property="starsLabel" destination="B7z-fI-C22" id="9pZ-YD-sa6"/>
-                                            <outlet property="transfererLabel" destination="P7b-3F-7iK" id="1kh-6c-bPL"/>
-                                            <outlet property="venueLabel" destination="dlA-jf-Wxn" id="hdb-aX-jrS"/>
                                             <segue destination="0wg-q7-zkq" kind="show" id="wDf-Rk-Vwo"/>
                                         </connections>
                                     </tableViewCell>
@@ -1030,87 +1016,14 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="currentTimeLabel" destination="fox-au-MWY" id="643-iq-dc5"/>
-                        <outlet property="dateLabel" destination="8OF-lR-Bs0" id="0ae-LU-d4r"/>
                         <outlet property="modalPlayerTableView" destination="WAm-yL-G1j" id="tY5-o9-OMf"/>
                         <outlet property="playButton" destination="FJ2-WK-jp8" id="ucf-xw-Gnv"/>
-                        <outlet property="songLabel" destination="zqd-wl-kg2" id="7Kc-zI-gi1"/>
                         <outlet property="timerSlider" destination="IXZ-TO-ud7" id="tlw-bY-1GX"/>
-                        <outlet property="totalTimeLabel" destination="RMC-v2-4Ln" id="fZw-oZ-mvc"/>
-                        <outlet property="venueLabel" destination="cjp-aH-beg" id="KUJ-o1-XdZ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="crr-0J-VmH" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1082.4000000000001" y="1358.7706146926537"/>
-        </scene>
-        <!--Share View Controller-->
-        <scene sceneID="oZG-2c-1eB">
-            <objects>
-                <viewController id="hrT-bW-Uny" customClass="ShareViewController" customModule="Chateau" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="1ae-Zs-AEI">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UmZ-AO-pwy">
-                                <rect key="frame" x="130" y="19" width="115" height="50"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="6Ei-0R-fgU"/>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="QR5-Zj-dke"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                <state key="normal" title="Downloading"/>
-                                <connections>
-                                    <action selector="playButtonPress:" destination="hrT-bW-Uny" eventType="touchUpInside" id="d08-jh-Ubx"/>
-                                </connections>
-                            </button>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="C0E-HO-aBL">
-                                <rect key="frame" x="0.0" y="77" width="375" height="468"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="375" id="H9K-ye-pJK"/>
-                                </constraints>
-                                <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="ShowDetailCell" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ShowDetailCell" textLabel="feS-ni-1dy" style="IBUITableViewCellStyleDefault" id="VnX-zn-98P" customClass="ShowDetailTableViewCell" customModule="Chateau" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="50" width="375" height="43.5"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="VnX-zn-98P" id="3Rj-4j-cyE">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="feS-ni-1dy">
-                                                    <rect key="frame" x="16" y="0.0" width="343" height="43.5"/>
-                                                    <autoresizingMask key="autoresizingMask"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </prototypes>
-                            </tableView>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="sGg-Ym-3e6"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="sGg-Ym-3e6" firstAttribute="top" secondItem="UmZ-AO-pwy" secondAttribute="top" constant="1" id="5DH-af-ok4"/>
-                            <constraint firstItem="C0E-HO-aBL" firstAttribute="centerX" secondItem="UmZ-AO-pwy" secondAttribute="centerX" id="7Bt-0T-sb4"/>
-                            <constraint firstItem="UmZ-AO-pwy" firstAttribute="centerX" secondItem="1ae-Zs-AEI" secondAttribute="centerX" id="7V5-F4-bLz"/>
-                            <constraint firstItem="sGg-Ym-3e6" firstAttribute="bottom" secondItem="C0E-HO-aBL" secondAttribute="bottom" constant="122" id="bjl-mT-YDJ"/>
-                            <constraint firstItem="C0E-HO-aBL" firstAttribute="top" secondItem="sGg-Ym-3e6" secondAttribute="top" constant="57" id="uhy-97-Zz9"/>
-                            <constraint firstItem="C0E-HO-aBL" firstAttribute="top" secondItem="UmZ-AO-pwy" secondAttribute="bottom" constant="8" symbolic="YES" id="wu7-3P-yc8"/>
-                        </constraints>
-                    </view>
-                    <navigationItem key="navigationItem" id="7tv-Rf-gA4"/>
-                    <connections>
-                        <outlet property="playButton" destination="UmZ-AO-pwy" id="Wil-Ic-4ew"/>
-                        <outlet property="sharedShowTableView" destination="C0E-HO-aBL" id="8zf-RD-Aed"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Pev-jM-li0" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="4665" y="1456"/>
         </scene>
         <!--Search-->
         <scene sceneID="qL6-gM-2Vy">
@@ -1155,7 +1068,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="P7t-lR-Gax"/>
+        <segue reference="wDf-Rk-Vwo"/>
         <segue reference="hJg-m6-Ivq"/>
     </inferredMetricsTieBreakers>
     <resources>

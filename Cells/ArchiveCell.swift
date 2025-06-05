@@ -3,24 +3,71 @@
 //  Breaze
 //
 //  Created by Joseph Hardy on 6/28/20.
-//  Copyright © 2020 Carquinez. All rights reserved.
+//  Copyright 2020 Carquinez. All rights reserved.
 //
 
 import UIKit
 
 class ArchiveCell: UITableViewCell {
-
-    @IBOutlet weak var titleLabel: UILabel!
+    
+    // MARK: - UI Elements
+    
+    // Keep this IBOutlet for Interface Builder compatibility
+    @IBOutlet weak var titleLabel: UILabel? {
+        didSet {
+            if let label = titleLabel {
+                label.font = AppFonts.subtitle
+            }
+        }
+    }
+    
+    // Private label for programmatic creation (only used when IBOutlet is nil)
+    private var programmaticTitleLabel: UILabel?
+    
+    // MARK: - Initialization
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setupUI()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        print("Warning: ArchiveCell initialized from Interface Builder. Programmatic setup will be applied.")
+        // Let Interface Builder connect outlets
+    }
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        // Apply additional setup for Interface Builder initialized cells
+        // We don't call setupUI() here to avoid duplicate UI elements
     }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+    
+    // MARK: - UI Setup
+    private func setupUI() {
+        // Only set up programmatic UI if not using Interface Builder
+        if titleLabel == nil {
+            let label = UILabel()
+            label.font = AppFonts.subtitle
+            label.translatesAutoresizingMaskIntoConstraints = false
+            programmaticTitleLabel = label
+            
+            contentView.addSubview(label)
+            
+            NSLayoutConstraint.activate([
+                label.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
+                label.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+                label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+                label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12)
+            ])
+        }
     }
-
+    
+    // MARK: - Configuration
+    func configure(with title: String) {
+        if let ibLabel = titleLabel {
+            ibLabel.text = title
+        } else if let programmaticLabel = programmaticTitleLabel {
+            programmaticLabel.text = title
+        }
+    }
 }

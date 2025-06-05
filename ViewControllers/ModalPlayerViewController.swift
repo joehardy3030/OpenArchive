@@ -14,7 +14,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     // MARK: - UI Components (programmatic)
     private let creatorLabel: UILabel = {
         let lbl = UILabel()
-        lbl.font = .systemFont(ofSize: 20, weight: .bold)
+        lbl.font = AppFonts.title
         lbl.numberOfLines = 0
         lbl.translatesAutoresizingMaskIntoConstraints = false
         return lbl
@@ -22,7 +22,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     
     private let songLabel: UILabel = {
         let lbl = UILabel()
-        lbl.font = .systemFont(ofSize: 18, weight: .bold)
+        lbl.font = AppFonts.subtitle
         lbl.numberOfLines = 0
         lbl.translatesAutoresizingMaskIntoConstraints = false
         return lbl
@@ -30,7 +30,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     
     private let venueLabel: UILabel = {
         let lbl = UILabel()
-        lbl.font = .systemFont(ofSize: 16)
+        lbl.font = AppFonts.body
         lbl.textColor = .secondaryLabel
         lbl.numberOfLines = 0
         lbl.translatesAutoresizingMaskIntoConstraints = false
@@ -39,7 +39,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     
     private let dateLabel: UILabel = {
         let lbl = UILabel()
-        lbl.font = .systemFont(ofSize: 14)
+        lbl.font = AppFonts.bodySecondary
         lbl.textColor = .secondaryLabel
         lbl.translatesAutoresizingMaskIntoConstraints = false
         return lbl
@@ -54,7 +54,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     
     private let currentTimeLabel: UILabel = {
         let lbl = UILabel()
-        lbl.font = .monospacedDigitSystemFont(ofSize: 12, weight: .medium)
+        lbl.font = AppFonts.monospaced
         lbl.text = "0:00"
         lbl.textAlignment = .right
         lbl.setContentHuggingPriority(.defaultHigh, for: .horizontal)
@@ -65,7 +65,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     
     private let totalTimeLabel: UILabel = {
         let lbl = UILabel()
-        lbl.font = .monospacedDigitSystemFont(ofSize: 12, weight: .medium)
+        lbl.font = AppFonts.monospaced
         lbl.text = "0:00"
         lbl.textAlignment = .left
         lbl.setContentHuggingPriority(.defaultHigh, for: .horizontal)
@@ -178,7 +178,8 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         modalPlayerTableView.delegate = self
         modalPlayerTableView.dataSource = self
         modalPlayerTableView.register(ModalPlayerTableViewCell.self, forCellReuseIdentifier: "ModalPlayerCell")
-
+    
+        
         notificationCenter.addObserver(self, selector: #selector(playbackDidStart), name: .playbackStarted, object: nil)
         notificationCenter.addObserver(self, selector: #selector(playbackDidPause), name: .playbackPaused, object: self.player.playerQueue)
         notificationCenter.addObserver(self, selector: #selector(playbackDidRewind), name: .playbackRewind, object: self.player.playerQueue)

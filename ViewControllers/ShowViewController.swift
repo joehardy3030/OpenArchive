@@ -383,20 +383,35 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         if section == 1 { // Taper's Notes Header
             let headerView = UIView()
             // headerView.backgroundColor = .systemGroupedBackground // Or your preferred background
-
+            
             let button = UIButton(type: .system)
             button.setTitle(isDescriptionExpanded ? "Hide Notes" : "Show Notes", for: .normal)
-            button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .bold)
+            //button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .bold)
+            button.titleLabel?.applyTextStyle(AppFonts.button)
             button.addTarget(self, action: #selector(toggleNotesSection), for: .touchUpInside)
             button.translatesAutoresizingMaskIntoConstraints = false
             headerView.addSubview(button)
             
-            // Adjust topAnchor constant for desired padding from the top
-            let topPadding: CGFloat = 0.0 // Adjusted for closer to top
+            let topPadding: CGFloat = 0.0
+
+            // Separator View
+            let separatorView = UIView()
+            separatorView.backgroundColor = UIColor.separator
+            separatorView.translatesAutoresizingMaskIntoConstraints = false
+            headerView.addSubview(separatorView)
 
             NSLayoutConstraint.activate([
+                // Button constraints
                 button.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16),
-                button.topAnchor.constraint(equalTo: headerView.topAnchor, constant: topPadding)
+                button.topAnchor.constraint(equalTo: headerView.topAnchor, constant: topPadding),
+                // Assuming button's intrinsic height is used. If specific height is needed, add: 
+                // button.heightAnchor.constraint(equalToConstant: 22.0),
+
+                // Separator constraints
+                separatorView.leadingAnchor.constraint(equalTo: headerView.leadingAnchor),
+                separatorView.trailingAnchor.constraint(equalTo: headerView.trailingAnchor),
+                separatorView.bottomAnchor.constraint(equalTo: headerView.bottomAnchor),
+                separatorView.heightAnchor.constraint(equalToConstant: 1.0 / UIScreen.main.scale)
             ])
             
             return headerView

@@ -37,6 +37,10 @@ class AppFonts { // Consider renaming to AppTextStyles or AppAppearance
         color: strongerSecondaryColor
     )
 
+    static let button = TextStyle(
+        font: .systemFont(ofSize: 17, weight: .bold),
+        color: .systemBlue
+    )
     static let captionSecondary = TextStyle(
         font: .systemFont(ofSize: 15),
         color: strongerSecondaryColor

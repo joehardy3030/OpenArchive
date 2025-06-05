@@ -330,6 +330,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         } else {
             cell.selectionStyle = .default
         }
+        cell.textLabel?.applyTextStyle(AppFonts.bodyPrimary)
         
         switch indexPath.row {
         case 0:
@@ -338,7 +339,6 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             cell.textLabel?.text = m.venue
         case 2:
             cell.textLabel?.text = m.coverage
-            cell.textLabel?.applyTextStyle(AppFonts.bodyPrimary)
         case 3:
             if let description = m.description {
                 let data = description.data(using: .utf8)!
@@ -391,8 +391,13 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         // Check if the description cell (row 3) was tapped
         if indexPath.row == 3 {
             isDescriptionCellExpanded.toggle()
-            // Use a specific animation or .automatic
-            tableView.reloadRows(at: [indexPath], with: .automatic) 
+            print("Description cell tapped. isExpanded: \(isDescriptionCellExpanded)") // Debug print
+            tableView.beginUpdates() // Tell table view to prepare for changes
+            // No need to call reloadRows if we are just changing height of existing cell content
+            // However, cellForRowAt needs to be called again to set numberOfLines
+            // So, reloadRows is actually appropriate here, but let's ensure updates are batched.
+            tableView.reloadRows(at: [indexPath], with: .automatic)
+            tableView.endUpdates()   // Tell table view to apply changes and animate
             return // Prevent song selection logic for this cell
         }
 

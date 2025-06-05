@@ -385,7 +385,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             // headerView.backgroundColor = .systemGroupedBackground // Or your preferred background
             
             let button = UIButton(type: .system)
-            button.setTitle(isDescriptionExpanded ? "Hide Notes" : "Show Notes", for: .normal)
+            button.setTitle(isDescriptionExpanded ? "Hide Notes" : "Notes", for: .normal)
             //button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .bold)
             button.titleLabel?.applyTextStyle(AppFonts.button)
             button.addTarget(self, action: #selector(toggleNotesSection), for: .touchUpInside)

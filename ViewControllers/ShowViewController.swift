@@ -3,7 +3,7 @@
 //  Breaze
 //
 //  Created by Joseph Hardy on 7/4/20.
-//  Copyright © 2020 Carquinez. All rights reserved.
+//  Copyright 2020 Carquinez. All rights reserved.
 //
 
 import UIKit
@@ -37,12 +37,15 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     var fileLocation: FileLocation?
     var broadcastIsPlaying: Bool = false
     var mp3index: Int = 0
+    var isDescriptionCellExpanded: Bool = false // State for description cell
     
     override func viewDidLoad() {
         
         super.viewDidLoad()
         self.showTableView.delegate = self
         self.showTableView.dataSource = self
+        self.showTableView.estimatedRowHeight = 44.0 // For dynamic height
+        self.showTableView.rowHeight = UITableView.automaticDimension // For dynamic height
         notificationCenter.addObserver(self, selector: #selector(playbackDidStart), name: .playbackStarted, object: nil)
         notificationCenter.addObserver(self, selector: #selector(playbackDidPause), name: .playbackPaused, object: self.player.playerQueue)
         notificationCenter.addObserver(self, selector: #selector(playbackDidFail), name: .playbackFailed, object: nil)
@@ -335,6 +338,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             cell.textLabel?.text = m.venue
         case 2:
             cell.textLabel?.text = m.coverage
+            cell.textLabel?.applyTextStyle(AppFonts.bodyPrimary)
         case 3:
             if let description = m.description {
                 let data = description.data(using: .utf8)!
@@ -350,12 +354,19 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 }
             }
             else {
-                cell.textLabel?.text = m.description
+                cell.textLabel?.text = "No description available."
             }
+            if isDescriptionCellExpanded {
+                cell.textLabel?.numberOfLines = 0
+            } else {
+                cell.textLabel?.numberOfLines = 3 // Preview lines
+            }
+            cell.textLabel?.applyTextStyle(AppFonts.bodySecondary) // Apply style
         case 4:
-            cell.textLabel?.text = m.source
-        case 5:
             cell.textLabel?.text = m.transferer
+            cell.textLabel?.applyTextStyle(AppFonts.bodySecondary)
+        case 5:
+            cell.textLabel?.text = m.source
         default:
             if let title = mp3s[idx].title,
                let track = mp3s[idx].track {
@@ -377,6 +388,14 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        // Check if the description cell (row 3) was tapped
+        if indexPath.row == 3 {
+            isDescriptionCellExpanded.toggle()
+            // Use a specific animation or .automatic
+            tableView.reloadRows(at: [indexPath], with: .automatic) 
+            return // Prevent song selection logic for this cell
+        }
+
         guard let indexPath = showTableView.indexPathForSelectedRow else { return }
         var songIndex = indexPath.row
         if songIndex >= numRowsBeforeSongs {

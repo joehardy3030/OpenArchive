@@ -3,7 +3,7 @@
 //  Breaze
 //
 //  Created by Joseph Hardy on 8/2/20.
-//  Copyright © 2020 Carquinez. All rights reserved.
+//  Copyright 2020 Carquinez. All rights reserved.
 //
 
 import UIKit
@@ -148,20 +148,32 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         let tv = UITableView()
         tv.translatesAutoresizingMaskIntoConstraints = false
         tv.tableFooterView = UIView()
-        tv.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 0)
+        tv.contentInset = UIEdgeInsets(top: 16, left: 0, bottom: 0, right: 0)
+        tv.scrollIndicatorInsets = UIEdgeInsets(top: 16, left: 0, bottom: 0, right: 0)
         return tv
+    }()
+
+    // Add new UI element for swipe handle indicator
+    private let pullIndicatorView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemGray3
+        view.layer.cornerRadius = 2.5
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
     }()
 
     // MARK: - Other Properties
     private let notificationCenter: NotificationCenter = .default
     private let commandCenter = MPRemoteCommandCenter.shared()
     private var isObservingPlayer = false  // Add flag to track observer state
+    private var feedbackGenerator: UIImpactFeedbackGenerator?
 
     // MARK: - Life-cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         setupActions()
+        setupGestures()
 
         modalPlayerTableView.delegate = self
         modalPlayerTableView.dataSource = self
@@ -170,6 +182,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         notificationCenter.addObserver(self, selector: #selector(playbackDidStart), name: .playbackStarted, object: nil)
         notificationCenter.addObserver(self, selector: #selector(playbackDidPause), name: .playbackPaused, object: self.player.playerQueue)
         notificationCenter.addObserver(self, selector: #selector(playbackDidRewind), name: .playbackRewind, object: self.player.playerQueue)
+        notificationCenter.addObserver(self, selector: #selector(playbackDidFail), name: .playbackFailed, object: nil)
 
         initialDefaults()
         setupShow()
@@ -177,25 +190,28 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
 
     deinit {
         notificationCenter.removeObserver(self)
-        if isObservingPlayer, let queue = player.playerQueue {
-            queue.removeObserver(self, forKeyPath: "currentItem.status")
-            isObservingPlayer = false
-        }
+        removePlayerObserver()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         notificationCenter.removeObserver(self)
-        if isObservingPlayer, let queue = player.playerQueue {
-            queue.removeObserver(self, forKeyPath: "currentItem.status")
-            isObservingPlayer = false
-        }
+        removePlayerObserver()
     }
 
     // MARK: - UI Setup
     private func setupUI() {
         view.backgroundColor = .systemBackground
 
+        // Add pull indicator at the top
+        view.addSubview(pullIndicatorView)
+        NSLayoutConstraint.activate([
+            pullIndicatorView.topAnchor.constraint(equalTo: view.topAnchor, constant: 8),
+            pullIndicatorView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            pullIndicatorView.widthAnchor.constraint(equalToConstant: 36),
+            pullIndicatorView.heightAnchor.constraint(equalToConstant: 5)
+        ])
+        
         // Labels Stack
         let labelsStack = UIStackView(arrangedSubviews: [creatorLabel, songLabel, venueLabel, dateLabel])
         labelsStack.axis = .vertical
@@ -238,7 +254,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
 
         NSLayoutConstraint.activate([
             // Table view at top
-            modalPlayerTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            modalPlayerTableView.topAnchor.constraint(equalTo: pullIndicatorView.bottomAnchor, constant: 12),
             modalPlayerTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             modalPlayerTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             modalPlayerTableView.bottomAnchor.constraint(equalTo: containerView.topAnchor, constant: -12),
@@ -281,6 +297,32 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         shareButton.addTarget(self, action: #selector(handleShareButton(_:)), for: .touchUpInside)
         timerSlider.addTarget(self, action: #selector(handleSliderChange), for: .valueChanged)
         showInfoButton.addTarget(self, action: #selector(handleShowInfoButton), for: .touchUpInside)
+    }
+
+    private func setupGestures() {
+        // Initialize feedback generator
+        feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+        feedbackGenerator?.prepare()
+        
+        // Add pan gesture recognizer to detect swipe down
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
+        view.addGestureRecognizer(panGesture)
+    }
+    
+    @objc private func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
+        let translation = gesture.translation(in: view)
+        
+        // Only respond to downward swipes
+        if translation.y > 0 {
+            // Generate impact feedback
+            feedbackGenerator?.impactOccurred()
+            
+            // Dismiss the modal
+            dismiss(animated: true, completion: nil)
+        }
+        
+        // Reset translation
+        gesture.setTranslation(.zero, in: view)
     }
 
     // MARK: - Actions
@@ -350,7 +392,8 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
                 setupSong()
                 print("ready to play")
             case .failed:
-                print("failed ")
+                // This is now handled by the .playbackFailed notification
+                break
             case .unknown:
                 print("unknown status")
             default:
@@ -440,6 +483,12 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     }
     
     func reloadShow() {
+        // Remove observer before reloading the queue to avoid crashes
+        if isObservingPlayer, let queue = player.playerQueue {
+            // Safely remove observer
+            removePlayerObserver()
+        }
+        
         // This operation should probably belong to the player class
         if let mp3s = self.player.showMetadataModel?.mp3Array {
             if player.isStreaming {
@@ -451,6 +500,22 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         setupShow()
     }
     
+    // Add a helper method to safely remove observers
+    private func removePlayerObserver() {
+        if isObservingPlayer, let queue = player.playerQueue {
+            // Use try-catch to handle potential exceptions when removing observers
+            do {
+                queue.removeObserver(self, forKeyPath: "currentItem.status")
+                isObservingPlayer = false
+            } catch {
+                print("Failed to remove observer: \(error)")
+                // Reset the flag anyway to avoid future issues
+                isObservingPlayer = false
+            }
+        }
+    }
+
+    // MARK: - Table View Data Source
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let c = player.showMetadataModel?.mp3Array?.count {
             return c
@@ -533,6 +598,17 @@ private extension ModalPlayerViewController {
             playButton.setBackgroundImage(UIImage(systemName: "play.circle.fill"), for: .normal)
         }
         print("Item paused -- modal player ")
+    }
+    
+    @objc private func playbackDidFail(_ notification: Notification) {
+        if let error = notification.userInfo?["error"] as? Error {
+            print("Playback failed with error: \(error.localizedDescription)")
+        }
+        let isStreaming = notification.userInfo?["isStreaming"] as? Bool ?? false
+        let message = isStreaming ? "Could not stream the track. Please check your internet connection and try again." : "Could not play the downloaded track. The file may be corrupt or missing."
+        let alert = UIAlertController(title: "Playback Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
     }
     
     @objc private func playbackDidRewind(_ notification: Notification) {

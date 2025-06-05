@@ -10,7 +10,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Collection-->
+        <!--Bands-->
         <scene sceneID="CgW-A0-Bgk">
             <objects>
                 <viewController storyboardIdentifier="Collection" useStoryboardIdentifierAsRestorationIdentifier="YES" id="OPO-ef-u3o" customClass="CollectionViewController" customModule="Chateau" customModuleProvider="target" sceneMemberID="viewController">
@@ -49,7 +49,7 @@
                         <viewLayoutGuide key="safeArea" id="xu0-ye-FVM"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Collection" id="CSZ-kN-ghC"/>
+                    <navigationItem key="navigationItem" title="Bands" id="CSZ-kN-ghC"/>
                     <connections>
                         <outlet property="tableView" destination="N4U-bR-ub7" id="hIG-Sn-3zo"/>
                     </connections>
@@ -332,7 +332,7 @@
         <scene sceneID="DC5-L9-xIP">
             <objects>
                 <navigationController id="iDX-jC-6by" userLabel="Shows" customClass="ArchiveNavigationController" customModule="Chateau" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Shows" id="9Qz-YH-r7u" userLabel="Archive">
+                    <tabBarItem key="tabBarItem" title="Bands" id="9Qz-YH-r7u" userLabel="Archive">
                         <imageReference key="image" image="calendar" catalog="system" symbolScale="default"/>
                         <imageReference key="landscapeImage" image="calendar" catalog="system" symbolScale="default"/>
                     </tabBarItem>
@@ -512,8 +512,8 @@
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                     </tabBar>
                     <connections>
-                        <segue destination="qma-6q-Vhi" kind="relationship" relationship="viewControllers" id="bPN-Lw-dJo"/>
                         <segue destination="iDX-jC-6by" kind="relationship" relationship="viewControllers" id="axA-5o-iN7"/>
+                        <segue destination="qma-6q-Vhi" kind="relationship" relationship="viewControllers" id="bPN-Lw-dJo"/>
                         <segue destination="iFd-OQ-bOu" kind="relationship" relationship="viewControllers" id="N2W-s4-MoT"/>
                     </connections>
                 </tabBarController>
@@ -1044,74 +1044,6 @@
             </objects>
             <point key="canvasLocation" x="-1082.4000000000001" y="1358.7706146926537"/>
         </scene>
-        <!--Share View Controller-->
-        <scene sceneID="oZG-2c-1eB">
-            <objects>
-                <viewController id="hrT-bW-Uny" customClass="ShareViewController" customModule="Chateau" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="1ae-Zs-AEI">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UmZ-AO-pwy">
-                                <rect key="frame" x="130" y="19" width="115" height="50"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="6Ei-0R-fgU"/>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="QR5-Zj-dke"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                <state key="normal" title="Downloading"/>
-                                <connections>
-                                    <action selector="playButtonPress:" destination="hrT-bW-Uny" eventType="touchUpInside" id="d08-jh-Ubx"/>
-                                </connections>
-                            </button>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="C0E-HO-aBL">
-                                <rect key="frame" x="0.0" y="77" width="375" height="468"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="375" id="H9K-ye-pJK"/>
-                                </constraints>
-                                <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="ShowDetailCell" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ShowDetailCell" textLabel="feS-ni-1dy" style="IBUITableViewCellStyleDefault" id="VnX-zn-98P" customClass="ShowDetailTableViewCell" customModule="Chateau" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="50" width="375" height="43.5"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="VnX-zn-98P" id="3Rj-4j-cyE">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="feS-ni-1dy">
-                                                    <rect key="frame" x="16" y="0.0" width="343" height="43.5"/>
-                                                    <autoresizingMask key="autoresizingMask"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </prototypes>
-                            </tableView>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="sGg-Ym-3e6"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="sGg-Ym-3e6" firstAttribute="top" secondItem="UmZ-AO-pwy" secondAttribute="top" constant="1" id="5DH-af-ok4"/>
-                            <constraint firstItem="C0E-HO-aBL" firstAttribute="centerX" secondItem="UmZ-AO-pwy" secondAttribute="centerX" id="7Bt-0T-sb4"/>
-                            <constraint firstItem="UmZ-AO-pwy" firstAttribute="centerX" secondItem="1ae-Zs-AEI" secondAttribute="centerX" id="7V5-F4-bLz"/>
-                            <constraint firstItem="sGg-Ym-3e6" firstAttribute="bottom" secondItem="C0E-HO-aBL" secondAttribute="bottom" constant="122" id="bjl-mT-YDJ"/>
-                            <constraint firstItem="C0E-HO-aBL" firstAttribute="top" secondItem="sGg-Ym-3e6" secondAttribute="top" constant="57" id="uhy-97-Zz9"/>
-                            <constraint firstItem="C0E-HO-aBL" firstAttribute="top" secondItem="UmZ-AO-pwy" secondAttribute="bottom" constant="8" symbolic="YES" id="wu7-3P-yc8"/>
-                        </constraints>
-                    </view>
-                    <navigationItem key="navigationItem" id="7tv-Rf-gA4"/>
-                    <connections>
-                        <outlet property="playButton" destination="UmZ-AO-pwy" id="Wil-Ic-4ew"/>
-                        <outlet property="sharedShowTableView" destination="C0E-HO-aBL" id="8zf-RD-Aed"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Pev-jM-li0" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="4665" y="1456"/>
-        </scene>
         <!--Search-->
         <scene sceneID="qL6-gM-2Vy">
             <objects>
@@ -1134,7 +1066,7 @@
             </objects>
             <point key="canvasLocation" x="782" y="1953"/>
         </scene>
-        <!--Search View Controller-->
+        <!--Search-->
         <scene sceneID="ats-Wc-dPv">
             <objects>
                 <viewController id="NuE-gc-eaG" customClass="SearchViewController" customModule="Chateau" customModuleProvider="target" sceneMemberID="viewController">
@@ -1144,7 +1076,7 @@
                         <viewLayoutGuide key="safeArea" id="mq5-op-hZy"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
-                    <navigationItem key="navigationItem" id="lkK-b6-Nrf"/>
+                    <navigationItem key="navigationItem" title="Search" id="lkK-b6-Nrf"/>
                     <connections>
                         <segue destination="VkJ-vg-Mzt" kind="show" identifier="showSearchResults" id="c4F-NP-axA"/>
                     </connections>
@@ -1155,8 +1087,8 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="P7t-lR-Gax"/>
-        <segue reference="hJg-m6-Ivq"/>
+        <segue reference="wDf-Rk-Vwo"/>
+        <segue reference="c4F-NP-axA"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="backward.end.fill" catalog="system" width="128" height="97"/>

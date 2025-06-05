@@ -150,6 +150,7 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
         else {
             cell.monthLabel?.text = month
         }
+        cell.monthLabel?.applyTextStyle(AppFonts.bodyPrimary) // Added
         return cell
     }
     

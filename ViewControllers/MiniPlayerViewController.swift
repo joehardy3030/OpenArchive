@@ -3,7 +3,7 @@
 //  Breaze
 //
 //  Created by Joseph Hardy on 7/20/20.
-//  Copyright © 2020 Carquinez. All rights reserved.
+//  Copyright 2020 Carquinez. All rights reserved.
 //
 
 import UIKit
@@ -16,7 +16,9 @@ class MiniPlayerViewController: UIViewController {
         didSet {
             currentTimeLabel.textAlignment = .right
             currentTimeLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-            currentTimeLabel.widthAnchor.constraint(equalToConstant: 60).isActive = true
+            let widthConstraint = currentTimeLabel.widthAnchor.constraint(equalToConstant: 60)
+            widthConstraint.priority = UILayoutPriority(999) // High but not required
+            widthConstraint.isActive = true
             currentTimeLabel.font = UIFont.monospacedDigitSystemFont(ofSize: currentTimeLabel.font.pointSize, weight: .medium)
         }
     }
@@ -24,7 +26,9 @@ class MiniPlayerViewController: UIViewController {
         didSet {
             totalTimeLabel.textAlignment = .left
             totalTimeLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-            totalTimeLabel.widthAnchor.constraint(equalToConstant: 60).isActive = true
+            let widthConstraint = totalTimeLabel.widthAnchor.constraint(equalToConstant: 60)
+            widthConstraint.priority = UILayoutPriority(999) // High but not required
+            widthConstraint.isActive = true
             totalTimeLabel.font = UIFont.monospacedDigitSystemFont(ofSize: totalTimeLabel.font.pointSize, weight: .medium)
         }
     }

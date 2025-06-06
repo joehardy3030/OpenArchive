@@ -32,7 +32,8 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     let fileManager = FileManager.default
     let numRowsBeforeSongs = 4 // date, venue, coverage, transferer
     var showMetadata: ShowMetadata?
-    var showMetadataModel: ShowMetadataModel?
+    var showMetadataModel: ShowMetadataModel? // Holds all the metadata for a show
+    var downloadProgress: [URL: Double] = [:] // To store download progress for tracks
     var showType: ShowType? = .archive
     var fileLocation: FileLocation?
     var isDescriptionExpanded: Bool = false
@@ -173,10 +174,15 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 }
             }
             else {
-                archiveAPI.getIADownload(url: url) {
-                    (response: URL?) -> Void in
+                archiveAPI.getIADownload(url: url, progressHandler: nil) { 
+                    (localFileURL: URL?, error: Error?) -> Void in
+                    if let error = error {
+                        print("Error downloading \(f.name ?? "unknown file"): \(error.localizedDescription)")
+                        // Optionally, update UI to show error for this specific file
+                        return
+                    }
                     DispatchQueue.main.async{
-                        self.setDownloadComplete(destination: response, name: f.name)
+                        self.setDownloadComplete(destination: localFileURL, name: f.name)
                         self.showTableView.reloadData()
                     }
                 }
@@ -239,9 +245,16 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             completion(localURL)
         }
         else {
-            archiveAPI.getIADownload(url: url) {
-                (response: URL?) -> Void in
-                completion(response)
+            archiveAPI.getIADownload(url: url, progressHandler: { (progress) in
+                self.downloadProgress[localURL] = progress
+            }) { 
+                (localFileURL: URL?, error: Error?) -> Void in
+                if let error = error {
+                    print("Error downloading \(s.name ?? "unknown file"): \(error.localizedDescription)")
+                    // Optionally, update UI to show error for this specific file
+                    return
+                }
+                completion(localFileURL)
             }
         }
     }
@@ -375,6 +388,11 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                     cell.textLabel?.text = track.name
                 }
                 cell.accessoryType = (track.destination != nil) ? .checkmark : .none
+                if let progress = self.downloadProgress[utils.trackURLfromName(name: track.name)!] {
+                    cell.detailTextLabel?.text = "\(Int(progress * 100))%"
+                } else {
+                    cell.detailTextLabel?.text = ""
+                }
             }
         default:
             break

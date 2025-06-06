@@ -39,6 +39,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     var isDescriptionExpanded: Bool = false
     var broadcastIsPlaying: Bool = false
     var mp3index: Int = 0
+    var isObservingPlayer = false  // Track observer state
     
     override func viewDidLoad() {
         
@@ -62,6 +63,16 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         default:
             print("No show type")
         }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        removePlayerObserver()
+    }
+    
+    deinit {
+        notificationCenter.removeObserver(self)
+        removePlayerObserver()
     }
     
     @IBAction func downloadShow(_ sender: Any) {
@@ -118,6 +129,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         if let mp = self.getMiniPlayerController() {
             mp.setupShow()
         }
+        setupPlayerObserver()
     }
     
     func loadDownloadedShow() {
@@ -128,6 +140,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         if let mp = self.getMiniPlayerController() {
             mp.setupShow()
         }
+        setupPlayerObserver()
     }
     
     func getIAGetShow() {
@@ -311,11 +324,12 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     }
     
     func selectCurrentTrack() {
-        print("select current track")
         let index = player.getCurrentTrackIndex()
-        let indexPath = IndexPath(item: index+numRowsBeforeSongs, section: 0)
+        print("select current track \(index)")
+        let indexPath = IndexPath(item: index, section: 2)
         self.showTableView.selectRow(at: indexPath, animated: true, scrollPosition: UITableView.ScrollPosition.middle)
     }
+    
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         
@@ -340,10 +354,9 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             default:
                 print("nope")
             }
-            
         }
-        
     }
+
     
     func numberOfSections(in tableView: UITableView) -> Int {
         return 3
@@ -545,5 +558,28 @@ private extension ShowViewController {
         let alert = UIAlertController(title: "Playback Error", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         present(alert, animated: true, completion: nil)
+    }
+    
+    // Add methods to manage the KVO observer
+    func setupPlayerObserver() {
+        guard let queue = player.playerQueue else { return }
+        if !isObservingPlayer {
+            queue.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
+            isObservingPlayer = true
+            print("Added player observer in ShowViewController")
+        }
+    }
+    
+    func removePlayerObserver() {
+        if isObservingPlayer, let queue = player.playerQueue {
+            do {
+                queue.removeObserver(self, forKeyPath: "currentItem.status")
+                isObservingPlayer = false
+                print("Removed player observer in ShowViewController")
+            } catch {
+                print("Failed to remove observer: \(error)")
+                isObservingPlayer = false
+            }
+        }
     }
 }

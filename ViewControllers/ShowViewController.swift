@@ -32,7 +32,8 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     let fileManager = FileManager.default
     let numRowsBeforeSongs = 4 // date, venue, coverage, transferer
     var showMetadata: ShowMetadata?
-    var showMetadataModel: ShowMetadataModel?
+    var showMetadataModel: ShowMetadataModel? // Holds all the metadata for a show
+    var downloadProgress: [URL: Double] = [:] // To store download progress for tracks
     var showType: ShowType? = .archive
     var fileLocation: FileLocation?
     var isDescriptionExpanded: Bool = false
@@ -173,10 +174,15 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 }
             }
             else {
-                archiveAPI.getIADownload(url: url) {
-                    (response: URL?) -> Void in
+                archiveAPI.getIADownload(url: url, progressHandler: nil) { 
+                    (localFileURL: URL?, error: Error?) -> Void in
+                    if let error = error {
+                        print("Error downloading \(f.name ?? "unknown file"): \(error.localizedDescription)")
+                        // Optionally, update UI to show error for this specific file
+                        return
+                    }
                     DispatchQueue.main.async{
-                        self.setDownloadComplete(destination: response, name: f.name)
+                        self.setDownloadComplete(destination: localFileURL, name: f.name)
                         self.showTableView.reloadData()
                     }
                 }
@@ -239,9 +245,44 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             completion(localURL)
         }
         else {
-            archiveAPI.getIADownload(url: url) {
-                (response: URL?) -> Void in
-                completion(response)
+            archiveAPI.getIADownload(url: url, progressHandler: { (progress) in
+                self.downloadProgress[localURL] = progress
+                
+                // Find the index of this track and reload just that row for performance
+                if let mp3s = self.showMetadataModel?.mp3Array {
+                    for (index, mp3) in mp3s.enumerated() {
+                        if mp3.name == s.name {
+                            DispatchQueue.main.async {
+                                let indexPath = IndexPath(row: index, section: 2) // Section 2 is tracks
+                                self.showTableView.reloadRows(at: [indexPath], with: .none)
+                            }
+                            break
+                        }
+                    }
+                }
+            }) { 
+                (localFileURL: URL?, error: Error?) -> Void in
+                if let error = error {
+                    print("Error downloading \(s.name ?? "unknown file"): \(error.localizedDescription)")
+                    // Remove from progress dictionary on error
+                    self.downloadProgress.removeValue(forKey: localURL)
+                    return
+                }
+                
+                // On successful download, update UI
+                if let mp3s = self.showMetadataModel?.mp3Array {
+                    for (index, mp3) in mp3s.enumerated() {
+                        if mp3.name == s.name {
+                            DispatchQueue.main.async {
+                                let indexPath = IndexPath(row: index, section: 2)
+                                self.showTableView.reloadRows(at: [indexPath], with: .automatic)
+                            }
+                            break
+                        }
+                    }
+                }
+                
+                completion(localFileURL)
             }
         }
     }
@@ -374,7 +415,25 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 } else {
                     cell.textLabel?.text = track.name
                 }
-                cell.accessoryType = (track.destination != nil) ? .checkmark : .none
+                cell.textLabel?.applyTextStyle(AppFonts.bodyPrimary)
+                
+                // Determine download state and configure cell
+                if let localURL = utils.trackURLfromName(name: track.name) {
+                    // Check if already downloaded
+                    if track.destination != nil || FileManager.default.fileExists(atPath: localURL.path) {
+                        cell.setDownloadState(.downloaded)
+                    } 
+                    // Check if currently downloading
+                    else if let progress = self.downloadProgress[localURL] {
+                        cell.setDownloadState(.downloading(progress: Float(progress)))
+                    } 
+                    // Not downloaded
+                    else {
+                        cell.setDownloadState(.notDownloaded)
+                    }
+                } else {
+                    cell.setDownloadState(.notDownloaded)
+                }
             }
         default:
             break

@@ -3,7 +3,7 @@
 //  Breaze
 //
 //  Created by Joseph Hardy on 7/17/20.
-//  Copyright © 2020 Carquinez. All rights reserved.
+//  Copyright 2020 Carquinez. All rights reserved.
 //
 
 import UIKit
@@ -75,7 +75,20 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
                                 self.network.removeDownloadDataDoc(docID: s.metadata?.identifier) // use callback
                             }
                         }
-                        self.shows = ss.sorted(by: { self.utils.getDateFromDateString(datetime: $0.metadata?.date!)! < self.utils.getDateFromDateString(datetime: $1.metadata?.date!)! })
+                        self.shows = ss.sorted(by: { (show1, show2) -> Bool in
+                            // Safely handle dates - shows with nil dates will be placed at the end
+                            guard let date1Str = show1.metadata?.date,
+                                  let date1 = self.utils.getDateFromDateString(datetime: date1Str) else {
+                                return false // Move nil dates to the end
+                            }
+                            
+                            guard let date2Str = show2.metadata?.date,
+                                  let date2 = self.utils.getDateFromDateString(datetime: date2Str) else {
+                                return true // Move nil dates to the end
+                            }
+                            
+                            return date1 < date2
+                        })
                     }
                 }
                 self.showListTableView.reloadData()
@@ -172,4 +185,3 @@ class DownloadsViewController: ArchiveSuperViewController, UITableViewDelegate, 
         
     }
 }
-

@@ -3,7 +3,7 @@
 //  Breaze
 //
 //  Created by Joe Hardy on 6/25/20.
-//  Copyright © 2020 Carquinez. All rights reserved.
+//  Copyright 2020 Carquinez. All rights reserved.
 //
 
 import UIKit
@@ -233,16 +233,32 @@ class ArchiveAPI: NSObject {
     }
      
     
-    func getIADownload(url: URL?, completion: @escaping (URL?) -> Void) {
+    func getIADownload(url: URL?,
+                       progressHandler: ((_ progress: Double) -> Void)? = nil,
+                       completion: @escaping (_ localFileURL: URL?, _ error: Error?) -> Void) {
         //https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#downloading-data-to-a-file
-        let destination = DownloadRequest.suggestedDownloadDestination(for: .documentDirectory)
-        guard let url = url else { return }
-        self.sessionManager.download(url, to: destination)
-            .downloadProgress { (progress) in
-                print("Progress: \(progress.fractionCompleted)")
+        let destination = DownloadRequest.suggestedDownloadDestination(for: .documentDirectory) // Consider a more specific directory based on show/track
+        guard let downloadURL = url else {
+            completion(nil, NSError(domain: "ArchiveAPIError", code: 0, userInfo: [NSLocalizedDescriptionKey: "Download URL was nil"]))
+            return
+        }
+        self.sessionManager.download(downloadURL, to: destination)
+            .downloadProgress { (progressObject) in // Renamed 'progress' to 'progressObject' to avoid conflict
+                // print("Progress: \(progressObject.fractionCompleted)") // Original print statement
+                progressHandler?(progressObject.fractionCompleted)
             }
             .response { response in
-                completion(response.fileURL)
+                if let error = response.error {
+                    print("Download failed with error: \(error.localizedDescription) for URL: \(downloadURL)")
+                    completion(nil, error)
+                } else if let fileURL = response.fileURL {
+                    print("Download finished. File saved to: \(fileURL.path) for URL: \(downloadURL)")
+                    completion(fileURL, nil)
+                } else {
+                    // This case should ideally not be reached if Alamofire's API guarantees either fileURL or error.
+                    print("Download completed with no file URL and no error for URL: \(downloadURL)")
+                    completion(nil, NSError(domain: "ArchiveAPIError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Download finished with an unknown state."]))
+                }
             }
     }
 }
@@ -250,4 +266,3 @@ class ArchiveAPI: NSObject {
 
     
     
-

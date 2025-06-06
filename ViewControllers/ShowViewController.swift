@@ -434,19 +434,6 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 } else {
                     cell.setDownloadState(.notDownloaded)
                 }
-                
-                // Highlight currently playing track if any
-                if let mp3s = self.showMetadataModel?.mp3Array, !mp3s.isEmpty,
-                   let playerQueue = player.playerQueue, playerQueue.rate > 0 || player.playerQueue?.currentItem != nil {
-                    let currentIndex = player.getCurrentTrackIndex()
-                    if currentIndex >= 0 && currentIndex < mp3s.count && currentIndex == indexPath.row {
-                        cell.textLabel?.textColor = .systemBlue
-                    } else {
-                        cell.textLabel?.textColor = nil // Reset to default color
-                    }
-                } else {
-                    cell.textLabel?.textColor = nil // Reset to default color
-                }
             }
         default:
             break

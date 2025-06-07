@@ -87,6 +87,38 @@ extension ShowMetadata {
 
 struct ShowMetadatas:Codable {
     var items: [ShowMetadata]?
+
+    enum CodingKeys: String, CodingKey {
+        case items
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        // Attempt to decode items as an array of optional ShowMetadata
+        // This allows individual items to be null without failing the whole decoding
+        if var itemsContainer = try? container.nestedUnkeyedContainer(forKey: .items) {
+            var decodedItems: [ShowMetadata] = []
+            while !itemsContainer.isAtEnd {
+                // Try to decode each item. If an item is null or fails to decode as ShowMetadata, it's skipped.
+                if let item = try? itemsContainer.decode(ShowMetadata.self) {
+                    decodedItems.append(item)
+                } else {
+                    // Optionally, try to decode nil to advance the container if the item was explicitly null
+                    _ = try? itemsContainer.decodeNil()
+                }
+            }
+            self.items = decodedItems.isEmpty ? nil : decodedItems // If all items were null or unparsable, treat as nil 'items'
+        } else {
+            // If 'items' key itself is missing or not an array, items will be nil
+            self.items = nil
+        }
+    }
+    
+    // If you need to manually create ShowMetadatas instances, provide a memberwise initializer
+    init(items: [ShowMetadata]? = nil) {
+        self.items = items
+    }
 }
 
 struct ShowFile: Codable {

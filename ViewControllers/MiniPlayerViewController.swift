@@ -45,6 +45,7 @@ class MiniPlayerViewController: UIViewController {
     var nowPlayingInfo = [String : Any]()
     var player: AudioPlayerArchive?
     var currentTrackIndex = 0
+    var isObservingPlayer = false
 
     
     override func viewDidLoad() {
@@ -57,6 +58,11 @@ class MiniPlayerViewController: UIViewController {
         initialDefaults()
     }
         
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        removePlayerObserver()
+    }
+
     @IBAction func playButton(_ sender: Any) {
         playPause()
     }
@@ -141,7 +147,7 @@ class MiniPlayerViewController: UIViewController {
         
     func setupShow () {
         guard let _ = player?.playerQueue else { return }
-        self.player?.playerQueue?.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
+        setupPlayerObserver()
         setupQueueTimerCallback()
         setupSlider()
         setupSong()
@@ -228,7 +234,31 @@ class MiniPlayerViewController: UIViewController {
     }
     
     deinit {
-        player?.playerQueue?.removeObserver(self, forKeyPath: "currentItem.status")
+        notificationCenter.removeObserver(self)
+        removePlayerObserver()
+    }
+
+    // Add methods to manage the KVO observer
+    func setupPlayerObserver() {
+        guard let queue = player?.playerQueue else { return }
+        if !isObservingPlayer {
+            queue.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
+            isObservingPlayer = true
+            print("Added player observer in MiniPlayerViewController")
+        }
+    }
+
+    func removePlayerObserver() {
+        if isObservingPlayer, let queue = player?.playerQueue {
+            do {
+                queue.removeObserver(self, forKeyPath: "currentItem.status")
+                isObservingPlayer = false
+                print("Removed player observer in MiniPlayerViewController")
+            } catch {
+                print("Failed to remove observer: \(error)")
+                isObservingPlayer = false // Still set to false even if removal fails
+            }
+        }
     }
 }
 

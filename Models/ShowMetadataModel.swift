@@ -94,23 +94,28 @@ struct ShowMetadatas:Codable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
-        // Attempt to decode items as an array of optional ShowMetadata
-        // This allows individual items to be null without failing the whole decoding
+
+        // Check if the 'items' key exists and is an array. If 'items' is JSON null or missing, self.items will be nil.
         if var itemsContainer = try? container.nestedUnkeyedContainer(forKey: .items) {
-            var decodedItems: [ShowMetadata] = []
+            var decodedItemsArray: [ShowMetadata] = []
+            // Define a local dummy struct to help skip any unparseable elements in the array
+            struct DummyDecodable: Decodable {}
+
             while !itemsContainer.isAtEnd {
-                // Try to decode each item. If an item is null or fails to decode as ShowMetadata, it's skipped.
-                if let item = try? itemsContainer.decode(ShowMetadata.self) {
-                    decodedItems.append(item)
-                } else {
-                    // Optionally, try to decode nil to advance the container if the item was explicitly null
-                    _ = try? itemsContainer.decodeNil()
+                do {
+                    let item = try itemsContainer.decode(ShowMetadata.self)
+                    decodedItemsArray.append(item)
+                } catch {
+                    // The item was not a valid ShowMetadata. Log and attempt to skip.
+                    // print("Failed to decode ShowMetadata item, attempting to skip. Error: \(error)")
+                    // Attempt to decode as a dummy type to advance the container past the problematic element.
+                    _ = try? itemsContainer.decode(DummyDecodable.self)
                 }
             }
-            self.items = decodedItems.isEmpty ? nil : decodedItems // If all items were null or unparsable, treat as nil 'items'
+            self.items = decodedItemsArray // If original JSON array was empty or all items were skipped, this becomes []
         } else {
-            // If 'items' key itself is missing or not an array, items will be nil
+            // 'items' key is missing, or its value is JSON null, or it's not a JSON array.
+            // In these cases, per standard optional decoding, items should be nil.
             self.items = nil
         }
     }

@@ -120,6 +120,7 @@ class ArchiveAPI: NSObject {
         
         // Check if this is a creator-based search
         if CollectionConfig.isCreatorBased(collection: collection) {
+                print("PHISH CREATOR BASED SEARCH")
                 url += "q=creator%3A%22" + collection + "%22"
         } else {
             // Original collection-based search

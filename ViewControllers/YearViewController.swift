@@ -15,6 +15,7 @@ class YearViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     @IBOutlet weak var yearTableView: UITableView!
     var selectedCollection: String?
     var years: [Int] = []
+    var yearCount: [Int:Int] = [:]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,6 +42,30 @@ class YearViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             self.years += 1983...2025
         default:
             self.years += 1965...1995
+        }
+        getShows()
+    }
+    
+    func getShows() {
+        for y in self.years {
+            getIADateRangeYear(year: y, sbdOnly: false)
+        }
+    }
+    
+    func getIADateRangeYear(year: Int, sbdOnly: Bool) {
+        guard let selectedCollection = self.selectedCollection else { return }
+        let url = archiveAPI.dateRangeYearURL(year: year, sbdOnly: sbdOnly, collection: selectedCollection)
+        print(url)
+        archiveAPI.getIARequestItemsDecodable(url: url) { (response: ShowMetadatas?) -> Void in
+            DispatchQueue.main.async {
+                if let showMetadatas = response?.items {
+                    self.yearCount[year] = showMetadatas.count
+                    print("\(year), \(String(describing: self.yearCount[year]))")
+                    self.yearTableView.reloadData()
+                } else {
+                    print("No data available.")
+                }
+            }
         }
     }
     

@@ -10,7 +10,7 @@ import UIKit
 import MediaPlayer
 
 class MiniPlayerViewController: UIViewController {
-
+    
     @IBOutlet weak var playButton: UIButton!
     @IBOutlet weak var currentTimeLabel: UILabel! {
         didSet {
@@ -46,7 +46,7 @@ class MiniPlayerViewController: UIViewController {
     var player: AudioPlayerArchive?
     var currentTrackIndex = 0
     var isObservingPlayer = false
-
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,12 +57,12 @@ class MiniPlayerViewController: UIViewController {
         notificationCenter.addObserver(self, selector: #selector(playbackDidPause), name: .playbackPaused, object: self.player?.playerQueue)
         initialDefaults()
     }
-        
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         removePlayerObserver()
     }
-
+    
     @IBAction func playButton(_ sender: Any) {
         playPause()
     }
@@ -72,7 +72,7 @@ class MiniPlayerViewController: UIViewController {
             q.advanceToNextItem()
         }
     }
-
+    
     @objc func handleSliderChange() {
         self.player?.timerSliderHandler(timerValue: timeSlider.value)
     }
@@ -86,7 +86,7 @@ class MiniPlayerViewController: UIViewController {
             } else {
                 status = .unknown
             }
-
+            
             // Switch over status value
             switch status {
             case .readyToPlay:
@@ -105,17 +105,17 @@ class MiniPlayerViewController: UIViewController {
     
     func setupQueueTimerCallback() {
         player?.setupTimer()  { (seconds: Double?) -> Void in
-             self.timerCallback(seconds: seconds)
+            self.timerCallback(seconds: seconds)
         }
     }
-        
+    
     func setupSlider() {
         if let ts = timeSlider {
             ts.value = 0.0
             ts.addTarget(self, action: #selector(handleSliderChange), for: .valueChanged)
         }
     }
-
+    
     @available(iOS 13.0, *)
     @IBAction func loadFullPlayer(_ sender: Any) {
         if player?.playerQueue != nil {
@@ -132,11 +132,11 @@ class MiniPlayerViewController: UIViewController {
             }
         }
     }
-
+    
     func prepareModalPlayer(viewController: ModalPlayerViewController) {
-
+        
     }
-
+    
     
     func initialDefaults() {
         timeSlider.value = 0.0
@@ -144,7 +144,7 @@ class MiniPlayerViewController: UIViewController {
         showLabel.text = ""
         venueLabel.text = ""
     }
-        
+    
     func setupShow () {
         guard let _ = player?.playerQueue else { return }
         setupPlayerObserver()
@@ -153,13 +153,13 @@ class MiniPlayerViewController: UIViewController {
         setupSong()
         playPause()
     }
-
+    
     func setupSong() {
         setupSongDetails()
         setupNotificationView()
     }
     
-
+    
     func setupSongDetails() {
         player?.songDetailsModel.songDetailsFromMetadata(row: player?.getCurrentTrackIndex(), showModel: player?.showMetadataModel)
         songLabel.text = player?.songDetailsModel.name
@@ -175,12 +175,12 @@ class MiniPlayerViewController: UIViewController {
             self.timeSlider.value = Float((seconds ?? 0.0)/(totalSeconds ))
         }
     }
-
+    
     func setupNotificationView() {
         guard let ci = self.player?.playerQueue?.currentItem,
-            let mp3s = player?.showMetadataModel?.mp3Array,
-            let md = player?.showMetadataModel?.metadata
-            else { return }
+              let mp3s = player?.showMetadataModel?.mp3Array,
+              let md = player?.showMetadataModel?.metadata
+        else { return }
         guard let ct = player?.getCurrentTrackIndex()
         else {
             print("No current track index")
@@ -215,8 +215,8 @@ class MiniPlayerViewController: UIViewController {
         
         if let image = UIImage(named: "Chateau80") {
             nowPlayingInfo[MPMediaItemPropertyArtwork] =
-                MPMediaItemArtwork(boundsSize: image.size) { size in
-                    return image
+            MPMediaItemArtwork(boundsSize: image.size) { size in
+                return image
             }
         }
         else { print("no image")}
@@ -237,7 +237,7 @@ class MiniPlayerViewController: UIViewController {
         notificationCenter.removeObserver(self)
         removePlayerObserver()
     }
-
+    
     // Add methods to manage the KVO observer
     func setupPlayerObserver() {
         guard let queue = player?.playerQueue else { return }
@@ -247,7 +247,7 @@ class MiniPlayerViewController: UIViewController {
             print("Added player observer in MiniPlayerViewController")
         }
     }
-
+    
     func removePlayerObserver() {
         if isObservingPlayer, let queue = player?.playerQueue {
             do {

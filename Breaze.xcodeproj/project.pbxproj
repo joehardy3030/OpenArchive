@@ -44,7 +44,6 @@
 		D879502E24C69E2900FB2436 /* MiniPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D879502D24C69E2900FB2436 /* MiniPlayerViewController.swift */; };
 		D87A551624D7B6D3005F32BA /* ModalPlayerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87A551524D7B6D3005F32BA /* ModalPlayerTableViewCell.swift */; };
 		D892BBA024CBBCF5008E4960 /* ArchiveSuperViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D892BB9F24CBBCF5008E4960 /* ArchiveSuperViewController.swift */; };
-		D89D789925901D80009324EE /* ArchivePlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89D789825901D80009324EE /* ArchivePlayerViewController.swift */; };
 		D8A5324C24A9AFF2002379CF /* ArchiveCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A5324B24A9AFF2002379CF /* ArchiveCell.swift */; };
 		D8ACD2E22B1D6CC30097224B /* ChateauGPTModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8ACD2E12B1D6CC30097224B /* ChateauGPTModel.swift */; };
 		D8B65F0024C54A5500F57355 /* DownloadPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B65EFF24C54A5500F57355 /* DownloadPlayerViewController.swift */; };
@@ -119,7 +118,6 @@
 		D879502D24C69E2900FB2436 /* MiniPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerViewController.swift; sourceTree = "<group>"; };
 		D87A551524D7B6D3005F32BA /* ModalPlayerTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalPlayerTableViewCell.swift; sourceTree = "<group>"; };
 		D892BB9F24CBBCF5008E4960 /* ArchiveSuperViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveSuperViewController.swift; sourceTree = "<group>"; };
-		D89D789825901D80009324EE /* ArchivePlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivePlayerViewController.swift; sourceTree = "<group>"; };
 		D8A5324B24A9AFF2002379CF /* ArchiveCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveCell.swift; sourceTree = "<group>"; };
 		D8ACD2E12B1D6CC30097224B /* ChateauGPTModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChateauGPTModel.swift; sourceTree = "<group>"; };
 		D8B65EFF24C54A5500F57355 /* DownloadPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadPlayerViewController.swift; sourceTree = "<group>"; };
@@ -271,7 +269,6 @@
 				D8EECF552B1BA86100CD3235 /* ChateauGPTViewController.swift */,
 				D814AEE22B6F35AF00C58FB3 /* SearchViewController.swift */,
 				D852C3CA24B1AA1C00029EB9 /* ShowViewController.swift */,
-				D89D789825901D80009324EE /* ArchivePlayerViewController.swift */,
 				D845E03824D7642A003381B6 /* ModalPlayerViewController.swift */,
 				D879502D24C69E2900FB2436 /* MiniPlayerViewController.swift */,
 				D8B65EFF24C54A5500F57355 /* DownloadPlayerViewController.swift */,
@@ -607,7 +604,6 @@
 				D8449A6A24AEF57600F113F4 /* MonthTableViewCell.swift in Sources */,
 				D82C591B2DDAC1460013BAC5 /* CollectionConfig.swift in Sources */,
 				D850B8FD24B26EAC00E3DC6B /* ShowMetadataModel.swift in Sources */,
-				D89D789925901D80009324EE /* ArchivePlayerViewController.swift in Sources */,
 				D8A5324C24A9AFF2002379CF /* ArchiveCell.swift in Sources */,
 				D84C3D8224CD164C007AF4EE /* ShowDetailTableViewCell.swift in Sources */,
 				D83EB53E24CE33C60016726C /* ArchiveNavigationController.swift in Sources */,

@@ -165,7 +165,6 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     // MARK: - Other Properties
     private let notificationCenter: NotificationCenter = .default
     private let commandCenter = MPRemoteCommandCenter.shared()
-    private var isObservingPlayer = false  // Add flag to track observer state
     private var feedbackGenerator: UIImpactFeedbackGenerator?
 
     // MARK: - Life-cycle
@@ -190,13 +189,11 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
 
     deinit {
         notificationCenter.removeObserver(self)
-        removePlayerObserver()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         notificationCenter.removeObserver(self)
-        removePlayerObserver()
     }
 
     // MARK: - UI Setup
@@ -376,34 +373,6 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         print("Rewind functionality")
     }
     
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-
-        if keyPath == #keyPath(AVQueuePlayer.currentItem.status) {
-            let status: AVPlayerItem.Status
-            if let statusNumber = change?[.newKey] as? NSNumber {
-                status = AVPlayerItem.Status(rawValue: statusNumber.intValue)!
-            } else {
-                status = .unknown
-            }
-
-            // Switch over status value
-            switch status {
-            case .readyToPlay:
-                setupSong()
-                print("ready to play")
-            case .failed:
-                // This is now handled by the .playbackFailed notification
-                break
-            case .unknown:
-                print("unknown status")
-            default:
-                print("nope")
-            }
-            
-        }
-
-    }
-
     func setupSlider() {
         timerSlider.value = 0.0
         timerSlider.addTarget(self, action: #selector(handleSliderChange), for: .valueChanged)
@@ -418,13 +387,6 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     func setupShow() {
         guard let queue = player.playerQueue else { return }
         playPauseButtonImageSetup()
-        if !isObservingPlayer {
-            queue.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
-            isObservingPlayer = true
-        }
-        self.player.setupTimer()  { (seconds: Double?) -> Void in
-             self.timerCallback(seconds: seconds)
-        }
         setupSlider()
         setupSong()
         print("Setup Show")
@@ -483,12 +445,6 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     }
     
     func reloadShow() {
-        // Remove observer before reloading the queue to avoid crashes
-        if isObservingPlayer, let queue = player.playerQueue {
-            // Safely remove observer
-            removePlayerObserver()
-        }
-        
         // This operation should probably belong to the player class
         if let mp3s = self.player.showMetadataModel?.mp3Array {
             if player.isStreaming {
@@ -500,21 +456,6 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         setupShow()
     }
     
-    // Add a helper method to safely remove observers
-    private func removePlayerObserver() {
-        if isObservingPlayer, let queue = player.playerQueue {
-            // Use try-catch to handle potential exceptions when removing observers
-            do {
-                queue.removeObserver(self, forKeyPath: "currentItem.status")
-                isObservingPlayer = false
-            } catch {
-                print("Failed to remove observer: \(error)")
-                // Reset the flag anyway to avoid future issues
-                isObservingPlayer = false
-            }
-        }
-    }
-
     // MARK: - Table View Data Source
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let c = player.showMetadataModel?.mp3Array?.count {

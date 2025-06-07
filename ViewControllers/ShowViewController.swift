@@ -39,7 +39,6 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     var isDescriptionExpanded: Bool = false
     var broadcastIsPlaying: Bool = false
     var mp3index: Int = 0
-    var isObservingPlayer = false  // Track observer state
     
     override func viewDidLoad() {
         
@@ -330,6 +329,10 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         self.showTableView.selectRow(at: indexPath, animated: true, scrollPosition: UITableView.ScrollPosition.middle)
     }
     
+    override func handlePlayerReadyToPlay() {
+        selectCurrentTrack()
+        print("ready to play in ShowViewController")
+    }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         
@@ -344,8 +347,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             // Switch over status value
             switch status {
             case .readyToPlay:
-                selectCurrentTrack()
-                print("ready to play show view controller")
+                handlePlayerReadyToPlay()
             case .failed:
                 // This is now handled by the .playbackFailed notification
                 break
@@ -541,45 +543,24 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
 
 @available(iOS 13.0, *)
 private extension ShowViewController {
-    @objc private func playbackDidStart(_ notification: Notification) {
-        print("Item playing")
-    }
-    
-    @objc private func playbackDidPause(_ notification: Notification) {
-        print("Item paused")
-    }
-    
-    @objc private func playbackDidFail(_ notification: Notification) {
-        if let error = notification.userInfo?["error"] as? Error {
-            print("Playback failed with error: \(error.localizedDescription)")
+    // Override notification handlers from the base class
+    override func playbackDidStart(_ notification: Notification) {
+        // Update play button UI
+        if #available(iOS 13.0, *) {
+            broadcastPlayPauseButton.setBackgroundImage(UIImage(systemName: "pause.fill"), for: .normal)
+        } else {
+            broadcastPlayPauseButton.setTitle("Pause", for: .normal)
         }
-        let isStreaming = notification.userInfo?["isStreaming"] as? Bool ?? false
-        let message = isStreaming ? "Could not stream the track. Please check your internet connection and try again." : "Could not play the downloaded track. The file may be corrupt or missing."
-        let alert = UIAlertController(title: "Playback Error", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        present(alert, animated: true, completion: nil)
+        broadcastIsPlaying = true
     }
     
-    // Add methods to manage the KVO observer
-    func setupPlayerObserver() {
-        guard let queue = player.playerQueue else { return }
-        if !isObservingPlayer {
-            queue.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
-            isObservingPlayer = true
-            print("Added player observer in ShowViewController")
+    override func playbackDidPause(_ notification: Notification) {
+        // Update play button UI
+        if #available(iOS 13.0, *) {
+            broadcastPlayPauseButton.setBackgroundImage(UIImage(systemName: "play.fill"), for: .normal)
+        } else {
+            broadcastPlayPauseButton.setTitle("Play", for: .normal)
         }
-    }
-    
-    func removePlayerObserver() {
-        if isObservingPlayer, let queue = player.playerQueue {
-            do {
-                queue.removeObserver(self, forKeyPath: "currentItem.status")
-                isObservingPlayer = false
-                print("Removed player observer in ShowViewController")
-            } catch {
-                print("Failed to remove observer: \(error)")
-                isObservingPlayer = false
-            }
-        }
+        broadcastIsPlaying = false
     }
 }

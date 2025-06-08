@@ -392,15 +392,20 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 cell.textLabel?.text = m.venue
             case 2:
                 cell.textLabel?.text = m.coverage
-            // case 3 was m.source, now moved
-            case 3: // Was case 4
+            case 3:
+                if let sourceArray = m.source, !sourceArray.isEmpty {
+                    cell.textLabel?.text = sourceArray.joined(separator: "; ")
+                } else {
+                    cell.textLabel?.text = "N/A" // Or your preferred placeholder for source
+                }
+            case 4:
                 cell.textLabel?.text = m.transferer
             default:
                 break
             }
         case 1: // Taper's Notes Section (only reached if isDescriptionExpanded is true)
             if indexPath.row == 0 { // Source row
-                cell.textLabel?.text = m.source
+                cell.textLabel?.text = m.source?.joined(separator: "; ")
             } else if indexPath.row == 1 { // Description row
                 if let description = m.description {
                     let data = description.data(using: .utf8)!

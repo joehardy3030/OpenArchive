@@ -256,14 +256,14 @@ class ArchiveAPI: NSObject {
     }
 
     
-    func getIARequestItemsDecodable(url: String, completion: @escaping (ShowMetadatas?) -> Void) {
+    func getIARequestItemsDecodable(url: String, completion: @escaping (ShowMetadatas?, Error?) -> Void) {
         AF.request(url).responseDecodable(of: ShowMetadatas.self) { response in
             switch response.result {
             case .success(let showMetadatas):
-                completion(showMetadatas)
+                completion(showMetadatas, nil)
             case .failure(let error):
                 print(error)
-                completion(nil)
+                completion(nil, error)
             }
         }
     }

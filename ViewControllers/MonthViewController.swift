@@ -9,7 +9,7 @@
 import UIKit
 
 class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UITableViewDelegate {
-
+    
     @IBOutlet weak var sbdToggle: UISegmentedControl!
     @IBOutlet weak var monthTableView: UITableView!
     var months: [String] = []
@@ -31,17 +31,17 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
         }
         sbdToggle.selectedSegmentIndex = getSbdToggle()
         self.months = ["Jan",
-                  "Feb",
-                  "Mar",
-                  "April",
-                  "May",
-                  "June",
-                  "July",
-                  "Aug",
-                  "Sept",
-                  "Oct",
-                  "Nov",
-                  "Dec"]
+                       "Feb",
+                       "Mar",
+                       "April",
+                       "May",
+                       "June",
+                       "July",
+                       "Aug",
+                       "Sept",
+                       "Oct",
+                       "Nov",
+                       "Dec"]
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -77,9 +77,9 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
         default:
             sbdToggle.selectedSegmentIndex = 1
         }
-
+        
     }
-
+    
     func getShows() {
         if let y = year {
             print("year \(String(describing: year))")
@@ -91,7 +91,7 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
     func getIADateRangeYear(year: Int, sbdOnly: Bool) {
         let url = archiveAPI.dateRangeYearURL(year: year, sbdOnly: sbdOnly, collection: selectedCollection)
         print(url)
-        archiveAPI.getIARequestItemsDecodable(url: url) { (response: ShowMetadatas?) -> Void in
+        archiveAPI.getIARequestItemsDecodable(url: url) { (response: ShowMetadatas?, error: Error?) -> Void in
             DispatchQueue.main.async {
                 if let showMetadatas = response?.items {
                     self.allShowsForYear = showMetadatas // Store all fetched shows
@@ -99,14 +99,14 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
                     self.monthCount = [:]
                     // Grouping by month
                     let groupedByMonth = Dictionary(grouping: showMetadatas, by: { $0.month })
-
+                    
                     // Counting and storing in monthCount
                     for (month, shows) in groupedByMonth {
                         if let month = month { // Ensure month is not nil
                             self.monthCount[month] = shows.count
                         }
                     }
-
+                    
                     // Optionally, print the results
                     for (month, count) in self.monthCount.sorted(by: { $0.key < $1.key }) {
                         print("Month: \(month), Count: \(count)")
@@ -116,6 +116,15 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
                     print("No data available.")
                 }
             }
+        }
+    }
+    
+    func showErrorAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        // Ensure it's presented on the main thread
+        DispatchQueue.main.async {
+            self.present(alert, animated: true, completion: nil)
         }
     }
     
@@ -139,9 +148,9 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
                 }
             }
         }
-
+        
         if let year = self.year {
-            let c = monthArray[indexPath.row] 
+            let c = monthArray[indexPath.row]
             if c > 0 {
                 cell.monthLabel?.text = month + " " + String(year) + " " + "(" + String(c) + " tapes)"
             }
@@ -187,5 +196,5 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
             // target.resetMonth() // Removed: ShowsListViewController will call this in its viewWillAppear
         }
     }
-
+    
 }

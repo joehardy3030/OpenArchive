@@ -3,7 +3,7 @@
 //  Breaze
 //
 //  Created by Joseph Hardy on 7/5/20.
-//  Copyright © 2020 Carquinez. All rights reserved.
+//  Copyright 2020 Carquinez. All rights reserved.
 //
 
 import UIKit
@@ -35,7 +35,7 @@ struct ShowMetadata: Codable {
     var year: String?
     var venue: String?
     var transferer: String?
-    var source: String?
+    var source: [String]?
     var coverage: String?
     var avg_rating: Float?
     var num_reviews: Int?
@@ -61,7 +61,6 @@ struct ShowMetadata: Codable {
         year = try container.decodeIfPresent(String.self, forKey: .year)
         venue = try container.decodeIfPresent(String.self, forKey: .venue)
         transferer = try container.decodeIfPresent(String.self, forKey: .transferer)
-        source = try container.decodeIfPresent(String.self, forKey: .source)
         coverage = try container.decodeIfPresent(String.self, forKey: .coverage)
         avg_rating = try container.decodeIfPresent(Float.self, forKey: .avg_rating)
         num_reviews = try container.decodeIfPresent(Int.self, forKey: .num_reviews)
@@ -73,6 +72,15 @@ struct ShowMetadata: Codable {
             collection = [collectionString]
         } else {
             collection = nil
+        }
+
+        // Handle source field that could be either a string or array
+        if let sourceArray = try? container.decodeIfPresent([String].self, forKey: .source) {
+            source = sourceArray
+        } else if let sourceString = try? container.decodeIfPresent(String.self, forKey: .source) {
+            source = [sourceString]
+        } else {
+            source = nil
         }
     }
 }

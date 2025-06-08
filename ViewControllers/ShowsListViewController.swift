@@ -46,12 +46,25 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
                                            sbdOnly: searchTermsModel.sbdOnly,
                                            collection: searchTermsModel.collection)
         archiveAPI.getIARequestItemsDecodable(url: url) {
-            (response: ShowMetadatas?) -> Void in
+            (response: ShowMetadatas?, error: Error?) -> Void in
              DispatchQueue.main.async{
-                if let r = response {
-                    self.showMetadatas = r.items?.sorted(by: { $0.date! < $1.date! })
+                if let error = error {
+                    // Basic error handling: print and clear data
+                    print("Error fetching search results: \(error.localizedDescription)")
+                    self.showMetadatas = nil
                     self.showListTableView.reloadData()
+                    // TODO: Implement user-facing error alert
+                    return
                 }
+
+                if let r = response, let items = r.items, !items.isEmpty {
+                    self.showMetadatas = items.sorted(by: { $0.date! < $1.date! })
+                } else {
+                    // No error, but no items or nil response
+                    self.showMetadatas = nil
+                    // TODO: Optionally inform user that no results were found
+                }
+                self.showListTableView.reloadData()
             }
         }
     }
@@ -62,16 +75,26 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
         let url = archiveAPI.dateRangeURL(year: year, month: month, sbdOnly: sbdOnly, collection: selectedCollection)
 
         archiveAPI.getIARequestItemsDecodable(url: url) {
-            (response: ShowMetadatas?) -> Void in
+            (response: ShowMetadatas?, error: Error?) -> Void in
             
              DispatchQueue.main.async{
-                if let r = response {
-                    //self.showMetadatas = r.items
-                    //if let s = self.showMetadatas {
-                    self.showMetadatas = r.items?.sorted(by: { $0.date! < $1.date! })
-                    //}
+                if let error = error {
+                    // Basic error handling: print and clear data
+                    print("Error fetching date range results: \(error.localizedDescription)")
+                    self.showMetadatas = nil
                     self.showListTableView.reloadData()
+                    // TODO: Implement user-facing error alert
+                    return
                 }
+
+                if let r = response, let items = r.items, !items.isEmpty {
+                    self.showMetadatas = items.sorted(by: { $0.date! < $1.date! })
+                } else {
+                    // No error, but no items or nil response
+                    self.showMetadatas = nil
+                    // TODO: Optionally inform user that no results were found
+                }
+                self.showListTableView.reloadData()
             }
         }
     }

@@ -18,11 +18,20 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
     var sbdOnly = true // look at observer pattern
     var selectedCollection: String = "GratefulDead"
     var allShowsForYear: [ShowMetadata]? // To store all shows fetched for the year
-    
+    var monthsWithCounts: [(month: String, countText: String)] = []
+    var activityIndicator: UIActivityIndicatorView!
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.monthTableView.delegate = self
         self.monthTableView.dataSource = self
+
+        // Setup activity indicator
+        activityIndicator = UIActivityIndicatorView(style: .large)
+        activityIndicator.center = self.view.center
+        activityIndicator.hidesWhenStopped = true
+        view.addSubview(activityIndicator)
+
         if selectedCollection == "GratefulDead" {
             sbdOnly = true // look at observer pattern
         }
@@ -87,33 +96,47 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
         }
     }
     
-    
     func getIADateRangeYear(year: Int, sbdOnly: Bool) {
         let url = archiveAPI.dateRangeYearURL(year: year, sbdOnly: sbdOnly, collection: selectedCollection)
         print(url)
+        activityIndicator.startAnimating()
+        monthTableView.isHidden = true
+
         archiveAPI.getIARequestItemsDecodable(url: url) { (response: ShowMetadatas?, error: Error?) -> Void in
             DispatchQueue.main.async {
-                if let showMetadatas = response?.items {
-                    self.allShowsForYear = showMetadatas // Store all fetched shows
-                    // Reset the monthCount dictionary for new data
+                self.activityIndicator.stopAnimating()
+                self.monthTableView.isHidden = false
+
+                if let error = error {
+                    self.showErrorAlert(title: "Error", message: "Failed to fetch shows: \(error.localizedDescription)")
+                    self.allShowsForYear = nil
                     self.monthCount = [:]
-                    // Grouping by month
-                    let groupedByMonth = Dictionary(grouping: showMetadatas, by: { $0.month })
+                    self.updateMonthsWithCounts()
+                    self.monthTableView.reloadData()
+                    return
+                }
+
+                if let showMetadatas = response?.items, !showMetadatas.isEmpty {
+                    self.allShowsForYear = showMetadatas
+                    self.monthCount = [:]
                     
-                    // Counting and storing in monthCount
-                    for (month, shows) in groupedByMonth {
-                        if let month = month { // Ensure month is not nil
-                            self.monthCount[month] = shows.count
+                    let groupedByMonth = Dictionary(grouping: showMetadatas, by: { $0.month })
+                    for (apiMonthKey, showsInMonth) in groupedByMonth {
+                        if let unwrappedApiKey = apiMonthKey {
+                            if let monthNameForDisplay = self.monthName(from: unwrappedApiKey) {
+                                self.monthCount[monthNameForDisplay] = showsInMonth.count
+                            }
                         }
                     }
                     
-                    // Optionally, print the results
-                    for (month, count) in self.monthCount.sorted(by: { $0.key < $1.key }) {
-                        print("Month: \(month), Count: \(count)")
-                    }
+                    self.updateMonthsWithCounts()
                     self.monthTableView.reloadData()
                 } else {
-                    print("No data available.")
+                    self.showErrorAlert(title: "No Shows", message: "No shows found for the selected year and criteria.")
+                    self.allShowsForYear = nil
+                    self.monthCount = [:]
+                    self.updateMonthsWithCounts()
+                    self.monthTableView.reloadData()
                 }
             }
         }
@@ -122,46 +145,37 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
     func showErrorAlert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        // Ensure it's presented on the main thread
         DispatchQueue.main.async {
             self.present(alert, animated: true, completion: nil)
         }
     }
     
+    func updateMonthsWithCounts() {
+        self.monthsWithCounts = self.months.map { monthName -> (month: String, countText: String) in
+            let count = self.monthCount[monthName] ?? 0
+            return (month: monthName, countText: "\(count) shows")
+        }
+    }
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.months.count
+        return self.monthsWithCounts.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = monthTableView.dequeueReusableCell(withIdentifier: "MonthCell", for: indexPath) as! MonthTableViewCell
-        let month = self.months[indexPath.row]
-        print(self.months[indexPath.row])
-        
-        var monthArray = Array(repeating: 0, count: 12) // Array to hold counts for each month
-        
-        for (monthKey, monthCount) in monthCount {
-            let components = monthKey.split(separator: "-")
-            if let monthString = components.last, let monthIndex = Int(monthString) {
-                let arrayIndex = monthIndex - 1 // Convert to zero-based index
-                if arrayIndex >= 0 && arrayIndex < monthArray.count {
-                    monthArray[arrayIndex] = monthCount
-                }
-            }
-        }
-        
+        let monthData = self.monthsWithCounts[indexPath.row]
         if let year = self.year {
-            let c = monthArray[indexPath.row]
-            if c > 0 {
-                cell.monthLabel?.text = month + " " + String(year) + " " + "(" + String(c) + " tapes)"
+            let countString = monthData.countText.components(separatedBy: " ").first ?? "0"
+            if let count = Int(countString), count > 0 {
+                cell.monthLabel?.text = "\(monthData.month) \(String(year)) (\(count) tapes)"
+            } else {
+                cell.monthLabel?.text = "\(monthData.month) \(String(year))"
             }
-            else {
-                cell.monthLabel?.text = month + " " + String(year)
-            }
+        } else {
+            cell.monthLabel?.text = monthData.month
         }
-        else {
-            cell.monthLabel?.text = month
-        }
-        cell.monthLabel?.applyTextStyle(AppFonts.bodyPrimary) // Added
+
+        cell.monthLabel?.applyTextStyle(AppFonts.bodyPrimary)
         return cell
     }
     
@@ -181,7 +195,6 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
             }
             target.selectedCollection = selectedCollection
             
-            // Filter and pass the shows for the selected month
             if let allShows = self.allShowsForYear {
                 let showsForSelectedMonth = allShows.filter { show -> Bool in
                     guard let showMonthString = show.month?.split(separator: "-").last,
@@ -190,11 +203,18 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
                     }
                     return showMonthInt == selectedMonthInt
                 }
-                target.showsForMonth = showsForSelectedMonth // We'll add this property to ShowsListViewController
+                target.showsForMonth = showsForSelectedMonth
             }
-            
-            // target.resetMonth() // Removed: ShowsListViewController will call this in its viewWillAppear
         }
     }
     
+    func monthName(from monthString: String) -> String? {
+        // Helper to get full month name from "YYYY-MM" string
+        let components = monthString.split(separator: "-")
+        if let monthString = components.last, let monthIndex = Int(monthString) {
+            let monthName = self.months[monthIndex - 1]
+            return monthName
+        }
+        return nil
+    }
 }

@@ -66,7 +66,7 @@ class YearViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 if let yearTotal = response?.totalCount {
                     print("Year total \(yearTotal)")
                     self.yearTotals[year] = yearTotal
-                    print(self.yearTotals[year])
+                    //print(self.yearTotals[year])
                     self.yearTableView.reloadData()
                 } else {
                     print("No data available.")

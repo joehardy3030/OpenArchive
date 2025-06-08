@@ -15,6 +15,7 @@ class YearViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     @IBOutlet weak var yearTableView: UITableView!
     var selectedCollection: String?
     var years: [Int] = []
+    var yearTotals: [Int:Int?] = [:]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,10 +43,10 @@ class YearViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         default:
             self.years += 1965...1995
         }
-        getYearTotal(year: 1995, sbdOnly: false)
+        getYearTotals()
     }
     
-    func getYearTotal(year: Int, sbdOnly: Bool) {
+    func getYearTotal(year: Int, sbdOnly: Bool, reload: Bool) {
      //    func yearRangeTotalURL(year: Int, sbdOnly: Bool, collection: String = "GratefulDead") -> String {
         guard let selectedCollection = self.selectedCollection else { return }
         let url = archiveAPI.yearRangeTotalURL(year: year, sbdOnly: sbdOnly, collection: selectedCollection)
@@ -54,29 +55,25 @@ class YearViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             DispatchQueue.main.async {
                 if let yearTotal = response?.totalCount {
                     print("Year total \(yearTotal)")
+                    self.yearTotals[year] = yearTotal
+                    print(self.yearTotals[year])
+                    self.yearTableView.reloadData()
                     
-                    /*
-                    // Counting and storing in monthCount
-                    for (month, shows) in groupedByMonth {
-                        if let month = month { // Ensure month is not nil
-                            self.monthCount[month] = shows.count
-                        }
-                    }
-                     */
-                    
-                    // Optionally, print the results
-                    /*
-                    for (month, count) in self.monthCount.sorted(by: { $0.key < $1.key }) {
-                        print("Month: \(month), Count: \(count)")
-                    }
-                     */
-                    //self.yearTableView.reloadData()
+                    //
                 } else {
                     print("No data available.")
                 }
             }
         }
     }
+    
+    func getYearTotals() {
+        for (index, y) in self.years.enumerated() {
+            let isLast = index == self.years.count - 1
+            getYearTotal(year: y, sbdOnly: false, reload: isLast)
+        }
+    }
+    
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.years.count
@@ -85,7 +82,15 @@ class YearViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = yearTableView.dequeueReusableCell(withIdentifier: "ArchiveCell", for: indexPath) as! ArchiveCell
         let year = self.years[indexPath.row]
-        cell.titleLabel?.text = String(year)
+        if let yearTotal = self.yearTotals[year] {
+            if let y = yearTotal {
+                cell.titleLabel?.text = String("\(year) (\(y) tapes)")
+            }
+            
+        }
+        else {
+            cell.titleLabel?.text = String(year)
+        }
         cell.titleLabel?.applyTextStyle(AppFonts.bodyPrimary)
         return cell
     }

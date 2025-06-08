@@ -268,16 +268,19 @@ class ArchiveAPI: NSObject {
         }
     }
     
-    func getIARequestTotal(url: String, completion: @escaping (YearsTotalResponse?) -> Void) {
-        AF.request(url).responseDecodable(of: YearsTotalResponse.self) { response in
-            print(response)
+    @discardableResult
+    func getIARequestTotal(url: String, completion: @escaping (YearsTotalResponse?) -> Void) -> DataRequest {
+        let request = AF.request(url).responseDecodable(of: YearsTotalResponse.self) { response in
+            // print(response) // Remove or comment out for cleaner logs
             switch response.result {
             case .success(let yearsTotalResponse):
                 completion(yearsTotalResponse)
             case .failure(let error):
-                print(error)
+                print("Error: \(error.localizedDescription)")
+                completion(nil)
             }
         }
+        return request
     }
     
     func getIADownload(url: URL?,

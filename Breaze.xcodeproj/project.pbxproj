@@ -32,6 +32,7 @@
 		D852C3C724B1219400029EB9 /* ShowsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D852C3C624B1219400029EB9 /* ShowsListViewController.swift */; };
 		D852C3C924B121E000029EB9 /* ShowsListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D852C3C824B121E000029EB9 /* ShowsListTableViewCell.swift */; };
 		D852C3CB24B1AA1C00029EB9 /* ShowViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D852C3CA24B1AA1C00029EB9 /* ShowViewController.swift */; };
+		D859CE402DF5081A00D6371F /* YearsTotalResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D859CE3F2DF5081700D6371F /* YearsTotalResponse.swift */; };
 		D85A4EEF2022D0B600E480FB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A4EEE2022D0B600E480FB /* AppDelegate.swift */; };
 		D85A4EF62022D0B600E480FB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D85A4EF42022D0B600E480FB /* Main.storyboard */; };
 		D85A4EF82022D0B600E480FB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D85A4EF72022D0B600E480FB /* Assets.xcassets */; };
@@ -101,6 +102,7 @@
 		D852C3C624B1219400029EB9 /* ShowsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowsListViewController.swift; sourceTree = "<group>"; };
 		D852C3C824B121E000029EB9 /* ShowsListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowsListTableViewCell.swift; sourceTree = "<group>"; };
 		D852C3CA24B1AA1C00029EB9 /* ShowViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowViewController.swift; sourceTree = "<group>"; };
+		D859CE3F2DF5081700D6371F /* YearsTotalResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearsTotalResponse.swift; sourceTree = "<group>"; };
 		D85A4EEB2022D0B500E480FB /* Chateau.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chateau.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D85A4EEE2022D0B600E480FB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D85A4EF52022D0B600E480FB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -287,6 +289,7 @@
 				D8ACD2E12B1D6CC30097224B /* ChateauGPTModel.swift */,
 				D8484AA32B97FB4200CEE940 /* SearchTermsModel.swift */,
 				D82C591A2DDAC1460013BAC5 /* CollectionConfig.swift */,
+				D859CE3F2DF5081700D6371F /* YearsTotalResponse.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -610,6 +613,7 @@
 				D89D789925901D80009324EE /* ArchivePlayerViewController.swift in Sources */,
 				D8A5324C24A9AFF2002379CF /* ArchiveCell.swift in Sources */,
 				D84C3D8224CD164C007AF4EE /* ShowDetailTableViewCell.swift in Sources */,
+				D859CE402DF5081A00D6371F /* YearsTotalResponse.swift in Sources */,
 				D83EB53E24CE33C60016726C /* ArchiveNavigationController.swift in Sources */,
 				D8717D38258FE93E00C86954 /* SongDetailsModel.swift in Sources */,
 			);

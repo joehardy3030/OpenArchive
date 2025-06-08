@@ -42,6 +42,40 @@ class YearViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         default:
             self.years += 1965...1995
         }
+        getYearTotal(year: 1995, sbdOnly: false)
+    }
+    
+    func getYearTotal(year: Int, sbdOnly: Bool) {
+     //    func yearRangeTotalURL(year: Int, sbdOnly: Bool, collection: String = "GratefulDead") -> String {
+        guard let selectedCollection = self.selectedCollection else { return }
+        let url = archiveAPI.yearRangeTotalURL(year: year, sbdOnly: sbdOnly, collection: selectedCollection)
+        print(url)
+        archiveAPI.getIARequestTotal(url: url) { (response: YearsTotalResponse?) -> Void in
+            DispatchQueue.main.async {
+                if let yearTotal = response?.totalCount {
+                    print("Year total \(yearTotal)")
+                    
+                    /*
+                    // Counting and storing in monthCount
+                    for (month, shows) in groupedByMonth {
+                        if let month = month { // Ensure month is not nil
+                            self.monthCount[month] = shows.count
+                        }
+                    }
+                     */
+                    
+                    // Optionally, print the results
+                    /*
+                    for (month, count) in self.monthCount.sorted(by: { $0.key < $1.key }) {
+                        print("Month: \(month), Count: \(count)")
+                    }
+                     */
+                    //self.yearTableView.reloadData()
+                } else {
+                    print("No data available.")
+                }
+            }
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

@@ -105,7 +105,7 @@ class ArchiveAPI: NSObject {
         print(url)
         return url
     }
-
+    
     func dateRangeYearURL(year: Int, sbdOnly: Bool, collection: String = "GratefulDead") -> String {
 
         let firstDayMonth = "01-01"
@@ -136,6 +136,42 @@ class ArchiveAPI: NSObject {
         url += toString
         url += String(year) + "-" + lastDayMonth
         url += "%5D"
+        print(url)
+        return url
+    }
+
+    func yearRangeTotalURL(year: Int, sbdOnly: Bool, collection: String = "GratefulDead") -> String {
+
+        let firstDayMonth = "01-01"
+        let lastDayMonth = "12-31"
+        let andString = "%20AND%20"
+        let dateString = "date%3A%5B"
+        let toString = "%20TO%20"
+        var url = baseURLString
+                
+        url += "advancedsearch.php?"
+        //url += "fields=identifier,date,venue,transferer,source,coverage,stars,avg_rating,num_reviews,collection,creator&"
+        
+        // Check if this is a creator-based search
+        if CollectionConfig.isCreatorBased(collection: collection) {
+                url += "q=creator%3A%22" + collection + "%22"
+        } else {
+            // Original collection-based search
+            if sbdOnly {
+                url += "q=collection%3A%28" + collection + "%20AND%20stream_only%29"
+            } else {
+                url += "q=collection%3A%28" + collection + "%29"
+            }
+        }
+        
+        url += andString
+        url += dateString
+        url += String(year) + "-" + firstDayMonth
+        url += toString
+        url += String(year) + "-" + lastDayMonth
+        url += "%5D"
+        url += "&output=json&rows=0"
+        
         print(url)
         return url
     }
@@ -231,7 +267,18 @@ class ArchiveAPI: NSObject {
             }
         }
     }
-     
+    
+    func getIARequestTotal(url: String, completion: @escaping (YearsTotalResponse?) -> Void) {
+        AF.request(url).responseDecodable(of: YearsTotalResponse.self) { response in
+            print(response)
+            switch response.result {
+            case .success(let yearsTotalResponse):
+                completion(yearsTotalResponse)
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
     
     func getIADownload(url: URL?,
                        progressHandler: ((_ progress: Double) -> Void)? = nil,

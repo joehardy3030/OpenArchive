@@ -11,19 +11,34 @@ final class LocalDatabase {
     let dbQueue: DatabaseQueue
 
     private init() {
-        // Resolve a writable URL inside Application Support
         let fm = FileManager.default
-        let supportURL = try! fm.url(for: .applicationSupportDirectory,
-                                     in: .userDomainMask,
-                                     appropriateFor: nil,
-                                     create: true)
-        let dbURL = supportURL.appendingPathComponent("breaze.sqlite")
+        do {
+            let supportURL = try fm.url(for: .applicationSupportDirectory,
+                                         in: .userDomainMask,
+                                         appropriateFor: nil,
+                                         create: true)
+            let dbURL = supportURL.appendingPathComponent("breaze.sqlite")
 
-        // Create/open the database
-        dbQueue = try! DatabaseQueue(path: dbURL.path)
+            // On first launch, copy the seed database from the app bundle.
+            if !fm.fileExists(atPath: dbURL.path) {
+                if let seedURL = Bundle.main.url(forResource: "seed", withExtension: "sqlite") {
+                    try fm.copyItem(at: seedURL, to: dbURL)
+                    print("Database seeded successfully.")
+                } else {
+                    print("Seed database not found in bundle.")
+                }
+            }
+            
+            // Create/open the database
+            dbQueue = try DatabaseQueue(path: dbURL.path)
+            
+            // Run migrations (idempotent)
+            try migrator.migrate(dbQueue)
 
-        // Run migrations (idempotent)
-        try! migrator.migrate(dbQueue)
+        } catch {
+            // All errors here are fatal.
+            fatalError("Database initialization failed: \(error)")
+        }
     }
 
     /// Database schema migrator.

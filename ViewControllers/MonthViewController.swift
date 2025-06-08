@@ -3,7 +3,7 @@
 //  Breaze
 //
 //  Created by Joseph Hardy on 7/2/20.
-//  Copyright © 2020 Carquinez. All rights reserved.
+//  Copyright 2020 Carquinez. All rights reserved.
 //
 
 import UIKit
@@ -17,6 +17,7 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
     var year: Int?
     var sbdOnly = true // look at observer pattern
     var selectedCollection: String = "GratefulDead"
+    var allShowsForYear: [ShowMetadata]? // To store all shows fetched for the year
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -93,6 +94,7 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
         archiveAPI.getIARequestItemsDecodable(url: url) { (response: ShowMetadatas?) -> Void in
             DispatchQueue.main.async {
                 if let showMetadatas = response?.items {
+                    self.allShowsForYear = showMetadatas // Store all fetched shows
                     // Reset the monthCount dictionary for new data
                     self.monthCount = [:]
                     // Grouping by month
@@ -157,8 +159,8 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let indexPath = monthTableView.indexPathForSelectedRow else { return }
         if let target = segue.destination as? ShowsListViewController {
-            let m = indexPath.row + 1
-            target.month = m
+            let selectedMonthInt = indexPath.row + 1
+            target.month = selectedMonthInt
             if let y = self.year {
                 target.year = y
             }
@@ -169,7 +171,20 @@ class MonthViewController: ArchiveSuperViewController, UITableViewDataSource, UI
                 target.sbdOnly = true
             }
             target.selectedCollection = selectedCollection
-            target.resetMonth()
+            
+            // Filter and pass the shows for the selected month
+            if let allShows = self.allShowsForYear {
+                let showsForSelectedMonth = allShows.filter { show -> Bool in
+                    guard let showMonthString = show.month?.split(separator: "-").last,
+                          let showMonthInt = Int(showMonthString) else {
+                        return false
+                    }
+                    return showMonthInt == selectedMonthInt
+                }
+                target.showsForMonth = showsForSelectedMonth // We'll add this property to ShowsListViewController
+            }
+            
+            // target.resetMonth() // Removed: ShowsListViewController will call this in its viewWillAppear
         }
     }
 

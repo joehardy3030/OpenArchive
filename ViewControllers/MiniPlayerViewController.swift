@@ -180,6 +180,7 @@ class MiniPlayerViewController: UIViewController {
         //print("MiniPlayer: setupSong() called.") // DIAGNOSTIC
         setupSongDetails()
         setupNotificationView()
+        setupQueueTimerCallback() // Ensure timer callback is set for MiniPlayer
     }
     
 

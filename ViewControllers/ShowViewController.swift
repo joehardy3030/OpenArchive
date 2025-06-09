@@ -397,6 +397,10 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         
+        // The following block for #keyPath(AVQueuePlayer.currentItem.status) is removed.
+        // ShowViewController should rely on notifications (.playbackStarted, .playbackPaused, .playbackFailed)
+        // to react to player state changes. MiniPlayerViewController is responsible for detailed currentItem.status KVO.
+        /*
         if keyPath == #keyPath(AVQueuePlayer.currentItem.status) {
             let status: AVPlayerItem.Status
             if let statusNumber = change?[.newKey] as? NSNumber {
@@ -419,6 +423,12 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 print("nope")
             }
         }
+        */
+        
+        // If ShowViewController were observing other keyPaths, their handling would go here.
+        // For example:
+        // if keyPath == #keyPath(AVQueuePlayer.rate) { ... }
+
     }
 
     
@@ -645,22 +655,40 @@ private extension ShowViewController {
     func setupPlayerObserver() {
         guard let queue = player.playerQueue else { return }
         if !isObservingPlayer {
-            queue.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
-            isObservingPlayer = true
-            print("Added player observer in ShowViewController")
+            // Do not observe currentItem.status directly in ShowViewController.
+            // queue.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
+            
+            // If this was the only observation, isObservingPlayer might not need to be set to true.
+            // However, if other KVO paths are (or will be) observed by ShowViewController on the player,
+            // then isObservingPlayer should be managed accordingly.
+            // For now, we comment out the line that would set it true for this specific observation.
+            // If no other KVO is intended, 'isObservingPlayer = true' and the print statement could be removed or adjusted.
+            // isObservingPlayer = true 
+            // print("Added player observer in ShowViewController") // Original print statement
+            print("Player observer setup in ShowViewController (currentItem.status observation is disabled)")
         }
     }
     
     func removePlayerObserver() {
+        // Check isObservingPlayer flag before attempting to remove.
+        // The actual removal for "currentItem.status" is commented out as it's no longer added.
         if isObservingPlayer, let queue = player.playerQueue {
+            /*
             do {
-                queue.removeObserver(self, forKeyPath: "currentItem.status")
-                isObservingPlayer = false
-                print("Removed player observer in ShowViewController")
+                // queue.removeObserver(self, forKeyPath: "currentItem.status")
+                // print("Removed player observer in ShowViewController") // Original print statement
             } catch {
-                print("Failed to remove observer: \(error)")
-                isObservingPlayer = false
+                // print("Failed to remove observer: \(error)")
             }
+            */
+            // If this was the only observation, isObservingPlayer should be set to false here.
+            // For now, we preserve the original structure for isObservingPlayer management.
+            // isObservingPlayer = false // This would typically be set after successfully removing all observers.
+            print("Player observer removal in ShowViewController (currentItem.status observation was disabled)")
         }
+        // It's crucial to ensure isObservingPlayer is correctly managed if other KVO paths are active.
+        // If 'currentItem.status' was the *only* thing being observed, then 'isObservingPlayer' should be reliably set to false here.
+        // For safety, if no other observers are managed by this flag, explicitly set it false:
+        // if <no_other_observers_are_active> { isObservingPlayer = false }
     }
 }

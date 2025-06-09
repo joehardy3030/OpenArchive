@@ -244,13 +244,15 @@ class ArchiveAPI: NSObject {
      
     
     func getIARequestMetadataDecodable(url: String, completion: @escaping (ShowMetadataModel?, Error?) -> Void) {
+        let startTime = Date()
         AF.request(url).responseDecodable(of: ShowMetadataModel.self) { response in
-            print(response)
+            let duration = Date().timeIntervalSince(startTime)
+            print("[ArchiveAPI] getIARequestMetadataDecodable for URL: \(url) took \(String(format: "%.3f", duration)) seconds.")
             switch response.result {
             case .success(let showMetadataModel):
                 completion(showMetadataModel, nil)
             case .failure(let error):
-                print(error)
+                print("[ArchiveAPI] Error for URL \(url): \(error.localizedDescription)")
                 completion(nil, error)
             }
         }
@@ -258,12 +260,15 @@ class ArchiveAPI: NSObject {
 
     
     func getIARequestItemsDecodable(url: String, completion: @escaping (ShowMetadatas?, Error?) -> Void) {
+        let startTime = Date()
         AF.request(url).responseDecodable(of: ShowMetadatas.self) { response in
+            let duration = Date().timeIntervalSince(startTime)
+            print("[ArchiveAPI] getIARequestItemsDecodable for URL: \(url) took \(String(format: "%.3f", duration)) seconds.")
             switch response.result {
             case .success(let showMetadatas):
                 completion(showMetadatas, nil)
             case .failure(let error):
-                print(error)
+                print("[ArchiveAPI] Error for URL \(url): \(error.localizedDescription)")
                 completion(nil, error)
             }
         }
@@ -272,7 +277,6 @@ class ArchiveAPI: NSObject {
     @discardableResult
     func getIARequestTotal(url: String, completion: @escaping (YearsTotalResponse?) -> Void) -> DataRequest {
         let request = AF.request(url).responseDecodable(of: YearsTotalResponse.self) { response in
-            // print(response) // Remove or comment out for cleaner logs
             switch response.result {
             case .success(let yearsTotalResponse):
                 completion(yearsTotalResponse)
@@ -294,8 +298,7 @@ class ArchiveAPI: NSObject {
             return
         }
         self.sessionManager.download(downloadURL, to: destination)
-            .downloadProgress { (progressObject) in // Renamed 'progress' to 'progressObject' to avoid conflict
-                // print("Progress: \(progressObject.fractionCompleted)") // Original print statement
+            .downloadProgress { (progressObject) in
                 progressHandler?(progressObject.fractionCompleted)
             }
             .response { response in
@@ -306,7 +309,6 @@ class ArchiveAPI: NSObject {
                     print("Download finished. File saved to: \(fileURL.path) for URL: \(downloadURL)")
                     completion(fileURL, nil)
                 } else {
-                    // This case should ideally not be reached if Alamofire's API guarantees either fileURL or error.
                     print("Download completed with no file URL and no error for URL: \(downloadURL)")
                     completion(nil, NSError(domain: "ArchiveAPIError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Download finished with an unknown state."]))
                 }

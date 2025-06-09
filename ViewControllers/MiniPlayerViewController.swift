@@ -159,6 +159,8 @@ class MiniPlayerViewController: UIViewController {
         songLabel.text = ""
         showLabel.text = ""
         venueLabel.text = ""
+        currentTimeLabel.text = "0:00"
+        totalTimeLabel.text = "0:00"
     }
         
     func setupShow () {

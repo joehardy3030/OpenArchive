@@ -157,7 +157,12 @@ class ShowsListTableViewCell: UITableViewCell {
             venueLabel.text = show.venue
         }
         transfererLabel.text = show.transferer
-        sourceLabel.text = show.source
+        //sourceLabel.text = show.source
+        if let sourceArray = show.source, !sourceArray.isEmpty {
+              sourceLabel.text = sourceArray.joined(separator: "; ")
+          } else {
+              sourceLabel.text = "" // Or your preferred placeholder for source
+          }
         
         if let rating = show.avg_rating, let reviews = show.num_reviews {
             starsLabel.text = "\(rating) stars \(reviews) ratings"
@@ -185,7 +190,12 @@ class ShowsListTableViewCell: UITableViewCell {
             venueLabel.text = metadata.venue
         }
         transfererLabel.text = metadata.transferer
-        sourceLabel.text = metadata.source
+        //sourceLabel.text = metadata.source
+        if let sourceArray = metadata.source, !sourceArray.isEmpty {
+              sourceLabel.text = sourceArray.joined(separator: "; ")
+          } else {
+              sourceLabel.text = "" // Or your preferred placeholder for source
+          }
         
         if let rating = metadata.avg_rating, let reviews = metadata.num_reviews {
             starsLabel.text = "\(rating) stars \(reviews) ratings"

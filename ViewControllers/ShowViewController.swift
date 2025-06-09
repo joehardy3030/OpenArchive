@@ -40,12 +40,22 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     var broadcastIsPlaying: Bool = false
     var mp3index: Int = 0
     var isObservingPlayer = false  // Track observer state
+    var activityIndicator: UIActivityIndicatorView!
     
     override func viewDidLoad() {
         
         super.viewDidLoad()
         self.showTableView.delegate = self
         self.showTableView.dataSource = self
+
+        // Setup activity indicator
+        activityIndicator = UIActivityIndicatorView(style: .large)
+        activityIndicator.center = self.view.center // Or self.showTableView.center if preferred
+        activityIndicator.hidesWhenStopped = true
+        view.addSubview(activityIndicator)
+        // Ensure it's above the table view if table view might obscure it
+        // view.bringSubviewToFront(activityIndicator) 
+
         notificationCenter.addObserver(self, selector: #selector(playbackDidStart), name: .playbackStarted, object: nil)
         notificationCenter.addObserver(self, selector: #selector(playbackDidPause), name: .playbackPaused, object: self.player.playerQueue)
         notificationCenter.addObserver(self, selector: #selector(playbackDidFail), name: .playbackFailed, object: nil)
@@ -145,33 +155,67 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     
     func getIAGetShow() {
         
-        guard let id = self.showMetadata?.identifier else { return }
+        guard let id = self.showMetadata?.identifier else { 
+            // Optionally, handle the case where identifier is nil early, e.g., show an alert or log.
+            // For now, just returning as per original logic if id is nil.
+            return 
+        }
         let url = archiveAPI.metadataURL(identifier: id)
-        archiveAPI.getIARequestMetadataDecodable(url: url) {
-            (response: ShowMetadataModel) -> Void in
-            self.showMetadataModel = response
-            if let ar = self.showMetadata?.avg_rating, let nr = self.showMetadata?.num_reviews {
-                self.showMetadataModel?.metadata?.avg_rating = ar
-                self.showMetadataModel?.metadata?.num_reviews = nr
-            }
-            if let files = self.showMetadataModel?.files {
-                print(files)
-                var mp3s = [ShowMP3]()
-                for f in files {
-                    if (f.format?.contains("MP3"))! {
-                        let showMP3 = ShowMP3(identifier: self.showMetadata?.identifier, name: f.name, title: f.title, track: f.track)
-                        mp3s.append(showMP3)
+
+        // Start activity indicator and hide table view
+        activityIndicator.startAnimating()
+        showTableView.isHidden = true
+
+        archiveAPI.getIARequestMetadataDecodable(url: url) { (response: ShowMetadataModel?, error: Error?) -> Void in
+            DispatchQueue.main.async{
+                // Stop activity indicator and show table view
+                self.activityIndicator.stopAnimating()
+                self.showTableView.isHidden = false
+
+                if let error = error {
+                    self.showErrorAlert(title: "Error Fetching Show", message: error.localizedDescription)
+                    self.showMetadataModel = nil // Clear data on error
+                    self.showTableView.reloadData()
+                    return
+                }
+
+                guard let showData = response else {
+                    self.showErrorAlert(title: "No Data", message: "Show information could not be loaded.")
+                    self.showMetadataModel = nil // Clear data
+                    self.showTableView.reloadData()
+                    return
+                }
+
+                self.showMetadataModel = showData
+                // Restore avg_rating and num_reviews from the initial shallow showMetadata if available
+                // This is because the full metadata API might not always return them or they might differ.
+                if let initialShowMeta = self.showMetadata {
+                    if let ar = initialShowMeta.avg_rating, let nr = initialShowMeta.num_reviews {
+                        self.showMetadataModel?.metadata?.avg_rating = ar
+                        self.showMetadataModel?.metadata?.num_reviews = nr
                     }
                 }
-                self.showMetadataModel?.mp3Array = mp3s
-            }
-            DispatchQueue.main.async{
+                
+                if let files = self.showMetadataModel?.files {
+                    var mp3s = [ShowMP3]()
+                    for f in files {
+                        if (f.format?.contains("MP3")) ?? false { 
+                            let showMP3 = ShowMP3(identifier: self.showMetadata?.identifier, 
+                                                  name: f.name, 
+                                                  title: f.title, 
+                                                  track: f.track)
+                            mp3s.append(showMP3)
+                        }
+                    }
+                    self.showMetadataModel?.mp3Array = mp3s.sorted { (item1, item2) -> Bool in // Sort tracks
+                        guard let track1 = item1.track, let track2 = item2.track else { return false }
+                        return track1.localizedStandardCompare(track2) == .orderedAscending
+                    }
+                }
                 self.showTableView.reloadData()
             }
-            
         }
     }
-    
     
     ///Download manager class
     func downloadShow() {
@@ -392,15 +436,20 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 cell.textLabel?.text = m.venue
             case 2:
                 cell.textLabel?.text = m.coverage
-            // case 3 was m.source, now moved
-            case 3: // Was case 4
+            case 3:
+                if let sourceArray = m.source, !sourceArray.isEmpty {
+                    cell.textLabel?.text = sourceArray.joined(separator: "; ")
+                } else {
+                    cell.textLabel?.text = "N/A" // Or your preferred placeholder for source
+                }
+            case 4:
                 cell.textLabel?.text = m.transferer
             default:
                 break
             }
         case 1: // Taper's Notes Section (only reached if isDescriptionExpanded is true)
             if indexPath.row == 0 { // Source row
-                cell.textLabel?.text = m.source
+                cell.textLabel?.text = m.source?.joined(separator: "; ")
             } else if indexPath.row == 1 { // Description row
                 if let description = m.description {
                     let data = description.data(using: .utf8)!
@@ -536,6 +585,14 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         // Only allow selection for track rows
         return indexPath.section == 2 ? indexPath : nil
+    }
+    
+    func showErrorAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        DispatchQueue.main.async {
+            self.present(alert, animated: true, completion: nil)
+        }
     }
 }
 

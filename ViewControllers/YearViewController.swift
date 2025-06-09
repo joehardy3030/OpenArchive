@@ -3,18 +3,21 @@
 //  Breaze
 //
 //  Created by Joe Hardy on 6/24/20.
-//  Copyright © 2020 Carquinez. All rights reserved.
+//  Copyright 2020 Carquinez. All rights reserved.
 //
 
 import UIKit
 import AVKit
 import AVFoundation
+import Alamofire
 
 class YearViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var yearTableView: UITableView!
     var selectedCollection: String?
     var years: [Int] = []
+    var yearTotals: [Int:Int?] = [:]
+    private var activeRequests: [Int: DataRequest] = [:] // Dictionary with year as key
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,19 +31,57 @@ class YearViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         case "PhilLeshandFriends":
             self.years += 1996...2025
         case "GooseBand":
-            self.years += 2015...2025
+            self.years += 2017...2025
         case "Furthur":
-            self.years += 1996...2015
+            self.years += 2009...2014
         case "TheOtherOnes":
-            self.years += 1996...2015
+            self.years += 1998...2002
         case "DeadAndCompany":
             self.years += 2015...2025
         case "Radiators":
             self.years += 1983...2025
         case "Phish":
-            self.years += 1983...2025
+            self.years += 1990...2025
         default:
             self.years += 1965...1995
+        }
+        //getYearTotals()
+    }
+    
+    func getYearTotal(year: Int, sbdOnly: Bool, reload: Bool) {
+        guard let selectedCollection = self.selectedCollection else { return }
+        let url = archiveAPI.yearRangeTotalURL(year: year, sbdOnly: sbdOnly, collection: selectedCollection)
+        print(url)
+        
+        // Cancel any existing request for this year
+        activeRequests[year]?.cancel()
+        
+        let request = archiveAPI.getIARequestTotal(url: url) { [weak self] (response: YearsTotalResponse?) -> Void in
+            guard let self = self else { return }
+            
+            // Remove this request from our tracking dictionary when complete
+            self.activeRequests.removeValue(forKey: year)
+            
+            DispatchQueue.main.async {
+                if let yearTotal = response?.totalCount {
+                    print("Year total \(yearTotal)")
+                    self.yearTotals[year] = yearTotal
+                    //print(self.yearTotals[year])
+                    self.yearTableView.reloadData()
+                } else {
+                    print("No data available.")
+                }
+            }
+        }
+        
+        // Store the request in our dictionary using year as key
+        activeRequests[year] = request
+    }
+    
+    func getYearTotals() {
+        for (index, y) in self.years.enumerated() {
+            let isLast = index == self.years.count - 1
+            getYearTotal(year: y, sbdOnly: false, reload: isLast)
         }
     }
     
@@ -51,12 +92,32 @@ class YearViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = yearTableView.dequeueReusableCell(withIdentifier: "ArchiveCell", for: indexPath) as! ArchiveCell
         let year = self.years[indexPath.row]
-        cell.titleLabel?.text = String(year)
+        if let yearTotal = self.yearTotals[year] {
+            if let y = yearTotal {
+                cell.titleLabel?.text = String("\(year) (\(y) tapes)")
+            }
+            
+        }
+        else {
+            cell.titleLabel?.text = String(year)
+        }
         cell.titleLabel?.applyTextStyle(AppFonts.bodyPrimary)
         return cell
     }
     
+    private func cancelAllRequests() {
+        print("Cancelling \(activeRequests.count) active requests")
+        // Cancel each request
+        for request in activeRequests.values {
+            request.cancel()
+        }
+        // Clear the dictionary
+        activeRequests.removeAll()
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        cancelAllRequests()
+        
         guard let indexPath = yearTableView.indexPathForSelectedRow else { return }
         if let target = segue.destination as? MonthViewController {
             let year = self.years[indexPath.row]
@@ -64,5 +125,9 @@ class YearViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             target.selectedCollection = selectedCollection ?? "GratefulDead"
         }
     }
-}
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        cancelAllRequests()
+    }
+}

@@ -105,7 +105,7 @@ class ArchiveAPI: NSObject {
         print(url)
         return url
     }
-
+    
     func dateRangeYearURL(year: Int, sbdOnly: Bool, collection: String = "GratefulDead") -> String {
 
         let firstDayMonth = "01-01"
@@ -136,6 +136,42 @@ class ArchiveAPI: NSObject {
         url += toString
         url += String(year) + "-" + lastDayMonth
         url += "%5D"
+        print(url)
+        return url
+    }
+
+    func yearRangeTotalURL(year: Int, sbdOnly: Bool, collection: String = "GratefulDead") -> String {
+
+        let firstDayMonth = "01-01"
+        let lastDayMonth = "12-31"
+        let andString = "%20AND%20"
+        let dateString = "date%3A%5B"
+        let toString = "%20TO%20"
+        var url = baseURLString
+                
+        url += "advancedsearch.php?"
+        //url += "fields=identifier,date,venue,transferer,source,coverage,stars,avg_rating,num_reviews,collection,creator&"
+        
+        // Check if this is a creator-based search
+        if CollectionConfig.isCreatorBased(collection: collection) {
+                url += "q=creator%3A%22" + collection + "%22"
+        } else {
+            // Original collection-based search
+            if sbdOnly {
+                url += "q=collection%3A%28" + collection + "%20AND%20stream_only%29"
+            } else {
+                url += "q=collection%3A%28" + collection + "%29"
+            }
+        }
+        
+        url += andString
+        url += dateString
+        url += String(year) + "-" + firstDayMonth
+        url += toString
+        url += String(year) + "-" + lastDayMonth
+        url += "%5D"
+        url += "&output=json&rows=0"
+        
         print(url)
         return url
     }
@@ -207,31 +243,50 @@ class ArchiveAPI: NSObject {
     }
      
     
-    func getIARequestMetadataDecodable(url: String, completion: @escaping (ShowMetadataModel) -> Void) {
+    func getIARequestMetadataDecodable(url: String, completion: @escaping (ShowMetadataModel?, Error?) -> Void) {
+        let startTime = Date()
         AF.request(url).responseDecodable(of: ShowMetadataModel.self) { response in
-            print(response)
+            let duration = Date().timeIntervalSince(startTime)
+            print("[ArchiveAPI] getIARequestMetadataDecodable for URL: \(url) took \(String(format: "%.3f", duration)) seconds.")
             switch response.result {
             case .success(let showMetadataModel):
-                completion(showMetadataModel)
+                completion(showMetadataModel, nil)
             case .failure(let error):
-                print(error)
+                print("[ArchiveAPI] Error for URL \(url): \(error.localizedDescription)")
+                completion(nil, error)
             }
         }
     }
 
     
-    func getIARequestItemsDecodable(url: String, completion: @escaping (ShowMetadatas?) -> Void) {
+    func getIARequestItemsDecodable(url: String, completion: @escaping (ShowMetadatas?, Error?) -> Void) {
+        let startTime = Date()
         AF.request(url).responseDecodable(of: ShowMetadatas.self) { response in
+            let duration = Date().timeIntervalSince(startTime)
+            print("[ArchiveAPI] getIARequestItemsDecodable for URL: \(url) took \(String(format: "%.3f", duration)) seconds.")
             switch response.result {
             case .success(let showMetadatas):
-                completion(showMetadatas)
+                completion(showMetadatas, nil)
             case .failure(let error):
-                print(error)
-                completion(nil)
+                print("[ArchiveAPI] Error for URL \(url): \(error.localizedDescription)")
+                completion(nil, error)
             }
         }
     }
-     
+    
+    @discardableResult
+    func getIARequestTotal(url: String, completion: @escaping (YearsTotalResponse?) -> Void) -> DataRequest {
+        let request = AF.request(url).responseDecodable(of: YearsTotalResponse.self) { response in
+            switch response.result {
+            case .success(let yearsTotalResponse):
+                completion(yearsTotalResponse)
+            case .failure(let error):
+                print("Error: \(error.localizedDescription)")
+                completion(nil)
+            }
+        }
+        return request
+    }
     
     func getIADownload(url: URL?,
                        progressHandler: ((_ progress: Double) -> Void)? = nil,
@@ -243,8 +298,7 @@ class ArchiveAPI: NSObject {
             return
         }
         self.sessionManager.download(downloadURL, to: destination)
-            .downloadProgress { (progressObject) in // Renamed 'progress' to 'progressObject' to avoid conflict
-                // print("Progress: \(progressObject.fractionCompleted)") // Original print statement
+            .downloadProgress { (progressObject) in
                 progressHandler?(progressObject.fractionCompleted)
             }
             .response { response in
@@ -255,7 +309,6 @@ class ArchiveAPI: NSObject {
                     print("Download finished. File saved to: \(fileURL.path) for URL: \(downloadURL)")
                     completion(fileURL, nil)
                 } else {
-                    // This case should ideally not be reached if Alamofire's API guarantees either fileURL or error.
                     print("Download completed with no file URL and no error for URL: \(downloadURL)")
                     completion(nil, NSError(domain: "ArchiveAPIError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Download finished with an unknown state."]))
                 }

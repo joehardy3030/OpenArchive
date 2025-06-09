@@ -3,7 +3,7 @@
 //  Breaze
 //
 //  Created by Joseph Hardy on 7/4/20.
-//  Copyright © 2020 Carquinez. All rights reserved.
+//  Copyright 2020 Carquinez. All rights reserved.
 //
 
 import UIKit
@@ -20,6 +20,7 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
     var showMetadatas: [ShowMetadata]?
     var sbdOnly = true
     var selectedCollection: String = "GratefulDead"
+    var showsForMonth: [ShowMetadata]? // To receive data from MonthViewController
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,6 +32,10 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
         sbdToggle.selectedSegmentIndex = getSbdToggle()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        resetMonth() // Load data when the view is about to appear
+    }
     
     func getIASearchTerm(searchTermsModel: SearchTermsModel) {
         let url = archiveAPI.searchTermURL(searchTerm: searchTermsModel.searchTerm ?? "",
@@ -41,12 +46,25 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
                                            sbdOnly: searchTermsModel.sbdOnly,
                                            collection: searchTermsModel.collection)
         archiveAPI.getIARequestItemsDecodable(url: url) {
-            (response: ShowMetadatas?) -> Void in
+            (response: ShowMetadatas?, error: Error?) -> Void in
              DispatchQueue.main.async{
-                if let r = response {
-                    self.showMetadatas = r.items?.sorted(by: { $0.date! < $1.date! })
+                if let error = error {
+                    // Basic error handling: print and clear data
+                    print("Error fetching search results: \(error.localizedDescription)")
+                    self.showMetadatas = nil
                     self.showListTableView.reloadData()
+                    // TODO: Implement user-facing error alert
+                    return
                 }
+
+                if let r = response, let items = r.items, !items.isEmpty {
+                    self.showMetadatas = items.sorted(by: { $0.date! < $1.date! })
+                } else {
+                    // No error, but no items or nil response
+                    self.showMetadatas = nil
+                    // TODO: Optionally inform user that no results were found
+                }
+                self.showListTableView.reloadData()
             }
         }
     }
@@ -57,16 +75,26 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
         let url = archiveAPI.dateRangeURL(year: year, month: month, sbdOnly: sbdOnly, collection: selectedCollection)
 
         archiveAPI.getIARequestItemsDecodable(url: url) {
-            (response: ShowMetadatas?) -> Void in
+            (response: ShowMetadatas?, error: Error?) -> Void in
             
              DispatchQueue.main.async{
-                if let r = response {
-                    //self.showMetadatas = r.items
-                    //if let s = self.showMetadatas {
-                    self.showMetadatas = r.items?.sorted(by: { $0.date! < $1.date! })
-                    //}
+                if let error = error {
+                    // Basic error handling: print and clear data
+                    print("Error fetching date range results: \(error.localizedDescription)")
+                    self.showMetadatas = nil
                     self.showListTableView.reloadData()
+                    // TODO: Implement user-facing error alert
+                    return
                 }
+
+                if let r = response, let items = r.items, !items.isEmpty {
+                    self.showMetadatas = items.sorted(by: { $0.date! < $1.date! })
+                } else {
+                    // No error, but no items or nil response
+                    self.showMetadatas = nil
+                    // TODO: Optionally inform user that no results were found
+                }
+                self.showListTableView.reloadData()
             }
         }
     }
@@ -94,7 +122,15 @@ class ShowsListViewController: ArchiveSuperViewController, UITableViewDelegate, 
      
 
     func resetMonth() {
-        self.getIADateRange()
+        // If showsForMonth is available, use it directly
+        if let providedShows = showsForMonth, !providedShows.isEmpty {
+            self.showMetadatas = providedShows.sorted(by: { $0.date! < $1.date! })
+            self.showListTableView.reloadData()
+        }
+        // Otherwise, fetch from API
+        else {
+            self.getIADateRange()
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

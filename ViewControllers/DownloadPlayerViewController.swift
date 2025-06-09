@@ -63,7 +63,12 @@ class DownloadPlayerViewController: ArchiveSuperViewController, UITableViewDeleg
         case 3:
             cell.textLabel?.text = m.description
         case 4:
-            cell.textLabel?.text = m.source
+            //cell.textLabel?.text = m.source
+            if let sourceArray = m.source, !sourceArray.isEmpty {
+                  cell.textLabel?.text = sourceArray.joined(separator: "; ")
+              } else {
+                  cell.textLabel?.text = "N/A" // Or your preferred placeholder for source
+              }
         case 5:
             cell.textLabel?.text = m.transferer
         default:

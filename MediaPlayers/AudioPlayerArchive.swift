@@ -250,7 +250,7 @@ class AudioPlayerArchive: NSObject {
         //print(playerQueue)
     }
 
-    func loadQueuePlayer(tracks: [ShowMP3]) {
+    func loadQueuePlayer(tracks: [ShowMP3], startingAt index: Int = 0) {
         cleanQueue()
         isStreaming = false  // Set flag for local playback
         for track in tracks {
@@ -259,15 +259,26 @@ class AudioPlayerArchive: NSObject {
                 prepareToPlay(url: url)
             }
         }
+        guard !playerItems.isEmpty else { return }
         playerQueue = AVQueuePlayer(items: playerItems)
+        
+        // Advance to the desired starting index
+        if index > 0 && index < playerItems.count {
+            print("AudioPlayerArchive: Advancing to index \(index) in loadQueuePlayer")
+            for _ in 0..<index {
+                playerQueue?.advanceToNextItem() // This should be synchronous enough
+            }
+        }
         //print(playerQueue)
     }
     
-    func loadStreamingQueuePlayer() {
-        print("streaming")
+    func loadStreamingQueuePlayer(startingAt index: Int = 0) {
+        print("streaming, starting at index \(index)")
         cleanQueue()
         isStreaming = true  // Set flag for streaming playback
         guard let tracks = self.showMetadataModel?.mp3Array, let id = self.showMetadataModel?.metadata?.identifier else { return }
+        guard !tracks.isEmpty else { return }
+
         for track in tracks {
             guard let n = track.name else { return }
             
@@ -275,7 +286,16 @@ class AudioPlayerArchive: NSObject {
                 prepareToPlay(url: url)
             }
         }
+        guard !playerItems.isEmpty else { return }
         playerQueue = AVQueuePlayer(items: playerItems)
+
+        // Advance to the desired starting index
+        if index > 0 && index < playerItems.count {
+            print("AudioPlayerArchive: Advancing to index \(index) in loadStreamingQueuePlayer")
+            for _ in 0..<index {
+                playerQueue?.advanceToNextItem() // This should be synchronous enough
+            }
+        }
         //print(playerQueue)
     }
 

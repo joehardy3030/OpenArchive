@@ -132,10 +132,10 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         self.player.play()
     }
 
-    func loadStreamingShow() {
+    func loadStreamingShow(startingAt index: Int = 0) {
         // This operation should probably belong to the player class
         if let _ = self.player.showMetadataModel?.mp3Array {
-            player.loadStreamingQueuePlayer()
+            player.loadStreamingQueuePlayer(startingAt: index)
         }
         if let mp = self.getMiniPlayerController() {
             mp.setupShow()
@@ -143,10 +143,10 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         setupPlayerObserver()
     }
     
-    func loadDownloadedShow() {
+    func loadDownloadedShow(startingAt index: Int = 0) {
         // This operation should probably belong to the player class
         if let mp3s = self.player.showMetadataModel?.mp3Array {
-            player.loadQueuePlayer(tracks: mp3s)
+            player.loadQueuePlayer(tracks: mp3s, startingAt: index)
         }
         if let mp = self.getMiniPlayerController() {
             mp.setupShow()
@@ -594,7 +594,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         // Check if we're streaming or playing downloaded files
         if playButtonLabel.currentTitle == "Stream" {
             // For streaming, just play the show starting from selected track
-            streamShow()
+            streamShow(startingAt: songIndex)
             for _ in 0..<songIndex {
                 player.playerQueue?.advanceToNextItem()
             }
@@ -604,7 +604,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 do {
                     let _ = try trackURL.checkResourceIsReachable()
                     print("playShow")
-                    playShow()
+                    playShow(startingAt: songIndex)
                     for _ in 0..<songIndex {
                         player.playerQueue?.advanceToNextItem()
                     }

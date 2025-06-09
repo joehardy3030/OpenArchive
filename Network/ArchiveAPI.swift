@@ -243,14 +243,15 @@ class ArchiveAPI: NSObject {
     }
      
     
-    func getIARequestMetadataDecodable(url: String, completion: @escaping (ShowMetadataModel) -> Void) {
+    func getIARequestMetadataDecodable(url: String, completion: @escaping (ShowMetadataModel?, Error?) -> Void) {
         AF.request(url).responseDecodable(of: ShowMetadataModel.self) { response in
             print(response)
             switch response.result {
             case .success(let showMetadataModel):
-                completion(showMetadataModel)
+                completion(showMetadataModel, nil)
             case .failure(let error):
                 print(error)
+                completion(nil, error)
             }
         }
     }

@@ -13,18 +13,29 @@ import MediaPlayer
 class AudioPlayerArchive: NSObject {
     static let shared = AudioPlayerArchive()
     var playerQueue: AVQueuePlayer? {
-        didSet {
-            // Remove observer from old queue
-            if let oldQueue = oldValue {
-                oldQueue.removeObserver(self, forKeyPath: "currentItem.status", context: &playerQueueKVOContext)
+        willSet {
+            // Remove observers from the old queue and its current item
+            if let oldQueue = playerQueue {
+                oldQueue.removeObserver(self, forKeyPath: #keyPath(AVQueuePlayer.currentItem), context: &playerQueueKVOContext)
+                if let oldItem = oldQueue.currentItem {
+                    // It's generally safe to attempt removal; KVO doesn't crash if observer isn't present for the given context.
+                    oldItem.removeObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), context: &playerItemKVOContext)
+                }
             }
-            // Add observer to new queue
+        }
+        didSet {
+            // Add observers to the new queue and its current item
             if let newQueue = playerQueue {
-                newQueue.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: &playerQueueKVOContext)
+                // Remove .initial to prevent re-entrant call that causes simultaneous access crash.
+                newQueue.addObserver(self, forKeyPath: #keyPath(AVQueuePlayer.currentItem), options: [.old, .new], context: &playerQueueKVOContext)
+                if let newItem = newQueue.currentItem {
+                    setupStatusObserver(for: newItem)
+                }
             }
         }
     }
     private var playerQueueKVOContext = 0
+    private var playerItemKVOContext = 1 // New context for item status
     var playerItems = [AVPlayerItem]()
     var nowPlayingInfo = [String : Any]()
     let commandCenter = MPRemoteCommandCenter.shared()
@@ -61,8 +72,12 @@ class AudioPlayerArchive: NSObject {
             commandCenter.nextTrackCommand.removeTarget(target)
         }
 
+        // Remove KVO observers
         if let queue = playerQueue {
-            queue.removeObserver(self, forKeyPath: "currentItem.status", context: &playerQueueKVOContext)
+            queue.removeObserver(self, forKeyPath: #keyPath(AVQueuePlayer.currentItem), context: &playerQueueKVOContext)
+            if let item = queue.currentItem {
+                item.removeObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), context: &playerItemKVOContext)
+            }
         }
     }
 
@@ -329,6 +344,14 @@ class AudioPlayerArchive: NSObject {
             pq.insert(item, after: nil)
         }
     }
+    
+    private func setupStatusObserver(for item: AVPlayerItem) {
+        item.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: [.new], context: &playerItemKVOContext)
+        // Manually check initial state since we are not using .initial to avoid re-entrant calls
+        if item.status == .readyToPlay && (self.playerQueue?.rate ?? 0.0 > 0.0 || self.state == .playing) {
+            self.state = .playing
+        }
+    }
 }
 
 extension AudioPlayerArchive {
@@ -428,45 +451,42 @@ extension Notification.Name {
 
 extension AudioPlayerArchive {
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        guard context == &playerQueueKVOContext else {
+        if context == &playerQueueKVOContext {
+            if keyPath == #keyPath(AVQueuePlayer.currentItem) {
+                if let oldItem = change?[.oldKey] as? AVPlayerItem {
+                    oldItem.removeObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), context: &playerItemKVOContext)
+                }
+                if let newItem = change?[.newKey] as? AVPlayerItem {
+                    // Use helper to add observer and check initial state. Do not use .initial in addObserver.
+                    setupStatusObserver(for: newItem)
+                }
+            }
+        } else if context == &playerItemKVOContext {
+            if keyPath == #keyPath(AVPlayerItem.status) {
+                guard let playerItem = object as? AVPlayerItem else { return }
+                let status = playerItem.status
+                switch status {
+                case .readyToPlay:
+                    if self.playerQueue?.rate ?? 0.0 > 0.0 || self.state == .playing {
+                        self.state = .playing
+                    }
+                case .failed:
+                    if let item = self.playerQueue?.currentItem, let error = item.error {
+                        var userInfo: [String: Any] = ["error": error]
+                        if let urlAsset = item.asset as? AVURLAsset {
+                            userInfo["failedURL"] = urlAsset.url
+                        }
+                        notificationCenter.post(name: .playbackFailed, object: self.playerQueue, userInfo: userInfo)
+                    }
+                    self.state = .idle
+                case .unknown:
+                    break
+                @unknown default:
+                    break
+                }
+            }
+        } else {
             super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-            return
-        }
-        
-        if keyPath == #keyPath(AVQueuePlayer.currentItem.status) {
-            let status: AVPlayerItem.Status
-            if let statusNumber = change?[.newKey] as? NSNumber,
-               let newStatus = AVPlayerItem.Status(rawValue: statusNumber.intValue) {
-                status = newStatus
-            } else {
-                status = .unknown
-            }
-            
-            switch status {
-            case .readyToPlay:
-                print("AudioPlayerArchive KVO: currentItem.status is readyToPlay.")
-                if self.playerQueue?.rate ?? 0.0 > 0.0 {
-                    print("AudioPlayerArchive KVO: Player rate > 0, setting state to .playing")
-                    self.state = .playing
-                } else {
-                    print("AudioPlayerArchive KVO: Player rate is 0, item ready but paused.")
-                }
-            case .failed:
-                print("AudioPlayerArchive KVO: currentItem.status is .failed")
-                if let item = self.playerQueue?.currentItem, let error = item.error {
-                    print("Error: \(error.localizedDescription)")
-                    notificationCenter.post(name: .playbackFailed, object: self.playerQueue, userInfo: ["error": error])
-                }
-                self.state = .idle
-            case .unknown:
-                print("AudioPlayerArchive KVO: currentItem.status is .unknown")
-            @unknown default:
-                break
-            }
         }
     }
-}
-
-extension AudioPlayerArchive {
-
 }

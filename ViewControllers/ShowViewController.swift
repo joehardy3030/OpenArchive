@@ -633,9 +633,29 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
 @available(iOS 13.0, *)
 private extension ShowViewController {
     @objc private func playbackDidStart(_ notification: Notification) {
-        print("Item playing")
+        // This method is called when playback starts
+        // Update UI or perform actions as needed
+        
+        // Example: Update play/pause button state if you have one directly in ShowViewController
+        // updatePlayPauseButtonState() 
+
+        // Example: If you had a per-cell streaming spinner that needs clearing:
+        // if let trackName = player.getCurrentTrackName(), pendingStreamTrackName == trackName {
+        //    pendingStreamTrackName = nil
+        //    if let index = showMetadataModel?.mp3Array.firstIndex(where: { $0.name == trackName }) {
+        //        let indexPath = IndexPath(row: index, section: 1) // Assuming songs are in section 1
+        //        showTableView.reloadRows(at: [indexPath], with: .none)
+        //    }
+        // }
+        
+        // If MiniPlayer is not visible, this might be a good place to ensure it's shown
+        // or that its state is consistent.
+        
+        // For highlighting the current track:
+        selectCurrentTrack() 
+        print("ShowViewController: Playback Did Start notification received. Called selectCurrentTrack().") // DIAGNOSTIC
     }
-    
+
     @objc private func playbackDidPause(_ notification: Notification) {
         print("Item paused")
     }

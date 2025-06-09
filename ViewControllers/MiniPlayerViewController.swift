@@ -112,12 +112,13 @@ class MiniPlayerViewController: UIViewController {
             // The current item of the player queue has changed.
             // This happens when a track finishes or when advanceToNextItem() is called.
             DispatchQueue.main.async {
-                // It's important to remove observer from the old item and add to the new one for 'status'
+                // It's important to remove observer from the old item and add to the new one for 'status',
+                // using the correct KVO context.
                 if let oldItem = change?[.oldKey] as? AVPlayerItem {
-                    oldItem.removeObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), context: nil)
+                    oldItem.removeObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), context: &self.miniPlayerKVOContext)
                 }
                 if let newItem = change?[.newKey] as? AVPlayerItem {
-                    newItem.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: [.old, .new], context: nil)
+                    newItem.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: [.old, .new], context: &self.miniPlayerKVOContext)
                 }
                // print("MiniPlayer KVO: Calling self.setupSong()") // DIAGNOSTIC
                 self.setupSong() // This will update UI and Now Playing info

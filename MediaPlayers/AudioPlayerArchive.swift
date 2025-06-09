@@ -3,7 +3,7 @@
 //  Breaze
 //
 //  Created by Joseph Hardy on 7/6/20.
-//  Copyright © 2020 Carquinez. All rights reserved.
+//  Copyright 2020 Carquinez. All rights reserved.
 //
 
 import UIKit
@@ -415,25 +415,32 @@ extension AudioPlayerArchive {
         
         if keyPath == #keyPath(AVQueuePlayer.currentItem.status) {
             let status: AVPlayerItem.Status
-            if let statusNumber = change?[.newKey] as? NSNumber {
-                status = AVPlayerItem.Status(rawValue: statusNumber.intValue)!
+            if let statusNumber = change?[.newKey] as? NSNumber,
+               let newStatus = AVPlayerItem.Status(rawValue: statusNumber.intValue) {
+                status = newStatus
             } else {
                 status = .unknown
             }
-
-            // Switch over status value
+            
             switch status {
             case .readyToPlay:
-                // Potentially do something here if needed, but VCs also observe this.
-                print("Player ready to play")
+                print("AudioPlayerArchive KVO: currentItem.status is readyToPlay.")
+                if self.playerQueue?.rate ?? 0.0 > 0.0 {
+                    print("AudioPlayerArchive KVO: Player rate > 0, setting state to .playing")
+                    self.state = .playing
+                } else {
+                    print("AudioPlayerArchive KVO: Player rate is 0, item ready but paused.")
+                }
             case .failed:
-                print("Player item failed")
-                self.pause()
-                let error = self.playerQueue?.currentItem?.error
-                notificationCenter.post(name: .playbackFailed, object: self, userInfo: ["error": error as Any, "isStreaming": self.isStreaming])
+                print("AudioPlayerArchive KVO: currentItem.status is .failed")
+                if let item = self.playerQueue?.currentItem, let error = item.error {
+                    print("Error: \(error.localizedDescription)")
+                    notificationCenter.post(name: .playbackFailed, object: self.playerQueue, userInfo: ["error": error])
+                }
+                self.state = .idle
             case .unknown:
-                print("Player item status unknown")
-            default:
+                print("AudioPlayerArchive KVO: currentItem.status is .unknown")
+            @unknown default:
                 break
             }
         }

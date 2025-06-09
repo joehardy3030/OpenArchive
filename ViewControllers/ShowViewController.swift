@@ -41,6 +41,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     var mp3index: Int = 0
     var isObservingPlayer = false  // Track observer state
     var activityIndicator: UIActivityIndicatorView!
+    var pendingDownloadRequests: Set<String> = [] // To track pending download requests
     
     override func viewDidLoad() {
         
@@ -295,50 +296,69 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     
     ///Download manager class
     func downloadSong(showMP3: ShowMP3?, completion: @escaping (URL?) -> Void) {
-        guard let s = showMP3 else { return }
-        let url = archiveAPI.downloadURL(identifier: self.showMetadata?.identifier, filename: s.name)
-        guard let localURL = utils.trackURLfromName(name: s.name) else { return }
+        guard let s = showMP3, let trackName = s.name else { 
+            completion(nil) // Ensure completion is called even if we bail early
+            return 
+        }
+        let url = archiveAPI.downloadURL(identifier: self.showMetadata?.identifier, filename: trackName)
+        guard let localURL = utils.trackURLfromName(name: trackName) else { 
+            completion(nil)
+            return 
+        }
+
         if fileManager.fileExists(atPath: localURL.path) {
             completion(localURL)
         }
         else {
+            // --- Mark as pending and update UI --- START
+            self.pendingDownloadRequests.insert(trackName)
+            if let mp3s = self.showMetadataModel?.mp3Array {
+                if let index = mp3s.firstIndex(where: { $0.name == trackName }) {
+                    DispatchQueue.main.async {
+                        let indexPath = IndexPath(row: index, section: 2) // Section 2 is tracks
+                        if self.showTableView.indexPathsForVisibleRows?.contains(indexPath) ?? false {
+                            self.showTableView.reloadRows(at: [indexPath], with: .none)
+                        }
+                    }
+                }
+            }
+            // --- Mark as pending and update UI --- END
+            
             archiveAPI.getIADownload(url: url, progressHandler: { (progress) in
+                // --- Clear pending state once progress starts --- START
+                if self.pendingDownloadRequests.contains(trackName) {
+                    self.pendingDownloadRequests.remove(trackName)
+                }
+                // --- Clear pending state once progress starts --- END
+
                 self.downloadProgress[localURL] = progress
                 
                 // Find the index of this track and reload just that row for performance
                 if let mp3s = self.showMetadataModel?.mp3Array {
-                    for (index, mp3) in mp3s.enumerated() {
-                        if mp3.name == s.name {
-                            DispatchQueue.main.async {
-                                let indexPath = IndexPath(row: index, section: 2) // Section 2 is tracks
+                    if let index = mp3s.firstIndex(where: { $0.name == trackName }) {
+                        DispatchQueue.main.async {
+                            let indexPath = IndexPath(row: index, section: 2) // Section 2 is tracks
+                            if self.showTableView.indexPathsForVisibleRows?.contains(indexPath) ?? false {
                                 self.showTableView.reloadRows(at: [indexPath], with: .none)
                             }
-                            break
                         }
                     }
                 }
             }) { 
                 (localFileURL: URL?, error: Error?) -> Void in
+                // --- Clear pending state on completion --- START
+                self.pendingDownloadRequests.remove(trackName)
+                // --- Clear pending state on completion --- END
+
                 if let error = error {
-                    print("Error downloading \(s.name ?? "unknown file"): \(error.localizedDescription)")
-                    // Remove from progress dictionary on error
-                    self.downloadProgress.removeValue(forKey: localURL)
+                    print("Error downloading \(trackName): \(error.localizedDescription)")
+                    // Optionally, update UI to show error for this specific file
                     return
                 }
-                
-                // On successful download, update UI
-                if let mp3s = self.showMetadataModel?.mp3Array {
-                    for (index, mp3) in mp3s.enumerated() {
-                        if mp3.name == s.name {
-                            DispatchQueue.main.async {
-                                let indexPath = IndexPath(row: index, section: 2)
-                                self.showTableView.reloadRows(at: [indexPath], with: .automatic)
-                            }
-                            break
-                        }
-                    }
+                DispatchQueue.main.async{
+                    self.setDownloadComplete(destination: localFileURL, name: trackName)
+                    self.showTableView.reloadData()
                 }
-                
                 completion(localFileURL)
             }
         }
@@ -480,9 +500,13 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 cell.textLabel?.applyTextStyle(AppFonts.bodyPrimary)
                 
                 // Determine download state and configure cell
-                if let localURL = utils.trackURLfromName(name: track.name) {
+                if let trackName = track.name, let localURL = utils.trackURLfromName(name: trackName) {
+                    // Check if request is pending
+                    if self.pendingDownloadRequests.contains(trackName) {
+                        cell.setDownloadState(.pendingRequest)
+                    }
                     // Check if already downloaded
-                    if track.destination != nil || FileManager.default.fileExists(atPath: localURL.path) {
+                    else if track.destination != nil || FileManager.default.fileExists(atPath: localURL.path) {
                         cell.setDownloadState(.downloaded)
                     } 
                     // Check if currently downloading

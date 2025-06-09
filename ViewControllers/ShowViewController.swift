@@ -118,17 +118,17 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         }
     }
 
-    func streamShow() {
+    func streamShow(startingAt index: Int = 0) {
         self.player.pause()
         self.player.showMetadataModel = showMetadataModel // Change showMetadata to showModel for consistency
-        self.loadStreamingShow()  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
+        self.loadStreamingShow(startingAt: index)  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
         self.player.play()
     }
 
-    func playShow() {
+    func playShow(startingAt index: Int = 0) {
         self.player.pause()
         self.player.showMetadataModel = showMetadataModel // Change showMetadata to showModel for consistency
-        self.loadDownloadedShow()  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
+        self.loadDownloadedShow(startingAt: index)  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
         self.player.play()
     }
 
@@ -595,9 +595,6 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         if playButtonLabel.currentTitle == "Stream" {
             // For streaming, just play the show starting from selected track
             streamShow(startingAt: songIndex)
-            for _ in 0..<songIndex {
-                player.playerQueue?.advanceToNextItem()
-            }
         } else {
             // For downloaded files, check if track exists locally
             if let trackURL = utils.trackURLfromName(name: showMetadataModel?.mp3Array?[songIndex].name) {
@@ -605,9 +602,6 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                     let _ = try trackURL.checkResourceIsReachable()
                     print("playShow")
                     playShow(startingAt: songIndex)
-                    for _ in 0..<songIndex {
-                        player.playerQueue?.advanceToNextItem()
-                    }
                 }
                 catch {
                     print("Track not available")

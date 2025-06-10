@@ -195,6 +195,8 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        NotificationCenter.default.post(name: .modalPlayerDidDismiss, object: nil)
+        print("ModalPlayerViewController: viewWillDisappear - Posting modalPlayerDidDismiss notification.") // DIAGNOSTIC
         notificationCenter.removeObserver(self)
         removePlayerObserver()
     }
@@ -590,7 +592,9 @@ private extension ModalPlayerViewController {
         if #available(iOS 13.0, *) {
             playButton.setBackgroundImage(UIImage(systemName: "pause.circle.fill"), for: .normal)
         }
-        print("Item playing -- modal player")
+        // Refresh all UI elements and re-establish timer for the new track
+        setupShow()
+        print("Item playing -- modal player, UI refreshed via setupShow()")
     }
     
     @objc private func playbackDidPause(_ notification: Notification) {

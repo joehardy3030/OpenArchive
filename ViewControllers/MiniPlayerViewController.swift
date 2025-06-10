@@ -9,6 +9,10 @@
 import UIKit
 import MediaPlayer
 
+extension Notification.Name {
+    static let modalPlayerDidDismiss = Notification.Name("modalPlayerDidDismiss")
+}
+
 class MiniPlayerViewController: UIViewController {
 
     @IBOutlet weak var playButton: UIButton!
@@ -45,7 +49,9 @@ class MiniPlayerViewController: UIViewController {
     var nowPlayingInfo = [String : Any]()
     var player: AudioPlayerArchive?
     var currentTrackIndex = 0
-    var isObservingPlayer = false
+    private var isObservingPlayer = false
+    private weak var observedQueue: AVQueuePlayer?
+    private var miniPlayerKVOContext = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,12 +60,25 @@ class MiniPlayerViewController: UIViewController {
         navigationController?.delegate = self
         notificationCenter.addObserver(self, selector: #selector(playbackDidStart), name: .playbackStarted, object: nil)
         notificationCenter.addObserver(self, selector: #selector(playbackDidPause), name: .playbackPaused, object: self.player?.playerQueue)
+        notificationCenter.addObserver(self, selector: #selector(modalPlayerDidDismiss), name: .modalPlayerDidDismiss, object: nil)
         initialDefaults()
     }
         
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        removePlayerObserver()
+        // DO NOT remove observer here, the MiniPlayer is persistent.
+        // It should only be removed in deinit or when the queue is replaced.
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // When the MiniPlayer is about to appear, ensure its timer callback is active.
+        // This is important if ModalPlayerViewController was active and set its own timer.
+        print("MiniPlayer: viewWillAppear - calling setupQueueTimerCallback()") // DIAGNOSTIC
+        setupQueueTimerCallback()
+        
+        // Optionally, if a full refresh of song details is also needed upon appearing:
+        // self.setupSong() 
     }
 
     @IBAction func playButton(_ sender: Any) {
@@ -73,12 +92,18 @@ class MiniPlayerViewController: UIViewController {
     }
 
     @objc func handleSliderChange() {
+        print("MiniPlayer timerSliderHander")
         self.player?.timerSliderHandler(timerValue: timeSlider.value)
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         
-        if keyPath == #keyPath(AVPlayerItem.status) {
+        guard context == &miniPlayerKVOContext else {
+            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+            return
+        }
+        
+        if keyPath == #keyPath(AVQueuePlayer.currentItem.status) {
             let status: AVPlayerItem.Status
             if let statusNumber = change?[.newKey] as? NSNumber {
                 status = AVPlayerItem.Status(rawValue: statusNumber.intValue)!
@@ -90,11 +115,11 @@ class MiniPlayerViewController: UIViewController {
             switch status {
             case .readyToPlay:
                 setupSong()
-                print("ready to play")
+                print("MiniPlayer ready to play")
             case .failed:
-                print("failed ")
+                print("MiniPlayer failed ")
             case .unknown:
-                print("unknown status")
+                print("MiniPlayer unknown status")
             default:
                 print("nope")
             }
@@ -104,12 +129,15 @@ class MiniPlayerViewController: UIViewController {
             // The current item of the player queue has changed.
             // This happens when a track finishes or when advanceToNextItem() is called.
             DispatchQueue.main.async {
-                // It's important to remove observer from the old item and add to the new one for 'status'
+                // It's important to remove observer from the old item and add to the new one for 'status',
+                // using the correct KVO context.
                 if let oldItem = change?[.oldKey] as? AVPlayerItem {
-                    oldItem.removeObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), context: nil)
+                    oldItem.removeObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), context: &self.miniPlayerKVOContext)
+                    print("MiniPlayer oldItem change")
                 }
                 if let newItem = change?[.newKey] as? AVPlayerItem {
-                    newItem.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: [.old, .new], context: nil)
+                    newItem.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: [.old, .new], context: &self.miniPlayerKVOContext)
+                    print("MiniPlayer newItem change")
                 }
                // print("MiniPlayer KVO: Calling self.setupSong()") // DIAGNOSTIC
                 self.setupSong() // This will update UI and Now Playing info
@@ -120,12 +148,15 @@ class MiniPlayerViewController: UIViewController {
     }
     
     func setupQueueTimerCallback() {
+        print("MiniPlayer SetupQueueTimerCallback")
         player?.setupTimer()  { (seconds: Double?) -> Void in
              self.timerCallback(seconds: seconds)
         }
+
     }
         
     func setupSlider() {
+        print("MiniPlayer Slider")
         if let ts = timeSlider {
             ts.value = 0.0
             ts.addTarget(self, action: #selector(handleSliderChange), for: .valueChanged)
@@ -164,20 +195,22 @@ class MiniPlayerViewController: UIViewController {
     }
         
     func setupShow () {
-        print("MiniPlayer: setupShow() called.") // DIAGNOSTIC
-        guard player?.playerQueue != nil else { 
-            print("MiniPlayer setupShow: Player queue is nil. Cannot setup show.") // DIAGNOSTIC
-            return 
+        setupPlayerObserver()
+        if player?.playerQueue == nil {
+             initialDefaults()
+             return
         }
-        setupPlayerObserver() // Centralize observer setup here
         setupQueueTimerCallback()
+        //self.player?.setupTimer()  { (seconds: Double?) -> Void in
+        //     self.timerCallback(seconds: seconds)
+        //}
         setupSlider()
         setupSong()
         playPause()
     }
 
     func setupSong() {
-        //print("MiniPlayer: setupSong() called.") // DIAGNOSTIC
+        print("MiniPlayer: setupSong() called.") // DIAGNOSTIC
         setupSongDetails()
         setupNotificationView()
         setupQueueTimerCallback() // Ensure timer callback is set for MiniPlayer
@@ -269,34 +302,29 @@ class MiniPlayerViewController: UIViewController {
         removePlayerObserver()
     }
 
-    // Add methods to manage the KVO observer
     func setupPlayerObserver() {
-        // Always remove existing observers before adding new ones to prevent duplicates
-        // especially if this method could be called multiple times.
-        removePlayerObserver() // Ensure clean state
-
-        guard let playerQueue = player?.playerQueue else { 
-            print("MiniPlayer setupPlayerObserver: Player queue not available.") // DIAGNOSTIC
-            return 
+        if let queue = observedQueue {
+            queue.removeObserver(self, forKeyPath: "currentItem.status", context: &miniPlayerKVOContext)
+            self.observedQueue = nil
+            isObservingPlayer = false
+            print("MiniPlayer: Removed old observer.")
         }
-        
-        print("MiniPlayer setupPlayerObserver: Adding observers to playerQueue.") // DIAGNOSTIC
-        // Observe currentItem status
-        playerQueue.currentItem?.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: [.old, .new], context: nil)
-        // Observe currentItem itself to detect track changes
-        playerQueue.addObserver(self, forKeyPath: #keyPath(AVQueuePlayer.currentItem), options: [.old, .new], context: nil)
+
+        guard let newQueue = player?.playerQueue else { return }
+
+        newQueue.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: &miniPlayerKVOContext)
         isObservingPlayer = true
+        self.observedQueue = newQueue
+        print("MiniPlayer: Added new observer.")
     }
 
     func removePlayerObserver() {
-        guard let playerQueue = player?.playerQueue, isObservingPlayer else { return }
-        
-        print("MiniPlayer removePlayerObserver: Removing observers.") // DIAGNOSTIC
-        // Use try-catch for safety, though isObservingPlayer should guard this.
-        // Removing observer from a nil currentItem is safe with '?'.
-        playerQueue.currentItem?.removeObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), context: nil)
-        playerQueue.removeObserver(self, forKeyPath: #keyPath(AVQueuePlayer.currentItem), context: nil)
-        isObservingPlayer = false
+        if let queue = observedQueue {
+            queue.removeObserver(self, forKeyPath: "currentItem.status", context: &miniPlayerKVOContext)
+            isObservingPlayer = false
+            self.observedQueue = nil
+            print("MiniPlayer: Removed observer in deinit.")
+        }
     }
 }
 
@@ -322,4 +350,10 @@ private extension MiniPlayerViewController {
             playButton.setBackgroundImage(UIImage(systemName: "play"), for: .normal)
         }
     }
+    
+    @objc private func modalPlayerDidDismiss(_ notification: Notification) {
+        print("MiniPlayer: ModalPlayer dismissed. Reclaiming timer callback.")
+        setupQueueTimerCallback()
+    }
+
 }

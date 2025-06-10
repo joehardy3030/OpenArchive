@@ -3,7 +3,7 @@
 //  Breaze
 //
 //  Created by Joseph Hardy on 7/6/20.
-//  Copyright © 2020 Carquinez. All rights reserved.
+//  Copyright 2020 Carquinez. All rights reserved.
 //
 
 import UIKit
@@ -13,18 +13,29 @@ import MediaPlayer
 class AudioPlayerArchive: NSObject {
     static let shared = AudioPlayerArchive()
     var playerQueue: AVQueuePlayer? {
-        didSet {
-            // Remove observer from old queue
-            if let oldQueue = oldValue {
-                oldQueue.removeObserver(self, forKeyPath: "currentItem.status", context: &playerQueueKVOContext)
+        willSet {
+            // Remove observers from the old queue and its current item
+            if let oldQueue = playerQueue {
+                oldQueue.removeObserver(self, forKeyPath: #keyPath(AVQueuePlayer.currentItem), context: &playerQueueKVOContext)
+                if let oldItem = oldQueue.currentItem {
+                    // It's generally safe to attempt removal; KVO doesn't crash if observer isn't present for the given context.
+                    oldItem.removeObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), context: &playerItemKVOContext)
+                }
             }
-            // Add observer to new queue
+        }
+        didSet {
+            // Add observers to the new queue and its current item
             if let newQueue = playerQueue {
-                newQueue.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: &playerQueueKVOContext)
+                // Remove .initial to prevent re-entrant call that causes simultaneous access crash.
+                newQueue.addObserver(self, forKeyPath: #keyPath(AVQueuePlayer.currentItem), options: [.old, .new], context: &playerQueueKVOContext)
+                if let newItem = newQueue.currentItem {
+                    setupStatusObserver(for: newItem)
+                }
             }
         }
     }
     private var playerQueueKVOContext = 0
+    private var playerItemKVOContext = 1 // New context for item status
     var playerItems = [AVPlayerItem]()
     var nowPlayingInfo = [String : Any]()
     let commandCenter = MPRemoteCommandCenter.shared()
@@ -61,8 +72,12 @@ class AudioPlayerArchive: NSObject {
             commandCenter.nextTrackCommand.removeTarget(target)
         }
 
+        // Remove KVO observers
         if let queue = playerQueue {
-            queue.removeObserver(self, forKeyPath: "currentItem.status", context: &playerQueueKVOContext)
+            queue.removeObserver(self, forKeyPath: #keyPath(AVQueuePlayer.currentItem), context: &playerQueueKVOContext)
+            if let item = queue.currentItem {
+                item.removeObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), context: &playerItemKVOContext)
+            }
         }
     }
 
@@ -250,7 +265,7 @@ class AudioPlayerArchive: NSObject {
         //print(playerQueue)
     }
 
-    func loadQueuePlayer(tracks: [ShowMP3]) {
+    func loadQueuePlayer(tracks: [ShowMP3], startingAt index: Int = 0) {
         cleanQueue()
         isStreaming = false  // Set flag for local playback
         for track in tracks {
@@ -259,15 +274,26 @@ class AudioPlayerArchive: NSObject {
                 prepareToPlay(url: url)
             }
         }
+        guard !playerItems.isEmpty else { return }
         playerQueue = AVQueuePlayer(items: playerItems)
+        
+        // Advance to the desired starting index
+        if index > 0 && index < playerItems.count {
+            print("AudioPlayerArchive: Advancing to index \(index) in loadQueuePlayer")
+            for _ in 0..<index {
+                playerQueue?.advanceToNextItem() // This should be synchronous enough
+            }
+        }
         //print(playerQueue)
     }
     
-    func loadStreamingQueuePlayer() {
-        print("streaming")
+    func loadStreamingQueuePlayer(startingAt index: Int = 0) {
+        print("streaming, starting at index \(index)")
         cleanQueue()
         isStreaming = true  // Set flag for streaming playback
         guard let tracks = self.showMetadataModel?.mp3Array, let id = self.showMetadataModel?.metadata?.identifier else { return }
+        guard !tracks.isEmpty else { return }
+
         for track in tracks {
             guard let n = track.name else { return }
             
@@ -275,7 +301,16 @@ class AudioPlayerArchive: NSObject {
                 prepareToPlay(url: url)
             }
         }
+        guard !playerItems.isEmpty else { return }
         playerQueue = AVQueuePlayer(items: playerItems)
+
+        // Advance to the desired starting index
+        if index > 0 && index < playerItems.count {
+            print("AudioPlayerArchive: Advancing to index \(index) in loadStreamingQueuePlayer")
+            for _ in 0..<index {
+                playerQueue?.advanceToNextItem() // This should be synchronous enough
+            }
+        }
         //print(playerQueue)
     }
 
@@ -307,6 +342,14 @@ class AudioPlayerArchive: NSObject {
         }
         for item in playerItems {
             pq.insert(item, after: nil)
+        }
+    }
+    
+    private func setupStatusObserver(for item: AVPlayerItem) {
+        item.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: [.new], context: &playerItemKVOContext)
+        // Manually check initial state since we are not using .initial to avoid re-entrant calls
+        if item.status == .readyToPlay && (self.playerQueue?.rate ?? 0.0 > 0.0 || self.state == .playing) {
+            self.state = .playing
         }
     }
 }
@@ -408,38 +451,42 @@ extension Notification.Name {
 
 extension AudioPlayerArchive {
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        guard context == &playerQueueKVOContext else {
+        if context == &playerQueueKVOContext {
+            if keyPath == #keyPath(AVQueuePlayer.currentItem) {
+                if let oldItem = change?[.oldKey] as? AVPlayerItem {
+                    oldItem.removeObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), context: &playerItemKVOContext)
+                }
+                if let newItem = change?[.newKey] as? AVPlayerItem {
+                    // Use helper to add observer and check initial state. Do not use .initial in addObserver.
+                    setupStatusObserver(for: newItem)
+                }
+            }
+        } else if context == &playerItemKVOContext {
+            if keyPath == #keyPath(AVPlayerItem.status) {
+                guard let playerItem = object as? AVPlayerItem else { return }
+                let status = playerItem.status
+                switch status {
+                case .readyToPlay:
+                    if self.playerQueue?.rate ?? 0.0 > 0.0 || self.state == .playing {
+                        self.state = .playing
+                    }
+                case .failed:
+                    if let item = self.playerQueue?.currentItem, let error = item.error {
+                        var userInfo: [String: Any] = ["error": error]
+                        if let urlAsset = item.asset as? AVURLAsset {
+                            userInfo["failedURL"] = urlAsset.url
+                        }
+                        notificationCenter.post(name: .playbackFailed, object: self.playerQueue, userInfo: userInfo)
+                    }
+                    self.state = .idle
+                case .unknown:
+                    break
+                @unknown default:
+                    break
+                }
+            }
+        } else {
             super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-            return
-        }
-        
-        if keyPath == #keyPath(AVQueuePlayer.currentItem.status) {
-            let status: AVPlayerItem.Status
-            if let statusNumber = change?[.newKey] as? NSNumber {
-                status = AVPlayerItem.Status(rawValue: statusNumber.intValue)!
-            } else {
-                status = .unknown
-            }
-
-            // Switch over status value
-            switch status {
-            case .readyToPlay:
-                // Potentially do something here if needed, but VCs also observe this.
-                print("Player ready to play")
-            case .failed:
-                print("Player item failed")
-                self.pause()
-                let error = self.playerQueue?.currentItem?.error
-                notificationCenter.post(name: .playbackFailed, object: self, userInfo: ["error": error as Any, "isStreaming": self.isStreaming])
-            case .unknown:
-                print("Player item status unknown")
-            default:
-                break
-            }
         }
     }
-}
-
-extension AudioPlayerArchive {
-
 }

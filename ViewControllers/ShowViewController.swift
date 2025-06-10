@@ -41,6 +41,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     var mp3index: Int = 0
     var isObservingPlayer = false  // Track observer state
     var activityIndicator: UIActivityIndicatorView!
+    var pendingDownloadRequests: Set<String> = [] // To track pending download requests
     
     override func viewDidLoad() {
         
@@ -117,24 +118,24 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         }
     }
 
-    func streamShow() {
+    func streamShow(startingAt index: Int = 0) {
         self.player.pause()
         self.player.showMetadataModel = showMetadataModel // Change showMetadata to showModel for consistency
-        self.loadStreamingShow()  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
+        self.loadStreamingShow(startingAt: index)  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
         self.player.play()
     }
 
-    func playShow() {
+    func playShow(startingAt index: Int = 0) {
         self.player.pause()
         self.player.showMetadataModel = showMetadataModel // Change showMetadata to showModel for consistency
-        self.loadDownloadedShow()  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
+        self.loadDownloadedShow(startingAt: index)  // Loads up showModel and puts it in the queue; viewDidLoad is called after segue, so need to do this here
         self.player.play()
     }
 
-    func loadStreamingShow() {
+    func loadStreamingShow(startingAt index: Int = 0) {
         // This operation should probably belong to the player class
         if let _ = self.player.showMetadataModel?.mp3Array {
-            player.loadStreamingQueuePlayer()
+            player.loadStreamingQueuePlayer(startingAt: index)
         }
         if let mp = self.getMiniPlayerController() {
             mp.setupShow()
@@ -142,10 +143,10 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         setupPlayerObserver()
     }
     
-    func loadDownloadedShow() {
+    func loadDownloadedShow(startingAt index: Int = 0) {
         // This operation should probably belong to the player class
         if let mp3s = self.player.showMetadataModel?.mp3Array {
-            player.loadQueuePlayer(tracks: mp3s)
+            player.loadQueuePlayer(tracks: mp3s, startingAt: index)
         }
         if let mp = self.getMiniPlayerController() {
             mp.setupShow()
@@ -295,50 +296,69 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     
     ///Download manager class
     func downloadSong(showMP3: ShowMP3?, completion: @escaping (URL?) -> Void) {
-        guard let s = showMP3 else { return }
-        let url = archiveAPI.downloadURL(identifier: self.showMetadata?.identifier, filename: s.name)
-        guard let localURL = utils.trackURLfromName(name: s.name) else { return }
+        guard let s = showMP3, let trackName = s.name else { 
+            completion(nil) // Ensure completion is called even if we bail early
+            return 
+        }
+        let url = archiveAPI.downloadURL(identifier: self.showMetadata?.identifier, filename: trackName)
+        guard let localURL = utils.trackURLfromName(name: trackName) else { 
+            completion(nil)
+            return 
+        }
+
         if fileManager.fileExists(atPath: localURL.path) {
             completion(localURL)
         }
         else {
+            // --- Mark as pending and update UI --- START
+            self.pendingDownloadRequests.insert(trackName)
+            if let mp3s = self.showMetadataModel?.mp3Array {
+                if let index = mp3s.firstIndex(where: { $0.name == trackName }) {
+                    DispatchQueue.main.async {
+                        let indexPath = IndexPath(row: index, section: 2) // Section 2 is tracks
+                        if self.showTableView.indexPathsForVisibleRows?.contains(indexPath) ?? false {
+                            self.showTableView.reloadRows(at: [indexPath], with: .none)
+                        }
+                    }
+                }
+            }
+            // --- Mark as pending and update UI --- END
+            
             archiveAPI.getIADownload(url: url, progressHandler: { (progress) in
+                // --- Clear pending state once progress starts --- START
+                if self.pendingDownloadRequests.contains(trackName) {
+                    self.pendingDownloadRequests.remove(trackName)
+                }
+                // --- Clear pending state once progress starts --- END
+
                 self.downloadProgress[localURL] = progress
                 
                 // Find the index of this track and reload just that row for performance
                 if let mp3s = self.showMetadataModel?.mp3Array {
-                    for (index, mp3) in mp3s.enumerated() {
-                        if mp3.name == s.name {
-                            DispatchQueue.main.async {
-                                let indexPath = IndexPath(row: index, section: 2) // Section 2 is tracks
+                    if let index = mp3s.firstIndex(where: { $0.name == trackName }) {
+                        DispatchQueue.main.async {
+                            let indexPath = IndexPath(row: index, section: 2) // Section 2 is tracks
+                            if self.showTableView.indexPathsForVisibleRows?.contains(indexPath) ?? false {
                                 self.showTableView.reloadRows(at: [indexPath], with: .none)
                             }
-                            break
                         }
                     }
                 }
             }) { 
                 (localFileURL: URL?, error: Error?) -> Void in
+                // --- Clear pending state on completion --- START
+                self.pendingDownloadRequests.remove(trackName)
+                // --- Clear pending state on completion --- END
+
                 if let error = error {
-                    print("Error downloading \(s.name ?? "unknown file"): \(error.localizedDescription)")
-                    // Remove from progress dictionary on error
-                    self.downloadProgress.removeValue(forKey: localURL)
+                    print("Error downloading \(trackName): \(error.localizedDescription)")
+                    // Optionally, update UI to show error for this specific file
                     return
                 }
-                
-                // On successful download, update UI
-                if let mp3s = self.showMetadataModel?.mp3Array {
-                    for (index, mp3) in mp3s.enumerated() {
-                        if mp3.name == s.name {
-                            DispatchQueue.main.async {
-                                let indexPath = IndexPath(row: index, section: 2)
-                                self.showTableView.reloadRows(at: [indexPath], with: .automatic)
-                            }
-                            break
-                        }
-                    }
+                DispatchQueue.main.async{
+                    self.setDownloadComplete(destination: localFileURL, name: trackName)
+                    self.showTableView.reloadData()
                 }
-                
                 completion(localFileURL)
             }
         }
@@ -377,6 +397,10 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         
+        // The following block for #keyPath(AVQueuePlayer.currentItem.status) is removed.
+        // ShowViewController should rely on notifications (.playbackStarted, .playbackPaused, .playbackFailed)
+        // to react to player state changes. MiniPlayerViewController is responsible for detailed currentItem.status KVO.
+        /*
         if keyPath == #keyPath(AVQueuePlayer.currentItem.status) {
             let status: AVPlayerItem.Status
             if let statusNumber = change?[.newKey] as? NSNumber {
@@ -399,6 +423,12 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 print("nope")
             }
         }
+        */
+        
+        // If ShowViewController were observing other keyPaths, their handling would go here.
+        // For example:
+        // if keyPath == #keyPath(AVQueuePlayer.rate) { ... }
+
     }
 
     
@@ -480,9 +510,13 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 cell.textLabel?.applyTextStyle(AppFonts.bodyPrimary)
                 
                 // Determine download state and configure cell
-                if let localURL = utils.trackURLfromName(name: track.name) {
+                if let trackName = track.name, let localURL = utils.trackURLfromName(name: trackName) {
+                    // Check if request is pending
+                    if self.pendingDownloadRequests.contains(trackName) {
+                        cell.setDownloadState(.pendingRequest)
+                    }
                     // Check if already downloaded
-                    if track.destination != nil || FileManager.default.fileExists(atPath: localURL.path) {
+                    else if track.destination != nil || FileManager.default.fileExists(atPath: localURL.path) {
                         cell.setDownloadState(.downloaded)
                     } 
                     // Check if currently downloading
@@ -560,20 +594,14 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         // Check if we're streaming or playing downloaded files
         if playButtonLabel.currentTitle == "Stream" {
             // For streaming, just play the show starting from selected track
-            streamShow()
-            for _ in 0..<songIndex {
-                player.playerQueue?.advanceToNextItem()
-            }
+            streamShow(startingAt: songIndex)
         } else {
             // For downloaded files, check if track exists locally
             if let trackURL = utils.trackURLfromName(name: showMetadataModel?.mp3Array?[songIndex].name) {
                 do {
                     let _ = try trackURL.checkResourceIsReachable()
                     print("playShow")
-                    playShow()
-                    for _ in 0..<songIndex {
-                        player.playerQueue?.advanceToNextItem()
-                    }
+                    playShow(startingAt: songIndex)
                 }
                 catch {
                     print("Track not available")
@@ -599,9 +627,29 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
 @available(iOS 13.0, *)
 private extension ShowViewController {
     @objc private func playbackDidStart(_ notification: Notification) {
-        print("Item playing")
+        // This method is called when playback starts
+        // Update UI or perform actions as needed
+        
+        // Example: Update play/pause button state if you have one directly in ShowViewController
+        // updatePlayPauseButtonState() 
+
+        // Example: If you had a per-cell streaming spinner that needs clearing:
+        // if let trackName = player.getCurrentTrackName(), pendingStreamTrackName == trackName {
+        //    pendingStreamTrackName = nil
+        //    if let index = showMetadataModel?.mp3Array.firstIndex(where: { $0.name == trackName }) {
+        //        let indexPath = IndexPath(row: index, section: 1) // Assuming songs are in section 1
+        //        showTableView.reloadRows(at: [indexPath], with: .none)
+        //    }
+        // }
+        
+        // If MiniPlayer is not visible, this might be a good place to ensure it's shown
+        // or that its state is consistent.
+        
+        // For highlighting the current track:
+        selectCurrentTrack() 
+        print("ShowViewController: Playback Did Start notification received. Called selectCurrentTrack().") // DIAGNOSTIC
     }
-    
+
     @objc private func playbackDidPause(_ notification: Notification) {
         print("Item paused")
     }
@@ -621,22 +669,40 @@ private extension ShowViewController {
     func setupPlayerObserver() {
         guard let queue = player.playerQueue else { return }
         if !isObservingPlayer {
-            queue.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
-            isObservingPlayer = true
-            print("Added player observer in ShowViewController")
+            // Do not observe currentItem.status directly in ShowViewController.
+            // queue.addObserver(self, forKeyPath: "currentItem.status", options: .new, context: nil)
+            
+            // If this was the only observation, isObservingPlayer might not need to be set to true.
+            // However, if other KVO paths are (or will be) observed by ShowViewController on the player,
+            // then isObservingPlayer should be managed accordingly.
+            // For now, we comment out the line that would set it true for this specific observation.
+            // If no other KVO is intended, 'isObservingPlayer = true' and the print statement could be removed or adjusted.
+            // isObservingPlayer = true 
+            // print("Added player observer in ShowViewController") // Original print statement
+            print("Player observer setup in ShowViewController (currentItem.status observation is disabled)")
         }
     }
     
     func removePlayerObserver() {
+        // Check isObservingPlayer flag before attempting to remove.
+        // The actual removal for "currentItem.status" is commented out as it's no longer added.
         if isObservingPlayer, let queue = player.playerQueue {
+            /*
             do {
-                queue.removeObserver(self, forKeyPath: "currentItem.status")
-                isObservingPlayer = false
-                print("Removed player observer in ShowViewController")
+                // queue.removeObserver(self, forKeyPath: "currentItem.status")
+                // print("Removed player observer in ShowViewController") // Original print statement
             } catch {
-                print("Failed to remove observer: \(error)")
-                isObservingPlayer = false
+                // print("Failed to remove observer: \(error)")
             }
+            */
+            // If this was the only observation, isObservingPlayer should be set to false here.
+            // For now, we preserve the original structure for isObservingPlayer management.
+            // isObservingPlayer = false // This would typically be set after successfully removing all observers.
+            print("Player observer removal in ShowViewController (currentItem.status observation was disabled)")
         }
+        // It's crucial to ensure isObservingPlayer is correctly managed if other KVO paths are active.
+        // If 'currentItem.status' was the *only* thing being observed, then 'isObservingPlayer' should be reliably set to false here.
+        // For safety, if no other observers are managed by this flag, explicitly set it false:
+        // if <no_other_observers_are_active> { isObservingPlayer = false }
     }
 }

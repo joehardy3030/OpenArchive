@@ -607,13 +607,16 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             // Set pending state and update UI
             if let trackName = showMetadataModel?.mp3Array?[songIndex].name {
                 pendingStreamTrackName = trackName
+                print("\(timestamp()) SVC didSelectRow: Cell reload requested for \(trackName)")
                 showTableView.reloadRows(at: [indexPath], with: .none)
             }
             // Dispatch the streaming setup to the next run loop cycle
             // to allow the UI to update and show the spinner immediately.
             DispatchQueue.main.async {
+                print("\(self.timestamp()) SVC didSelectRow: Dispatch block executing. Starting stream setup.")
                 self.streamShow(startingAt: songIndex)
             }
+            print("\(timestamp()) SVC didSelectRow: didSelectRowAt finished. UI update is now pending.")
         } else {
             // For downloaded files, check if track exists locally
             if let trackURL = utils.trackURLfromName(name: showMetadataModel?.mp3Array?[songIndex].name) {

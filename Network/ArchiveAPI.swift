@@ -245,9 +245,26 @@ class ArchiveAPI: NSObject {
     
     func getIARequestMetadataDecodable(url: String, completion: @escaping (ShowMetadataModel?, Error?) -> Void) {
         let startTime = Date()
+        print("[ArchiveAPI] Requesting metadata from URL: \(url) at \(timestamp())")
+
         AF.request(url).responseDecodable(of: ShowMetadataModel.self) { response in
             let duration = Date().timeIntervalSince(startTime)
+            
+            // Log detailed metrics
+            if let metrics = response.metrics {
+                print("[ArchiveAPI] Metrics for \(url):")
+                print("  - Total Duration: \(String(format: "%.3f", metrics.taskInterval.duration))s")
+                if let remoteAddress = metrics.remoteAddress {
+                    print("  - Remote Address: \(remoteAddress)")
+                }
+                print("  - Time to First Byte: \(String(format: "%.3f", metrics.redirectCount > 0 ? 0 : (metrics.taskInterval.start.distance(to: metrics.responseStartDate ?? Date()))))s")
+                print("  - Serialization Duration: \(String(format: "%.3f", response.serializationDuration))s")
+            } else {
+                print("[ArchiveAPI] No metrics available.")
+            }
+
             print("[ArchiveAPI] getIARequestMetadataDecodable for URL: \(url) took \(String(format: "%.3f", duration)) seconds.")
+            
             switch response.result {
             case .success(let showMetadataModel):
                 completion(showMetadataModel, nil)
@@ -313,6 +330,12 @@ class ArchiveAPI: NSObject {
                     completion(nil, NSError(domain: "ArchiveAPIError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Download finished with an unknown state."]))
                 }
             }
+    }
+    
+    private func timestamp() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm:ss.SSS"
+        return formatter.string(from: Date())
     }
 }
 

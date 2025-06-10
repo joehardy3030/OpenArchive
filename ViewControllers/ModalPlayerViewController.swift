@@ -195,6 +195,8 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        NotificationCenter.default.post(name: .modalPlayerDidDismiss, object: nil)
+        print("ModalPlayerViewController: viewWillDisappear - Posting modalPlayerDidDismiss notification.") // DIAGNOSTIC
         notificationCenter.removeObserver(self)
         removePlayerObserver()
     }

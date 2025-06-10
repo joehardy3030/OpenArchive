@@ -9,6 +9,10 @@
 import UIKit
 import MediaPlayer
 
+extension Notification.Name {
+    static let modalPlayerDidDismiss = Notification.Name("modalPlayerDidDismiss")
+}
+
 class MiniPlayerViewController: UIViewController {
 
     @IBOutlet weak var playButton: UIButton!
@@ -56,6 +60,7 @@ class MiniPlayerViewController: UIViewController {
         navigationController?.delegate = self
         notificationCenter.addObserver(self, selector: #selector(playbackDidStart), name: .playbackStarted, object: nil)
         notificationCenter.addObserver(self, selector: #selector(playbackDidPause), name: .playbackPaused, object: self.player?.playerQueue)
+        notificationCenter.addObserver(self, selector: #selector(modalPlayerDidDismiss), name: .modalPlayerDidDismiss, object: nil)
         initialDefaults()
     }
         
@@ -63,6 +68,17 @@ class MiniPlayerViewController: UIViewController {
         super.viewWillDisappear(animated)
         // DO NOT remove observer here, the MiniPlayer is persistent.
         // It should only be removed in deinit or when the queue is replaced.
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // When the MiniPlayer is about to appear, ensure its timer callback is active.
+        // This is important if ModalPlayerViewController was active and set its own timer.
+        print("MiniPlayer: viewWillAppear - calling setupQueueTimerCallback()") // DIAGNOSTIC
+        setupQueueTimerCallback()
+        
+        // Optionally, if a full refresh of song details is also needed upon appearing:
+        // self.setupSong() 
     }
 
     @IBAction func playButton(_ sender: Any) {
@@ -76,6 +92,7 @@ class MiniPlayerViewController: UIViewController {
     }
 
     @objc func handleSliderChange() {
+        print("MiniPlayer timerSliderHander")
         self.player?.timerSliderHandler(timerValue: timeSlider.value)
     }
     
@@ -135,6 +152,7 @@ class MiniPlayerViewController: UIViewController {
         player?.setupTimer()  { (seconds: Double?) -> Void in
              self.timerCallback(seconds: seconds)
         }
+
     }
         
     func setupSlider() {
@@ -183,13 +201,16 @@ class MiniPlayerViewController: UIViewController {
              return
         }
         setupQueueTimerCallback()
+        //self.player?.setupTimer()  { (seconds: Double?) -> Void in
+        //     self.timerCallback(seconds: seconds)
+        //}
         setupSlider()
         setupSong()
         playPause()
     }
 
     func setupSong() {
-        //print("MiniPlayer: setupSong() called.") // DIAGNOSTIC
+        print("MiniPlayer: setupSong() called.") // DIAGNOSTIC
         setupSongDetails()
         setupNotificationView()
         setupQueueTimerCallback() // Ensure timer callback is set for MiniPlayer
@@ -329,4 +350,10 @@ private extension MiniPlayerViewController {
             playButton.setBackgroundImage(UIImage(systemName: "play"), for: .normal)
         }
     }
+    
+    @objc private func modalPlayerDidDismiss(_ notification: Notification) {
+        print("MiniPlayer: ModalPlayer dismissed. Reclaiming timer callback.")
+        setupQueueTimerCallback()
+    }
+
 }

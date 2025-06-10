@@ -42,6 +42,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     var isObservingPlayer = false  // Track observer state
     var activityIndicator: UIActivityIndicatorView!
     var pendingDownloadRequests: Set<String> = [] // To track pending download requests
+    var pendingStreamTrackName: String? // To track pending stream requests
     
     override func viewDidLoad() {
         
@@ -389,7 +390,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     
     func selectCurrentTrack() {
         let index = player.getCurrentTrackIndex()
-        print("select current track \(index)")
+        print("\(timestamp()) select current track \(index)")
         let indexPath = IndexPath(item: index, section: 2)
         self.showTableView.selectRow(at: indexPath, animated: true, scrollPosition: UITableView.ScrollPosition.middle)
     }
@@ -510,21 +511,31 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 cell.textLabel?.applyTextStyle(AppFonts.bodyPrimary)
                 
                 // Determine download state and configure cell
-                if let trackName = track.name, let localURL = utils.trackURLfromName(name: trackName) {
-                    // Check if request is pending
-                    if self.pendingDownloadRequests.contains(trackName) {
-                        cell.setDownloadState(.pendingRequest)
+                if let trackName = track.name {
+                    // Check for pending stream first
+                    if pendingStreamTrackName == trackName {
+                        print("\(self.timestamp()) SVC cellForRowAt: Setting .pendingStream for \(trackName)") // ADDED LOG
+                        cell.setDownloadState(.pendingStream)
                     }
-                    // Check if already downloaded
-                    else if track.destination != nil || FileManager.default.fileExists(atPath: localURL.path) {
-                        cell.setDownloadState(.downloaded)
-                    } 
-                    // Check if currently downloading
-                    else if let progress = self.downloadProgress[localURL] {
-                        cell.setDownloadState(.downloading(progress: Float(progress)))
-                    } 
-                    // Not downloaded
-                    else {
+                    // Then check download states
+                    else if let localURL = utils.trackURLfromName(name: trackName) {
+                        // Check if request is pending
+                        if self.pendingDownloadRequests.contains(trackName) {
+                            cell.setDownloadState(.pendingRequest)
+                        }
+                        // Check if already downloaded
+                        else if track.destination != nil || FileManager.default.fileExists(atPath: localURL.path) {
+                            cell.setDownloadState(.downloaded)
+                        } 
+                        // Check if currently downloading
+                        else if let progress = self.downloadProgress[localURL] {
+                            cell.setDownloadState(.downloading(progress: Float(progress)))
+                        } 
+                        // Not downloaded
+                        else {
+                            cell.setDownloadState(.notDownloaded)
+                        }
+                    } else {
                         cell.setDownloadState(.notDownloaded)
                     }
                 } else {
@@ -593,8 +604,19 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         
         // Check if we're streaming or playing downloaded files
         if playButtonLabel.currentTitle == "Stream" {
-            // For streaming, just play the show starting from selected track
-            streamShow(startingAt: songIndex)
+            // Set pending state and update UI
+            if let trackName = showMetadataModel?.mp3Array?[songIndex].name {
+                pendingStreamTrackName = trackName
+                print("\(timestamp()) SVC didSelectRow: Cell reload requested for \(trackName)")
+                showTableView.reloadRows(at: [indexPath], with: .none)
+            }
+            // Dispatch the streaming setup to the next run loop cycle
+            // to allow the UI to update and show the spinner immediately.
+            DispatchQueue.main.async {
+                print("\(self.timestamp()) SVC didSelectRow: Dispatch block executing. Starting stream setup.")
+                self.streamShow(startingAt: songIndex)
+            }
+            print("\(timestamp()) SVC didSelectRow: didSelectRowAt finished. UI update is now pending.")
         } else {
             // For downloaded files, check if track exists locally
             if let trackURL = utils.trackURLfromName(name: showMetadataModel?.mp3Array?[songIndex].name) {
@@ -626,24 +648,27 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
 
 @available(iOS 13.0, *)
 private extension ShowViewController {
+    private func timestamp() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm:ss.SSS"
+        return formatter.string(from: Date())
+    }
+    
     @objc private func playbackDidStart(_ notification: Notification) {
-        // This method is called when playback starts
-        // Update UI or perform actions as needed
-        
-        // Example: Update play/pause button state if you have one directly in ShowViewController
-        // updatePlayPauseButtonState() 
+        print("\(self.timestamp()) SVC playbackDidStart: Notification received. Current pendingStreamTrackName: \(pendingStreamTrackName ?? "nil")") // ADDED LOG
+        if let currentItemAsset = player.playerQueue?.currentItem?.asset as? AVURLAsset {
+            print("\(self.timestamp()) SVC playbackDidStart: Current playing item in queue: \(currentItemAsset.url.lastPathComponent)") // ADDED LOG
+        }
 
-        // Example: If you had a per-cell streaming spinner that needs clearing:
-        // if let trackName = player.getCurrentTrackName(), pendingStreamTrackName == trackName {
-        //    pendingStreamTrackName = nil
-        //    if let index = showMetadataModel?.mp3Array.firstIndex(where: { $0.name == trackName }) {
-        //        let indexPath = IndexPath(row: index, section: 1) // Assuming songs are in section 1
-        //        showTableView.reloadRows(at: [indexPath], with: .none)
-        //    }
-        // }
-        
-        // If MiniPlayer is not visible, this might be a good place to ensure it's shown
-        // or that its state is consistent.
+        // Clear the pending stream indicator when playback starts.
+        if let trackName = pendingStreamTrackName,
+           let index = showMetadataModel?.mp3Array?.firstIndex(where: { $0.name == trackName }) {
+            pendingStreamTrackName = nil
+            let indexPath = IndexPath(row: index, section: 2)
+            if showTableView.indexPathsForVisibleRows?.contains(indexPath) ?? false {
+                showTableView.reloadRows(at: [indexPath], with: .none)
+            }
+        }
         
         // For highlighting the current track:
         selectCurrentTrack() 
@@ -655,6 +680,16 @@ private extension ShowViewController {
     }
     
     @objc private func playbackDidFail(_ notification: Notification) {
+        // Clear the pending stream indicator on failure.
+        if let trackName = pendingStreamTrackName,
+           let index = showMetadataModel?.mp3Array?.firstIndex(where: { $0.name == trackName }) {
+            pendingStreamTrackName = nil
+            let indexPath = IndexPath(row: index, section: 2)
+            if showTableView.indexPathsForVisibleRows?.contains(indexPath) ?? false {
+                showTableView.reloadRows(at: [indexPath], with: .none)
+            }
+        }
+
         if let error = notification.userInfo?["error"] as? Error {
             print("Playback failed with error: \(error.localizedDescription)")
         }

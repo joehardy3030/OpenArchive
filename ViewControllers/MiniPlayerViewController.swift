@@ -98,11 +98,11 @@ class MiniPlayerViewController: UIViewController {
             switch status {
             case .readyToPlay:
                 setupSong()
-                print("ready to play")
+                print("MiniPlayer ready to play")
             case .failed:
-                print("failed ")
+                print("MiniPlayer failed ")
             case .unknown:
-                print("unknown status")
+                print("MiniPlayer unknown status")
             default:
                 print("nope")
             }
@@ -116,9 +116,11 @@ class MiniPlayerViewController: UIViewController {
                 // using the correct KVO context.
                 if let oldItem = change?[.oldKey] as? AVPlayerItem {
                     oldItem.removeObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), context: &self.miniPlayerKVOContext)
+                    print("MiniPlayer oldItem change")
                 }
                 if let newItem = change?[.newKey] as? AVPlayerItem {
                     newItem.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: [.old, .new], context: &self.miniPlayerKVOContext)
+                    print("MiniPlayer newItem change")
                 }
                // print("MiniPlayer KVO: Calling self.setupSong()") // DIAGNOSTIC
                 self.setupSong() // This will update UI and Now Playing info
@@ -129,12 +131,14 @@ class MiniPlayerViewController: UIViewController {
     }
     
     func setupQueueTimerCallback() {
+        print("MiniPlayer SetupQueueTimerCallback")
         player?.setupTimer()  { (seconds: Double?) -> Void in
              self.timerCallback(seconds: seconds)
         }
     }
         
     func setupSlider() {
+        print("MiniPlayer Slider")
         if let ts = timeSlider {
             ts.value = 0.0
             ts.addTarget(self, action: #selector(handleSliderChange), for: .valueChanged)

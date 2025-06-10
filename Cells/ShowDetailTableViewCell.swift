@@ -105,7 +105,7 @@ class ShowDetailTableViewCell: UITableViewCell {
             detailTextLabel?.alpha = 1.0
             
         case .pendingRequest, .pendingStream:
-            print("ShowDetailTableViewCell: setDownloadState received .pendingStream or .pendingRequest. Starting spinner.")
+            print("\(timestamp()) ShowDetailTableViewCell: setDownloadState received .pendingStream or .pendingRequest. Starting spinner.")
             activityIndicator.startAnimating()
             accessoryType = .none
             textLabel?.alpha = 0.7
@@ -141,5 +141,11 @@ class ShowDetailTableViewCell: UITableViewCell {
         textLabel?.alpha = 1.0
         detailTextLabel?.alpha = 1.0
         detailTextLabel?.text = nil
+    }
+    
+    private func timestamp() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm:ss.SSS"
+        return formatter.string(from: Date())
     }
 }

@@ -390,7 +390,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
     
     func selectCurrentTrack() {
         let index = player.getCurrentTrackIndex()
-        print("select current track \(index)")
+        print("\(timestamp()) select current track \(index)")
         let indexPath = IndexPath(item: index, section: 2)
         self.showTableView.selectRow(at: indexPath, animated: true, scrollPosition: UITableView.ScrollPosition.middle)
     }
@@ -514,21 +514,21 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 if let trackName = track.name {
                     // Check for pending stream first
                     if pendingStreamTrackName == trackName {
-                        print("SVC cellForRowAt: Setting .pendingStream for \(trackName)") // ADDED LOG
+                        print("\(self.timestamp()) SVC cellForRowAt: Setting .pendingStream for \(trackName)") // ADDED LOG
                         cell.setDownloadState(.pendingStream)
                     }
                     // Then check download states
-                    else if let trackURL = utils.trackURLfromName(name: trackName) {
+                    else if let localURL = utils.trackURLfromName(name: trackName) {
                         // Check if request is pending
                         if self.pendingDownloadRequests.contains(trackName) {
                             cell.setDownloadState(.pendingRequest)
                         }
                         // Check if already downloaded
-                        else if track.destination != nil || FileManager.default.fileExists(atPath: trackURL.path) {
+                        else if track.destination != nil || FileManager.default.fileExists(atPath: localURL.path) {
                             cell.setDownloadState(.downloaded)
                         } 
                         // Check if currently downloading
-                        else if let progress = self.downloadProgress[trackURL] {
+                        else if let progress = self.downloadProgress[localURL] {
                             cell.setDownloadState(.downloading(progress: Float(progress)))
                         } 
                         // Not downloaded
@@ -609,8 +609,11 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                 pendingStreamTrackName = trackName
                 showTableView.reloadRows(at: [indexPath], with: .none)
             }
-            // For streaming, just play the show starting from selected track
-            streamShow(startingAt: songIndex)
+            // Dispatch the streaming setup to the next run loop cycle
+            // to allow the UI to update and show the spinner immediately.
+            DispatchQueue.main.async {
+                self.streamShow(startingAt: songIndex)
+            }
         } else {
             // For downloaded files, check if track exists locally
             if let trackURL = utils.trackURLfromName(name: showMetadataModel?.mp3Array?[songIndex].name) {
@@ -642,10 +645,16 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
 
 @available(iOS 13.0, *)
 private extension ShowViewController {
+    private func timestamp() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm:ss.SSS"
+        return formatter.string(from: Date())
+    }
+    
     @objc private func playbackDidStart(_ notification: Notification) {
-        print("SVC playbackDidStart: Notification received. Current pendingStreamTrackName: \(pendingStreamTrackName ?? "nil")") // ADDED LOG
+        print("\(self.timestamp()) SVC playbackDidStart: Notification received. Current pendingStreamTrackName: \(pendingStreamTrackName ?? "nil")") // ADDED LOG
         if let currentItemAsset = player.playerQueue?.currentItem?.asset as? AVURLAsset {
-            print("SVC playbackDidStart: Current playing item in queue: \(currentItemAsset.url.lastPathComponent)") // ADDED LOG
+            print("\(self.timestamp()) SVC playbackDidStart: Current playing item in queue: \(currentItemAsset.url.lastPathComponent)") // ADDED LOG
         }
 
         // Clear the pending stream indicator when playback starts.

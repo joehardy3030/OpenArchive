@@ -121,7 +121,8 @@ class AudioPlayerArchive: NSObject {
     
     @objc func play() {
         self.playerQueue?.play()
-        state = .playing
+        print("AudioPlayerArchive: play() called")
+        // state = .playing // This is now handled by KVO when the item is ready to play
     }
 
     @objc func pause() {
@@ -288,7 +289,7 @@ class AudioPlayerArchive: NSObject {
     }
     
     func loadStreamingQueuePlayer(startingAt index: Int = 0) {
-        print("streaming, starting at index \(index)")
+        print("\(timestamp()) streaming, starting at index \(index)")
         cleanQueue()
         isStreaming = true  // Set flag for streaming playback
         guard let tracks = self.showMetadataModel?.mp3Array, let id = self.showMetadataModel?.metadata?.identifier else { return }
@@ -351,6 +352,12 @@ class AudioPlayerArchive: NSObject {
         if item.status == .readyToPlay && (self.playerQueue?.rate ?? 0.0 > 0.0 || self.state == .playing) {
             self.state = .playing
         }
+    }
+    
+    private func timestamp() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm:ss.SSS"
+        return formatter.string(from: Date())
     }
 }
 

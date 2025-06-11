@@ -18,9 +18,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="N4U-bR-ub7">
-                                <rect key="frame" x="0.0" y="64" width="375" height="390"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="N4U-bR-ub7">
+                                <rect key="frame" x="0.0" y="64" width="375" height="534"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="CollectionCell" textLabel="2uU-Gx-U3U" style="IBUITableViewCellStyleDefault" id="20T-Wg-meE">
@@ -48,6 +47,12 @@
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="xu0-ye-FVM"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="N4U-bR-ub7" firstAttribute="leading" secondItem="xu0-ye-FVM" secondAttribute="leading" id="68I-G5-AVN"/>
+                            <constraint firstItem="xu0-ye-FVM" firstAttribute="bottom" secondItem="N4U-bR-ub7" secondAttribute="bottom" id="B8s-w6-T7J"/>
+                            <constraint firstItem="N4U-bR-ub7" firstAttribute="trailing" secondItem="xu0-ye-FVM" secondAttribute="trailing" id="jQv-Q0-0m8"/>
+                            <constraint firstItem="N4U-bR-ub7" firstAttribute="top" secondItem="xu0-ye-FVM" secondAttribute="top" id="sgx-kG-c4K"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Bands" id="CSZ-kN-ghC"/>
                     <connections>
@@ -71,14 +76,14 @@
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ArchiveCell" id="oPe-Pq-P2Y" customClass="ArchiveCell" customModule="Chateau" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="50" width="375" height="43"/>
+                                        <rect key="frame" x="0.0" y="50" width="375" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="oPe-Pq-P2Y" id="DIS-r0-Sed">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LTW-wf-yTz">
-                                                    <rect key="frame" x="54" y="11" width="227" height="21"/>
+                                                    <rect key="frame" x="54" y="11" width="227" height="21.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -278,14 +283,14 @@
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="MonthCell" id="HcZ-fU-WPQ" customClass="MonthTableViewCell" customModule="Chateau" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="50" width="375" height="43"/>
+                                        <rect key="frame" x="0.0" y="50" width="375" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="HcZ-fU-WPQ" id="Ogc-r8-GMv">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Month" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zNP-8O-O75">
-                                                    <rect key="frame" x="44" y="11" width="262" height="21"/>
+                                                    <rect key="frame" x="44" y="11" width="262" height="21.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>

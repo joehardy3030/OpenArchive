@@ -241,13 +241,37 @@ class ArchiveAPI: NSObject {
         print(url.absoluteString)
         return url.absoluteString
     }
-     
     
     func getIARequestMetadataDecodable(url: String, completion: @escaping (ShowMetadataModel?, Error?) -> Void) {
         let startTime = Date()
+        print("[ArchiveAPI] Requesting metadata from URL: \(url) at \(timestamp())")
+
         AF.request(url).responseDecodable(of: ShowMetadataModel.self) { response in
             let duration = Date().timeIntervalSince(startTime)
+            
+            // Log detailed metrics
+            if let metrics = response.metrics {
+                print("[ArchiveAPI] Metrics for \(url):")
+                print("  - Total Duration: \(String(format: "%.3f", metrics.taskInterval.duration))s")
+                
+                // Correctly access remoteAddress from the last transaction metric
+                if #available(iOS 13.0, *), let lastTransaction = metrics.transactionMetrics.last, let remoteAddress = lastTransaction.remoteAddress {
+                     print("  - Remote Address: \(remoteAddress)")
+                }
+                
+                // Correctly calculate Time to First Byte from the first transaction's response start date
+                if let firstResponseDate = metrics.transactionMetrics.first?.responseStartDate {
+                    let timeToFirstByte = firstResponseDate.timeIntervalSince(metrics.taskInterval.start)
+                    print("  - Time to First Byte: \(String(format: "%.3f", timeToFirstByte))s")
+                }
+
+                print("  - Serialization Duration: \(String(format: "%.3f", response.serializationDuration))s")
+            } else {
+                print("[ArchiveAPI] No metrics available.")
+            }
+
             print("[ArchiveAPI] getIARequestMetadataDecodable for URL: \(url) took \(String(format: "%.3f", duration)) seconds.")
+            
             switch response.result {
             case .success(let showMetadataModel):
                 completion(showMetadataModel, nil)
@@ -257,7 +281,6 @@ class ArchiveAPI: NSObject {
             }
         }
     }
-
     
     func getIARequestItemsDecodable(url: String, completion: @escaping (ShowMetadatas?, Error?) -> Void) {
         let startTime = Date()
@@ -313,6 +336,12 @@ class ArchiveAPI: NSObject {
                     completion(nil, NSError(domain: "ArchiveAPIError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Download finished with an unknown state."]))
                 }
             }
+    }
+    
+    private func timestamp() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm:ss.SSS"
+        return formatter.string(from: Date())
     }
 }
 

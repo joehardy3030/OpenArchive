@@ -17,8 +17,13 @@ class CollectionViewController: ArchiveSuperViewController, UITableViewDelegate,
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         tableView.delegate = self
         tableView.dataSource = self
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
     }
 
     // MARK: - TableView DataSource

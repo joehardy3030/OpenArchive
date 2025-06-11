@@ -241,7 +241,6 @@ class ArchiveAPI: NSObject {
         print(url.absoluteString)
         return url.absoluteString
     }
-     
     
     func getIARequestMetadataDecodable(url: String, completion: @escaping (ShowMetadataModel?, Error?) -> Void) {
         let startTime = Date()
@@ -254,10 +253,18 @@ class ArchiveAPI: NSObject {
             if let metrics = response.metrics {
                 print("[ArchiveAPI] Metrics for \(url):")
                 print("  - Total Duration: \(String(format: "%.3f", metrics.taskInterval.duration))s")
-                if let remoteAddress = metrics.remoteAddress {
-                    print("  - Remote Address: \(remoteAddress)")
+                
+                // Correctly access remoteAddress from the last transaction metric
+                if #available(iOS 13.0, *), let lastTransaction = metrics.transactionMetrics.last, let remoteAddress = lastTransaction.remoteAddress {
+                     print("  - Remote Address: \(remoteAddress)")
                 }
-                print("  - Time to First Byte: \(String(format: "%.3f", metrics.redirectCount > 0 ? 0 : (metrics.taskInterval.start.distance(to: metrics.responseStartDate ?? Date()))))s")
+                
+                // Correctly calculate Time to First Byte from the first transaction's response start date
+                if let firstResponseDate = metrics.transactionMetrics.first?.responseStartDate {
+                    let timeToFirstByte = firstResponseDate.timeIntervalSince(metrics.taskInterval.start)
+                    print("  - Time to First Byte: \(String(format: "%.3f", timeToFirstByte))s")
+                }
+
                 print("  - Serialization Duration: \(String(format: "%.3f", response.serializationDuration))s")
             } else {
                 print("[ArchiveAPI] No metrics available.")
@@ -274,7 +281,6 @@ class ArchiveAPI: NSObject {
             }
         }
     }
-
     
     func getIARequestItemsDecodable(url: String, completion: @escaping (ShowMetadatas?, Error?) -> Void) {
         let startTime = Date()

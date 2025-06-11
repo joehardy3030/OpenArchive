@@ -24,10 +24,6 @@ class CollectionViewController: ArchiveSuperViewController, UITableViewDelegate,
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
-        // Set the navigation title after the view hierarchy is fully established
-        // This can help avoid constraint conflicts during initial layout
-        self.navigationItem.title = "Bands"
     }
 
     // MARK: - TableView DataSource

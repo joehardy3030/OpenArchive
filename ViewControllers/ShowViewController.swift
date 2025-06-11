@@ -61,7 +61,7 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         notificationCenter.addObserver(self, selector: #selector(playbackDidStart), name: .playbackStarted, object: nil)
         notificationCenter.addObserver(self, selector: #selector(playbackDidPause), name: .playbackPaused, object: self.player.playerQueue)
         notificationCenter.addObserver(self, selector: #selector(playbackDidFail), name: .playbackFailed, object: nil)
-        self.navigationItem.title = "";
+        self.navigationItem.title = ""
         switch showType {
         case .archive:
             self.navigationItem.title = utils.getDateFromDateTimeString(datetime: showMetadata?.date)

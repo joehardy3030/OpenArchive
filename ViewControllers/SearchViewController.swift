@@ -67,7 +67,7 @@ class SearchViewController: ArchiveSuperViewController {
         let textFields = [songTextField, venueTextField, startDateTextField, endDateTextField, minRatingTextField, collectionTextField]
         for textField in textFields {
             textField.borderStyle = .none
-            textField.layer.borderColor = UIColor.separator.cgColor
+            textField.layer.borderColor = UIColor.tertiaryLabel.cgColor
             textField.layer.borderWidth = 1.0
             textField.layer.cornerRadius = 8.0
             
@@ -78,7 +78,7 @@ class SearchViewController: ArchiveSuperViewController {
             if let placeholder = textField.placeholder {
                 textField.attributedPlaceholder = NSAttributedString(
                     string: placeholder,
-                    attributes: [NSAttributedString.Key.foregroundColor: UIColor.placeholderText]
+                    attributes: [NSAttributedString.Key.foregroundColor: UIColor.secondaryLabel]
                 )
             }
         }

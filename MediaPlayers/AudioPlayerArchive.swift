@@ -122,7 +122,7 @@ class AudioPlayerArchive: NSObject {
     @objc func play() {
         self.playerQueue?.play()
         print("AudioPlayerArchive: play() called")
-        state = .playing // This is now handled by KVO when the item is ready to play
+        state = .playing
     }
 
     @objc func pause() {

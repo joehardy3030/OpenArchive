@@ -60,12 +60,10 @@ class SearchViewController: ArchiveSuperViewController {
         // Configure text fields with borders
         songTextField.placeholder = "Enter search term"
         songTextField.borderStyle = .roundedRect
-        //startDateTextField.placeholder = "Start Date (YYYY-MM-DD)"
         venueTextField.placeholder = "Venue"
         venueTextField.borderStyle = .roundedRect
         startDateTextField.placeholder = "Start Year (YYYY)"
         startDateTextField.borderStyle = .roundedRect
-        //endDateTextField.placeholder = "End Date (YYYY-MM-DD)"
         endDateTextField.placeholder = "End Year (YYYY)"
         endDateTextField.borderStyle = .roundedRect
         minRatingTextField.placeholder = "1-5 stars min"
@@ -76,25 +74,26 @@ class SearchViewController: ArchiveSuperViewController {
         searchButton.backgroundColor = .blue
         searchButton.addTarget(self, action: #selector(searchButtonTapped), for: .touchUpInside)
         
-        // Layout your views
-        songLabel.frame = CGRect(x: 20, y: 80, width: 200, height: 20)
-        songTextField.frame = CGRect(x: 20, y: 100, width: 200, height: 40)
-        venueTextField.frame = CGRect(x: 20, y: 150, width: 200, height: 40) // New
-        startDateTextField.frame = CGRect(x: 20, y: 200, width: 200, height: 40) // New
-        endDateTextField.frame = CGRect(x: 20, y: 250, width: 200, height: 40) // New
-        minRatingTextField.frame = CGRect(x: 20, y: 300, width: 200, height: 40) // New
-        collectionTextField.frame = CGRect(x: 20, y: 350, width: 200, height: 40)
-        searchButton.frame = CGRect(x: 20, y: 400, width: 200, height: 40)
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 10.0
+        stackView.alignment = .fill
+        stackView.distribution = .fill
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+
+        let subviews = [songTextField, venueTextField, startDateTextField, endDateTextField, minRatingTextField, collectionTextField, searchButton]
+        for subview in subviews {
+            stackView.addArrangedSubview(subview)
+            subview.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        }
         
-        // Add subviews
-        view.addSubview(songLabel)
-        view.addSubview(songTextField)
-        view.addSubview(venueTextField)
-        view.addSubview(startDateTextField)
-        view.addSubview(endDateTextField)
-        view.addSubview(minRatingTextField)
-        view.addSubview(collectionTextField)
-        view.addSubview(searchButton)
+        view.addSubview(stackView)
+        
+        NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            stackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            stackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20)
+        ])
         
         // Dismiss keyboard when tapping outside the text boxes
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))

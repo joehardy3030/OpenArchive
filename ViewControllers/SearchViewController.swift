@@ -22,8 +22,8 @@ class SearchViewController: ArchiveSuperViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupUI()
         setupCollectionPicker()
+        setupUI()
     }
     
     private func setupCollectionPicker() {
@@ -32,7 +32,6 @@ class SearchViewController: ArchiveSuperViewController {
         
         // Configure collection text field
         collectionTextField.placeholder = "Select Collection"
-        collectionTextField.borderStyle = .roundedRect
         collectionTextField.inputView = collectionPicker
         
         // Add toolbar with Done button
@@ -49,6 +48,7 @@ class SearchViewController: ArchiveSuperViewController {
         
         collectionTextField.inputAccessoryView = toolbar
         collectionTextField.text = CollectionConfig.collectionsText[0] // Set default value
+        view.endEditing(true)
     }
     
     @objc func donePicker() {
@@ -59,15 +59,29 @@ class SearchViewController: ArchiveSuperViewController {
         
         // Configure text fields with borders
         songTextField.placeholder = "Enter search term"
-        songTextField.borderStyle = .roundedRect
         venueTextField.placeholder = "Venue"
-        venueTextField.borderStyle = .roundedRect
         startDateTextField.placeholder = "Start Year (YYYY)"
-        startDateTextField.borderStyle = .roundedRect
         endDateTextField.placeholder = "End Year (YYYY)"
-        endDateTextField.borderStyle = .roundedRect
         minRatingTextField.placeholder = "1-5 stars min"
-        minRatingTextField.borderStyle = .roundedRect
+        
+        let textFields = [songTextField, venueTextField, startDateTextField, endDateTextField, minRatingTextField, collectionTextField]
+        for textField in textFields {
+            textField.borderStyle = .none
+            textField.layer.borderColor = UIColor.separator.cgColor
+            textField.layer.borderWidth = 1.0
+            textField.layer.cornerRadius = 8.0
+            
+            let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: textField.frame.height))
+            textField.leftView = paddingView
+            textField.leftViewMode = .always
+            
+            if let placeholder = textField.placeholder {
+                textField.attributedPlaceholder = NSAttributedString(
+                    string: placeholder,
+                    attributes: [NSAttributedString.Key.foregroundColor: UIColor.placeholderText]
+                )
+            }
+        }
         
         // Configure button
         searchButton.setTitle("Search", for: .normal)

@@ -660,13 +660,15 @@ private extension ShowViewController {
             print("\(self.timestamp()) SVC playbackDidStart: Current playing item in queue: \(currentItemAsset.url.lastPathComponent)") // ADDED LOG
         }
 
-        // Clear the pending stream indicator when playback starts.
-        if let trackName = pendingStreamTrackName,
-           let index = showMetadataModel?.mp3Array?.firstIndex(where: { $0.name == trackName }) {
-            pendingStreamTrackName = nil
-            let indexPath = IndexPath(row: index, section: 2)
-            if showTableView.indexPathsForVisibleRows?.contains(indexPath) ?? false {
-                showTableView.reloadRows(at: [indexPath], with: .none)
+        // Only clear the pending stream indicator if we're actually playing
+        if player.playerQueue?.rate ?? 0.0 > 0.0 {
+            if let trackName = pendingStreamTrackName,
+               let index = showMetadataModel?.mp3Array?.firstIndex(where: { $0.name == trackName }) {
+                pendingStreamTrackName = nil
+                let indexPath = IndexPath(row: index, section: 2)
+                if showTableView.indexPathsForVisibleRows?.contains(indexPath) ?? false {
+                    showTableView.reloadRows(at: [indexPath], with: .none)
+                }
             }
         }
         

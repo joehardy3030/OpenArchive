@@ -436,7 +436,7 @@
 				};
 			};
 			buildConfigurationList = D85A4EE62022D0B500E480FB /* Build configuration list for PBXProject "Breaze" */;
-			compatibilityVersion = "Xcode 8.0";
+			compatibilityVersion = "Xcode 15.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (

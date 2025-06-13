@@ -338,7 +338,7 @@
             <objects>
                 <navigationController id="iDX-jC-6by" userLabel="Shows" customClass="ArchiveNavigationController" customModule="Chateau" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Bands" id="9Qz-YH-r7u" userLabel="Archive">
-                        <imageReference key="image" image="calendar" catalog="system" symbolScale="default"/>
+                        <imageReference key="image" image="music.microphone" catalog="system" symbolScale="default"/>
                         <imageReference key="landscapeImage" image="calendar" catalog="system" symbolScale="default"/>
                     </tabBarItem>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
@@ -1102,6 +1102,7 @@
         <image name="forward.end.fill" catalog="system" width="128" height="97"/>
         <image name="icloud.and.arrow.down" catalog="system" width="128" height="120"/>
         <image name="magnifyingglass" catalog="system" width="128" height="117"/>
+        <image name="music.microphone" catalog="system" width="128" height="119"/>
         <image name="person.2" catalog="system" width="128" height="87"/>
         <image name="play" catalog="system" width="120" height="128"/>
         <image name="play.circle.fill" catalog="system" width="128" height="123"/>

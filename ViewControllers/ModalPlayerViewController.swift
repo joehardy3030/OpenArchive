@@ -8,6 +8,7 @@
 
 import UIKit
 import MediaPlayer
+import AVKit
 
 class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate, UITableViewDataSource {
 
@@ -162,6 +163,14 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         return view
     }()
 
+    // Add route picker view property
+    private let routePickerView: AVRoutePickerView = {
+        let routePicker = AVRoutePickerView()
+        routePicker.tintColor = .label
+        routePicker.translatesAutoresizingMaskIntoConstraints = false
+        return routePicker
+    }()
+
     // MARK: - Other Properties
     private let notificationCenter: NotificationCenter = .default
     private let commandCenter = MPRemoteCommandCenter.shared()
@@ -253,6 +262,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
         view.addSubview(containerView)
         containerView.addSubview(playerControlsStack)
         containerView.addSubview(showInfoButton)
+        containerView.addSubview(routePickerView)
 
         NSLayoutConstraint.activate([
             // Table view at top
@@ -284,11 +294,16 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
             shareButton.widthAnchor.constraint(equalToConstant: 40),
             shareButton.heightAnchor.constraint(equalToConstant: 40),
 
-            // Show info button floating in upper-right
+            // Show info button and route picker in upper-right
             showInfoButton.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 8),
             showInfoButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -8),
             showInfoButton.widthAnchor.constraint(equalToConstant: 36),
-            showInfoButton.heightAnchor.constraint(equalToConstant: 36)
+            showInfoButton.heightAnchor.constraint(equalToConstant: 36),
+            
+            routePickerView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 8),
+            routePickerView.trailingAnchor.constraint(equalTo: showInfoButton.leadingAnchor, constant: -12),
+            routePickerView.widthAnchor.constraint(equalToConstant: 36),
+            routePickerView.heightAnchor.constraint(equalToConstant: 36)
         ])
     }
 
@@ -486,7 +501,7 @@ class ModalPlayerViewController: ArchiveSuperViewController, UITableViewDelegate
     
     func reloadShow() {
         // Remove observer before reloading the queue to avoid crashes
-        if isObservingPlayer, let queue = player.playerQueue {
+        if isObservingPlayer, let _ = player.playerQueue {
             // Safely remove observer
             removePlayerObserver()
         }

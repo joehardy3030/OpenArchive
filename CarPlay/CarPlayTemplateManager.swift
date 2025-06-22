@@ -32,14 +32,33 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
         self.interfaceController?.delegate = self
         self.player = AudioPlayerArchive.shared
         self.network = NetworkUtility()
-        self.decadesCPListTemplate()
+        self.createTabbedInterface()
     }
     
     func numberOfChildItems(at indexPath: IndexPath) -> Int {
         return 0
     }
     
-    private func decadesCPListTemplate() {
+    private func createTabbedInterface() {
+        // Create the Bands tab (decades/years)
+        let bandsTemplate = createBandsTabTemplate()
+        
+        // Create the My Tapes tab (downloaded shows)
+        let myTapesTemplate = createMyTapesTabTemplate()
+        
+        // Create the tab bar template
+        let tabBarTemplate = CPTabBarTemplate(tabs: [bandsTemplate, myTapesTemplate])
+        
+        // Set as root template
+        self.interfaceController?.setRootTemplate(tabBarTemplate, animated: true) { success, error in
+            print("Set root template success: \(success)")
+            if let error = error {
+                print("Set root template error: \(error)")
+            }
+        }
+    }
+    
+    private func createBandsTabTemplate() -> CPListTemplate {
         var items = [CPListItem]()
         
         for d in decades {
@@ -63,16 +82,22 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
         }
                 
         let section = CPListSection(items: items)
-        let decadesTemplate = CPListTemplate(title: "Decades", sections: [section])
-        print("About to set root template")
-        self.interfaceController?.setRootTemplate(decadesTemplate, animated: true) { success, error in
-            print("Set root template success: \(success)")
-            if let error = error {
-                print("Set root template error: \(error)")
-            }
-        }
+        let bandsTemplate = CPListTemplate(title: "Bands", sections: [section])
+        bandsTemplate.tabBarItem = CPTabBarItem(title: "Bands", image: UIImage(systemName: "music.note"))
+        return bandsTemplate
     }
     
+    private func createMyTapesTabTemplate() -> CPListTemplate {
+        // Create a placeholder section that will be populated when the tab is selected
+        let placeholderItem = CPListItem(text: "Loading...", detailText: "")
+        let placeholderSection = CPListSection(items: [placeholderItem])
+        let myTapesTemplate = CPListTemplate(title: "My Tapes", sections: [placeholderSection])
+        
+        // Add a handler to load the actual downloaded shows when this tab is selected
+        myTapesTemplate.tabBarItem = CPTabBarItem(title: "My Tapes", image: UIImage(systemName: "music.note.list"))
+        
+        return myTapesTemplate
+    }
     
     private func yearsCPListTemplate(decade: String?) -> CPListTemplate {
         var items = [CPListItem]()
@@ -125,6 +150,10 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
     }
     
     func templateWillAppear(_ aTemplate: CPTemplate, animated: Bool) {
+        // Check if this is the My Tapes template and load downloaded shows
+        if aTemplate is CPListTemplate && aTemplate.title == "My Tapes" {
+            loadDownloadedShowsForMyTapes()
+        }
     }
 
     func templateDidAppear(_ aTemplate: CPTemplate, animated: Bool) {
@@ -135,7 +164,85 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
 
     func templateDidDisappear(_ aTemplate: CPTemplate, animated: Bool) {
     }
-
+    
+    private func loadDownloadedShowsForMyTapes() {
+        network.getAllDownloadDocs(decade: nil) { [weak self] (response: [ShowMetadataModel]?) in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                
+                if let shows = response {
+                    // Filter out shows with missing tracks
+                    let validShows = shows.filter { show in
+                        return self.checkTracksAndRemove(show: show)
+                    }
+                    
+                    // Sort by date
+                    let sortedShows = validShows.sorted { (show1, show2) -> Bool in
+                        guard let date1Str = show1.metadata?.date,
+                              let date1 = self.utils.getDateFromDateString(datetime: date1Str) else {
+                            return false
+                        }
+                        
+                        guard let date2Str = show2.metadata?.date,
+                              let date2 = self.utils.getDateFromDateString(datetime: date2Str) else {
+                            return true
+                        }
+                        
+                        return date1 < date2
+                    }
+                    
+                    // Create list items for the shows
+                    var items = [CPListItem]()
+                    for show in sortedShows {
+                        let item = CPListItem(text: show.metadata?.date, detailText: show.metadata?.coverage)
+                        item.handler = { [weak self] (item, completion: () -> Void) in
+                            guard let self = self else {
+                                completion()
+                                return
+                            }
+                            print(item.description)
+                            // Create a CarPlayDownloadsTemplate to handle playing this show
+                            _ = CarPlayDownloadsTemplate(interfaceController: self.interfaceController, decade: nil, year: nil, selectedShow: show)
+                            completion()
+                        }
+                        items.append(item)
+                    }
+                    
+                    // Update the My Tapes template
+                    let section = CPListSection(items: items)
+                    let myTapesTemplate = CPListTemplate(title: "My Tapes", sections: [section])
+                    
+                    // Find the current tab bar template and update the My Tapes tab
+                    if let currentTemplate = self.interfaceController?.rootTemplate as? CPTabBarTemplate {
+                        let updatedTabs = currentTemplate.tabs.map { tab in
+                            if tab.title == "My Tapes" {
+                                return myTapesTemplate
+                            }
+                            return tab
+                        }
+                        let updatedTabBarTemplate = CPTabBarTemplate(tabs: updatedTabs)
+                        self.interfaceController?.setRootTemplate(updatedTabBarTemplate, animated: true)
+                    }
+                }
+            }
+        }
+    }
+    
+    private func checkTracksAndRemove(show: ShowMetadataModel) -> Bool {
+        guard let mp3s = show.mp3Array else { return false }
+        for song in mp3s {
+            if let trackURL = utils.trackURLfromName(name: song.name) {
+                do {
+                    let _ = try trackURL.checkResourceIsReachable()
+                }
+                catch {
+                    print(error)
+                    return false
+                }
+            }
+        }
+        return true
+    }
 }
 
 /*

@@ -343,6 +343,30 @@ class ArchiveAPI: NSObject {
         formatter.dateFormat = "HH:mm:ss.SSS"
         return formatter.string(from: Date())
     }
+    
+    func getReviewsURL(identifier: String, page: Int = 1, pageSize: Int = 20) -> String {
+        var url = baseURLString
+        url += "services/search/v1/scrape?"
+        url += "fields=id,show_identifier,rating,review_text,reviewer,date&"
+        url += "q=show_identifier:" + identifier + " AND mediatype:review"
+        url += "&page=\(page)"
+        url += "&page_size=\(pageSize)"
+        return url
+    }
+    
+    func getReviews(identifier: String, page: Int = 1, pageSize: Int = 20, completion: @escaping (ReviewResponse?, Error?) -> Void) {
+        let url = getReviewsURL(identifier: identifier, page: page, pageSize: pageSize)
+        
+        AF.request(url).responseDecodable(of: ReviewResponse.self) { response in
+            switch response.result {
+            case .success(let reviewResponse):
+                completion(reviewResponse, nil)
+            case .failure(let error):
+                print("[ArchiveAPI] Error fetching reviews for \(identifier): \(error.localizedDescription)")
+                completion(nil, error)
+            }
+        }
+    }
 }
 
 

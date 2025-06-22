@@ -17,6 +17,7 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
     let interfaceController: CPInterfaceController?
     var player: AudioPlayerArchive?
     var network: NetworkUtility!
+    let utils = Utils()
     let decades = ["1960s", "1970s", "1980s", "1990s", "2000s", "2010s", "2020s"]
     let years = ["0","1","2","3","4","5","6","7","8","9"]
     let commandCenter = MPRemoteCommandCenter.shared()
@@ -47,7 +48,7 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
         let myTapesTemplate = createMyTapesTabTemplate()
         
         // Create the tab bar template
-        let tabBarTemplate = CPTabBarTemplate(tabs: [bandsTemplate, myTapesTemplate])
+        let tabBarTemplate = CPTabBarTemplate(templates: [bandsTemplate, myTapesTemplate])
         
         // Set as root template
         self.interfaceController?.setRootTemplate(tabBarTemplate, animated: true) { success, error in
@@ -151,7 +152,7 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
     
     func templateWillAppear(_ aTemplate: CPTemplate, animated: Bool) {
         // Check if this is the My Tapes template and load downloaded shows
-        if aTemplate is CPListTemplate && aTemplate.title == "My Tapes" {
+        if let listTemplate = aTemplate as? CPListTemplate, listTemplate.title == "My Tapes" {
             loadDownloadedShowsForMyTapes()
         }
     }
@@ -214,13 +215,13 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
                     
                     // Find the current tab bar template and update the My Tapes tab
                     if let currentTemplate = self.interfaceController?.rootTemplate as? CPTabBarTemplate {
-                        let updatedTabs = currentTemplate.tabs.map { tab in
-                            if tab.title == "My Tapes" {
+                        let updatedTemplates = currentTemplate.templates.map { template in
+                            if let listTemplate = template as? CPListTemplate, listTemplate.title == "My Tapes" {
                                 return myTapesTemplate
                             }
-                            return tab
+                            return template
                         }
-                        let updatedTabBarTemplate = CPTabBarTemplate(tabs: updatedTabs)
+                        let updatedTabBarTemplate = CPTabBarTemplate(templates: updatedTemplates)
                         self.interfaceController?.setRootTemplate(updatedTabBarTemplate, animated: true)
                     }
                 }

@@ -22,6 +22,11 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
     let years = ["0","1","2","3","4","5","6","7","8","9"]
     let commandCenter = MPRemoteCommandCenter.shared()
     
+    // Pagination properties for My Tapes
+    private var allDownloadedShows: [ShowMetadataModel] = []
+    private var currentPage = 0
+    private let itemsPerPage = 11 // Show 11 items + 1 "See more" = 12 total
+    
     init(interfaceController: CPInterfaceController?) {
         self.interfaceController = interfaceController
         super.init()
@@ -166,8 +171,6 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
             DispatchQueue.main.async {
                 guard let self = self else { return }
                 
-                var items = [CPListItem]()
-                
                 if let shows = response {
                     // Filter out shows with missing tracks
                     let validShows = shows.filter { show in
@@ -189,49 +192,121 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
                         return date1 < date2
                     }
                     
-                    // Create list items for the shows
-                    for show in sortedShows {
-                        let item = CPListItem(text: show.metadata?.date ?? "Unknown Date", detailText: show.metadata?.coverage ?? "")
-                        item.handler = { [weak self] (item, completion: () -> Void) in
-                            guard let self = self else {
-                                completion()
-                                return
-                            }
-                            print("Selected show: \(item.text ?? "Unknown")")
-                            // Create a CarPlayDownloadsTemplate to handle playing this show
-                            _ = CarPlayDownloadsTemplate(interfaceController: self.interfaceController, decade: nil, year: nil, selectedShow: show)
-                            completion()
-                        }
-                        items.append(item)
-                    }
-                }
-                
-                // If no shows, add a message
-                if items.isEmpty {
-                    let noShowsItem = CPListItem(text: "No Downloaded Shows", detailText: "Download shows from the app to see them here")
-                    items.append(noShowsItem)
-                }
-                
-                // Update the template with new content
-                let section = CPListSection(items: items)
-                let updatedTemplate = CPListTemplate(title: "My Tapes", sections: [section])
-                updatedTemplate.tabImage = UIImage(systemName: "icloud.and.arrow.down")
-                updatedTemplate.tabTitle = "My Tapes"
-                
-                // Update the tab bar template
-                if let currentTemplate = self.interfaceController?.rootTemplate as? CPTabBarTemplate {
-                    var updatedTemplates: [CPTemplate] = []
-                    for existingTemplate in currentTemplate.templates {
-                        if let listTemplate = existingTemplate as? CPListTemplate, listTemplate.title == "My Tapes" {
-                            updatedTemplates.append(updatedTemplate)
-                        } else {
-                            updatedTemplates.append(existingTemplate)
-                        }
-                    }
-                    let updatedTabBarTemplate = CPTabBarTemplate(templates: updatedTemplates)
-                    self.interfaceController?.setRootTemplate(updatedTabBarTemplate, animated: false)
+                    // Store all shows and reset pagination
+                    self.allDownloadedShows = sortedShows
+                    self.currentPage = 0
+                    
+                    // Create the first page
+                    self.createMyTapesPage()
+                } else {
+                    // No shows available
+                    self.allDownloadedShows = []
+                    self.currentPage = 0
+                    self.createMyTapesPage()
                 }
             }
+        }
+    }
+    
+    private func createMyTapesPage() {
+        var items = [CPListItem]()
+        
+        if allDownloadedShows.isEmpty {
+            let noShowsItem = CPListItem(text: "No Downloaded Shows", detailText: "Download shows from the app to see them here")
+            items.append(noShowsItem)
+        } else {
+            let startIndex = currentPage * itemsPerPage
+            let endIndex = min(startIndex + itemsPerPage, allDownloadedShows.count)
+            
+            // Add shows for current page
+            for i in startIndex..<endIndex {
+                let show = allDownloadedShows[i]
+                
+                // Get band name following the same pattern as CarPlayDownloadsTemplate
+                var bandName = ""
+                if let creator = show.metadata?.creator {
+                    bandName = creator
+                } else if let collections = show.metadata?.collection, !collections.isEmpty {
+                    bandName = collections[0]
+                }
+                else {
+                    bandName = "Unknown Band"
+                }
+                
+                // Use band name as main text, date and coverage as detail text
+                let mainText = "\(bandName), \(show.metadata?.date ?? "Unknown Date")"
+                
+                // Format the detail text to include date and coverage
+                var detailText = ""
+                if let coverage = show.metadata?.coverage, !coverage.isEmpty {
+                    detailText = "\(coverage)"
+                }
+                
+                let item = CPListItem(text: mainText, detailText: detailText)
+                item.handler = { [weak self] (item, completion: () -> Void) in
+                    guard let self = self else {
+                        completion()
+                        return
+                    }
+                    print("Selected show: \(item.text ?? "Unknown")")
+                    // Create a CarPlayDownloadsTemplate to handle playing this show
+                    _ = CarPlayDownloadsTemplate(interfaceController: self.interfaceController, decade: nil, year: nil, selectedShow: show)
+                    completion()
+                }
+                items.append(item)
+            }
+            
+            // Add "See more" item if there are more shows
+            if endIndex < allDownloadedShows.count {
+                let remainingCount = allDownloadedShows.count - endIndex
+                let seeMoreItem = CPListItem(text: "See more", detailText: "\(remainingCount) more shows")
+                seeMoreItem.handler = { [weak self] (item, completion: () -> Void) in
+                    guard let self = self else {
+                        completion()
+                        return
+                    }
+                    self.currentPage += 1
+                    self.createMyTapesPage()
+                    completion()
+                }
+                items.append(seeMoreItem)
+            }
+            
+            // Add "Show previous" item if we're not on the first page
+            if currentPage > 0 {
+                let showPreviousItem = CPListItem(text: "Show previous", detailText: "Go back to previous shows")
+                showPreviousItem.handler = { [weak self] (item, completion: () -> Void) in
+                    guard let self = self else {
+                        completion()
+                        return
+                    }
+                    self.currentPage -= 1
+                    self.createMyTapesPage()
+                    completion()
+                }
+                // Insert at the beginning
+                items.insert(showPreviousItem, at: 0)
+            }
+        }
+        
+        // Update the template with new content
+        let section = CPListSection(items: items)
+        let updatedTemplate = CPListTemplate(title: "My Tapes", sections: [section])
+        updatedTemplate.tabImage = UIImage(systemName: "icloud.and.arrow.down")
+        updatedTemplate.tabTitle = "My Tapes"
+        
+        // Update the tab bar template
+        if let currentTemplate = self.interfaceController?.rootTemplate as? CPTabBarTemplate {
+            var updatedTemplates: [CPTemplate] = []
+            for existingTemplate in currentTemplate.templates {
+                if let listTemplate = existingTemplate as? CPListTemplate, listTemplate.title == "My Tapes" {
+                    updatedTemplates.append(updatedTemplate)
+                } else {
+                    updatedTemplates.append(existingTemplate)
+                }
+            }
+            let updatedTabBarTemplate = CPTabBarTemplate(templates: updatedTemplates)
+            self.interfaceController?.setRootTemplate(updatedTabBarTemplate, animated: false)
         }
     }
     

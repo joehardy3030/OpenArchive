@@ -48,7 +48,7 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
         
         // Create the My Tapes tab (downloaded shows) - load content immediately
         let myTapesTemplate = createMyTapesTabTemplate()
-        myTapesTemplate.tabImage = UIImage(systemName: "music.note.list")
+        myTapesTemplate.tabImage = UIImage(systemName: "icloud.and.arrow.down")
         myTapesTemplate.tabTitle = "My Tapes"
         loadDownloadedShowsForTemplate(myTapesTemplate)
         
@@ -215,7 +215,7 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
                 // Update the template with new content
                 let section = CPListSection(items: items)
                 let updatedTemplate = CPListTemplate(title: "My Tapes", sections: [section])
-                updatedTemplate.tabImage = UIImage(systemName: "music.note.list")
+                updatedTemplate.tabImage = UIImage(systemName: "icloud.and.arrow.down")
                 updatedTemplate.tabTitle = "My Tapes"
                 
                 // Update the tab bar template

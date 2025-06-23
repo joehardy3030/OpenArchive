@@ -503,8 +503,8 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             cell.selectionStyle = .default
             if let mp3s = self.showMetadataModel?.mp3Array {
                 let track = mp3s[indexPath.row]
-                if let title = track.title, let trackNum = track.track {
-                    cell.textLabel?.text = trackNum + " " + title
+                if let title = track.title {
+                    cell.textLabel?.text = title
                 } else {
                     cell.textLabel?.text = track.name
                 }

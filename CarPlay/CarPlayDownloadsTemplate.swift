@@ -44,14 +44,23 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
     private var timerToken: Any?
     private weak var timerTokenPlayer: AVQueuePlayer?
     
-    init(interfaceController: CPInterfaceController?, decade: String?, year: String?) {
+    init(interfaceController: CPInterfaceController?, decade: String?, year: String?, selectedShow: ShowMetadataModel? = nil) {
         self.interfaceController = interfaceController
         super.init()
         self.selfRetainer = self // Retain self while active
         self.interfaceController?.delegate = self
         self.player = AudioPlayerArchive.shared
         self.network = NetworkUtility()
-        self.getDownloadedShows(decade: decade, year: year)
+        
+        // If a show is pre-selected, play it directly
+        if let show = selectedShow {
+            self.selectedShow = show
+            self.playShow()
+        } else {
+            // Otherwise, load shows by decade/year as before
+            self.getDownloadedShows(decade: decade, year: year)
+        }
+        
         playableContentManager = MPPlayableContentManager.shared()
         playableContentManager?.dataSource = self
         playableContentManager?.delegate = self

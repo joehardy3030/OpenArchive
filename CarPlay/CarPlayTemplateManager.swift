@@ -46,10 +46,12 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
     }
     
     private func createTabbedInterface() {
+        /*
         // Create the Bands tab (decades/years)
         let bandsTemplate = createBandsTabTemplate()
         bandsTemplate.tabImage = UIImage(systemName: "music.note")
         bandsTemplate.tabTitle = "Bands"
+        */
         
         // Create the My Tapes tab (downloaded shows) - load content immediately
         let myTapesTemplate = createMyTapesTabTemplate()
@@ -57,11 +59,21 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
         myTapesTemplate.tabTitle = "My Tapes"
         loadDownloadedShowsForTemplate(myTapesTemplate)
         
+        /*
         // Create the tab bar template
         let tabBarTemplate = CPTabBarTemplate(templates: [myTapesTemplate, bandsTemplate])
         
         // Set as root template
         self.interfaceController?.setRootTemplate(tabBarTemplate, animated: true) { success, error in
+            print("Set root template success: \(success)")
+            if let error = error {
+                print("Set root template error: \(error)")
+            }
+        }
+        */
+        
+        // Set MyTapes as the root template directly (without tabs)
+        self.interfaceController?.setRootTemplate(myTapesTemplate, animated: true) { success, error in
             print("Set root template success: \(success)")
             if let error = error {
                 print("Set root template error: \(error)")
@@ -295,7 +307,11 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
         updatedTemplate.tabImage = UIImage(systemName: "icloud.and.arrow.down")
         updatedTemplate.tabTitle = "My Tapes"
         
-        // Update the tab bar template
+        // Update the template directly (without tabs)
+        self.interfaceController?.setRootTemplate(updatedTemplate, animated: false)
+        
+        /* 
+        // Original tab bar update code
         if let currentTemplate = self.interfaceController?.rootTemplate as? CPTabBarTemplate {
             var updatedTemplates: [CPTemplate] = []
             for existingTemplate in currentTemplate.templates {
@@ -308,6 +324,7 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
             let updatedTabBarTemplate = CPTabBarTemplate(templates: updatedTemplates)
             self.interfaceController?.setRootTemplate(updatedTabBarTemplate, animated: false)
         }
+        */
     }
     
     private func checkTracksAndRemove(show: ShowMetadataModel) -> Bool {
@@ -328,6 +345,7 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
     
     private func loadDownloadedShowsForMyTapes() {
         // This method is no longer used but keeping for compatibility
+        /* Original code for tabs
         if let currentTemplate = self.interfaceController?.rootTemplate as? CPTabBarTemplate {
             for template in currentTemplate.templates {
                 if let listTemplate = template as? CPListTemplate, listTemplate.title == "My Tapes" {
@@ -335,6 +353,13 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
                     break
                 }
             }
+        }
+        */
+        
+        // Modified version for direct template (no tabs)
+        if let listTemplate = self.interfaceController?.rootTemplate as? CPListTemplate, 
+           listTemplate.title == "My Tapes" {
+            loadDownloadedShowsForTemplate(listTemplate)
         }
     }
 }

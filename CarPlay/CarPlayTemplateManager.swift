@@ -58,7 +58,7 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
         loadDownloadedShowsForTemplate(myTapesTemplate)
         
         // Create the tab bar template
-        let tabBarTemplate = CPTabBarTemplate(templates: [bandsTemplate, myTapesTemplate])
+        let tabBarTemplate = CPTabBarTemplate(templates: [myTapesTemplate, bandsTemplate])
         
         // Set as root template
         self.interfaceController?.setRootTemplate(tabBarTemplate, animated: true) { success, error in

@@ -14,6 +14,8 @@ class CollectionViewController: ArchiveSuperViewController, UITableViewDelegate,
     var selectedCollection: String?
     private let store = CollectionStore()
     private var entries: [CollectionEntry] = []
+    private var addButtonItem: UIBarButtonItem?
+    private var browseButtonItem: UIBarButtonItem?
     
     @IBOutlet weak var tableView: UITableView! // Connect this in your storyboard
 
@@ -22,9 +24,7 @@ class CollectionViewController: ArchiveSuperViewController, UITableViewDelegate,
         
         tableView.delegate = self
         tableView.dataSource = self
-        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addCollectionTapped))
-        let browseButton = UIBarButtonItem(title: "Browse", style: .plain, target: self, action: #selector(browseCollectionsTapped))
-        navigationItem.rightBarButtonItems = [addButton, browseButton]
+        setNavButtons()
         entries = store.getEntries()
     }
     
@@ -95,10 +95,7 @@ class CollectionViewController: ArchiveSuperViewController, UITableViewDelegate,
         spinner.startAnimating()
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: spinner)
         archiveAPI.fetchEtreeCollections { [weak self] collections, error in
-            DispatchQueue.main.async {
-                guard let self = self else { return }
-                self.navigationItem.rightBarButtonItems = self.navigationItem.rightBarButtonItems // restore buttons
-            }
+            DispatchQueue.main.async { self?.setNavButtons() }
             if let error = error { print("fetchEtreeCollections error: \(error.localizedDescription)"); return }
             guard let collections = collections else { return }
             DispatchQueue.main.async {
@@ -108,18 +105,17 @@ class CollectionViewController: ArchiveSuperViewController, UITableViewDelegate,
     }
 
     private func presentCollectionsPicker(collections: [ArchiveAPI.ArchiveCollection]) {
-        // Simple list picker via Action Sheet; for large lists, consider a modal table with search
-        let alert = UIAlertController(title: "Browse Bands", message: "Select a band to add", preferredStyle: .actionSheet)
-        let first = collections.prefix(15) // Avoid huge action sheet; truncate for now
-        for item in first {
-            let title = (item.title ?? item.identifier) ?? "Unknown"
-            let id = item.identifier ?? title
-            alert.addAction(UIAlertAction(title: title, style: .default, handler: { [weak self] _ in
-                self?.addCollectionAndInferYears(displayName: title, identifier: id)
-            }))
+        let picker = CollectionsPickerViewController(collections: collections.sorted { (a, b) -> Bool in
+            let at = (a.title ?? a.identifier) ?? ""
+            let bt = (b.title ?? b.identifier) ?? ""
+            return at.localizedCaseInsensitiveCompare(bt) == .orderedAscending
+        }) { [weak self] selected in
+            let title = (selected.title ?? selected.identifier) ?? "Unknown"
+            let id = selected.identifier ?? title
+            self?.addCollectionAndInferYears(displayName: title, identifier: id)
         }
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        present(alert, animated: true)
+        let nav = UINavigationController(rootViewController: picker)
+        present(nav, animated: true)
     }
 
     // Add then infer whether creator-based and compute year range to persist for YearViewController
@@ -146,5 +142,13 @@ class CollectionViewController: ArchiveSuperViewController, UITableViewDelegate,
                 }
             }
         }
+    }
+
+    private func setNavButtons() {
+        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addCollectionTapped))
+        let browseButton = UIBarButtonItem(title: "Browse", style: .plain, target: self, action: #selector(browseCollectionsTapped))
+        self.addButtonItem = addButton
+        self.browseButtonItem = browseButton
+        navigationItem.rightBarButtonItems = [addButton, browseButton]
     }
 }

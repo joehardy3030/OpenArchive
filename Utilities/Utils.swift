@@ -194,8 +194,24 @@ class Utils {
     }
     
     func trackURLfromName(name: String?) -> URL? {
-        guard let d = getDocumentsDirectory(), let n = name else { return nil }
-        let url = d.appendingPathComponent(n)
+        guard let documentsDirectory = getDocumentsDirectory(), let originalName = name else { return nil }
+
+        // Sanitize and normalize the relative path to prevent path traversal
+        let sanitized = originalName
+            .replacingOccurrences(of: "\\", with: "/")
+            .trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+
+        if sanitized.isEmpty { return nil }
+
+        // Split into path components and reject any traversal attempts
+        let components = sanitized.split(separator: "/").map(String.init)
+        if components.contains("..") { return nil }
+
+        // Build the final URL by appending each path component
+        var url = documentsDirectory
+        for component in components {
+            url.appendPathComponent(component)
+        }
         return url
     }
     

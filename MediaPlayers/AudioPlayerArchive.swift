@@ -181,7 +181,10 @@ class AudioPlayerArchive: NSObject {
         if let mp3s = showMetadataModel?.mp3Array {
             if mp3s.count > 0 {
                 for i in 0...(mp3s.count - 1) {
-                    if mp3s[i].name == filename || mp3s[i].name == filename?.removingPercentEncoding {
+                    // Compare against the stored name and its lastPathComponent to support nested paths
+                    let storedName = mp3s[i].name
+                    let storedFileName = storedName.flatMap { URL(fileURLWithPath: $0).lastPathComponent }
+                    if storedName == filename || storedName == filename?.removingPercentEncoding || storedFileName == filename || storedFileName == filename?.removingPercentEncoding {
                         return i
                     }
                 }

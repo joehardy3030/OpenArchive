@@ -315,11 +315,46 @@ class ArchiveAPI: NSObject {
                        progressHandler: ((_ progress: Double) -> Void)? = nil,
                        completion: @escaping (_ localFileURL: URL?, _ error: Error?) -> Void) {
         //https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#downloading-data-to-a-file
-        let destination = DownloadRequest.suggestedDownloadDestination(for: .documentDirectory) // Consider a more specific directory based on show/track
         guard let downloadURL = url else {
             completion(nil, NSError(domain: "ArchiveAPIError", code: 0, userInfo: [NSLocalizedDescriptionKey: "Download URL was nil"]))
             return
         }
+
+        // Custom destination that supports nested paths present in some collections
+        let destination: DownloadRequest.Destination = { _, response in
+            let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+
+            // Try to extract the relative path after /download/<identifier>/ from the request URL
+            var relativePath: String
+            let pathComponents = downloadURL.path.split(separator: "/").map(String.init)
+            if let downloadIndex = pathComponents.firstIndex(of: "download"), pathComponents.count > downloadIndex + 2 {
+                let remainder = pathComponents.suffix(from: downloadIndex + 2)
+                relativePath = remainder.joined(separator: "/")
+            } else {
+                relativePath = response.suggestedFilename ?? downloadURL.lastPathComponent
+            }
+
+            // Sanitize and normalize the relative path to prevent path traversal
+            let sanitized = relativePath
+                .replacingOccurrences(of: "\\", with: "/")
+                .trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+
+            let components = sanitized.split(separator: "/").map(String.init)
+            if sanitized.isEmpty || components.contains("..") {
+                // Fallback to a flat filename if unsafe
+                let fallback = documentsDirectory.appendingPathComponent(response.suggestedFilename ?? downloadURL.lastPathComponent)
+                return (fallback, [.removePreviousFile, .createIntermediateDirectories])
+            }
+
+            // Build destination URL with intermediate directories
+            var destinationURL = documentsDirectory
+            for component in components {
+                destinationURL.appendPathComponent(component)
+            }
+
+            return (destinationURL, [.removePreviousFile, .createIntermediateDirectories])
+        }
+
         self.sessionManager.download(downloadURL, to: destination)
             .downloadProgress { (progressObject) in
                 progressHandler?(progressObject.fractionCompleted)

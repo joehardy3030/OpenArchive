@@ -209,9 +209,17 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
                             mp3s.append(showMP3)
                         }
                     }
-                    self.showMetadataModel?.mp3Array = mp3s.sorted { (item1, item2) -> Bool in // Sort tracks
-                        guard let track1 = item1.track, let track2 = item2.track else { return false }
-                        return track1.localizedStandardCompare(track2) == .orderedAscending
+                    // Sort by disc/set (parsed from filename), then by track number, then by title/name as fallback
+                    self.showMetadataModel?.mp3Array = mp3s.sorted { (left, right) -> Bool in
+                        let leftKey = self.sortKey(for: left)
+                        let rightKey = self.sortKey(for: right)
+                        if leftKey.discOrSet != rightKey.discOrSet {
+                            return leftKey.discOrSet < rightKey.discOrSet
+                        }
+                        if leftKey.trackNumber != rightKey.trackNumber {
+                            return leftKey.trackNumber < rightKey.trackNumber
+                        }
+                        return leftKey.fallback < rightKey.fallback
                     }
                 }
                 self.showTableView.reloadData()
@@ -648,6 +656,40 @@ class ShowViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
 
 @available(iOS 13.0, *)
 private extension ShowViewController {
+    // Build a sort key that groups by disc/set then by track number.
+    // Supports filenames like "...d1t01.mp3" or "...s2t05.mp3" and falls back to metadata track/title.
+    func sortKey(for mp3: ShowMP3) -> (discOrSet: Int, trackNumber: Int, fallback: String) {
+        let name = mp3.name ?? ""
+        let lastComponent = URL(fileURLWithPath: name).lastPathComponent
+        let fallback = mp3.title ?? lastComponent
+
+        // Regex for d1t01 or s2t05; case-insensitive
+        let pattern = "(?i)[ds](\\d+)t(\\d+)"
+        if let regex = try? NSRegularExpression(pattern: pattern, options: []),
+           let match = regex.firstMatch(in: lastComponent, options: [], range: NSRange(location: 0, length: lastComponent.utf16.count)),
+           match.numberOfRanges >= 3 {
+            let discRange = match.range(at: 1)
+            let trackRange = match.range(at: 2)
+            if let discSwiftRange = Range(discRange, in: lastComponent),
+               let trackSwiftRange = Range(trackRange, in: lastComponent) {
+                let discString = String(lastComponent[discSwiftRange])
+                let trackString = String(lastComponent[trackSwiftRange])
+                let disc = Int(discString) ?? 1
+                let track = Int(trackString) ?? 1
+                return (disc, track, fallback)
+            }
+        }
+
+        // Fallbacks
+        let disc = 1
+        var track = 9999
+        if let trackString = mp3.track {
+            // Extract leading integer if possible (handles "01", "1/12", etc.)
+            let prefixDigits = trackString.prefix { $0.isNumber }
+            if let parsed = Int(prefixDigits) { track = parsed }
+        }
+        return (disc, track, fallback)
+    }
     private func timestamp() -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm:ss.SSS"

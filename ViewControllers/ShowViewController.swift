@@ -680,6 +680,35 @@ private extension ShowViewController {
             }
         }
 
+        // Regex for leading disc-track pattern like "1-03_..."
+        // Capture disc then track: ^(\d{1,2})-(\d{1,2})[ _-]
+        if let regex = try? NSRegularExpression(pattern: "^(\\d{1,2})-(\\d{1,2})[ _-]", options: []),
+           let match = regex.firstMatch(in: lastComponent, options: [], range: NSRange(location: 0, length: lastComponent.utf16.count)),
+           match.numberOfRanges >= 3 {
+            let discRange = match.range(at: 1)
+            let trackRange = match.range(at: 2)
+            if let discSwiftRange = Range(discRange, in: lastComponent),
+               let trackSwiftRange = Range(trackRange, in: lastComponent) {
+                let discString = String(lastComponent[discSwiftRange])
+                let trackString = String(lastComponent[trackSwiftRange])
+                let disc = Int(discString) ?? 1
+                let track = Int(trackString) ?? 1
+                return (disc, track, fallback)
+            }
+        }
+
+        // Regex for leading track number like "01_...", "01 ...", or "01-..."
+        if let regex = try? NSRegularExpression(pattern: "^(\\d{1,3})[ _-]", options: []),
+           let match = regex.firstMatch(in: lastComponent, options: [], range: NSRange(location: 0, length: lastComponent.utf16.count)),
+           match.numberOfRanges >= 2 {
+            let trackRange = match.range(at: 1)
+            if let trackSwiftRange = Range(trackRange, in: lastComponent) {
+                let trackString = String(lastComponent[trackSwiftRange])
+                let track = Int(trackString) ?? 1
+                return (1, track, fallback)
+            }
+        }
+
         // Fallbacks
         let disc = 1
         var track = 9999

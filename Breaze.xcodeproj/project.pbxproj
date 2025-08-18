@@ -49,6 +49,7 @@
 		D8A5324C24A9AFF2002379CF /* ArchiveCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A5324B24A9AFF2002379CF /* ArchiveCell.swift */; };
 		D8ACD2E22B1D6CC30097224B /* ChateauGPTModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8ACD2E12B1D6CC30097224B /* ChateauGPTModel.swift */; };
 		D8B65F0024C54A5500F57355 /* DownloadPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B65EFF24C54A5500F57355 /* DownloadPlayerViewController.swift */; };
+		D8C0E0ED2E53E6DC001E6E31 /* CollectionsPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C0E0EC2E53E6DC001E6E31 /* CollectionsPickerViewController.swift */; };
 		D8C8A2072DBF30E0002896F2 /* CollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C8A2062DBF30CD002896F2 /* CollectionViewController.swift */; };
 		D8DCF13425AFFEA200D28837 /* CarPlayDownloadsTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DCF13325AFFEA200D28837 /* CarPlayDownloadsTemplate.swift */; };
 		D8EECF562B1BA86100CD3235 /* ChateauGPTViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EECF552B1BA86100CD3235 /* ChateauGPTViewController.swift */; };
@@ -125,6 +126,7 @@
 		D8A5324B24A9AFF2002379CF /* ArchiveCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveCell.swift; sourceTree = "<group>"; };
 		D8ACD2E12B1D6CC30097224B /* ChateauGPTModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChateauGPTModel.swift; sourceTree = "<group>"; };
 		D8B65EFF24C54A5500F57355 /* DownloadPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadPlayerViewController.swift; sourceTree = "<group>"; };
+		D8C0E0EC2E53E6DC001E6E31 /* CollectionsPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionsPickerViewController.swift; sourceTree = "<group>"; };
 		D8C8A2062DBF30CD002896F2 /* CollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewController.swift; sourceTree = "<group>"; };
 		D8DCF13325AFFEA200D28837 /* CarPlayDownloadsTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarPlayDownloadsTemplate.swift; sourceTree = "<group>"; };
 		D8EECF552B1BA86100CD3235 /* ChateauGPTViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChateauGPTViewController.swift; sourceTree = "<group>"; };
@@ -266,6 +268,7 @@
 				D83EB54124CE62170016726C /* ArchiveTabBarController.swift */,
 				D83EB53D24CE33C60016726C /* ArchiveNavigationController.swift */,
 				D8C8A2062DBF30CD002896F2 /* CollectionViewController.swift */,
+				D8C0E0EC2E53E6DC001E6E31 /* CollectionsPickerViewController.swift */,
 				7984F98C24A4565400989DB8 /* YearViewController.swift */,
 				D8449A6724AEF3C200F113F4 /* MonthViewController.swift */,
 				D852C3C624B1219400029EB9 /* ShowsListViewController.swift */,
@@ -608,6 +611,7 @@
 				D8B65F0024C54A5500F57355 /* DownloadPlayerViewController.swift in Sources */,
 				D84D2B8E24C2925A006C8175 /* DownloadsViewController.swift in Sources */,
 				D8449A6A24AEF57600F113F4 /* MonthTableViewCell.swift in Sources */,
+				D8C0E0ED2E53E6DC001E6E31 /* CollectionsPickerViewController.swift in Sources */,
 				D82C591B2DDAC1460013BAC5 /* CollectionConfig.swift in Sources */,
 				D850B8FD24B26EAC00E3DC6B /* ShowMetadataModel.swift in Sources */,
 				D89D789925901D80009324EE /* ArchivePlayerViewController.swift in Sources */,

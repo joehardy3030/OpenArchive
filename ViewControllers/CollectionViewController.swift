@@ -22,7 +22,9 @@ class CollectionViewController: ArchiveSuperViewController, UITableViewDelegate,
         
         tableView.delegate = self
         tableView.dataSource = self
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addCollectionTapped))
+        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addCollectionTapped))
+        let browseButton = UIBarButtonItem(title: "Browse", style: .plain, target: self, action: #selector(browseCollectionsTapped))
+        navigationItem.rightBarButtonItems = [addButton, browseButton]
         entries = store.getEntries()
     }
     
@@ -82,10 +84,67 @@ class CollectionViewController: ArchiveSuperViewController, UITableViewDelegate,
             let name = alert.textFields?[0].text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
             let id = alert.textFields?[1].text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
             guard !name.isEmpty, !id.isEmpty else { return }
-            self.store.addCollection(displayName: name, identifier: id)
-            self.entries = self.store.getEntries()
-            self.tableView.reloadData()
+            self.addCollectionAndInferYears(displayName: name, identifier: id)
         }))
         present(alert, animated: true)
+    }
+
+    // MARK: - Browse and Fetch All Collections
+    @objc private func browseCollectionsTapped() {
+        let spinner = UIActivityIndicatorView(style: .medium)
+        spinner.startAnimating()
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: spinner)
+        archiveAPI.fetchEtreeCollections { [weak self] collections, error in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                self.navigationItem.rightBarButtonItems = self.navigationItem.rightBarButtonItems // restore buttons
+            }
+            if let error = error { print("fetchEtreeCollections error: \(error.localizedDescription)"); return }
+            guard let collections = collections else { return }
+            DispatchQueue.main.async {
+                self?.presentCollectionsPicker(collections: collections)
+            }
+        }
+    }
+
+    private func presentCollectionsPicker(collections: [ArchiveAPI.ArchiveCollection]) {
+        // Simple list picker via Action Sheet; for large lists, consider a modal table with search
+        let alert = UIAlertController(title: "Browse Bands", message: "Select a band to add", preferredStyle: .actionSheet)
+        let first = collections.prefix(15) // Avoid huge action sheet; truncate for now
+        for item in first {
+            let title = (item.title ?? item.identifier) ?? "Unknown"
+            let id = item.identifier ?? title
+            alert.addAction(UIAlertAction(title: title, style: .default, handler: { [weak self] _ in
+                self?.addCollectionAndInferYears(displayName: title, identifier: id)
+            }))
+        }
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        present(alert, animated: true)
+    }
+
+    // Add then infer whether creator-based and compute year range to persist for YearViewController
+    private func addCollectionAndInferYears(displayName: String, identifier: String) {
+        archiveAPI.detectCreatorBased(collectionOrCreator: identifier) { [weak self] isCreator in
+            // Persist creator-based override if needed
+            if isCreator {
+                let defaults = UserDefaults.standard
+                var extra = defaults.stringArray(forKey: "creatorBasedCollectionsExtra") ?? []
+                if !extra.contains(identifier) {
+                    extra.append(identifier)
+                    defaults.set(extra, forKey: "creatorBasedCollectionsExtra")
+                }
+            }
+            self?.archiveAPI.fetchCollectionYearRange(identifier: identifier, isCreatorBased: isCreator) { range in
+                let defaults = UserDefaults.standard
+                if let (minY, maxY) = range {
+                    defaults.set([minY, maxY], forKey: "years_\(identifier)")
+                }
+                DispatchQueue.main.async {
+                    self?.store.addCollection(displayName: displayName, identifier: identifier)
+                    self?.entries = self?.store.getEntries() ?? []
+                    self?.tableView.reloadData()
+                }
+            }
+        }
     }
 }

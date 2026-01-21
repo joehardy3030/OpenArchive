@@ -10,9 +10,23 @@ import UIKit
 //import FirebaseUI
 
 class StartViewController: ArchiveSuperViewController {
+    
+    private weak var miniPlayerVC: MiniPlayerViewController?
+    private var hasAttemptedRestore = false
         
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        // Attempt to restore playback state after view hierarchy is set up
+        // Only do this once on initial launch
+        if !hasAttemptedRestore, let mp = miniPlayerVC {
+            hasAttemptedRestore = true
+            mp.attemptRestorePlaybackState()
+        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -23,9 +37,8 @@ class StartViewController: ArchiveSuperViewController {
         }
         
         if let mp = segue.destination as? MiniPlayerViewController {
-//            if let p = player {
-                mp.player = player // There needs to be a player already for this to work. Need to inject it.
-            
+            mp.player = player // There needs to be a player already for this to work. Need to inject it.
+            self.miniPlayerVC = mp // Keep reference for restore
         }
     }
 

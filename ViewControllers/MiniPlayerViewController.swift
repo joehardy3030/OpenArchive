@@ -52,6 +52,10 @@ class MiniPlayerViewController: UIViewController {
     private var isObservingPlayer = false
     private weak var observedQueue: AVQueuePlayer?
     private var miniPlayerKVOContext = 0
+    
+    // For restored playback state (not yet playing)
+    private var restoredState: PlaybackState?
+    private var isRestoredStateReady = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -82,7 +86,12 @@ class MiniPlayerViewController: UIViewController {
     }
 
     @IBAction func playButton(_ sender: Any) {
-        playPause()
+        // If we have a restored state that hasn't been loaded into the player yet
+        if let state = restoredState, !isRestoredStateReady {
+            startRestoredPlayback(state: state)
+        } else {
+            playPause()
+        }
     }
     
     @IBAction func forwardButton(_ sender: Any) {
@@ -294,6 +303,87 @@ class MiniPlayerViewController: UIViewController {
         }
         else {
             player?.play()
+        }
+    }
+    
+    // MARK: - Playback State Restoration
+    
+    /// Attempt to restore saved playback state (call after player is set)
+    func attemptRestorePlaybackState() {
+        guard let player = player else { return }
+        
+        // Don't restore if already playing
+        if player.playerQueue?.rate ?? 0 > 0 { return }
+        
+        // Try to restore state
+        if let state = player.restorePlaybackState() {
+            self.restoredState = state
+            self.isRestoredStateReady = false
+            
+            // Display the restored show info without starting playback
+            displayRestoredState(state)
+            
+            print("MiniPlayer: Restored playback state displayed, waiting for user to tap play")
+        }
+    }
+    
+    /// Display the restored state in the UI (paused, not playing)
+    private func displayRestoredState(_ state: PlaybackState) {
+        guard let mp3s = state.showMetadataModel.mp3Array,
+              state.trackIndex < mp3s.count else { return }
+        
+        let track = mp3s[state.trackIndex]
+        let metadata = state.showMetadataModel.metadata
+        
+        // Update labels
+        songLabel.text = track.title ?? track.name ?? "Unknown Track"
+        venueLabel.text = metadata?.venue ?? metadata?.coverage ?? ""
+        showLabel.text = metadata?.creator ?? ""
+        
+        // Show saved position
+        currentTimeLabel.text = utils.getTimerString(seconds: state.playbackPosition)
+        totalTimeLabel.text = "Tap to play"
+        
+        // Reset slider
+        timeSlider.value = 0.0
+        
+        // Ensure play button shows play icon
+        if #available(iOS 13.0, *) {
+            playButton.setBackgroundImage(UIImage(systemName: "play"), for: .normal)
+        }
+        
+        print("MiniPlayer: Displaying restored state - \(track.title ?? track.name ?? "Unknown")")
+    }
+    
+    /// Actually start playback of the restored state
+    private func startRestoredPlayback(state: PlaybackState) {
+        guard let player = player else { return }
+        
+        print("MiniPlayer: Starting restored playback")
+        
+        // Show loading indicator
+        songLabel.text = "Loading..."
+        
+        player.prepareRestoredPlayback(state: state) { [weak self] success in
+            guard let self = self else { return }
+            
+            if success {
+                self.isRestoredStateReady = true
+                self.setupPlayerObserver()
+                self.setupQueueTimerCallback()
+                self.setupSlider()
+                self.setupSong()
+                self.player?.play()
+                
+                // Clear the restored state since we're now playing
+                self.restoredState = nil
+                
+                print("MiniPlayer: Restored playback started successfully")
+            } else {
+                print("MiniPlayer: Failed to start restored playback")
+                self.initialDefaults()
+                self.restoredState = nil
+            }
         }
     }
     

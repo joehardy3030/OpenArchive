@@ -14,9 +14,30 @@ class ArchiveTabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Force classic tab bar style (iOS 18+ uses a new floating/pill-shaped design by default)
         if #available(iOS 18.0, *) {
-            mode = .tabBar  // Use classic bottom tab bar instead of new floating style
+            mode = .tabBar
         }
+        
+        configureTabBarAppearance()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        // Move the tab bar lower - closer to the bottom of the screen
+        // Adjust this value to move it lower (positive) or higher (negative)
+        let offsetDown: CGFloat = 10
+        
+        var tabBarFrame = tabBar.frame
+        tabBarFrame.origin.y = view.bounds.height - tabBarFrame.height - view.safeAreaInsets.bottom + offsetDown
+        tabBar.frame = tabBarFrame
+    }
+    
+    private func configureTabBarAppearance() {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        
+        tabBar.standardAppearance = appearance
+        tabBar.scrollEdgeAppearance = appearance
     }
 }

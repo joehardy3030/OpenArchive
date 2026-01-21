@@ -17,24 +17,5 @@ class ArchiveTabBarController: UITabBarController {
         if #available(iOS 18.0, *) {
             mode = .tabBar
         }
-        
-        configureTabBarAppearance()
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
-        // Use transform to visually push the tab bar down
-        // Adjust this value: positive moves down, negative moves up
-        let offsetDown: CGFloat = 20
-        tabBar.transform = CGAffineTransform(translationX: 0, y: offsetDown)
-    }
-    
-    private func configureTabBarAppearance() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        
-        tabBar.standardAppearance = appearance
-        tabBar.scrollEdgeAppearance = appearance
     }
 }

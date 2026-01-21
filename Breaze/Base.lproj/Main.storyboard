@@ -501,6 +501,9 @@
                             <constraint firstItem="AsE-5v-DPU" firstAttribute="bottom" secondItem="bnz-td-SvN" secondAttribute="bottom" constant="50" id="zxz-72-mDt"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="miniPlayerBottomConstraint" destination="zxz-72-mDt" id="mP0-zk-bcL"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fSx-EV-GEo" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

@@ -13,6 +13,10 @@ class ArchiveTabBarController: UITabBarController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        
+        // Force classic tab bar style (iOS 18+ uses a new floating/pill-shaped design by default)
+        if #available(iOS 18.0, *) {
+            mode = .tabBar  // Use classic bottom tab bar instead of new floating style
+        }
     }
 }

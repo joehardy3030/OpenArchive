@@ -13,9 +13,60 @@ class StartViewController: ArchiveSuperViewController {
     
     private weak var miniPlayerVC: MiniPlayerViewController?
     private var hasAttemptedRestore = false
+    
+    // Container views for programmatic constraint adjustment
+    private weak var tabBarContainerView: UIView?
+    private weak var miniPlayerContainerView: UIView?
         
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Find the container views and fix layout constraints
+        fixContainerViewLayout()
+    }
+    
+    /// Fix the overlapping container views by adjusting constraints programmatically
+    private func fixContainerViewLayout() {
+        // Find the two container views (they are the only direct subviews that are container views)
+        let containerViews = view.subviews.filter { $0 is UIView && $0.subviews.isEmpty == false }
+        
+        // The mini player container has a fixed height of 120
+        // The tab bar container is the larger one
+        for subview in view.subviews {
+            // Check for mini player container (has height constraint of 120)
+            let hasHeightConstraint = subview.constraints.contains { constraint in
+                constraint.firstAttribute == .height && constraint.constant == 120
+            }
+            if hasHeightConstraint {
+                miniPlayerContainerView = subview
+            } else if subview != miniPlayerContainerView && subview.translatesAutoresizingMaskIntoConstraints == false {
+                // The other container view (tab bar controller)
+                tabBarContainerView = subview
+            }
+        }
+        
+        guard let tabContainer = tabBarContainerView,
+              let miniContainer = miniPlayerContainerView else {
+            print("StartViewController: Could not find container views for layout fix")
+            return
+        }
+        
+        // Find and deactivate the tab container's bottom-to-safeArea constraint
+        for constraint in view.constraints {
+            // Look for constraint: tabContainer.bottom = safeArea.bottom
+            if (constraint.firstItem as? UIView == tabContainer && constraint.firstAttribute == .bottom) ||
+               (constraint.secondItem as? UIView == tabContainer && constraint.secondAttribute == .bottom) {
+                if constraint.firstItem is UILayoutGuide || constraint.secondItem is UILayoutGuide {
+                    constraint.isActive = false
+                    print("StartViewController: Deactivated tab container bottom constraint to safe area")
+                    break
+                }
+            }
+        }
+        
+        // Add new constraint: tabContainer.bottom = miniContainer.top
+        tabContainer.bottomAnchor.constraint(equalTo: miniContainer.topAnchor).isActive = true
+        print("StartViewController: Added tab container bottom to mini player top constraint")
     }
     
     override func viewDidAppear(_ animated: Bool) {

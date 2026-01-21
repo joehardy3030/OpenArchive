@@ -25,13 +25,9 @@ class StartViewController: ArchiveSuperViewController {
         fixContainerViewLayout()
     }
     
-    /// Fix the overlapping container views by adjusting constraints programmatically
+    /// Fix the layout: tab bar at bottom, mini player above tab bar, content above mini player
     private func fixContainerViewLayout() {
-        // Find the two container views (they are the only direct subviews that are container views)
-        let containerViews = view.subviews.filter { $0 is UIView && $0.subviews.isEmpty == false }
-        
-        // The mini player container has a fixed height of 120
-        // The tab bar container is the larger one
+        // Find the two container views
         for subview in view.subviews {
             // Check for mini player container (has height constraint of 120)
             let hasHeightConstraint = subview.constraints.contains { constraint in
@@ -40,7 +36,6 @@ class StartViewController: ArchiveSuperViewController {
             if hasHeightConstraint {
                 miniPlayerContainerView = subview
             } else if subview != miniPlayerContainerView && subview.translatesAutoresizingMaskIntoConstraints == false {
-                // The other container view (tab bar controller)
                 tabBarContainerView = subview
             }
         }
@@ -51,22 +46,27 @@ class StartViewController: ArchiveSuperViewController {
             return
         }
         
-        // Find and deactivate the tab container's bottom-to-safeArea constraint
+        // Deactivate existing bottom constraints for both containers
         for constraint in view.constraints {
-            // Look for constraint: tabContainer.bottom = safeArea.bottom
-            if (constraint.firstItem as? UIView == tabContainer && constraint.firstAttribute == .bottom) ||
-               (constraint.secondItem as? UIView == tabContainer && constraint.secondAttribute == .bottom) {
-                if constraint.firstItem is UILayoutGuide || constraint.secondItem is UILayoutGuide {
-                    constraint.isActive = false
-                    print("StartViewController: Deactivated tab container bottom constraint to safe area")
-                    break
-                }
+            let isTabContainerBottom = (constraint.firstItem as? UIView == tabContainer && constraint.firstAttribute == .bottom) ||
+                                       (constraint.secondItem as? UIView == tabContainer && constraint.secondAttribute == .bottom)
+            let isMiniContainerBottom = (constraint.firstItem as? UIView == miniContainer && constraint.firstAttribute == .bottom) ||
+                                        (constraint.secondItem as? UIView == miniContainer && constraint.secondAttribute == .bottom)
+            
+            if isTabContainerBottom || isMiniContainerBottom {
+                constraint.isActive = false
             }
         }
         
-        // Add new constraint: tabContainer.bottom = miniContainer.top
-        tabContainer.bottomAnchor.constraint(equalTo: miniContainer.topAnchor).isActive = true
-        print("StartViewController: Added tab container bottom to mini player top constraint")
+        // New layout (bottom to top): Tab bar -> Mini player -> Content
+        // 1. Tab container goes all the way to the bottom (so its tab bar is at the very bottom)
+        tabContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        
+        // 2. Mini player sits above the tab bar (49 points is standard tab bar height)
+        let tabBarHeight: CGFloat = 49
+        miniContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -tabBarHeight).isActive = true
+        
+        print("StartViewController: Layout adjusted - tab bar at bottom, mini player above it")
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -81,10 +81,10 @@ class StartViewController: ArchiveSuperViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let vc = segue.destination as? ArchiveTabBarController {
-           // if let p = player {
-           //     vc.player = p // There needs to be a player already for this to work. Need to inject it.
-           // }
+        if let tabBarController = segue.destination as? ArchiveTabBarController {
+            // Add additional safe area inset so content views leave room for the mini player above the tab bar
+            let miniPlayerHeight: CGFloat = 120
+            tabBarController.additionalSafeAreaInsets = UIEdgeInsets(top: 0, left: 0, bottom: miniPlayerHeight, right: 0)
         }
         
         if let mp = segue.destination as? MiniPlayerViewController {

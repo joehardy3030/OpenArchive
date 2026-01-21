@@ -6,6 +6,7 @@ final class CollectionsPickerViewController: UIViewController, UITableViewDataSo
     private let onSelect: (ArchiveAPI.ArchiveCollection) -> Void
     private let tableView = UITableView(frame: .zero, style: .plain)
     private let searchBar = UISearchBar(frame: .zero)
+    //private let miniPlayerHeight: CGFloat = 120
 
     init(collections: [ArchiveAPI.ArchiveCollection], onSelect: @escaping (ArchiveAPI.ArchiveCollection) -> Void) {
         self.allCollections = collections
@@ -42,8 +43,10 @@ final class CollectionsPickerViewController: UIViewController, UITableViewDataSo
             tableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            //tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -miniPlayerHeight)
         ])
+
+        // Keep the table view above the mini player overlay via constraint.
     }
 
     // MARK: - Actions

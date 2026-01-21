@@ -24,13 +24,10 @@ class ArchiveTabBarController: UITabBarController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        // Move the tab bar lower - closer to the bottom of the screen
-        // Adjust this value to move it lower (positive) or higher (negative)
-        let offsetDown: CGFloat = 10
-        
-        var tabBarFrame = tabBar.frame
-        tabBarFrame.origin.y = view.bounds.height - tabBarFrame.height - view.safeAreaInsets.bottom + offsetDown
-        tabBar.frame = tabBarFrame
+        // Use transform to visually push the tab bar down
+        // Adjust this value: positive moves down, negative moves up
+        let offsetDown: CGFloat = 20
+        tabBar.transform = CGAffineTransform(translationX: 0, y: offsetDown)
     }
     
     private func configureTabBarAppearance() {

@@ -378,6 +378,105 @@ class ArchiveAPI: NSObject {
         formatter.dateFormat = "HH:mm:ss.SSS"
         return formatter.string(from: Date())
     }
+
+    // MARK: - Collections Discovery
+
+    struct ArchiveCollection: Codable {
+        let identifier: String?
+        let title: String?
+    }
+
+    private struct AdvancedSearchDoc: Codable {
+        let identifier: String?
+        let title: String?
+        let date: String?
+    }
+
+    private struct AdvancedSearchResponse: Codable {
+        struct Inner: Codable {
+            let numFound: Int?
+            let docs: [AdvancedSearchDoc]?
+        }
+        let response: Inner?
+    }
+
+    func fetchEtreeCollections(completion: @escaping ([ArchiveCollection]?, Error?) -> Void) {
+        // List child collections under the Live Music Archive (etree)
+        // advancedsearch: q=collection:etree AND mediatype:collection
+        let q = "collection%3Aetree%20AND%20mediatype%3Acollection"
+        let url = baseURLString + "advancedsearch.php?q=" + q + "&fl%5B%5D=identifier&fl%5B%5D=title&rows=50000&output=json"
+        AF.request(url).responseDecodable(of: AdvancedSearchResponse.self) { response in
+            switch response.result {
+            case .success(let resp):
+                let collections = (resp.response?.docs ?? []).map { ArchiveCollection(identifier: $0.identifier, title: $0.title) }
+                completion(collections, nil)
+            case .failure(let error):
+                completion(nil, error)
+            }
+        }
+    }
+
+    func detectCreatorBased(collectionOrCreator id: String, completion: @escaping (Bool) -> Void) {
+        // Heuristic: if collection:id has 0 results but creator:"id" has >0, treat as creator-based
+        let qCollection = "collection%3A%28" + id + "%29"
+        let urlCollection = baseURLString + "advancedsearch.php?q=" + qCollection + "&rows=0&output=json"
+        AF.request(urlCollection).responseDecodable(of: AdvancedSearchResponse.self) { [weak self] response in
+            guard let self = self else { return }
+            let collectionCount = response.value?.response?.numFound ?? 0
+            if collectionCount > 0 {
+                completion(false)
+                return
+            }
+            let qCreator = "creator%3A%22" + id + "%22"
+            let urlCreator = self.baseURLString + "advancedsearch.php?q=" + qCreator + "&rows=0&output=json"
+            AF.request(urlCreator).responseDecodable(of: AdvancedSearchResponse.self) { resp2 in
+                let creatorCount = resp2.value?.response?.numFound ?? 0
+                completion(creatorCount > 0)
+            }
+        }
+    }
+
+    func fetchCollectionYearRange(identifier: String, isCreatorBased: Bool, completion: @escaping ((Int, Int)?) -> Void) {
+        // Query earliest and latest dates
+        let fieldQuery: String
+        if isCreatorBased {
+            fieldQuery = "creator%3A%22" + identifier + "%22"
+        } else {
+            fieldQuery = "collection%3A%28" + identifier + "%29"
+        }
+        let dateQuery = "date%3A%5B0000-01-01%20TO%209999-12-31%5D"
+
+        func makeURL(sort: String) -> String {
+            return baseURLString + "advancedsearch.php?q=" + fieldQuery + "%20AND%20" + dateQuery + "&fl%5B%5D=date&sort%5B%5D=date+" + sort + "&rows=1&output=json"
+        }
+
+        AF.request(makeURL(sort: "asc")).responseDecodable(of: AdvancedSearchResponse.self) { responseAsc in
+            let minYear: Int? = {
+                guard let date = responseAsc.value?.response?.docs?.first?.date else { return nil }
+                return ArchiveAPI.extractYear(from: date)
+            }()
+            AF.request(makeURL(sort: "desc")).responseDecodable(of: AdvancedSearchResponse.self) { responseDesc in
+                let maxYear: Int? = {
+                    guard let date = responseDesc.value?.response?.docs?.first?.date else { return nil }
+                    return ArchiveAPI.extractYear(from: date)
+                }()
+                if let minY = minYear, let maxY = maxYear, minY <= maxY {
+                    completion((minY, maxY))
+                } else {
+                    completion(nil)
+                }
+            }
+        }
+    }
+
+    private static func extractYear(from dateString: String) -> Int? {
+        // Accept YYYY, YYYY-MM, or YYYY-MM-DD
+        if dateString.count >= 4 {
+            let prefix = String(dateString.prefix(4))
+            return Int(prefix)
+        }
+        return nil
+    }
 }
 
 

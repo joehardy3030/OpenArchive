@@ -23,6 +23,11 @@ class YearViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         super.viewDidLoad()
         self.yearTableView.delegate = self
         self.yearTableView.dataSource = self
+        if let selectedCollection = selectedCollection, let stored = UserDefaults.standard.array(forKey: "years_\(selectedCollection)") as? [Int], stored.count == 2 {
+            let start = stored[0]
+            let end = stored[1]
+            if start <= end { self.years += start...end }
+        } else {
         switch selectedCollection {
         case "GratefulDead":
             self.years += 1965...1995
@@ -44,6 +49,7 @@ class YearViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
             self.years += 1990...2025
         default:
             self.years += 1965...1995
+        }
         }
         //getYearTotals()
     }

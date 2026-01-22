@@ -414,6 +414,92 @@ extension AudioPlayerArchive {
 
 }
 
+// MARK: - Playback State Persistence
+extension AudioPlayerArchive {
+    
+    /// Save current playback state for later restoration
+    func savePlaybackState() {
+        guard let model = showMetadataModel,
+              model.mp3Array?.isEmpty == false else {
+            print("AudioPlayerArchive: No show loaded, skipping state save")
+            return
+        }
+        
+        let trackIndex = getCurrentTrackIndex()
+        let position = playerQueue?.currentTime().seconds ?? 0.0
+        
+        // Avoid saving invalid positions
+        guard !position.isNaN && !position.isInfinite else {
+            print("AudioPlayerArchive: Invalid position, skipping state save")
+            return
+        }
+        
+        let state = PlaybackState(
+            showMetadataModel: model,
+            trackIndex: trackIndex,
+            playbackPosition: position,
+            isStreaming: isStreaming,
+            savedAt: Date()
+        )
+        
+        PlaybackState.save(state)
+    }
+    
+    /// Restore playback state (loads metadata but does NOT start playback)
+    /// Returns the restored state if successful, nil otherwise
+    func restorePlaybackState() -> PlaybackState? {
+        guard let state = PlaybackState.load() else { return nil }
+        
+        // Restore the show metadata
+        self.showMetadataModel = state.showMetadataModel
+        self.isStreaming = state.isStreaming
+        
+        print("AudioPlayerArchive: Restored state - track \(state.trackIndex), position \(state.playbackPosition), streaming: \(state.isStreaming)")
+        
+        return state
+    }
+    
+    /// Prepare the player queue and seek to position (call after UI is ready)
+    func prepareRestoredPlayback(state: PlaybackState, completion: @escaping (Bool) -> Void) {
+        guard let tracks = showMetadataModel?.mp3Array, !tracks.isEmpty else {
+            completion(false)
+            return
+        }
+        
+        // For local playback, verify the first track exists
+        if !state.isStreaming {
+            if let firstTrackName = tracks.first?.name,
+               let localURL = utils.trackURLfromName(name: firstTrackName) {
+                if !FileManager.default.fileExists(atPath: localURL.path) {
+                    print("AudioPlayerArchive: Local file not found, will stream instead")
+                    self.isStreaming = true
+                }
+            }
+        }
+        
+        // Load the queue
+        if isStreaming {
+            loadStreamingQueuePlayer(startingAt: state.trackIndex)
+        } else {
+            loadQueuePlayer(tracks: tracks, startingAt: state.trackIndex)
+        }
+        
+        // Seek to saved position after a short delay to allow player to initialize
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            guard let self = self, let queue = self.playerQueue else {
+                completion(false)
+                return
+            }
+            
+            let seekTime = CMTime(seconds: state.playbackPosition, preferredTimescale: 1000)
+            queue.seek(to: seekTime) { finished in
+                print("AudioPlayerArchive: Seek to \(state.playbackPosition)s completed: \(finished)")
+                completion(finished)
+            }
+        }
+    }
+}
+
 private extension AudioPlayerArchive {
     enum State {
         case idle

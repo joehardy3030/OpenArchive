@@ -13,6 +13,9 @@ class ArchiveTabBarController: UITabBarController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        
+        if #available(iOS 18.0, *) {
+            mode = .tabBar
+        }
     }
 }

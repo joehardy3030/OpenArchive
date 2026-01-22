@@ -14,6 +14,8 @@ class CollectionViewController: ArchiveSuperViewController, UITableViewDelegate,
     var selectedCollection: String?
     private let store = CollectionStore()
     private var entries: [CollectionEntry] = []
+    private var addButtonItem: UIBarButtonItem?
+    private var browseButtonItem: UIBarButtonItem?
     
     @IBOutlet weak var tableView: UITableView! // Connect this in your storyboard
 
@@ -22,7 +24,7 @@ class CollectionViewController: ArchiveSuperViewController, UITableViewDelegate,
         
         tableView.delegate = self
         tableView.dataSource = self
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addCollectionTapped))
+        setNavButtons()
         entries = store.getEntries()
     }
     
@@ -82,10 +84,71 @@ class CollectionViewController: ArchiveSuperViewController, UITableViewDelegate,
             let name = alert.textFields?[0].text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
             let id = alert.textFields?[1].text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
             guard !name.isEmpty, !id.isEmpty else { return }
-            self.store.addCollection(displayName: name, identifier: id)
-            self.entries = self.store.getEntries()
-            self.tableView.reloadData()
+            self.addCollectionAndInferYears(displayName: name, identifier: id)
         }))
         present(alert, animated: true)
+    }
+
+    // MARK: - Browse and Fetch All Collections
+    @objc private func browseCollectionsTapped() {
+        let spinner = UIActivityIndicatorView(style: .medium)
+        spinner.startAnimating()
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: spinner)
+        archiveAPI.fetchEtreeCollections { [weak self] collections, error in
+            DispatchQueue.main.async { self?.setNavButtons() }
+            if let error = error { print("fetchEtreeCollections error: \(error.localizedDescription)"); return }
+            guard let collections = collections else { return }
+            DispatchQueue.main.async {
+                self?.presentCollectionsPicker(collections: collections)
+            }
+        }
+    }
+
+    private func presentCollectionsPicker(collections: [ArchiveAPI.ArchiveCollection]) {
+        let picker = CollectionsPickerViewController(collections: collections.sorted { (a, b) -> Bool in
+            let at = (a.title ?? a.identifier) ?? ""
+            let bt = (b.title ?? b.identifier) ?? ""
+            return at.localizedCaseInsensitiveCompare(bt) == .orderedAscending
+        }) { [weak self] selected in
+            let title = (selected.title ?? selected.identifier) ?? "Unknown"
+            let id = selected.identifier ?? title
+            self?.addCollectionAndInferYears(displayName: title, identifier: id)
+        }
+        let nav = UINavigationController(rootViewController: picker)
+        present(nav, animated: true)
+    }
+
+    // Add then infer whether creator-based and compute year range to persist for YearViewController
+    private func addCollectionAndInferYears(displayName: String, identifier: String) {
+        archiveAPI.detectCreatorBased(collectionOrCreator: identifier) { [weak self] isCreator in
+            // Persist creator-based override if needed
+            if isCreator {
+                let defaults = UserDefaults.standard
+                var extra = defaults.stringArray(forKey: "creatorBasedCollectionsExtra") ?? []
+                if !extra.contains(identifier) {
+                    extra.append(identifier)
+                    defaults.set(extra, forKey: "creatorBasedCollectionsExtra")
+                }
+            }
+            self?.archiveAPI.fetchCollectionYearRange(identifier: identifier, isCreatorBased: isCreator) { range in
+                let defaults = UserDefaults.standard
+                if let (minY, maxY) = range {
+                    defaults.set([minY, maxY], forKey: "years_\(identifier)")
+                }
+                DispatchQueue.main.async {
+                    self?.store.addCollection(displayName: displayName, identifier: identifier)
+                    self?.entries = self?.store.getEntries() ?? []
+                    self?.tableView.reloadData()
+                }
+            }
+        }
+    }
+
+    private func setNavButtons() {
+        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addCollectionTapped))
+        let browseButton = UIBarButtonItem(title: "Browse", style: .plain, target: self, action: #selector(browseCollectionsTapped))
+        self.addButtonItem = addButton
+        self.browseButtonItem = browseButton
+        navigationItem.rightBarButtonItems = [addButton, browseButton]
     }
 }

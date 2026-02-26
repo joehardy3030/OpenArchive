@@ -432,6 +432,11 @@ private extension MiniPlayerViewController {
         if #available(iOS 13.0, *) {
             playButton.setBackgroundImage(UIImage(systemName: "pause"), for: .normal)
         }
+
+        // When playback starts from the modal player, the queue may have been rebuilt.
+        // Reconnect observers and refresh labels so the mini player stays in sync.
+        setupPlayerObserver()
+        setupSong()
     }
     
     @objc private func playbackDidPause(_ notification: Notification) {

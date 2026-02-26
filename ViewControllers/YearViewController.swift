@@ -32,21 +32,21 @@ class YearViewController: ArchiveSuperViewController, UITableViewDelegate, UITab
         case "GratefulDead":
             self.years += 1965...1995
         case "BillyStrings":
-            self.years += 2015...2025
+            self.years += 2015...2026
         case "PhilLeshandFriends":
-            self.years += 1996...2025
+            self.years += 1996...2026
         case "GooseBand":
-            self.years += 2017...2025
+            self.years += 2017...2026
         case "Furthur":
             self.years += 2009...2014
         case "TheOtherOnes":
             self.years += 1998...2002
         case "DeadAndCompany":
-            self.years += 2015...2025
+            self.years += 2015...2026
         case "Radiators":
-            self.years += 1983...2025
+            self.years += 1983...2026
         case "Phish":
-            self.years += 1990...2025
+            self.years += 1990...2026
         default:
             self.years += 1965...1995
         }

@@ -361,6 +361,7 @@
 				D85A4EE82022D0B500E480FB /* Frameworks */,
 				D85A4EE92022D0B500E480FB /* Resources */,
 				698DE67C1E1063997D8048EC /* [CP] Embed Pods Frameworks */,
+				A1B2C3D4E5F60718293A4B5C /* Set build number from git commit count */,
 			);
 			buildRules = (
 			);
@@ -555,6 +556,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Breaze/Pods-Breaze-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A1B2C3D4E5F60718293A4B5C /* Set build number from git commit count */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Set build number from git commit count";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Scripts/increment_build_number.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		F7FED7BE6C8978E2B3F37EE2 /* [CP] Check Pods Manifest.lock */ = {

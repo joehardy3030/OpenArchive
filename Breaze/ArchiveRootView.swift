@@ -4,26 +4,25 @@ import SwiftUI
 struct ArchiveRootView: View {
     @EnvironmentObject private var playerViewModel: PlayerViewModel
 
-    @State private var selectedTab: Tab = .shows
+    @State private var selectedTab: Tab = .bands
 
     enum Tab {
-        case shows
-        case downloads
+        case bands
+        case myTapes
         case search
-        case gpt
     }
 
     var body: some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedTab) {
-                Text("Shows tab SwiftUI placeholder")
-                    .tag(Tab.shows)
+                Text("Bands tab SwiftUI placeholder")
+                    .tag(Tab.bands)
                     .tabItem {
-                        Label("Shows", systemImage: "music.note.list")
+                        Label("Bands", systemImage: "music.note.list")
                     }
 
-                Text("Downloads tab SwiftUI placeholder")
-                    .tag(Tab.downloads)
+                Text("My Tapes tab SwiftUI placeholder")
+                    .tag(Tab.myTapes)
                     .tabItem {
                         Label("My Tapes", systemImage: "tray.full")
                     }
@@ -32,12 +31,6 @@ struct ArchiveRootView: View {
                     .tag(Tab.search)
                     .tabItem {
                         Label("Search", systemImage: "magnifyingglass")
-                    }
-
-                Text("GPT tab SwiftUI placeholder")
-                    .tag(Tab.gpt)
-                    .tabItem {
-                        Label("GPT", systemImage: "sparkles")
                     }
             }
 

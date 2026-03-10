@@ -110,9 +110,6 @@
 		D859CE3F2DF5081700D6371F /* YearsTotalResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearsTotalResponse.swift; sourceTree = "<group>"; };
 		D85A4EEB2022D0B500E480FB /* Chateau.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chateau.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D85A4EEE2022D0B600E480FB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		E1000002202601A000000001 /* ChateauArchiveApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChateauArchiveApp.swift; sourceTree = "<group>"; };
-		E1000002202601A000000002 /* PlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewModel.swift; sourceTree = "<group>"; };
-		E1000002202601A000000003 /* ArchiveRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveRootView.swift; sourceTree = "<group>"; };
 		D85A4EF52022D0B600E480FB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		D85A4EF72022D0B600E480FB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D85A4EFA2022D0B600E480FB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -138,6 +135,9 @@
 		D8C8A2062DBF30CD002896F2 /* CollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewController.swift; sourceTree = "<group>"; };
 		D8DCF13325AFFEA200D28837 /* CarPlayDownloadsTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarPlayDownloadsTemplate.swift; sourceTree = "<group>"; };
 		D8EECF552B1BA86100CD3235 /* ChateauGPTViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChateauGPTViewController.swift; sourceTree = "<group>"; };
+		E1000002202601A000000001 /* ChateauArchiveApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChateauArchiveApp.swift; sourceTree = "<group>"; };
+		E1000002202601A000000002 /* PlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewModel.swift; sourceTree = "<group>"; };
+		E1000002202601A000000003 /* ArchiveRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveRootView.swift; sourceTree = "<group>"; };
 		E24D8A6E14FB1F7F63E0D1DD /* Pods-Breaze.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Breaze.debug.xcconfig"; path = "Target Support Files/Pods-Breaze/Pods-Breaze.debug.xcconfig"; sourceTree = "<group>"; };
 		EEB1C82C04A1C7AE0A653AD7 /* Pods-BreazeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BreazeTests.debug.xcconfig"; path = "Target Support Files/Pods-BreazeTests/Pods-BreazeTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -847,7 +847,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 7.2.0;
+				MARKETING_VERSION = 8.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.carquinez.chateau;
 				PRODUCT_NAME = Chateau;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -873,7 +873,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 7.2.0;
+				MARKETING_VERSION = 8.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.carquinez.chateau;
 				PRODUCT_NAME = Chateau;
 				PROVISIONING_PROFILE_SPECIFIER = "";

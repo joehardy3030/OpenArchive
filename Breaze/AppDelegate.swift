@@ -14,7 +14,6 @@ import ARKit
 import CarPlay
 
 
-@UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     let center = UNUserNotificationCenter.current()

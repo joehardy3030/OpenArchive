@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import AVFoundation
 
 /// Observable wrapper around `AudioPlayerArchive` so SwiftUI views can react to playback changes.
 final class PlayerViewModel: ObservableObject {

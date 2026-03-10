@@ -54,6 +54,9 @@
 		D8C8A2072DBF30E0002896F2 /* CollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C8A2062DBF30CD002896F2 /* CollectionViewController.swift */; };
 		D8DCF13425AFFEA200D28837 /* CarPlayDownloadsTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DCF13325AFFEA200D28837 /* CarPlayDownloadsTemplate.swift */; };
 		D8EECF562B1BA86100CD3235 /* ChateauGPTViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EECF552B1BA86100CD3235 /* ChateauGPTViewController.swift */; };
+		E1000001202601A000000001 /* ChateauArchiveApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1000002202601A000000001 /* ChateauArchiveApp.swift */; };
+		E1000001202601A000000002 /* PlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1000002202601A000000002 /* PlayerViewModel.swift */; };
+		E1000001202601A000000003 /* ArchiveRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1000002202601A000000003 /* ArchiveRootView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -107,6 +110,9 @@
 		D859CE3F2DF5081700D6371F /* YearsTotalResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearsTotalResponse.swift; sourceTree = "<group>"; };
 		D85A4EEB2022D0B500E480FB /* Chateau.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chateau.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D85A4EEE2022D0B600E480FB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		E1000002202601A000000001 /* ChateauArchiveApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChateauArchiveApp.swift; sourceTree = "<group>"; };
+		E1000002202601A000000002 /* PlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewModel.swift; sourceTree = "<group>"; };
+		E1000002202601A000000003 /* ArchiveRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveRootView.swift; sourceTree = "<group>"; };
 		D85A4EF52022D0B600E480FB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		D85A4EF72022D0B600E480FB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D85A4EFA2022D0B600E480FB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -232,6 +238,9 @@
 			isa = PBXGroup;
 			children = (
 				799C3C8E2345582E00D9341E /* Breaze.entitlements */,
+				E1000002202601A000000001 /* ChateauArchiveApp.swift */,
+				E1000002202601A000000003 /* ArchiveRootView.swift */,
+				E1000002202601A000000002 /* PlayerViewModel.swift */,
 				D85A4EEE2022D0B600E480FB /* AppDelegate.swift */,
 				D85B4AFA25AD75A800A786DB /* SceneDelegate.swift */,
 				D87109F325ABF09D00CA133E /* CarPlaySceneDelegate.swift */,
@@ -606,6 +615,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E1000001202601A000000001 /* ChateauArchiveApp.swift in Sources */,
+				E1000001202601A000000003 /* ArchiveRootView.swift in Sources */,
+				E1000001202601A000000002 /* PlayerViewModel.swift in Sources */,
 				D843EBDD24B3B10300C128A5 /* AudioPlayerArchive.swift in Sources */,
 				D84D6E2824BEB5140022A058 /* NetworkUtility.swift in Sources */,
 				D892BBA024CBBCF5008E4960 /* ArchiveSuperViewController.swift in Sources */,

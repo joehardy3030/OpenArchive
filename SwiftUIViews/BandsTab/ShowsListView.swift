@@ -1,0 +1,92 @@
+import SwiftUI
+
+struct ShowsListView: View {
+    let year: Int
+    let month: Int
+    let collection: String
+    let sbdOnly: Bool
+    let prefetchedShows: [ShowMetadata]
+
+    @StateObject private var viewModel: ShowsListViewModel
+
+    init(year: Int, month: Int, collection: String, sbdOnly: Bool, prefetchedShows: [ShowMetadata]) {
+        self.year = year
+        self.month = month
+        self.collection = collection
+        self.sbdOnly = sbdOnly
+        self.prefetchedShows = prefetchedShows
+        _viewModel = StateObject(wrappedValue: ShowsListViewModel(
+            year: year, month: month, collection: collection,
+            sbdOnly: sbdOnly, prefetchedShows: prefetchedShows
+        ))
+    }
+
+    var body: some View {
+        List(viewModel.shows, id: \.identifier) { show in
+            NavigationLink(value: ShowDestination(metadata: show, showType: .archive)) {
+                ShowRowView(show: show)
+            }
+        }
+        .navigationTitle(viewModel.navigationTitle)
+        .navigationDestination(for: ShowDestination.self) { dest in
+            ShowDetailView(metadata: dest.metadata, showType: dest.showType)
+        }
+    }
+}
+
+struct ShowDestination: Hashable {
+    let metadata: ShowMetadata
+    let showType: ShowType
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(metadata.identifier)
+    }
+
+    static func == (lhs: ShowDestination, rhs: ShowDestination) -> Bool {
+        lhs.metadata.identifier == rhs.metadata.identifier && lhs.showType == rhs.showType
+    }
+}
+
+/// A single row showing artist, date, venue, source info, and ratings.
+struct ShowRowView: View {
+    let show: ShowMetadata
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(show.creator ?? show.collection?.joined(separator: ", ") ?? "")
+                .font(.system(size: 18, weight: .bold))
+            Text(formatDate(show.date))
+                .font(.system(size: 17, weight: .bold))
+            if let venue = show.venue {
+                let loc = [venue, show.coverage].compactMap { $0 }.joined(separator: ", ")
+                Text(loc)
+                    .font(.system(size: 16))
+                    .foregroundColor(.secondary)
+            }
+            if let src = show.source, !src.isEmpty {
+                Text(src.joined(separator: "; "))
+                    .font(.system(size: 15))
+                    .foregroundColor(.secondary)
+            }
+            if let rating = show.avg_rating, let reviews = show.num_reviews {
+                Text("\(String(format: "%.1f", rating)) stars  \(reviews) ratings")
+                    .font(.system(size: 16))
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding(.vertical, 4)
+    }
+
+    private func formatDate(_ dateString: String?) -> String {
+        guard let dateString else { return "" }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        if let date = formatter.date(from: dateString) {
+            formatter.dateFormat = "yyyy-MM-dd"
+            return formatter.string(from: date)
+        }
+        return dateString
+    }
+}

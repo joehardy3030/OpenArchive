@@ -57,6 +57,23 @@
 		E1000001202601A000000001 /* ChateauArchiveApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1000002202601A000000001 /* ChateauArchiveApp.swift */; };
 		E1000001202601A000000002 /* PlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1000002202601A000000002 /* PlayerViewModel.swift */; };
 		E1000001202601A000000003 /* ArchiveRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1000002202601A000000003 /* ArchiveRootView.swift */; };
+		E2000001202603A000000001 /* CollectionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2000002202603A000000001 /* CollectionsView.swift */; };
+		E2000001202603A000000002 /* CollectionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2000002202603A000000002 /* CollectionsViewModel.swift */; };
+		E2000001202603A000000003 /* YearListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2000002202603A000000003 /* YearListView.swift */; };
+		E2000001202603A000000004 /* YearListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2000002202603A000000004 /* YearListViewModel.swift */; };
+		E2000001202603A000000005 /* MonthListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2000002202603A000000005 /* MonthListView.swift */; };
+		E2000001202603A000000006 /* MonthListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2000002202603A000000006 /* MonthListViewModel.swift */; };
+		E2000001202603A000000007 /* ShowsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2000002202603A000000007 /* ShowsListView.swift */; };
+		E2000001202603A000000008 /* ShowsListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2000002202603A000000008 /* ShowsListViewModel.swift */; };
+		E2000001202603A000000009 /* ShowDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2000002202603A000000009 /* ShowDetailView.swift */; };
+		E2000001202603A00000000A /* ShowDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2000002202603A00000000A /* ShowDetailViewModel.swift */; };
+		E2000001202603A00000000B /* SwiftUIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2000002202603A00000000B /* SwiftUIExtensions.swift */; };
+		E2000001202603A00000000C /* DownloadsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2000002202603A00000000C /* DownloadsView.swift */; };
+		E2000001202603A00000000D /* DownloadsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2000002202603A00000000D /* DownloadsViewModel.swift */; };
+		E2000001202603A00000000E /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2000002202603A00000000E /* SearchView.swift */; };
+		E2000001202603A00000000F /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2000002202603A00000000F /* SearchViewModel.swift */; };
+		E2000001202603A000000010 /* FullPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2000002202603A000000010 /* FullPlayerView.swift */; };
+		E2000001202603A000000011 /* DeepLinkRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2000002202603A000000011 /* DeepLinkRouter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -138,6 +155,23 @@
 		E1000002202601A000000001 /* ChateauArchiveApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChateauArchiveApp.swift; sourceTree = "<group>"; };
 		E1000002202601A000000002 /* PlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewModel.swift; sourceTree = "<group>"; };
 		E1000002202601A000000003 /* ArchiveRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveRootView.swift; sourceTree = "<group>"; };
+		E2000002202603A000000001 /* CollectionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionsView.swift; sourceTree = "<group>"; };
+		E2000002202603A000000002 /* CollectionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionsViewModel.swift; sourceTree = "<group>"; };
+		E2000002202603A000000003 /* YearListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearListView.swift; sourceTree = "<group>"; };
+		E2000002202603A000000004 /* YearListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearListViewModel.swift; sourceTree = "<group>"; };
+		E2000002202603A000000005 /* MonthListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthListView.swift; sourceTree = "<group>"; };
+		E2000002202603A000000006 /* MonthListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthListViewModel.swift; sourceTree = "<group>"; };
+		E2000002202603A000000007 /* ShowsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowsListView.swift; sourceTree = "<group>"; };
+		E2000002202603A000000008 /* ShowsListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowsListViewModel.swift; sourceTree = "<group>"; };
+		E2000002202603A000000009 /* ShowDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowDetailView.swift; sourceTree = "<group>"; };
+		E2000002202603A00000000A /* ShowDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowDetailViewModel.swift; sourceTree = "<group>"; };
+		E2000002202603A00000000B /* SwiftUIExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIExtensions.swift; sourceTree = "<group>"; };
+		E2000002202603A00000000C /* DownloadsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadsView.swift; sourceTree = "<group>"; };
+		E2000002202603A00000000D /* DownloadsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadsViewModel.swift; sourceTree = "<group>"; };
+		E2000002202603A00000000E /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
+		E2000002202603A00000000F /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
+		E2000002202603A000000010 /* FullPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullPlayerView.swift; sourceTree = "<group>"; };
+		E2000002202603A000000011 /* DeepLinkRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkRouter.swift; sourceTree = "<group>"; };
 		E24D8A6E14FB1F7F63E0D1DD /* Pods-Breaze.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Breaze.debug.xcconfig"; path = "Target Support Files/Pods-Breaze/Pods-Breaze.debug.xcconfig"; sourceTree = "<group>"; };
 		EEB1C82C04A1C7AE0A653AD7 /* Pods-BreazeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BreazeTests.debug.xcconfig"; path = "Target Support Files/Pods-BreazeTests/Pods-BreazeTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -186,6 +220,7 @@
 				D892BBA224CBBDF4008E4960 /* Models */,
 				D892BBA624CBBF58008E4960 /* Network */,
 				D82C59182DDAA5ED0013BAC5 /* Database */,
+				E2000003202603A000000001 /* SwiftUIViews */,
 			);
 			name = Archive;
 			path = ..;
@@ -356,6 +391,62 @@
 				C9D58EED31CE81FB1690A28E /* Pods_BreazeUITests.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E2000003202603A000000001 /* SwiftUIViews */ = {
+			isa = PBXGroup;
+			children = (
+				E2000003202603A000000002 /* BandsTab */,
+				E2000003202603A000000003 /* DownloadsTab */,
+				E2000003202603A000000004 /* SearchTab */,
+				E2000003202603A000000005 /* Player */,
+				E2000002202603A00000000B /* SwiftUIExtensions.swift */,
+				E2000002202603A000000011 /* DeepLinkRouter.swift */,
+			);
+			path = SwiftUIViews;
+			sourceTree = "<group>";
+		};
+		E2000003202603A000000003 /* DownloadsTab */ = {
+			isa = PBXGroup;
+			children = (
+				E2000002202603A00000000C /* DownloadsView.swift */,
+				E2000002202603A00000000D /* DownloadsViewModel.swift */,
+			);
+			path = DownloadsTab;
+			sourceTree = "<group>";
+		};
+		E2000003202603A000000004 /* SearchTab */ = {
+			isa = PBXGroup;
+			children = (
+				E2000002202603A00000000E /* SearchView.swift */,
+				E2000002202603A00000000F /* SearchViewModel.swift */,
+			);
+			path = SearchTab;
+			sourceTree = "<group>";
+		};
+		E2000003202603A000000002 /* BandsTab */ = {
+			isa = PBXGroup;
+			children = (
+				E2000002202603A000000001 /* CollectionsView.swift */,
+				E2000002202603A000000002 /* CollectionsViewModel.swift */,
+				E2000002202603A000000003 /* YearListView.swift */,
+				E2000002202603A000000004 /* YearListViewModel.swift */,
+				E2000002202603A000000005 /* MonthListView.swift */,
+				E2000002202603A000000006 /* MonthListViewModel.swift */,
+				E2000002202603A000000007 /* ShowsListView.swift */,
+				E2000002202603A000000008 /* ShowsListViewModel.swift */,
+				E2000002202603A000000009 /* ShowDetailView.swift */,
+				E2000002202603A00000000A /* ShowDetailViewModel.swift */,
+			);
+			path = BandsTab;
+			sourceTree = "<group>";
+		};
+		E2000003202603A000000005 /* Player */ = {
+			isa = PBXGroup;
+			children = (
+				E2000002202603A000000010 /* FullPlayerView.swift */,
+			);
+			path = Player;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -618,6 +709,23 @@
 				E1000001202601A000000001 /* ChateauArchiveApp.swift in Sources */,
 				E1000001202601A000000003 /* ArchiveRootView.swift in Sources */,
 				E1000001202601A000000002 /* PlayerViewModel.swift in Sources */,
+				E2000001202603A000000001 /* CollectionsView.swift in Sources */,
+				E2000001202603A000000002 /* CollectionsViewModel.swift in Sources */,
+				E2000001202603A000000003 /* YearListView.swift in Sources */,
+				E2000001202603A000000004 /* YearListViewModel.swift in Sources */,
+				E2000001202603A000000005 /* MonthListView.swift in Sources */,
+				E2000001202603A000000006 /* MonthListViewModel.swift in Sources */,
+				E2000001202603A000000007 /* ShowsListView.swift in Sources */,
+				E2000001202603A000000008 /* ShowsListViewModel.swift in Sources */,
+				E2000001202603A000000009 /* ShowDetailView.swift in Sources */,
+				E2000001202603A00000000A /* ShowDetailViewModel.swift in Sources */,
+				E2000001202603A00000000B /* SwiftUIExtensions.swift in Sources */,
+				E2000001202603A00000000C /* DownloadsView.swift in Sources */,
+				E2000001202603A00000000D /* DownloadsViewModel.swift in Sources */,
+				E2000001202603A00000000E /* SearchView.swift in Sources */,
+				E2000001202603A00000000F /* SearchViewModel.swift in Sources */,
+				E2000001202603A000000010 /* FullPlayerView.swift in Sources */,
+				E2000001202603A000000011 /* DeepLinkRouter.swift in Sources */,
 				D843EBDD24B3B10300C128A5 /* AudioPlayerArchive.swift in Sources */,
 				D84D6E2824BEB5140022A058 /* NetworkUtility.swift in Sources */,
 				D892BBA024CBBCF5008E4960 /* ArchiveSuperViewController.swift in Sources */,

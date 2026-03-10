@@ -5,6 +5,7 @@ struct ArchiveRootView: View {
     @EnvironmentObject private var playerViewModel: PlayerViewModel
 
     @State private var selectedTab: Tab = .bands
+    @State private var showFullPlayer = false
 
     enum Tab {
         case bands
@@ -15,39 +16,43 @@ struct ArchiveRootView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedTab) {
-                Text("Bands tab SwiftUI placeholder")
+                CollectionsView()
                     .tag(Tab.bands)
                     .tabItem {
                         Label("Bands", systemImage: "music.note.list")
                     }
 
-                Text("My Tapes tab SwiftUI placeholder")
+                DownloadsView()
                     .tag(Tab.myTapes)
                     .tabItem {
                         Label("My Tapes", systemImage: "tray.full")
                     }
 
-                Text("Search tab SwiftUI placeholder")
+                SearchView()
                     .tag(Tab.search)
                     .tabItem {
                         Label("Search", systemImage: "magnifyingglass")
                     }
             }
 
-            // Simple mini-player bar placeholder wired to PlayerViewModel.
             if playerViewModel.currentShow != nil {
-                MiniPlayerBar()
+                MiniPlayerBar(showFullPlayer: $showFullPlayer)
                     .environmentObject(playerViewModel)
                     .padding(.horizontal)
-                    .padding(.bottom, 8)
+                    .padding(.bottom, 50)
             }
+        }
+        .sheet(isPresented: $showFullPlayer) {
+            FullPlayerView()
+                .environmentObject(playerViewModel)
         }
     }
 }
 
-/// Very small SwiftUI bar that mirrors basic MiniPlayer information.
+/// Compact bar shown above the tab bar when audio is loaded.
 struct MiniPlayerBar: View {
     @EnvironmentObject private var playerViewModel: PlayerViewModel
+    @Binding var showFullPlayer: Bool
 
     var body: some View {
         HStack {
@@ -55,15 +60,23 @@ struct MiniPlayerBar: View {
                 Text(playerViewModel.currentShow?.metadata?.creator ?? "Chateau Archive")
                     .font(.headline)
                     .lineLimit(1)
-                if let date = playerViewModel.currentShow?.metadata?.date {
-                    Text(date)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                        .lineLimit(1)
-                }
+                Text(currentTrackName)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .lineLimit(1)
             }
+            .contentShape(Rectangle())
+            .onTapGesture { showFullPlayer = true }
+
             Spacer()
-            Button(action: { playerViewModel.togglePlayPause() }) {
+
+            Button { playerViewModel.skipForward() } label: {
+                Image(systemName: "forward.fill")
+                    .font(.body)
+            }
+            .padding(.trailing, 4)
+
+            Button { playerViewModel.togglePlayPause() } label: {
                 Image(systemName: playerViewModel.isPlaying ? "pause.fill" : "play.fill")
                     .font(.title2)
             }
@@ -72,6 +85,15 @@ struct MiniPlayerBar: View {
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .shadow(radius: 3)
+        .onTapGesture { showFullPlayer = true }
+    }
+
+    private var currentTrackName: String {
+        guard let tracks = playerViewModel.currentShow?.mp3Array,
+              playerViewModel.currentTrackIndex < tracks.count else {
+            return playerViewModel.currentShow?.metadata?.date ?? ""
+        }
+        let t = tracks[playerViewModel.currentTrackIndex]
+        return t.title ?? t.name ?? ""
     }
 }
-

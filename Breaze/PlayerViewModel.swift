@@ -16,15 +16,21 @@ final class PlayerViewModel: ObservableObject {
     @Published var isStreaming: Bool = false
     @Published var currentTime: Double = 0
     @Published var totalTime: Double = 0
+    @Published var sliderValue: Double = 0
+
+    private var isUserDraggingSlider = false
 
     private init() {
-        // Timer updates come from AudioPlayerArchive.setupTimer
         player.setupTimer { [weak self] seconds in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 self.currentTime = seconds ?? 0
                 if let duration = self.player.playerQueue?.currentItem?.duration {
-                    self.totalTime = CMTimeGetSeconds(duration)
+                    let total = CMTimeGetSeconds(duration)
+                    self.totalTime = total
+                    if !self.isUserDraggingSlider, total > 0 {
+                        self.sliderValue = (seconds ?? 0) / total
+                    }
                 }
                 self.currentShow = self.player.showMetadataModel
                 self.currentTrackIndex = self.player.getCurrentTrackIndex()
@@ -89,7 +95,18 @@ final class PlayerViewModel: ObservableObject {
         player.timerSliderHandler(timerValue: Float(fraction))
     }
 
-    // Restore saved playback state without auto-playing
+    func playTrack(at index: Int) {
+        guard let show = currentShow else { return }
+        player.pause()
+        player.showMetadataModel = show
+        if isStreaming {
+            player.loadStreamingQueuePlayer(startingAt: index)
+        } else if let tracks = show.mp3Array {
+            player.loadQueuePlayer(tracks: tracks, startingAt: index)
+        }
+        player.play()
+    }
+
     func restorePlaybackIfAvailable() {
         _ = player.restorePlaybackState()
         currentShow = player.showMetadataModel

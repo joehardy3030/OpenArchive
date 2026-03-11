@@ -4,12 +4,17 @@ final class ShowDetailViewModel: ObservableObject {
     @Published var model: ShowMetadataModel?
     @Published var isLoading = false
     @Published var pendingTrackIndex: Int? = nil
+    @Published var isDownloading = false
+    @Published var isDownloaded = false
 
     let showType: ShowType
     private let initialMetadata: ShowMetadata
     private let archiveAPI = ArchiveAPI()
     private let utils = Utils()
+    private let network = NetworkUtility()
+    private let fileManager = FileManager.default
     private let player = AudioPlayerArchive.shared
+    private var mp3Index = 0
 
     var fullMetadata: ShowMetadata? { model?.metadata }
 
@@ -61,6 +66,11 @@ final class ShowDetailViewModel: ObservableObject {
                     }
                     showData.mp3Array = mp3s.sorted { self.sortKey(for: $0) < self.sortKey(for: $1) }
                 }
+                self.isDownloaded = showData.mp3Array?.allSatisfy { mp3 in
+                    guard let name = mp3.name,
+                          let localURL = self.utils.trackURLfromName(name: name) else { return false }
+                    return self.fileManager.fileExists(atPath: localURL.path)
+                } ?? false
                 self.model = showData
             }
         }
@@ -85,6 +95,66 @@ final class ShowDetailViewModel: ObservableObject {
         // Push state into the shared view model
         playerViewModel.currentShow = m
         playerViewModel.isStreaming = (showType == .archive)
+    }
+
+    // MARK: - Download
+
+    func downloadShow() {
+        guard !isDownloading, !isDownloaded else { return }
+        guard let mp3s = model?.mp3Array, !mp3s.isEmpty else { return }
+        isDownloading = true
+        mp3Index = 0
+        downloadSyncRun()
+    }
+
+    private func downloadSyncRun() {
+        guard let mp3s = model?.mp3Array else { return }
+        if mp3Index < mp3s.count {
+            downloadSync(showMP3: mp3s[mp3Index])
+        } else {
+            saveDownloadData()
+        }
+    }
+
+    private func downloadSync(showMP3: ShowMP3) {
+        downloadSong(showMP3: showMP3) { [weak self] destination in
+            guard let self else { return }
+            DispatchQueue.main.async {
+                self.setDownloadComplete(destination: destination, name: showMP3.name)
+                self.mp3Index += 1
+                self.downloadSyncRun()
+            }
+        }
+    }
+
+    private func downloadSong(showMP3: ShowMP3, completion: @escaping (URL?) -> Void) {
+        guard let trackName = showMP3.name else { completion(nil); return }
+        let url = archiveAPI.downloadURL(identifier: initialMetadata.identifier, filename: trackName)
+        guard let localURL = utils.trackURLfromName(name: trackName) else { completion(nil); return }
+
+        if fileManager.fileExists(atPath: localURL.path) {
+            completion(localURL)
+        } else {
+            archiveAPI.getIADownload(url: url) { localFileURL, error in
+                guard error == nil else { return }
+                completion(localFileURL)
+            }
+        }
+    }
+
+    private func setDownloadComplete(destination: URL?, name: String?) {
+        guard let d = destination, let count = model?.mp3Array?.count else { return }
+        for i in 0..<count where model?.mp3Array?[i].name == name {
+            model?.mp3Array?[i].destination = d
+        }
+    }
+
+    private func saveDownloadData() {
+        _ = network.addDownloadDataDoc(showMetadataModel: model)
+        DispatchQueue.main.async {
+            self.isDownloading = false
+            self.isDownloaded = true
+        }
     }
 
     // MARK: - Sort helpers (mirrors ShowViewController logic)

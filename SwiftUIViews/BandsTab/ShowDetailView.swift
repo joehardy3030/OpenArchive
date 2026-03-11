@@ -38,6 +38,46 @@ struct ShowDetailView: View {
                 }
             }
 
+            // MARK: - Actions Section
+            Section {
+                HStack {
+                    Button {
+                        viewModel.streamOrPlay(startingAt: 0, playerViewModel: playerViewModel)
+                    } label: {
+                        Label(showType == .archive ? "Stream" : "Play",
+                              systemImage: showType == .archive ? "dot.radiowaves.left.and.right" : "play.fill")
+                    }
+                    .frame(maxWidth: .infinity)
+
+                    if showType == .archive {
+                        Divider()
+                        Button {
+                            viewModel.downloadShow()
+                        } label: {
+                            if viewModel.isDownloading {
+                                Label("Downloading…", systemImage: "arrow.down.circle")
+                                    .foregroundColor(.secondary)
+                            } else if viewModel.isDownloaded {
+                                Label("Downloaded", systemImage: "checkmark.circle.fill")
+                                    .foregroundColor(.secondary)
+                            } else {
+                                Label("Download", systemImage: "arrow.down.circle")
+                            }
+                        }
+                        .disabled(viewModel.isDownloading || viewModel.isDownloaded)
+                        .frame(maxWidth: .infinity)
+                        Divider()
+                    }
+
+                    ShareLink(item: viewModel.shareURL) {
+                        Label("Share", systemImage: "square.and.arrow.up")
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderless)
+                .padding(.vertical, 4)
+            }
+
             // MARK: - Tracks Section
             if let tracks = viewModel.model?.mp3Array, !tracks.isEmpty {
                 Section("Tracks") {
@@ -63,18 +103,6 @@ struct ShowDetailView: View {
         .overlay {
             if viewModel.isLoading {
                 ProgressView("Loading show...")
-            }
-        }
-        .toolbar {
-            ToolbarItemGroup(placement: .topBarTrailing) {
-                if showType == .archive {
-                    Button {
-                        viewModel.streamOrPlay(startingAt: 0, playerViewModel: playerViewModel)
-                    } label: {
-                        Label("Stream", systemImage: "play.circle")
-                    }
-                }
-                ShareLink(item: viewModel.shareURL)
             }
         }
     }

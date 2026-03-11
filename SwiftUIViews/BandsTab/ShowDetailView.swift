@@ -18,6 +18,9 @@ struct ShowDetailView: View {
         List {
             // MARK: - Info Section
             Section {
+                if let band = viewModel.fullMetadata?.creator ?? viewModel.fullMetadata?.collection?.first {
+                    InfoRow(label: "Band", value: band)
+                }
                 if let date = viewModel.fullMetadata?.date { InfoRow(label: "Date", value: date) }
                 if let venue = viewModel.fullMetadata?.venue { InfoRow(label: "Venue", value: venue) }
                 if let coverage = viewModel.fullMetadata?.coverage { InfoRow(label: "Location", value: coverage) }
@@ -55,13 +58,13 @@ struct ShowDetailView: View {
                             viewModel.downloadShow()
                         } label: {
                             if viewModel.isDownloading {
-                                Label("Downloading…", systemImage: "arrow.down.circle")
+                                Image(systemName: "arrow.down.circle")
                                     .foregroundColor(.secondary)
                             } else if viewModel.isDownloaded {
-                                Label("Downloaded", systemImage: "checkmark.circle.fill")
+                                Image(systemName: "checkmark.circle.fill")
                                     .foregroundColor(.secondary)
                             } else {
-                                Label("Download", systemImage: "arrow.down.circle")
+                                Image(systemName: "arrow.down.circle")
                             }
                         }
                         .disabled(viewModel.isDownloading || viewModel.isDownloaded)
@@ -70,7 +73,7 @@ struct ShowDetailView: View {
                     }
 
                     ShareLink(item: viewModel.shareURL) {
-                        Label("Share", systemImage: "square.and.arrow.up")
+                        Image(systemName: "square.and.arrow.up")
                     }
                     .frame(maxWidth: .infinity)
                 }

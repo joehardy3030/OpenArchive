@@ -43,7 +43,7 @@ struct ShowDetailView: View {
 
             // MARK: - Actions Section
             Section {
-                HStack {
+                HStack(spacing: 20) {
                     Button {
                         viewModel.streamOrPlay(startingAt: 0, playerViewModel: playerViewModel)
                     } label: {
@@ -51,10 +51,10 @@ struct ShowDetailView: View {
                               systemImage: showType == .archive ? "dot.radiowaves.left.and.right" : "play.fill")
                             .lineLimit(1)
                     }
-                    .frame(maxWidth: .infinity)
+
+                    Spacer()
 
                     if showType == .archive {
-                        Divider()
                         Button {
                             viewModel.downloadShow()
                         } label: {
@@ -69,14 +69,11 @@ struct ShowDetailView: View {
                             }
                         }
                         .disabled(viewModel.isDownloading || viewModel.isDownloaded)
-                        .frame(maxWidth: .infinity)
-                        Divider()
                     }
 
                     ShareLink(item: viewModel.shareURL) {
                         Image(systemName: "square.and.arrow.up")
                     }
-                    .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderless)
                 .padding(.vertical, 4)

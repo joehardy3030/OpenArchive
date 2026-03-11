@@ -21,28 +21,14 @@ final class PlayerViewModel: ObservableObject {
     private var isUserDraggingSlider = false
 
     private init() {
-        player.setupTimer { [weak self] seconds in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
-                self.currentTime = seconds ?? 0
-                if let duration = self.player.playerQueue?.currentItem?.duration {
-                    let total = CMTimeGetSeconds(duration)
-                    self.totalTime = total
-                    if !self.isUserDraggingSlider, total > 0 {
-                        self.sliderValue = (seconds ?? 0) / total
-                    }
-                }
-                self.currentShow = self.player.showMetadataModel
-                self.currentTrackIndex = self.player.getCurrentTrackIndex()
-                self.isStreaming = self.player.isStreaming
-            }
-        }
-
         // Observe playback notifications to keep isPlaying in sync.
         NotificationCenter.default.publisher(for: .playbackStarted)
             .sink { [weak self] _ in
                 DispatchQueue.main.async {
                     self?.isPlaying = true
+                    // Re-register the periodic timer each time a new queue starts playing,
+                    // since playerQueue is nil at init and replaced on every stream/play call.
+                    self?.setupPlaybackTimer()
                 }
             }
             .store(in: &cancellables)
@@ -62,6 +48,27 @@ final class PlayerViewModel: ObservableObject {
                 }
             }
             .store(in: &cancellables)
+    }
+
+    // MARK: - Timer
+
+    private func setupPlaybackTimer() {
+        player.setupTimer { [weak self] seconds in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                self.currentTime = seconds ?? 0
+                if let duration = self.player.playerQueue?.currentItem?.duration {
+                    let total = CMTimeGetSeconds(duration)
+                    self.totalTime = total
+                    if !self.isUserDraggingSlider, total > 0 {
+                        self.sliderValue = (seconds ?? 0) / total
+                    }
+                }
+                self.currentShow = self.player.showMetadataModel
+                self.currentTrackIndex = self.player.getCurrentTrackIndex()
+                self.isStreaming = self.player.isStreaming
+            }
+        }
     }
 
     // MARK: - Control surface

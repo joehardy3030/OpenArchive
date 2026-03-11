@@ -110,7 +110,7 @@ struct ShowDetailView: View {
                                         .tint(.blue)
                                 } else if track.destination != nil {
                                     Image(systemName: "arrow.down.circle.fill")
-                                        .foregroundColor(.secondary)
+                                        .foregroundColor(.accentColor)
                                         .font(.caption)
                                 }
                             }

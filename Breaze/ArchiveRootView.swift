@@ -79,18 +79,19 @@ struct MiniPlayerBar: View {
             Button { playerViewModel.skipBackward() } label: {
                 Image(systemName: "backward.fill")
                     .font(.body)
+                    .padding(10)
             }
-            .padding(.trailing, 4)
-
-            Button { playerViewModel.skipForward() } label: {
-                Image(systemName: "forward.fill")
-                    .font(.body)
-            }
-            .padding(.trailing, 4)
 
             Button { playerViewModel.togglePlayPause() } label: {
                 Image(systemName: playerViewModel.isPlaying ? "pause.fill" : "play.fill")
                     .font(.title2)
+                    .padding(10)
+            }
+
+            Button { playerViewModel.skipForward() } label: {
+                Image(systemName: "forward.fill")
+                    .font(.body)
+                    .padding(10)
             }
         }
         .padding(10)

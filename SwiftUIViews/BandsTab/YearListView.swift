@@ -16,10 +16,10 @@ struct YearListView: View {
         List(viewModel.years, id: \.self) { year in
             NavigationLink(value: YearDestination(year: year, collection: collection)) {
                 if let total = viewModel.yearTotals[year] {
-                    Text("\(year) (\(total) tapes)")
+                    Text(verbatim: "\(year) (\(total) tapes)")
                         .font(.system(size: 18))
                 } else {
-                    Text("\(year)")
+                    Text(verbatim: "\(year)")
                         .font(.system(size: 18))
                 }
             }

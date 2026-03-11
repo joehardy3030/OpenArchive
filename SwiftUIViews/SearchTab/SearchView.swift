@@ -22,8 +22,8 @@ struct SearchView: View {
                     }
                     Section {
                         Picker("Band", selection: $viewModel.selectedCollectionIndex) {
-                            ForEach(0..<CollectionConfig.collectionsText.count, id: \.self) { i in
-                                Text(CollectionConfig.collectionsText[i]).tag(i)
+                            ForEach(0..<viewModel.collectionDisplayNames.count, id: \.self) { i in
+                                Text(viewModel.collectionDisplayNames[i]).tag(i)
                             }
                         }
                     }
@@ -54,6 +54,7 @@ struct SearchView: View {
                     }
                 }
             }
+            .onAppear { viewModel.loadCollections() }
             .navigationTitle("Search")
             .navigationDestination(for: ShowDestination.self) { dest in
                 ShowDetailView(metadata: dest.metadata, showType: dest.showType)

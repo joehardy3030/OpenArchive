@@ -9,8 +9,25 @@ final class SearchViewModel: ObservableObject {
     @Published var selectedCollectionIndex = 0
     @Published var results: [ShowMetadata]? = nil
     @Published var isLoading = false
+    @Published var collectionEntries: [CollectionEntry] = []
 
     private let archiveAPI = ArchiveAPI()
+    private let store = CollectionStore()
+
+    var collectionDisplayNames: [String] {
+        collectionEntries.map { $0.displayName }
+    }
+
+    var collectionIdentifiers: [String] {
+        collectionEntries.map { $0.identifier }
+    }
+
+    func loadCollections() {
+        collectionEntries = store.getEntries()
+        if selectedCollectionIndex >= collectionEntries.count {
+            selectedCollectionIndex = 0
+        }
+    }
 
     func search() {
         let model = SearchTermsModel(
@@ -20,7 +37,7 @@ final class SearchViewModel: ObservableObject {
             endYear: endYear.isEmpty ? nil : endYear,
             minRating: minRating.isEmpty ? nil : minRating,
             sbdOnly: nil,
-            collection: CollectionConfig.collections[selectedCollectionIndex]
+            collection: collectionIdentifiers[selectedCollectionIndex]
         )
 
         isLoading = true

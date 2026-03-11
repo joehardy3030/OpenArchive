@@ -4,6 +4,7 @@ struct CollectionsView: View {
     @StateObject private var viewModel = CollectionsViewModel()
     @EnvironmentObject private var deepLinkRouter: DeepLinkRouter
     @State private var showBrowseSheet = false
+    @State private var showRemoveSheet = false
     @State private var deepLinkPath = NavigationPath()
 
     var body: some View {
@@ -25,9 +26,11 @@ struct CollectionsView: View {
             .navigationDestination(for: CollectionEntry.self) { entry in
                 YearListView(collection: entry.identifier, title: entry.displayName)
             }
-            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItemGroup(placement: .topBarTrailing) {
+                    Button(action: { showRemoveSheet = true }) {
+                        Image(systemName: "minus")
+                    }
                     Button(action: { viewModel.fetchBrowseCollections(); showBrowseSheet = true }) {
                         Image(systemName: "plus")
                     }
@@ -41,6 +44,11 @@ struct CollectionsView: View {
                 _ = deepLinkRouter.consume()
                 deepLinkPath.append(ShowDestination(metadata: show, showType: .archive))
             }
+            .sheet(isPresented: $showRemoveSheet) {
+                RemoveBandsSheet(entries: viewModel.entries) { entry in
+                    viewModel.remove(entry)
+                }
+            }
             .sheet(isPresented: $showBrowseSheet) {
                 BrowseCollectionsSheet(
                     collections: viewModel.browseCollections,
@@ -50,6 +58,40 @@ struct CollectionsView: View {
                     let id = selected.identifier ?? title
                     viewModel.addAndInferYears(displayName: title, identifier: id)
                     showBrowseSheet = false
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Remove Bands Sheet
+
+struct RemoveBandsSheet: View {
+    let entries: [CollectionEntry]
+    let onRemove: (CollectionEntry) -> Void
+
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            List {
+                ForEach(entries, id: \.identifier) { entry in
+                    Button(role: .destructive) {
+                        onRemove(entry)
+                    } label: {
+                        HStack {
+                            Image(systemName: "minus.circle.fill")
+                                .foregroundColor(.red)
+                            Text(entry.displayName)
+                                .font(.system(size: 18, weight: .bold))
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Remove Bands")
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Done") { dismiss() }
                 }
             }
         }

@@ -22,8 +22,9 @@ struct ShowDetailView: View {
                     Button {
                         viewModel.streamOrPlay(startingAt: 0, playerViewModel: playerViewModel)
                     } label: {
-                        Label(showType == .archive ? "Stream" : "Play",
-                              systemImage: showType == .archive ? "dot.radiowaves.left.and.right" : "play.fill")
+                        let isStreaming = showType == .archive && !viewModel.isDownloaded
+                        Label(isStreaming ? "Stream" : "Play",
+                              systemImage: isStreaming ? "dot.radiowaves.left.and.right" : "play.fill")
                             .lineLimit(1)
                     }
 
@@ -38,7 +39,7 @@ struct ShowDetailView: View {
                                     .scaleEffect(0.8)
                             } else if viewModel.isDownloaded {
                                 Image(systemName: "checkmark.circle.fill")
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(.accentColor)
                             } else {
                                 Image(systemName: "arrow.down.circle")
                             }

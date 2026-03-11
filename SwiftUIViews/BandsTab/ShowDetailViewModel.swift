@@ -85,10 +85,11 @@ final class ShowDetailViewModel: ObservableObject {
         player.pause()
         player.showMetadataModel = m
 
-        if showType == .archive {
-            player.loadStreamingQueuePlayer(startingAt: index)
-        } else if let tracks = m.mp3Array {
+        let playLocally = showType == .downloaded || isDownloaded
+        if playLocally, let tracks = m.mp3Array {
             player.loadQueuePlayer(tracks: tracks, startingAt: index)
+        } else {
+            player.loadStreamingQueuePlayer(startingAt: index)
         }
 
         player.play()
@@ -96,7 +97,7 @@ final class ShowDetailViewModel: ObservableObject {
 
         // Push state into the shared view model
         playerViewModel.currentShow = m
-        playerViewModel.isStreaming = (showType == .archive)
+        playerViewModel.isStreaming = !playLocally
     }
 
     // MARK: - Download

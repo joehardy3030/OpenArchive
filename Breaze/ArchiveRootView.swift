@@ -60,6 +60,12 @@ struct MiniPlayerBar: View {
                 Text(playerViewModel.currentShow?.metadata?.creator ?? "Chateau Archive")
                     .font(.headline)
                     .lineLimit(1)
+                if let venue = playerViewModel.currentShow?.metadata?.venue {
+                    Text(venue)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                }
                 Text(currentTrackName)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
@@ -69,6 +75,12 @@ struct MiniPlayerBar: View {
             .onTapGesture { showFullPlayer = true }
 
             Spacer()
+
+            Button { playerViewModel.skipBackward() } label: {
+                Image(systemName: "backward.fill")
+                    .font(.body)
+            }
+            .padding(.trailing, 4)
 
             Button { playerViewModel.skipForward() } label: {
                 Image(systemName: "forward.fill")

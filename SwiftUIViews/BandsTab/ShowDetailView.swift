@@ -49,6 +49,7 @@ struct ShowDetailView: View {
                     } label: {
                         Label(showType == .archive ? "Stream" : "Play",
                               systemImage: showType == .archive ? "dot.radiowaves.left.and.right" : "play.fill")
+                            .lineLimit(1)
                     }
                     .frame(maxWidth: .infinity)
 
@@ -89,6 +90,18 @@ struct ShowDetailView: View {
                             viewModel.streamOrPlay(startingAt: index, playerViewModel: playerViewModel)
                         } label: {
                             HStack {
+                                let isCurrentShow = playerViewModel.currentShow?.metadata?.identifier == metadata.identifier
+                                let isCurrentTrack = isCurrentShow && playerViewModel.currentTrackIndex == index
+                                if isCurrentTrack {
+                                    Image(systemName: playerViewModel.isPlaying ? "speaker.wave.2.fill" : "speaker.fill")
+                                        .foregroundColor(.accentColor)
+                                        .frame(width: 24)
+                                } else {
+                                    Text("\(index + 1)")
+                                        .font(.system(size: 14))
+                                        .foregroundColor(.secondary)
+                                        .frame(width: 24)
+                                }
                                 Text(track.title ?? track.name ?? "Track \(index + 1)")
                                     .font(.system(size: 18))
                                     .foregroundColor(.primary)

@@ -59,8 +59,8 @@ struct ShowDetailView: View {
                             viewModel.downloadShow()
                         } label: {
                             if viewModel.isDownloading {
-                                Image(systemName: "arrow.down.circle")
-                                    .foregroundColor(.secondary)
+                                ProgressView()
+                                    .scaleEffect(0.8)
                             } else if viewModel.isDownloaded {
                                 Image(systemName: "checkmark.circle.fill")
                                     .foregroundColor(.secondary)
@@ -105,6 +105,13 @@ struct ShowDetailView: View {
                                 Spacer()
                                 if viewModel.pendingTrackIndex == index {
                                     ProgressView()
+                                } else if viewModel.downloadingTrackIndex == index {
+                                    ProgressView()
+                                        .tint(.blue)
+                                } else if track.destination != nil {
+                                    Image(systemName: "arrow.down.circle.fill")
+                                        .foregroundColor(.secondary)
+                                        .font(.caption)
                                 }
                             }
                         }

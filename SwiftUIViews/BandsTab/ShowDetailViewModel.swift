@@ -14,7 +14,7 @@ final class ShowDetailViewModel: ObservableObject {
     private let network = NetworkUtility()
     private let fileManager = FileManager.default
     private let player = AudioPlayerArchive.shared
-    private var mp3Index = 0
+    @Published var downloadingTrackIndex: Int? = nil
 
     var fullMetadata: ShowMetadata? { model?.metadata }
 
@@ -105,14 +105,14 @@ final class ShowDetailViewModel: ObservableObject {
         guard !isDownloading, !isDownloaded else { return }
         guard let mp3s = model?.mp3Array, !mp3s.isEmpty else { return }
         isDownloading = true
-        mp3Index = 0
+        downloadingTrackIndex = 0
         downloadSyncRun()
     }
 
     private func downloadSyncRun() {
-        guard let mp3s = model?.mp3Array else { return }
-        if mp3Index < mp3s.count {
-            downloadSync(showMP3: mp3s[mp3Index])
+        guard let mp3s = model?.mp3Array, let idx = downloadingTrackIndex else { return }
+        if idx < mp3s.count {
+            downloadSync(showMP3: mp3s[idx])
         } else {
             saveDownloadData()
         }
@@ -123,7 +123,7 @@ final class ShowDetailViewModel: ObservableObject {
             guard let self else { return }
             DispatchQueue.main.async {
                 self.setDownloadComplete(destination: destination, name: showMP3.name)
-                self.mp3Index += 1
+                self.downloadingTrackIndex = (self.downloadingTrackIndex ?? 0) + 1
                 self.downloadSyncRun()
             }
         }
@@ -155,6 +155,7 @@ final class ShowDetailViewModel: ObservableObject {
         _ = network.addDownloadDataDoc(showMetadataModel: model)
         DispatchQueue.main.async {
             self.isDownloading = false
+            self.downloadingTrackIndex = nil
             self.isDownloaded = true
         }
     }

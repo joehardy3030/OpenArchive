@@ -16,31 +16,6 @@ struct ShowDetailView: View {
 
     var body: some View {
         List {
-            // MARK: - Info Section
-            Section {
-                if let band = viewModel.fullMetadata?.creator ?? viewModel.fullMetadata?.collection?.first {
-                    InfoRow(label: "Band", value: band)
-                }
-                if let date = viewModel.fullMetadata?.date { InfoRow(label: "Date", value: date) }
-                if let venue = viewModel.fullMetadata?.venue { InfoRow(label: "Venue", value: venue) }
-                if let coverage = viewModel.fullMetadata?.coverage { InfoRow(label: "Location", value: coverage) }
-                if let src = viewModel.fullMetadata?.source, !src.isEmpty {
-                    InfoRow(label: "Source", value: src.joined(separator: "; "))
-                }
-            }
-
-            // MARK: - Notes Section
-            Section {
-                Button(isNotesExpanded ? "Hide Notes" : "Notes") {
-                    withAnimation { isNotesExpanded.toggle() }
-                }
-                .font(.system(size: 17, weight: .bold))
-                if isNotesExpanded, let desc = viewModel.fullMetadata?.description {
-                    Text(desc.strippingHTML())
-                        .font(.system(size: 16))
-                }
-            }
-
             // MARK: - Actions Section
             Section {
                 HStack(spacing: 20) {
@@ -77,6 +52,31 @@ struct ShowDetailView: View {
                 }
                 .buttonStyle(.borderless)
                 .padding(.vertical, 4)
+            }
+
+            // MARK: - Info Section
+            Section {
+                if let band = viewModel.fullMetadata?.creator ?? viewModel.fullMetadata?.collection?.first {
+                    InfoRow(label: "Band", value: band)
+                }
+                if let date = viewModel.fullMetadata?.date { InfoRow(label: "Date", value: date) }
+                if let venue = viewModel.fullMetadata?.venue { InfoRow(label: "Venue", value: venue) }
+                if let coverage = viewModel.fullMetadata?.coverage { InfoRow(label: "Location", value: coverage) }
+                if let src = viewModel.fullMetadata?.source, !src.isEmpty {
+                    InfoRow(label: "Source", value: src.joined(separator: "; "))
+                }
+            }
+
+            // MARK: - Notes Section
+            Section {
+                Button(isNotesExpanded ? "Hide Notes" : "Notes") {
+                    withAnimation { isNotesExpanded.toggle() }
+                }
+                .font(.system(size: 17, weight: .bold))
+                if isNotesExpanded, let desc = viewModel.fullMetadata?.description {
+                    Text(desc.strippingHTML())
+                        .font(.system(size: 16))
+                }
             }
 
             // MARK: - Tracks Section

@@ -3,10 +3,7 @@ import SwiftUI
 struct CollectionsView: View {
     @StateObject private var viewModel = CollectionsViewModel()
     @EnvironmentObject private var deepLinkRouter: DeepLinkRouter
-    @State private var showAddAlert = false
     @State private var showBrowseSheet = false
-    @State private var newName = ""
-    @State private var newIdentifier = ""
     @State private var deepLinkPath = NavigationPath()
 
     var body: some View {
@@ -28,26 +25,13 @@ struct CollectionsView: View {
             .navigationDestination(for: CollectionEntry.self) { entry in
                 YearListView(collection: entry.identifier, title: entry.displayName)
             }
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItemGroup(placement: .topBarTrailing) {
-                    Button("Browse") { viewModel.fetchBrowseCollections(); showBrowseSheet = true }
-                    Button(action: { newName = ""; newIdentifier = ""; showAddAlert = true }) {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: { viewModel.fetchBrowseCollections(); showBrowseSheet = true }) {
                         Image(systemName: "plus")
                     }
                 }
-            }
-            .alert("Add Band", isPresented: $showAddAlert) {
-                TextField("Display Name", text: $newName)
-                TextField("Identifier", text: $newIdentifier)
-                Button("Cancel", role: .cancel) {}
-                Button("Add") {
-                    let name = newName.trimmingCharacters(in: .whitespacesAndNewlines)
-                    let id = newIdentifier.trimmingCharacters(in: .whitespacesAndNewlines)
-                    guard !name.isEmpty, !id.isEmpty else { return }
-                    viewModel.addAndInferYears(displayName: name, identifier: id)
-                }
-            } message: {
-                Text("Enter display name and identifier (collection or creator)")
             }
             .navigationDestination(for: ShowDestination.self) { dest in
                 ShowDetailView(metadata: dest.metadata, showType: dest.showType)

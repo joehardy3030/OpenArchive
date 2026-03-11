@@ -19,7 +19,9 @@ final class ShowDetailViewModel: ObservableObject {
     var fullMetadata: ShowMetadata? { model?.metadata }
 
     var title: String {
-        utils.getDateFromDateTimeString(datetime: initialMetadata.date) ?? initialMetadata.date ?? ""
+        let formatted = utils.getDateFromDateTimeString(datetime: initialMetadata.date)
+        if let f = formatted, !f.isEmpty { return f }
+        return initialMetadata.date ?? ""
     }
 
     var shareURL: URL {

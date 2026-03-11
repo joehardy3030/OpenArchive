@@ -21,11 +21,13 @@ final class ShowDetailViewModel: ObservableObject {
         utils.urlFromIdentifier(identifier: initialMetadata.identifier)
     }
 
-    init(metadata: ShowMetadata, showType: ShowType) {
+    init(metadata: ShowMetadata, showType: ShowType, existingModel: ShowMetadataModel? = nil) {
         self.initialMetadata = metadata
         self.showType = showType
 
-        if showType == .archive {
+        if let existingModel {
+            self.model = existingModel
+        } else if showType == .archive {
             fetchShowDetail()
         }
     }

@@ -8,10 +8,10 @@ struct ShowDetailView: View {
     @EnvironmentObject private var playerViewModel: PlayerViewModel
     @State private var isNotesExpanded = false
 
-    init(metadata: ShowMetadata, showType: ShowType) {
+    init(metadata: ShowMetadata, showType: ShowType, existingModel: ShowMetadataModel? = nil) {
         self.metadata = metadata
         self.showType = showType
-        _viewModel = StateObject(wrappedValue: ShowDetailViewModel(metadata: metadata, showType: showType))
+        _viewModel = StateObject(wrappedValue: ShowDetailViewModel(metadata: metadata, showType: showType, existingModel: existingModel))
     }
 
     var body: some View {

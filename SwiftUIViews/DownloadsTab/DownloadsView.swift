@@ -20,7 +20,8 @@ struct DownloadsView: View {
             .navigationTitle("My Tapes")
             .navigationDestination(for: DownloadedShowDestination.self) { dest in
                 ShowDetailView(metadata: dest.model.metadata ?? ShowMetadata(identifier: "unknown"),
-                               showType: .downloaded)
+                               showType: .downloaded,
+                               existingModel: dest.model)
             }
             .onAppear {
                 viewModel.loadDownloads()

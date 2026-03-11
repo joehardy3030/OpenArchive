@@ -103,16 +103,19 @@ struct FullPlayerView: View {
                         Image(systemName: "forward.fill")
                             .font(.system(size: 28))
                     }
+                }
+                .tint(.primary)
+
+                // Share + AirPlay
+                HStack(spacing: 40) {
                     ShareLink(item: shareURL) {
                         Image(systemName: "square.and.arrow.up")
                             .font(.system(size: 24))
                     }
+                    AirPlayRoutePickerRepresentable()
+                        .frame(width: 40, height: 40)
                 }
                 .tint(.primary)
-
-                // AirPlay route picker
-                AirPlayRoutePickerRepresentable()
-                    .frame(width: 40, height: 40)
             }
             .padding()
             .background(.regularMaterial)

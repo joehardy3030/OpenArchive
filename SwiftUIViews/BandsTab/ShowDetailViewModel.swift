@@ -15,7 +15,6 @@ final class ShowDetailViewModel: ObservableObject {
     private let fileManager = FileManager.default
     private let player = AudioPlayerArchive.shared
     @Published var downloadingTrackIndex: Int? = nil
-
     var fullMetadata: ShowMetadata? { model?.metadata }
 
     var title: String {
@@ -34,25 +33,8 @@ final class ShowDetailViewModel: ObservableObject {
 
         if let existingModel {
             self.model = existingModel
-            // Downloaded shows may not have description stored locally — fetch it
-            if existingModel.metadata?.description == nil {
-                fetchDescription()
-            }
         } else if showType == .archive {
             fetchShowDetail()
-        }
-    }
-
-    private func fetchDescription() {
-        guard let id = initialMetadata.identifier else { return }
-        let url = archiveAPI.metadataURL(identifier: id)
-        archiveAPI.getIARequestMetadataDecodable(url: url) { [weak self] (response: ShowMetadataModel?, error: Error?) in
-            DispatchQueue.main.async {
-                guard let self = self else { return }
-                if let desc = response?.metadata?.description {
-                    self.model?.metadata?.description = desc
-                }
-            }
         }
     }
 

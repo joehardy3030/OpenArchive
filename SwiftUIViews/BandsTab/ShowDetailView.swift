@@ -74,9 +74,15 @@ struct ShowDetailView: View {
                     withAnimation { isNotesExpanded.toggle() }
                 }
                 .font(.system(size: 17, weight: .bold))
-                if isNotesExpanded, let desc = viewModel.fullMetadata?.description {
-                    Text(desc.strippingHTML())
-                        .font(.system(size: 16))
+                if isNotesExpanded {
+                    if let desc = viewModel.fullMetadata?.description {
+                        Text(desc.strippingHTML())
+                            .font(.system(size: 16))
+                    } else {
+                        Text("No notes available")
+                            .font(.system(size: 16))
+                            .foregroundColor(.secondary)
+                    }
                 }
             }
 

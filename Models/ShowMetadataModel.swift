@@ -56,7 +56,14 @@ struct ShowMetadata: Codable {
         creator = try container.decodeIfPresent(String.self, forKey: .creator)
         mediatype = try container.decodeIfPresent(String.self, forKey: .mediatype)
         type = try container.decodeIfPresent(String.self, forKey: .type)
-        description = try container.decodeIfPresent(String.self, forKey: .description)
+        // Handle description field that could be either a string or array
+        if let descString = try? container.decodeIfPresent(String.self, forKey: .description) {
+            description = descString
+        } else if let descArray = try? container.decodeIfPresent([String].self, forKey: .description) {
+            description = descArray.joined(separator: "\n")
+        } else {
+            description = nil
+        }
         date = try container.decodeIfPresent(String.self, forKey: .date)
         year = try container.decodeIfPresent(String.self, forKey: .year)
         venue = try container.decodeIfPresent(String.self, forKey: .venue)

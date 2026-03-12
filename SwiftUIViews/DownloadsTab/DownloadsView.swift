@@ -68,6 +68,13 @@ struct DownloadedShowRow: View {
                 Text(src.joined(separator: "; "))
                     .font(.system(size: 15))
                     .foregroundColor(.secondary)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+            }
+            if let rating = show.metadata?.avg_rating, let reviews = show.metadata?.num_reviews {
+                Text("\(String(format: "%.1f", rating)) stars  \(reviews) ratings")
+                    .font(.system(size: 16))
+                    .foregroundColor(.secondary)
             }
         }
         .padding(.vertical, 4)

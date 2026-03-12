@@ -19,7 +19,6 @@
 		D848521929454EEF00CD3EA4 /* CarPlayTemplateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D848521829454EEF00CD3EA4 /* CarPlayTemplateManager.swift */; };
 		D84D6E2824BEB5140022A058 /* NetworkUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84D6E2724BEB5140022A058 /* NetworkUtility.swift */; };
 		D850B8FD24B26EAC00E3DC6B /* ShowMetadataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D850B8FC24B26EAC00E3DC6B /* ShowMetadataModel.swift */; };
-		FCA84AC2861A9103DECDED04 /* ShowTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = E07983D51E8D40A81DED55FD /* ShowTypes.swift */; };
 		D859CE402DF5081A00D6371F /* YearsTotalResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D859CE3F2DF5081700D6371F /* YearsTotalResponse.swift */; };
 		D85A4EEF2022D0B600E480FB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A4EEE2022D0B600E480FB /* AppDelegate.swift */; };
 		D85A4EF82022D0B600E480FB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D85A4EF72022D0B600E480FB /* Assets.xcassets */; };
@@ -50,6 +49,7 @@
 		E2000001202603A00000000F /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2000002202603A00000000F /* SearchViewModel.swift */; };
 		E2000001202603A000000010 /* FullPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2000002202603A000000010 /* FullPlayerView.swift */; };
 		E2000001202603A000000011 /* DeepLinkRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2000002202603A000000011 /* DeepLinkRouter.swift */; };
+		FCA84AC2861A9103DECDED04 /* ShowTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = E07983D51E8D40A81DED55FD /* ShowTypes.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,7 +87,6 @@
 		D848521829454EEF00CD3EA4 /* CarPlayTemplateManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CarPlayTemplateManager.swift; sourceTree = "<group>"; };
 		D84D6E2724BEB5140022A058 /* NetworkUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkUtility.swift; sourceTree = "<group>"; };
 		D850B8FC24B26EAC00E3DC6B /* ShowMetadataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowMetadataModel.swift; sourceTree = "<group>"; };
-		E07983D51E8D40A81DED55FD /* ShowTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowTypes.swift; sourceTree = "<group>"; };
 		D859CE3F2DF5081700D6371F /* YearsTotalResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearsTotalResponse.swift; sourceTree = "<group>"; };
 		D85A4EEB2022D0B500E480FB /* Chateau.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chateau.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D85A4EEE2022D0B600E480FB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -104,6 +103,7 @@
 		D8ACD2E12B1D6CC30097224B /* ChateauGPTModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChateauGPTModel.swift; sourceTree = "<group>"; };
 		D8BA4E812F2155FE00B67F4F /* PlaybackState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackState.swift; sourceTree = "<group>"; };
 		D8DCF13325AFFEA200D28837 /* CarPlayDownloadsTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarPlayDownloadsTemplate.swift; sourceTree = "<group>"; };
+		E07983D51E8D40A81DED55FD /* ShowTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowTypes.swift; sourceTree = "<group>"; };
 		E1000002202601A000000001 /* ChateauArchiveApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChateauArchiveApp.swift; sourceTree = "<group>"; };
 		E1000002202601A000000002 /* PlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewModel.swift; sourceTree = "<group>"; };
 		E1000002202601A000000003 /* ArchiveRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveRootView.swift; sourceTree = "<group>"; };
@@ -294,17 +294,6 @@
 			path = CarPlay;
 			sourceTree = "<group>";
 		};
-		F750615CF5BAF14CDA3C127E /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				799C3C8F2345582F00D9341E /* HealthKit.framework */,
-				BA40D6B8D9FFEE08A048EACE /* Pods_Breaze.framework */,
-				7EBF20D287E48F03823653E6 /* Pods_BreazeTests.framework */,
-				C9D58EED31CE81FB1690A28E /* Pods_BreazeUITests.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		E2000003202603A000000001 /* SwiftUIViews */ = {
 			isa = PBXGroup;
 			children = (
@@ -316,6 +305,23 @@
 				E2000002202603A000000011 /* DeepLinkRouter.swift */,
 			);
 			path = SwiftUIViews;
+			sourceTree = "<group>";
+		};
+		E2000003202603A000000002 /* BandsTab */ = {
+			isa = PBXGroup;
+			children = (
+				E2000002202603A000000001 /* CollectionsView.swift */,
+				E2000002202603A000000002 /* CollectionsViewModel.swift */,
+				E2000002202603A000000003 /* YearListView.swift */,
+				E2000002202603A000000004 /* YearListViewModel.swift */,
+				E2000002202603A000000005 /* MonthListView.swift */,
+				E2000002202603A000000006 /* MonthListViewModel.swift */,
+				E2000002202603A000000007 /* ShowsListView.swift */,
+				E2000002202603A000000008 /* ShowsListViewModel.swift */,
+				E2000002202603A000000009 /* ShowDetailView.swift */,
+				E2000002202603A00000000A /* ShowDetailViewModel.swift */,
+			);
+			path = BandsTab;
 			sourceTree = "<group>";
 		};
 		E2000003202603A000000003 /* DownloadsTab */ = {
@@ -336,29 +342,23 @@
 			path = SearchTab;
 			sourceTree = "<group>";
 		};
-		E2000003202603A000000002 /* BandsTab */ = {
-			isa = PBXGroup;
-			children = (
-				E2000002202603A000000001 /* CollectionsView.swift */,
-				E2000002202603A000000002 /* CollectionsViewModel.swift */,
-				E2000002202603A000000003 /* YearListView.swift */,
-				E2000002202603A000000004 /* YearListViewModel.swift */,
-				E2000002202603A000000005 /* MonthListView.swift */,
-				E2000002202603A000000006 /* MonthListViewModel.swift */,
-				E2000002202603A000000007 /* ShowsListView.swift */,
-				E2000002202603A000000008 /* ShowsListViewModel.swift */,
-				E2000002202603A000000009 /* ShowDetailView.swift */,
-				E2000002202603A00000000A /* ShowDetailViewModel.swift */,
-			);
-			path = BandsTab;
-			sourceTree = "<group>";
-		};
 		E2000003202603A000000005 /* Player */ = {
 			isa = PBXGroup;
 			children = (
 				E2000002202603A000000010 /* FullPlayerView.swift */,
 			);
 			path = Player;
+			sourceTree = "<group>";
+		};
+		F750615CF5BAF14CDA3C127E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				799C3C8F2345582F00D9341E /* HealthKit.framework */,
+				BA40D6B8D9FFEE08A048EACE /* Pods_Breaze.framework */,
+				7EBF20D287E48F03823653E6 /* Pods_BreazeTests.framework */,
+				C9D58EED31CE81FB1690A28E /* Pods_BreazeUITests.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -433,7 +433,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 0920;
-				LastUpgradeCheck = 2620;
+				LastUpgradeCheck = 2630;
 				ORGANIZATIONNAME = Carquinez;
 				TargetAttributes = {
 					D85A4EEA2022D0B500E480FB = {
@@ -827,7 +827,7 @@
 				CODE_SIGN_ENTITLEMENTS = Breaze/Breaze.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 740;
 				INFOPLIST_FILE = Breaze/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Chateau Archive";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
@@ -853,7 +853,7 @@
 				CODE_SIGN_ENTITLEMENTS = Breaze/Breaze.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 740;
 				INFOPLIST_FILE = Breaze/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Chateau Archive";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";

@@ -241,14 +241,14 @@ class AudioPlayerArchive: NSObject {
     */
     
     func prepareToPlay(url: URL) {
-        let asset = AVAsset(url: url)
+        let asset = AVURLAsset(url: url)
         let assetKeys = ["playable"]
         let item = AVPlayerItem(asset: asset, automaticallyLoadedAssetKeys: assetKeys)
         playerItems.append(item)
     }
 
     func prepareToPlaySong(url: URL) {
-        let asset = AVAsset(url: url)
+        let asset = AVURLAsset(url: url)
         let assetKeys = ["playable"]
         let lastItem = playerItems.last
         let item = AVPlayerItem(asset: asset, automaticallyLoadedAssetKeys: assetKeys)

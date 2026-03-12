@@ -32,7 +32,7 @@ struct ShowDetailView: View {
 
                     if showType == .archive {
                         Button {
-                            viewModel.downloadShow()
+                            viewModel.downloadShow(playerViewModel: playerViewModel)
                         } label: {
                             if viewModel.isDownloading {
                                 ProgressView()

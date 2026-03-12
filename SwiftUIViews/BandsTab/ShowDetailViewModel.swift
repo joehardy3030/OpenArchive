@@ -102,13 +102,16 @@ final class ShowDetailViewModel: ObservableObject {
 
     // MARK: - Download
 
-    func downloadShow() {
+    func downloadShow(playerViewModel: PlayerViewModel) {
         guard !isDownloading, !isDownloaded else { return }
         guard let mp3s = model?.mp3Array, !mp3s.isEmpty else { return }
         isDownloading = true
         downloadingTrackIndex = 0
+        self.downloadPlayerViewModel = playerViewModel
         downloadSyncRun()
     }
+
+    private weak var downloadPlayerViewModel: PlayerViewModel?
 
     private func downloadSyncRun() {
         guard let mp3s = model?.mp3Array, let idx = downloadingTrackIndex else { return }
@@ -124,7 +127,14 @@ final class ShowDetailViewModel: ObservableObject {
             guard let self else { return }
             DispatchQueue.main.async {
                 self.setDownloadComplete(destination: destination, name: showMP3.name)
-                self.downloadingTrackIndex = (self.downloadingTrackIndex ?? 0) + 1
+                let justFinishedIndex = self.downloadingTrackIndex ?? 0
+
+                // Start playing as soon as the first track finishes downloading
+                if justFinishedIndex == 0, let pvm = self.downloadPlayerViewModel {
+                    self.streamOrPlay(startingAt: 0, playerViewModel: pvm)
+                }
+
+                self.downloadingTrackIndex = justFinishedIndex + 1
                 self.downloadSyncRun()
             }
         }

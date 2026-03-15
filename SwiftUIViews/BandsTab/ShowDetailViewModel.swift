@@ -7,6 +7,14 @@ final class ShowDetailViewModel: ObservableObject {
     @Published var isDownloading = false
     @Published var isDownloaded = false
 
+    // Phish.net metadata enrichment (only populated for Phish shows)
+    @Published var phishNetSetlist: [SetlistSet] = []
+    @Published var phishNetVenue: String?
+    @Published var phishNetLocation: String?
+    @Published var phishNetRating: String?
+    @Published var phishNetSetlistNotes: String?
+    @Published var isPhishNetLoading = false
+
     let showType: ShowType
     private let initialMetadata: ShowMetadata
     private let archiveAPI = ArchiveAPI()
@@ -16,6 +24,13 @@ final class ShowDetailViewModel: ObservableObject {
     private let player = AudioPlayerArchive.shared
     @Published var downloadingTrackIndex: Int? = nil
     var fullMetadata: ShowMetadata? { model?.metadata }
+
+    /// Whether this show is a Phish show (eligible for Phish.net enrichment)
+    var isPhishShow: Bool {
+        if let creator = initialMetadata.creator, creator.lowercased() == "phish" { return true }
+        if let colls = initialMetadata.collection, colls.contains(where: { $0.lowercased() == "phish" }) { return true }
+        return false
+    }
 
     var title: String {
         let formatted = utils.getDateFromDateTimeString(datetime: initialMetadata.date)
@@ -35,6 +50,10 @@ final class ShowDetailViewModel: ObservableObject {
             self.model = existingModel
         } else if showType == .archive {
             fetchShowDetail()
+        }
+
+        if isPhishShow {
+            fetchPhishNetMetadata()
         }
     }
 
@@ -170,6 +189,81 @@ final class ShowDetailViewModel: ObservableObject {
         }
     }
 
+    // MARK: - Phish.net Metadata Enrichment
+
+    private func fetchPhishNetMetadata() {
+        guard let dateStr = initialMetadata.date else { return }
+        // Extract YYYY-MM-DD from the date string (may include time component)
+        let showDate = String(dateStr.prefix(10))
+        guard showDate.count == 10 else { return }
+
+        isPhishNetLoading = true
+
+        // Fetch setlist and show info in parallel
+        let group = DispatchGroup()
+
+        group.enter()
+        PhishNetAPI.shared.fetchSetlist(date: showDate) { [weak self] response, _ in
+            defer { group.leave() }
+            guard let self = self, let entries = response?.data, !entries.isEmpty else { return }
+
+            // Group setlist entries by set name
+            var setDict: [String: [SetlistSong]] = [:]
+            var setOrder: [String] = []
+            var venueStr: String?
+            var locationStr: String?
+            var notesStr: String?
+
+            for entry in entries {
+                let setName = entry.set ?? "Unknown"
+                let song = SetlistSong(
+                    name: entry.song ?? "Unknown",
+                    position: entry.position ?? 0,
+                    isJamChart: (entry.isjamchart ?? 0) == 1,
+                    jamChartDescription: entry.jamchart_description
+                )
+                if setDict[setName] == nil {
+                    setDict[setName] = []
+                    setOrder.append(setName)
+                }
+                setDict[setName]?.append(song)
+
+                if venueStr == nil { venueStr = entry.venue }
+                if locationStr == nil, let city = entry.city {
+                    var loc = city
+                    if let state = entry.state, !state.isEmpty { loc += ", \(state)" }
+                    if let country = entry.country, !country.isEmpty { loc += ", \(country)" }
+                    locationStr = loc
+                }
+                if notesStr == nil { notesStr = entry.setlistnotes }
+            }
+
+            let sets = setOrder.map { name in
+                SetlistSet(name: name, songs: (setDict[name] ?? []).sorted { $0.position < $1.position })
+            }
+
+            DispatchQueue.main.async {
+                self.phishNetSetlist = sets
+                self.phishNetVenue = venueStr
+                self.phishNetLocation = locationStr
+                self.phishNetSetlistNotes = notesStr
+            }
+        }
+
+        group.enter()
+        PhishNetAPI.shared.fetchShow(date: showDate) { [weak self] response, _ in
+            defer { group.leave() }
+            guard let self = self, let show = response?.data?.first else { return }
+            DispatchQueue.main.async {
+                self.phishNetRating = show.rating
+            }
+        }
+
+        group.notify(queue: .main) { [weak self] in
+            self?.isPhishNetLoading = false
+        }
+    }
+
     // MARK: - Sort helpers (mirrors ShowViewController logic)
 
     private func sortKey(for mp3: ShowMP3) -> (Int, Int, String) {
@@ -210,4 +304,20 @@ final class ShowDetailViewModel: ObservableObject {
         }
         return (1, track, fallback)
     }
+}
+
+// MARK: - Setlist Models
+
+struct SetlistSong: Identifiable {
+    let id = UUID()
+    let name: String
+    let position: Int
+    let isJamChart: Bool
+    let jamChartDescription: String?
+}
+
+struct SetlistSet: Identifiable {
+    let id = UUID()
+    let name: String
+    let songs: [SetlistSong]
 }

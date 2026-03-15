@@ -61,10 +61,22 @@ struct ShowDetailView: View {
                     InfoRow(label: "Band", value: band)
                 }
                 if let date = viewModel.fullMetadata?.date { InfoRow(label: "Date", value: date) }
-                if let venue = viewModel.fullMetadata?.venue { InfoRow(label: "Venue", value: venue) }
-                if let coverage = viewModel.fullMetadata?.coverage { InfoRow(label: "Location", value: coverage) }
+                // Prefer Phish.net venue/location when available
+                if let venue = viewModel.phishNetVenue ?? viewModel.fullMetadata?.venue {
+                    InfoRow(label: "Venue", value: venue)
+                }
+                if let location = viewModel.phishNetLocation ?? viewModel.fullMetadata?.coverage {
+                    InfoRow(label: "Location", value: location)
+                }
                 if let src = viewModel.fullMetadata?.source, !src.isEmpty {
                     InfoRow(label: "Source", value: src.joined(separator: "; "))
+                }
+                if let rating = viewModel.fullMetadata?.avg_rating {
+                    let reviews = viewModel.fullMetadata?.num_reviews ?? 0
+                    InfoRow(label: "Recording Rating", value: "\(String(format: "%.1f", rating)) stars (\(reviews) reviews)")
+                }
+                if let rating = viewModel.phishNetRating {
+                    InfoRow(label: "Show Rating (Phish.net)", value: rating)
                 }
             }
 
@@ -81,6 +93,47 @@ struct ShowDetailView: View {
                     } else {
                         Text("No notes available")
                             .font(.system(size: 16))
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+
+            // MARK: - Phish.net Setlist Section
+            if !viewModel.phishNetSetlist.isEmpty {
+                Section("Setlist") {
+                    ForEach(viewModel.phishNetSetlist) { set in
+                        Text(setDisplayName(set.name))
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(.secondary)
+                            .listRowSeparator(.hidden)
+                        ForEach(set.songs) { song in
+                            HStack {
+                                Text(song.name)
+                                    .font(.system(size: 16))
+                                if song.isJamChart {
+                                    Image(systemName: "star.fill")
+                                        .font(.caption2)
+                                        .foregroundColor(.orange)
+                                }
+                            }
+                        }
+                    }
+                    if let notes = viewModel.phishNetSetlistNotes, !notes.isEmpty {
+                        Text(notes.strippingHTML())
+                            .font(.system(size: 14))
+                            .foregroundColor(.secondary)
+                    }
+                    Text("Data courtesy of Phish.net / The Mockingbird Foundation")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+            } else if viewModel.isPhishNetLoading {
+                Section("Setlist") {
+                    HStack {
+                        ProgressView()
+                            .scaleEffect(0.8)
+                        Text("Loading from Phish.net...")
+                            .font(.system(size: 14))
                             .foregroundColor(.secondary)
                     }
                 }
@@ -149,8 +202,19 @@ private struct InfoRow: View {
     }
 }
 
+private func setDisplayName(_ raw: String) -> String {
+    switch raw.lowercased() {
+    case "1": return "Set 1"
+    case "2": return "Set 2"
+    case "3": return "Set 3"
+    case "e": return "Encore"
+    case "e2": return "Encore 2"
+    default: return raw
+    }
+}
+
 // Minimal HTML stripping helper
-private extension String {
+extension String {
     func strippingHTML() -> String {
         self.replacingOccurrences(of: "<br\\s*/?>", with: "\n", options: .regularExpression)
             .replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)

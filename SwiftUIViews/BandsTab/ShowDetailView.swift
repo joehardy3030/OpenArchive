@@ -7,6 +7,7 @@ struct ShowDetailView: View {
     @StateObject private var viewModel: ShowDetailViewModel
     @EnvironmentObject private var playerViewModel: PlayerViewModel
     @State private var isNotesExpanded = false
+    @State private var isSetlistExpanded = false
 
     init(metadata: ShowMetadata, showType: ShowType, existingModel: ShowMetadataModel? = nil) {
         self.metadata = metadata
@@ -100,39 +101,44 @@ struct ShowDetailView: View {
 
             // MARK: - Phish.net Setlist Section
             if !viewModel.phishNetSetlist.isEmpty {
-                Section("Setlist") {
-                    ForEach(viewModel.phishNetSetlist) { set in
-                        Text(setDisplayName(set.name))
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.secondary)
-                            .listRowSeparator(.hidden)
-                        ForEach(set.songs) { song in
-                            HStack {
-                                Text(song.name)
-                                    .font(.system(size: 16))
-                                if song.isJamChart {
-                                    Image(systemName: "star.fill")
-                                        .font(.caption2)
-                                        .foregroundColor(.orange)
+                Section {
+                    Button(isSetlistExpanded ? "Hide Setlist" : "Setlist") {
+                        withAnimation { isSetlistExpanded.toggle() }
+                    }
+                    .font(.system(size: 17, weight: .bold))
+                    if isSetlistExpanded {
+                        ForEach(viewModel.phishNetSetlist) { set in
+                            Text(setDisplayName(set.name))
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(.secondary)
+                            ForEach(set.songs) { song in
+                                HStack {
+                                    Text(song.name)
+                                        .font(.system(size: 16))
+                                    if song.isJamChart {
+                                        Image(systemName: "star.fill")
+                                            .font(.caption2)
+                                            .foregroundColor(.orange)
+                                    }
                                 }
                             }
                         }
-                    }
-                    if let notes = viewModel.phishNetSetlistNotes, !notes.isEmpty {
-                        Text(notes.strippingHTML())
-                            .font(.system(size: 14))
+                        if let notes = viewModel.phishNetSetlistNotes, !notes.isEmpty {
+                            Text(notes.strippingHTML())
+                                .font(.system(size: 14))
+                                .foregroundColor(.secondary)
+                        }
+                        Text("Data courtesy of Phish.net / The Mockingbird Foundation")
+                            .font(.caption2)
                             .foregroundColor(.secondary)
                     }
-                    Text("Data courtesy of Phish.net / The Mockingbird Foundation")
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
                 }
             } else if viewModel.isPhishNetLoading {
-                Section("Setlist") {
+                Section {
                     HStack {
                         ProgressView()
                             .scaleEffect(0.8)
-                        Text("Loading from Phish.net...")
+                        Text("Loading setlist...")
                             .font(.system(size: 14))
                             .foregroundColor(.secondary)
                     }

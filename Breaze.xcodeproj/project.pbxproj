@@ -14,6 +14,7 @@
 		B5C3A8D3CBD83ACBD863E369 /* Pods_BreazeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EBF20D287E48F03823653E6 /* Pods_BreazeTests.framework */; };
 		D80ACFA02F676B5500EA9D45 /* PhishNetAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80ACF9F2F676B5500EA9D45 /* PhishNetAPI.swift */; };
 		D80ACFA22F676B8200EA9D45 /* PhishNetAPIKeys.plist in Resources */ = {isa = PBXBuildFile; fileRef = D80ACFA12F676B8200EA9D45 /* PhishNetAPIKeys.plist */; };
+		D80ACFA42F6775DA00EA9D45 /* PhishInAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80ACFA32F6775DA00EA9D45 /* PhishInAPI.swift */; };
 		D82C59192DDAA5ED0013BAC5 /* LocalDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82C59172DDAA5ED0013BAC5 /* LocalDatabase.swift */; };
 		D82C591B2DDAC1460013BAC5 /* CollectionConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82C591A2DDAC1460013BAC5 /* CollectionConfig.swift */; };
 		D843EBDD24B3B10300C128A5 /* AudioPlayerArchive.swift in Sources */ = {isa = PBXBuildFile; fileRef = D843EBDC24B3B10300C128A5 /* AudioPlayerArchive.swift */; };
@@ -84,6 +85,7 @@
 		C9D58EED31CE81FB1690A28E /* Pods_BreazeUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BreazeUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D80ACF9F2F676B5500EA9D45 /* PhishNetAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhishNetAPI.swift; sourceTree = "<group>"; };
 		D80ACFA12F676B8200EA9D45 /* PhishNetAPIKeys.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PhishNetAPIKeys.plist; sourceTree = "<group>"; };
+		D80ACFA32F6775DA00EA9D45 /* PhishInAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhishInAPI.swift; sourceTree = "<group>"; };
 		D82C59172DDAA5ED0013BAC5 /* LocalDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalDatabase.swift; sourceTree = "<group>"; };
 		D82C591A2DDAC1460013BAC5 /* CollectionConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionConfig.swift; sourceTree = "<group>"; };
 		D843EBDC24B3B10300C128A5 /* AudioPlayerArchive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerArchive.swift; sourceTree = "<group>"; };
@@ -287,6 +289,7 @@
 				D84D6E2724BEB5140022A058 /* NetworkUtility.swift */,
 				7984F98E24A56EFD00989DB8 /* ArchiveAPI.swift */,
 				D80ACF9F2F676B5500EA9D45 /* PhishNetAPI.swift */,
+				D80ACFA32F6775DA00EA9D45 /* PhishInAPI.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -657,6 +660,7 @@
 				D82C591B2DDAC1460013BAC5 /* CollectionConfig.swift in Sources */,
 				D850B8FD24B26EAC00E3DC6B /* ShowMetadataModel.swift in Sources */,
 				FCA84AC2861A9103DECDED04 /* ShowTypes.swift in Sources */,
+				D80ACFA42F6775DA00EA9D45 /* PhishInAPI.swift in Sources */,
 				D859CE402DF5081A00D6371F /* YearsTotalResponse.swift in Sources */,
 				D80ACFA02F676B5500EA9D45 /* PhishNetAPI.swift in Sources */,
 				D8BA4E822F2155FE00B67F4F /* PlaybackState.swift in Sources */,

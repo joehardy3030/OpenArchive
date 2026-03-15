@@ -23,14 +23,7 @@ struct ShowsListView: View {
 
     var body: some View {
         List {
-            // Archive.org recordings
-            ForEach(viewModel.shows, id: \.identifier) { show in
-                NavigationLink(value: ShowDestination(metadata: show, showType: .archive)) {
-                    ShowRowView(show: show)
-                }
-            }
-
-            // Phish.in recordings (for dates that have audio on Phish.in)
+            // Phish.in recordings (shown first for Phish collection)
             if !viewModel.phishInDates.isEmpty {
                 Section("Phish.in Recordings") {
                     ForEach(viewModel.phishInDates.sorted(), id: \.self) { date in
@@ -38,6 +31,15 @@ struct ShowsListView: View {
                         NavigationLink(value: ShowDestination(metadata: meta, showType: .phishIn)) {
                             PhishInRowView(date: date)
                         }
+                    }
+                }
+            }
+
+            // Archive.org recordings
+            Section(viewModel.phishInDates.isEmpty ? "" : "Archive.org Recordings") {
+                ForEach(viewModel.shows, id: \.identifier) { show in
+                    NavigationLink(value: ShowDestination(metadata: show, showType: .archive)) {
+                        ShowRowView(show: show)
                     }
                 }
             }

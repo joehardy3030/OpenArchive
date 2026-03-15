@@ -86,3 +86,6 @@ node_modules/
 Breaze/GoogleService-Info.plist
 
 *.mobileprovision
+
+# API keys / secrets
+Breaze/PhishNetAPIKeys.plist

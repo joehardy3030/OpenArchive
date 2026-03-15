@@ -2,6 +2,8 @@ import Foundation
 
 final class ShowsListViewModel: ObservableObject {
     @Published var shows: [ShowMetadata] = []
+    /// Phish.in show dates available for this month (only for Phish collection)
+    @Published var phishInDates: Set<String> = []
 
     let year: Int
     let month: Int
@@ -27,6 +29,11 @@ final class ShowsListViewModel: ObservableObject {
         } else {
             fetchFromAPI(sbdOnly: sbdOnly)
         }
+
+        // Fetch Phish.in show dates for Phish collection
+        if collection == "Phish" {
+            fetchPhishInDates()
+        }
     }
 
     private func fetchFromAPI(sbdOnly: Bool) {
@@ -38,5 +45,32 @@ final class ShowsListViewModel: ObservableObject {
                 }
             }
         }
+    }
+
+    private func fetchPhishInDates() {
+        PhishInAPI.shared.fetchShows(year: year) { [weak self] shows, _ in
+            DispatchQueue.main.async {
+                guard let self = self, let shows = shows else { return }
+                let monthStr = self.month < 10 ? "0\(self.month)" : "\(self.month)"
+                let prefix = "\(self.year)-\(monthStr)"
+                self.phishInDates = Set(shows.compactMap { $0.date }.filter { $0.hasPrefix(prefix) })
+            }
+        }
+    }
+
+    /// Check if a given show date has a Phish.in recording
+    func hasPhishInRecording(date: String?) -> Bool {
+        guard let date = date else { return false }
+        let showDate = String(date.prefix(10))
+        return phishInDates.contains(showDate)
+    }
+
+    /// Create a ShowMetadata stub for a Phish.in recording on a given date
+    func phishInMetadata(for date: String) -> ShowMetadata {
+        var meta = ShowMetadata(identifier: "phishin-\(date)")
+        meta.date = "\(date)T00:00:00Z"
+        meta.creator = "Phish"
+        meta.source = ["Phish.in audience recording"]
+        return meta
     }
 }

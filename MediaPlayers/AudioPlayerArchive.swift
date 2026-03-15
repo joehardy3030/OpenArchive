@@ -318,6 +318,26 @@ class AudioPlayerArchive: NSObject {
         //print(playerQueue)
     }
 
+    /// Load streaming queue from direct MP3 URLs (e.g., Phish.in tracks).
+    func loadStreamingFromURLs(_ urls: [URL], startingAt index: Int = 0) {
+        print("\(timestamp()) streaming from direct URLs, starting at index \(index)")
+        cleanQueue()
+        isStreaming = true
+
+        for url in urls {
+            prepareToPlay(url: url)
+        }
+        guard !playerItems.isEmpty else { return }
+        playerQueue = AVQueuePlayer(items: playerItems)
+
+        if index > 0 && index < playerItems.count {
+            print("AudioPlayerArchive: Advancing to index \(index) in loadStreamingFromURLs")
+            for _ in 0..<index {
+                playerQueue?.advanceToNextItem()
+            }
+        }
+    }
+
     func reLoadQueuePlayer(tracks: [ShowMP3]) {
         //cleanQueue()
         guard let pq = playerQueue else { return }

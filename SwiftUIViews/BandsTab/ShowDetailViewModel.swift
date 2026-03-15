@@ -15,6 +15,9 @@ final class ShowDetailViewModel: ObservableObject {
     @Published var phishNetSetlistNotes: String?
     @Published var isPhishNetLoading = false
 
+    // Phish.in direct streaming URLs (parallel to mp3Array)
+    var phishInTrackURLs: [URL] = []
+
     let showType: ShowType
     private let initialMetadata: ShowMetadata
     private let archiveAPI = ArchiveAPI()
@@ -48,6 +51,8 @@ final class ShowDetailViewModel: ObservableObject {
 
         if let existingModel {
             self.model = existingModel
+        } else if showType == .phishIn {
+            fetchPhishInShowDetail()
         } else if showType == .archive {
             fetchShowDetail()
         }
@@ -103,11 +108,16 @@ final class ShowDetailViewModel: ObservableObject {
         player.pause()
         player.showMetadataModel = m
 
-        let playLocally = showType == .downloaded || isDownloaded
-        if playLocally, let tracks = m.mp3Array {
-            player.loadQueuePlayer(tracks: tracks, startingAt: index)
+        if showType == .phishIn, !phishInTrackURLs.isEmpty {
+            // Stream directly from Phish.in MP3 URLs
+            player.loadStreamingFromURLs(phishInTrackURLs, startingAt: index)
         } else {
-            player.loadStreamingQueuePlayer(startingAt: index)
+            let playLocally = showType == .downloaded || isDownloaded
+            if playLocally, let tracks = m.mp3Array {
+                player.loadQueuePlayer(tracks: tracks, startingAt: index)
+            } else {
+                player.loadStreamingQueuePlayer(startingAt: index)
+            }
         }
 
         player.play()
@@ -115,7 +125,7 @@ final class ShowDetailViewModel: ObservableObject {
 
         // Push state into the shared view model
         playerViewModel.currentShow = m
-        playerViewModel.isStreaming = !playLocally
+        playerViewModel.isStreaming = showType == .phishIn || (showType != .downloaded && !isDownloaded)
     }
 
     // MARK: - Download
@@ -186,6 +196,61 @@ final class ShowDetailViewModel: ObservableObject {
             self.isDownloading = false
             self.downloadingTrackIndex = nil
             self.isDownloaded = true
+        }
+    }
+
+    // MARK: - Phish.in Show Detail
+
+    private func fetchPhishInShowDetail() {
+        guard let dateStr = initialMetadata.date else { return }
+        let showDate = String(dateStr.prefix(10))
+        guard showDate.count == 10 else { return }
+
+        isLoading = true
+
+        PhishInAPI.shared.fetchShow(date: showDate) { [weak self] show, _ in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                self.isLoading = false
+                guard let show = show, let tracks = show.tracks else { return }
+
+                // Filter out soundcheck tracks and sort by position
+                let playableTracks = tracks
+                    .filter { ($0.set_name ?? "").lowercased() != "soundcheck" }
+                    .sorted { ($0.position ?? 0) < ($1.position ?? 0) }
+
+                // Build ShowMP3 array for display compatibility
+                let mp3s = playableTracks.map { track in
+                    ShowMP3(
+                        identifier: "phishin-\(showDate)",
+                        name: track.mp3_url,
+                        title: track.title,
+                        track: track.position.map { String($0) }
+                    )
+                }
+
+                // Collect direct streaming URLs
+                self.phishInTrackURLs = playableTracks.compactMap { track in
+                    guard let urlStr = track.mp3_url else { return nil }
+                    return URL(string: urlStr)
+                }
+
+                // Build a ShowMetadataModel for the player
+                var metadata = ShowMetadata(identifier: "phishin-\(showDate)")
+                metadata.title = show.venue_name.map { "\(showDate) - \($0)" }
+                metadata.creator = "Phish"
+                metadata.date = show.date
+                metadata.venue = show.venue_name
+
+                if let venue = show.venue {
+                    metadata.coverage = venue.location
+                }
+
+                var showModel = ShowMetadataModel()
+                showModel.metadata = metadata
+                showModel.mp3Array = mp3s
+                self.model = showModel
+            }
         }
     }
 

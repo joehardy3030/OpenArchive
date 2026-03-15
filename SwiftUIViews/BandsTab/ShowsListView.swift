@@ -22,9 +22,24 @@ struct ShowsListView: View {
     }
 
     var body: some View {
-        List(viewModel.shows, id: \.identifier) { show in
-            NavigationLink(value: ShowDestination(metadata: show, showType: .archive)) {
-                ShowRowView(show: show)
+        List {
+            // Archive.org recordings
+            ForEach(viewModel.shows, id: \.identifier) { show in
+                NavigationLink(value: ShowDestination(metadata: show, showType: .archive)) {
+                    ShowRowView(show: show)
+                }
+            }
+
+            // Phish.in recordings (for dates that have audio on Phish.in)
+            if !viewModel.phishInDates.isEmpty {
+                Section("Phish.in Recordings") {
+                    ForEach(viewModel.phishInDates.sorted(), id: \.self) { date in
+                        let meta = viewModel.phishInMetadata(for: date)
+                        NavigationLink(value: ShowDestination(metadata: meta, showType: .phishIn)) {
+                            PhishInRowView(date: date)
+                        }
+                    }
+                }
             }
         }
         .navigationTitle(viewModel.navigationTitle)
@@ -40,6 +55,7 @@ struct ShowDestination: Hashable {
 
     func hash(into hasher: inout Hasher) {
         hasher.combine(metadata.identifier)
+        hasher.combine(String(describing: showType))
     }
 
     static func == (lhs: ShowDestination, rhs: ShowDestination) -> Bool {
@@ -90,5 +106,23 @@ struct ShowRowView: View {
             return formatter.string(from: date)
         }
         return dateString
+    }
+}
+
+/// Row for a Phish.in recording entry.
+struct PhishInRowView: View {
+    let date: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text("Phish")
+                .font(.system(size: 18, weight: .bold))
+            Text(date)
+                .font(.system(size: 17, weight: .bold))
+            Text("Phish.in audience recording")
+                .font(.system(size: 15))
+                .foregroundColor(.secondary)
+        }
+        .padding(.vertical, 4)
     }
 }

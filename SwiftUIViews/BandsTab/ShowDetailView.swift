@@ -23,7 +23,7 @@ struct ShowDetailView: View {
                     Button {
                         viewModel.streamOrPlay(startingAt: 0, playerViewModel: playerViewModel)
                     } label: {
-                        let isStreaming = showType == .archive && !viewModel.isDownloaded
+                        let isStreaming = showType == .phishIn || (showType == .archive && !viewModel.isDownloaded)
                         Label(isStreaming ? "Stream" : "Play",
                               systemImage: isStreaming ? "dot.radiowaves.left.and.right" : "play.fill")
                             .lineLimit(1)

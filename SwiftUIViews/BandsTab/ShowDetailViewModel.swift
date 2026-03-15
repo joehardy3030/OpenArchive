@@ -11,7 +11,7 @@ final class ShowDetailViewModel: ObservableObject {
     @Published var phishNetSetlist: [SetlistSet] = []
     @Published var phishNetVenue: String?
     @Published var phishNetLocation: String?
-    @Published var phishNetRating: String?
+    @Published var phishNetTourName: String?
     @Published var phishNetSetlistNotes: String?
     @Published var isPhishNetLoading = false
 
@@ -199,68 +199,49 @@ final class ShowDetailViewModel: ObservableObject {
 
         isPhishNetLoading = true
 
-        // Fetch setlist and show info in parallel
-        let group = DispatchGroup()
-
-        group.enter()
         PhishNetAPI.shared.fetchSetlist(date: showDate) { [weak self] response, _ in
-            defer { group.leave() }
-            guard let self = self, let entries = response?.data, !entries.isEmpty else { return }
-
-            // Group setlist entries by set name
-            var setDict: [String: [SetlistSong]] = [:]
-            var setOrder: [String] = []
-            var venueStr: String?
-            var locationStr: String?
-            var notesStr: String?
-
-            for entry in entries {
-                let setName = entry.set ?? "Unknown"
-                let song = SetlistSong(
-                    name: entry.song ?? "Unknown",
-                    position: entry.position ?? 0,
-                    isJamChart: (entry.isjamchart ?? 0) == 1,
-                    jamChartDescription: entry.jamchart_description
-                )
-                if setDict[setName] == nil {
-                    setDict[setName] = []
-                    setOrder.append(setName)
-                }
-                setDict[setName]?.append(song)
-
-                if venueStr == nil { venueStr = entry.venue }
-                if locationStr == nil, let city = entry.city {
-                    var loc = city
-                    if let state = entry.state, !state.isEmpty { loc += ", \(state)" }
-                    if let country = entry.country, !country.isEmpty { loc += ", \(country)" }
-                    locationStr = loc
-                }
-                if notesStr == nil { notesStr = entry.setlistnotes }
-            }
-
-            let sets = setOrder.map { name in
-                SetlistSet(name: name, songs: (setDict[name] ?? []).sorted { $0.position < $1.position })
-            }
-
             DispatchQueue.main.async {
-                self.phishNetSetlist = sets
-                self.phishNetVenue = venueStr
-                self.phishNetLocation = locationStr
-                self.phishNetSetlistNotes = notesStr
-            }
-        }
+                guard let self = self else { return }
+                self.isPhishNetLoading = false
 
-        group.enter()
-        PhishNetAPI.shared.fetchShow(date: showDate) { [weak self] response, _ in
-            defer { group.leave() }
-            guard let self = self, let show = response?.data?.first else { return }
-            DispatchQueue.main.async {
-                self.phishNetRating = show.rating
-            }
-        }
+                guard let entries = response?.data, !entries.isEmpty else { return }
 
-        group.notify(queue: .main) { [weak self] in
-            self?.isPhishNetLoading = false
+                // Group setlist entries by set name
+                var setDict: [String: [SetlistSong]] = [:]
+                var setOrder: [String] = []
+
+                for entry in entries {
+                    let setName = entry.set ?? "Unknown"
+                    let song = SetlistSong(
+                        name: entry.song ?? "Unknown",
+                        position: entry.position ?? 0,
+                        isJamChart: (entry.isjamchart ?? 0) == 1,
+                        jamChartDescription: entry.jamchart_description
+                    )
+                    if setDict[setName] == nil {
+                        setDict[setName] = []
+                        setOrder.append(setName)
+                    }
+                    setDict[setName]?.append(song)
+                }
+
+                self.phishNetSetlist = setOrder.map { name in
+                    SetlistSet(name: name, songs: (setDict[name] ?? []).sorted { $0.position < $1.position })
+                }
+
+                // Extract venue/location/tour from first entry
+                if let first = entries.first {
+                    self.phishNetVenue = first.venue
+                    if let city = first.city {
+                        var loc = city
+                        if let state = first.state, !state.isEmpty { loc += ", \(state)" }
+                        if let country = first.country, !country.isEmpty { loc += ", \(country)" }
+                        self.phishNetLocation = loc
+                    }
+                    self.phishNetTourName = first.tourname
+                    self.phishNetSetlistNotes = first.setlistnotes
+                }
+            }
         }
     }
 

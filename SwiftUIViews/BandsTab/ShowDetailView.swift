@@ -75,8 +75,8 @@ struct ShowDetailView: View {
                     let reviews = viewModel.fullMetadata?.num_reviews ?? 0
                     InfoRow(label: "Recording Rating", value: "\(String(format: "%.1f", rating)) stars (\(reviews) reviews)")
                 }
-                if let rating = viewModel.phishNetRating {
-                    InfoRow(label: "Show Rating (Phish.net)", value: rating)
+                if let tour = viewModel.phishNetTourName {
+                    InfoRow(label: "Tour", value: tour)
                 }
             }
 

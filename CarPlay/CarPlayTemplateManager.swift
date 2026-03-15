@@ -73,11 +73,8 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
         */
         
         // Set MyTapes as the root template directly (without tabs)
-        self.interfaceController?.setRootTemplate(myTapesTemplate, animated: true) { success, error in
-            print("Set root template success: \(success)")
-            if let error = error {
-                print("Set root template error: \(error)")
-            }
+        Task {
+            try? await self.interfaceController?.setRootTemplate(myTapesTemplate, animated: true)
         }
     }
     
@@ -308,7 +305,9 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
         updatedTemplate.tabTitle = "My Tapes"
         
         // Update the template directly (without tabs)
-        self.interfaceController?.setRootTemplate(updatedTemplate, animated: false)
+        Task {
+            try? await self.interfaceController?.setRootTemplate(updatedTemplate, animated: false)
+        }
         
         /* 
         // Original tab bar update code

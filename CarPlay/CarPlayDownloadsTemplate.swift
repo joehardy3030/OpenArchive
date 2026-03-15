@@ -12,22 +12,18 @@ import CarPlay
 import MediaPlayer
 
 @available(iOS 14.0, *)
-class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableContentDataSource, CPInterfaceControllerDelegate {
+class CarPlayDownloadsTemplate: NSObject, CPInterfaceControllerDelegate {
 
     let fileManager = FileManager.default
     let notificationCenter: NotificationCenter = .default
     let interfaceController: CPInterfaceController?
     let commandCenter = MPRemoteCommandCenter.shared()
-    var nowPlayingSongManager: MPNowPlayingInfoCenter?
-    var playableContentManager: MPPlayableContentManager?
     var nowPlayingInfo = [String : Any]()
     var shows: [ShowMetadataModel]?
     var selectedShow: ShowMetadataModel?
     var network: NetworkUtility!
     let utils = Utils()
     let archiveAPI = ArchiveAPI()
-    var prevController: ArchiveSuperViewController?
-    var miniPlayer: MiniPlayerViewController?
     var player: AudioPlayerArchive?
     var isPlaying = false
     
@@ -61,9 +57,6 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
             self.getDownloadedShows(decade: decade, year: year)
         }
         
-        playableContentManager = MPPlayableContentManager.shared()
-        playableContentManager?.dataSource = self
-        playableContentManager?.delegate = self
         notificationCenter.addObserver(self, selector: #selector(playbackDidStart), name: .playbackStarted, object: nil)
         notificationCenter.addObserver(self, selector: #selector(playbackDidPause), name: .playbackPaused, object: self.player?.playerQueue)
         notificationCenter.addObserver(self, selector: #selector(playerQueueItemStatusChanged(_:)), name: .playerQueueItemStatusChanged, object: nil)
@@ -73,8 +66,6 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
     
     deinit {
         notificationCenter.removeObserver(self)
-        playableContentManager?.dataSource = nil
-        playableContentManager?.delegate = nil
         nowPlayingInfoUpdateTimer?.invalidate()
         // Remove command handlers
         if let target = playCommandTarget {
@@ -95,16 +86,6 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
         selfRetainer = nil // Release self reference
     }
         
-    func numberOfChildItems(at indexPath: IndexPath) -> Int {
-        return 0
-    }
-    
-    func contentItem(at indexPath: IndexPath) -> MPContentItem? {
-        let item = MPContentItem()
-        item.title = shows?[indexPath.row].metadata?.title
-        return item
-    }
-    
     func getDownloadedShows(decade: String?, year: String?) {
         network.getAllDownloadDocs(decade: decade) {
             (response: [ShowMetadataModel]?) -> Void in
@@ -177,12 +158,9 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
                 
         let section = CPListSection(items: items)
         let listTemplate = CPListTemplate(title: "My Tapes", sections: [section])
-        self.interfaceController?.pushTemplate(listTemplate, animated: true)
-    }
-    
-    func playableContentManager(_ contentManager: MPPlayableContentManager, initiatePlaybackOfContentItemAt indexPath: IndexPath, completionHandler: @escaping (Error?) -> Void) {
-        print(indexPath)
-        completionHandler(nil)
+        Task {
+            try? await self.interfaceController?.pushTemplate(listTemplate, animated: true)
+        }
     }
     
     func playShow() {
@@ -219,11 +197,12 @@ class CarPlayDownloadsTemplate: NSObject, MPPlayableContentDelegate, MPPlayableC
         setupRemoteCommandHandlers()
         startNowPlayingInfoUpdates()
         loadDownloadedShow()
-        self.interfaceController?.pushTemplate(CPNowPlayingTemplate.shared, animated: true) { [weak self] success, error in
-            if success {
+        Task { [weak self] in
+            do {
+                try await self?.interfaceController?.pushTemplate(CPNowPlayingTemplate.shared, animated: true)
                 self?.player?.play()
                 print("player nominally playing")
-            } else if let error = error {
+            } catch {
                 print("Failed to push now playing template: \(error)")
             }
         }

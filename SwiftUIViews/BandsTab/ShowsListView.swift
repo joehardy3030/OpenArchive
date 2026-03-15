@@ -121,9 +121,6 @@ struct PhishInRowView: View {
                 .font(.system(size: 18, weight: .bold))
             Text(date)
                 .font(.system(size: 17, weight: .bold))
-            Text("Phish.in audience recording")
-                .font(.system(size: 15))
-                .foregroundColor(.secondary)
         }
         .padding(.vertical, 4)
     }

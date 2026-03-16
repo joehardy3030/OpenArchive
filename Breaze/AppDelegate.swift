@@ -44,9 +44,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     
+    // MARK: - Scene Configuration
+    // Route CarPlay scene requests to our CarPlaySceneDelegate.
+    // The main SwiftUI window scene is handled automatically by the @main App lifecycle.
+    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+        if connectingSceneSession.role.rawValue == "CPTemplateApplicationSceneSessionRoleApplication" {
+            let config = UISceneConfiguration(name: "CarPlay Configuration", sessionRole: connectingSceneSession.role)
+            config.delegateClass = CarPlaySceneDelegate.self
+            return config
+        }
+        // Default window scene — SwiftUI handles this
+        let config = UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+        return config
+    }
+
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-        
+
         // Save playback state for resume on next launch
         AudioPlayerArchive.shared.savePlaybackState()
     }

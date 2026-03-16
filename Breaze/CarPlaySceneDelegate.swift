@@ -9,7 +9,6 @@
 import Foundation
 import CarPlay
 
-@available(iOS 14.0, *)
 class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
     var interfaceController: CPInterfaceController?
     var templateManager: CarPlayTemplateManager?
@@ -24,8 +23,9 @@ class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
     }
     
     // CarPlay disconnected
-    private func templateApplicationScene(_ templateApplicationScene: CPTemplateApplicationScene,
+    func templateApplicationScene(_ templateApplicationScene: CPTemplateApplicationScene,
                                   didDisconnect interfaceController: CPInterfaceController) {
+        self.templateManager = nil
         self.interfaceController = nil
     }
 }

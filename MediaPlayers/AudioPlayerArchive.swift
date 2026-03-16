@@ -634,6 +634,8 @@ extension AudioPlayerArchive {
                     // Use helper to add observer and check initial state. Do not use .initial in addObserver.
                     setupStatusObserver(for: newItem)
                 }
+                // Persist playback state on every track change
+                savePlaybackState()
             }
         } else if context == &playerItemKVOContext {
             if keyPath == #keyPath(AVPlayerItem.status) {

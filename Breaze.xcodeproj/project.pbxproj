@@ -24,11 +24,11 @@
 		D850B8FD24B26EAC00E3DC6B /* ShowMetadataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D850B8FC24B26EAC00E3DC6B /* ShowMetadataModel.swift */; };
 		D859CE402DF5081A00D6371F /* YearsTotalResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D859CE3F2DF5081700D6371F /* YearsTotalResponse.swift */; };
 		D85A4EEF2022D0B600E480FB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A4EEE2022D0B600E480FB /* AppDelegate.swift */; };
-		D87109F425ABF09D00CA133E /* CarPlaySceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87109F325ABF09D00CA133E /* CarPlaySceneDelegate.swift */; };
 		D85A4EF82022D0B600E480FB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D85A4EF72022D0B600E480FB /* Assets.xcassets */; };
 		D85A4EFB2022D0B600E480FB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D85A4EF92022D0B600E480FB /* LaunchScreen.storyboard */; };
 		D85A4F062022D0B600E480FB /* BreazeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A4F052022D0B600E480FB /* BreazeTests.swift */; };
 		D85A4F112022D0B600E480FB /* BreazeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A4F102022D0B600E480FB /* BreazeUITests.swift */; };
+		D87109F425ABF09D00CA133E /* CarPlaySceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87109F325ABF09D00CA133E /* CarPlaySceneDelegate.swift */; };
 		D8717D38258FE93E00C86954 /* SongDetailsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8717D37258FE93E00C86954 /* SongDetailsModel.swift */; };
 		D8ACD2E22B1D6CC30097224B /* ChateauGPTModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8ACD2E12B1D6CC30097224B /* ChateauGPTModel.swift */; };
 		D8BA4E822F2155FE00B67F4F /* PlaybackState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8BA4E812F2155FE00B67F4F /* PlaybackState.swift */; };
@@ -97,7 +97,6 @@
 		D859CE3F2DF5081700D6371F /* YearsTotalResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearsTotalResponse.swift; sourceTree = "<group>"; };
 		D85A4EEB2022D0B500E480FB /* Chateau.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chateau.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D85A4EEE2022D0B600E480FB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		D87109F325ABF09D00CA133E /* CarPlaySceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarPlaySceneDelegate.swift; sourceTree = "<group>"; };
 		D85A4EF72022D0B600E480FB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D85A4EFA2022D0B600E480FB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D85A4EFC2022D0B600E480FB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -107,6 +106,7 @@
 		D85A4F0C2022D0B600E480FB /* BreazeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BreazeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D85A4F102022D0B600E480FB /* BreazeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreazeUITests.swift; sourceTree = "<group>"; };
 		D85A4F122022D0B600E480FB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D87109F325ABF09D00CA133E /* CarPlaySceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarPlaySceneDelegate.swift; sourceTree = "<group>"; };
 		D8717D37258FE93E00C86954 /* SongDetailsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongDetailsModel.swift; sourceTree = "<group>"; };
 		D8ACD2E12B1D6CC30097224B /* ChateauGPTModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChateauGPTModel.swift; sourceTree = "<group>"; };
 		D8BA4E812F2155FE00B67F4F /* PlaybackState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackState.swift; sourceTree = "<group>"; };
@@ -852,7 +852,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 9.0.0;
+				MARKETING_VERSION = 9.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.carquinez.chateau;
 				PRODUCT_NAME = Chateau;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -878,7 +878,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 9.0.0;
+				MARKETING_VERSION = 9.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.carquinez.chateau;
 				PRODUCT_NAME = Chateau;
 				PROVISIONING_PROFILE_SPECIFIER = "";

@@ -116,10 +116,17 @@ final class PlayerViewModel: ObservableObject {
     }
 
     func restorePlaybackIfAvailable() {
-        _ = player.restorePlaybackState()
+        guard let state = player.restorePlaybackState() else { return }
         currentShow = player.showMetadataModel
-        currentTrackIndex = player.getCurrentTrackIndex()
-        isStreaming = player.isStreaming
+        currentTrackIndex = state.trackIndex
+        isStreaming = state.isStreaming
+
+        // Load the player queue and seek to saved position (paused, ready to play)
+        player.prepareRestoredPlayback(state: state) { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.currentTrackIndex = self?.player.getCurrentTrackIndex() ?? 0
+            }
+        }
     }
 }
 

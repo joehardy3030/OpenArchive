@@ -153,11 +153,9 @@ struct FullPlayerView: View {
     private func navigateToShowDetail() {
         guard let metadata = playerViewModel.currentShow?.metadata else { return }
         let showType = playerViewModel.currentShowType
+        // Store pending navigation; ArchiveRootView's onDismiss will trigger it
+        deepLinkRouter.pendingNavigation = (metadata, showType)
         dismiss()
-        // Small delay to let the sheet dismiss before triggering navigation
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            deepLinkRouter.navigate(to: metadata, showType: showType)
-        }
     }
 }
 

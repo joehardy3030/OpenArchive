@@ -6,6 +6,9 @@ final class DeepLinkRouter: ObservableObject {
     @Published var pendingShow: ShowMetadata? = nil
     @Published var pendingShowType: ShowType = .archive
 
+    /// Staged navigation from full player info button; fires after sheet dismisses
+    var pendingNavigation: (ShowMetadata, ShowType)? = nil
+
     func handle(url: URL) {
         guard let identifier = url.host, !identifier.isEmpty else { return }
         pendingShowType = .archive

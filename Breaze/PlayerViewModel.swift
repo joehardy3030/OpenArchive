@@ -107,7 +107,12 @@ final class PlayerViewModel: ObservableObject {
         guard let show = currentShow else { return }
         player.pause()
         player.showMetadataModel = show
-        if isStreaming {
+        if currentShowType == .phishIn, let tracks = show.mp3Array {
+            let urls = tracks.compactMap { $0.name.flatMap { URL(string: $0) } }
+            if !urls.isEmpty {
+                player.loadStreamingFromURLs(urls, startingAt: index)
+            }
+        } else if isStreaming {
             player.loadStreamingQueuePlayer(startingAt: index)
         } else if let tracks = show.mp3Array {
             player.loadQueuePlayer(tracks: tracks, startingAt: index)

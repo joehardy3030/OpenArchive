@@ -126,6 +126,7 @@ final class ShowDetailViewModel: ObservableObject {
         // Push state into the shared view model
         playerViewModel.currentShow = m
         playerViewModel.isStreaming = showType == .phishIn || (showType != .downloaded && !isDownloaded)
+        playerViewModel.currentShowType = showType
     }
 
     // MARK: - Download

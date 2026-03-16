@@ -4,6 +4,7 @@ import MediaPlayer
 
 struct FullPlayerView: View {
     @EnvironmentObject private var playerViewModel: PlayerViewModel
+    @EnvironmentObject private var deepLinkRouter: DeepLinkRouter
     @Environment(\.dismiss) private var dismiss
 
     private let utils = Utils()
@@ -106,8 +107,14 @@ struct FullPlayerView: View {
                 }
                 .tint(.primary)
 
-                // Share + AirPlay
+                // Info + Share + AirPlay
                 HStack(spacing: 40) {
+                    Button {
+                        navigateToShowDetail()
+                    } label: {
+                        Image(systemName: "info.circle")
+                            .font(.system(size: 24))
+                    }
                     ShareLink(item: shareURL) {
                         Image(systemName: "square.and.arrow.up")
                             .font(.system(size: 24))
@@ -141,6 +148,16 @@ struct FullPlayerView: View {
 
     private var shareURL: URL {
         utils.urlFromIdentifier(identifier: playerViewModel.currentShow?.metadata?.identifier)
+    }
+
+    private func navigateToShowDetail() {
+        guard let metadata = playerViewModel.currentShow?.metadata else { return }
+        let showType = playerViewModel.currentShowType
+        dismiss()
+        // Small delay to let the sheet dismiss before triggering navigation
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            deepLinkRouter.navigate(to: metadata, showType: showType)
+        }
     }
 }
 

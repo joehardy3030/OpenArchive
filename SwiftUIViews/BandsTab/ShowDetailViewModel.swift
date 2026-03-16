@@ -18,6 +18,9 @@ final class ShowDetailViewModel: ObservableObject {
     // Phish.in direct streaming URLs (parallel to mp3Array)
     var phishInTrackURLs: [URL] = []
 
+    /// Show image URL (archive.org thumbnail or Phish.in cover art)
+    @Published var showImageURL: URL?
+
     let showType: ShowType
     private let initialMetadata: ShowMetadata
     private let archiveAPI = ArchiveAPI()
@@ -101,6 +104,22 @@ final class ShowDetailViewModel: ObservableObject {
                     return self.fileManager.fileExists(atPath: localURL.path)
                 } ?? false
                 self.model = showData
+
+                // Find full-res show image from files (JPEG, not thumb/spectrogram)
+                if let files = showData.files, let id = self.initialMetadata.identifier {
+                    if let imageFile = files.first(where: { file in
+                        guard let name = file.name?.lowercased(),
+                              let format = file.format else { return false }
+                        return format == "JPEG"
+                            && !name.contains("_thumb")
+                            && !name.hasSuffix("__ia_thumb.jpg")
+                    }) {
+                        if let name = imageFile.name,
+                           let encoded = name.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) {
+                            self.showImageURL = URL(string: "https://archive.org/download/\(id)/\(encoded)")
+                        }
+                    }
+                }
             }
         }
     }
@@ -255,6 +274,11 @@ final class ShowDetailViewModel: ObservableObject {
                 showModel.metadata = metadata
                 showModel.mp3Array = mp3s
                 self.model = showModel
+
+                // Set cover art URL
+                if let artURL = show.cover_art_urls?.medium ?? show.cover_art_urls?.large {
+                    self.showImageURL = URL(string: artURL)
+                }
             }
         }
     }

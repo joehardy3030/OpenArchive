@@ -56,6 +56,32 @@ struct ShowDetailView: View {
                 .padding(.vertical, 4)
             }
 
+            // MARK: - Show Image
+            if let imageURL = viewModel.showImageURL {
+                Section {
+                    AsyncImage(url: imageURL) { phase in
+                        switch phase {
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .cornerRadius(8)
+                        case .failure:
+                            EmptyView()
+                        case .empty:
+                            HStack {
+                                Spacer()
+                                ProgressView()
+                                Spacer()
+                            }
+                        @unknown default:
+                            EmptyView()
+                        }
+                    }
+                    .listRowInsets(EdgeInsets())
+                }
+            }
+
             // MARK: - Info Section
             Section {
                 if let band = viewModel.fullMetadata?.creator ?? viewModel.fullMetadata?.collection?.first {

@@ -17,7 +17,7 @@ final class MonthListViewModel: ObservableObject {
     private let archiveAPI = ArchiveAPI()
     private var allShowsForYear: [ShowMetadata] = []
     /// Phish.in show summaries for the year, keyed by date
-    private(set) var phishInShowsByDate: [String: PhishInShowSummary] = [:]
+    @Published private(set) var phishInShowsByDate: [String: PhishInShowSummary] = [:]
 
     private static let monthNames = [
         "Jan", "Feb", "Mar", "April", "May", "June",

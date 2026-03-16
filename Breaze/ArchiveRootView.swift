@@ -15,32 +15,31 @@ struct ArchiveRootView: View {
     }
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            TabView(selection: $selectedTab) {
-                CollectionsView()
-                    .tag(Tab.bands)
-                    .tabItem {
-                        Label("Bands", systemImage: "music.note.list")
-                    }
+        TabView(selection: $selectedTab) {
+            CollectionsView()
+                .tag(Tab.bands)
+                .tabItem {
+                    Label("Bands", systemImage: "music.note.list")
+                }
 
-                DownloadsView()
-                    .tag(Tab.myTapes)
-                    .tabItem {
-                        Label("My Tapes", systemImage: "tray.full")
-                    }
+            DownloadsView()
+                .tag(Tab.myTapes)
+                .tabItem {
+                    Label("My Tapes", systemImage: "tray.full")
+                }
 
-                SearchView()
-                    .tag(Tab.search)
-                    .tabItem {
-                        Label("Search", systemImage: "magnifyingglass")
-                    }
-            }
-
+            SearchView()
+                .tag(Tab.search)
+                .tabItem {
+                    Label("Search", systemImage: "magnifyingglass")
+                }
+        }
+        .safeAreaInset(edge: .bottom) {
             if playerViewModel.currentShow != nil {
                 MiniPlayerBar(showFullPlayer: $showFullPlayer)
                     .environmentObject(playerViewModel)
                     .padding(.horizontal)
-                    .padding(.bottom, 50)
+                    .padding(.bottom, 4)
             }
         }
         .sheet(isPresented: $showFullPlayer, onDismiss: {

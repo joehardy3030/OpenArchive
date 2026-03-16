@@ -4,6 +4,8 @@ final class ShowsListViewModel: ObservableObject {
     @Published var shows: [ShowMetadata] = []
     /// Phish.in show dates available for this month (only for Phish collection)
     @Published var phishInDates: Set<String> = []
+    /// Full Phish.in show summaries keyed by date
+    private(set) var phishInShowsByDate: [String: PhishInShowSummary] = [:]
 
     let year: Int
     let month: Int
@@ -53,7 +55,13 @@ final class ShowsListViewModel: ObservableObject {
                 guard let self = self, let shows = shows else { return }
                 let monthStr = self.month < 10 ? "0\(self.month)" : "\(self.month)"
                 let prefix = "\(self.year)-\(monthStr)"
-                self.phishInDates = Set(shows.compactMap { $0.date }.filter { $0.hasPrefix(prefix) })
+                let filtered = shows.filter { ($0.date ?? "").hasPrefix(prefix) }
+                self.phishInDates = Set(filtered.compactMap { $0.date })
+                for show in filtered {
+                    if let date = show.date {
+                        self.phishInShowsByDate[date] = show
+                    }
+                }
             }
         }
     }
@@ -71,6 +79,10 @@ final class ShowsListViewModel: ObservableObject {
         meta.date = "\(date)T00:00:00Z"
         meta.creator = "Phish"
         meta.source = ["Phish.in audience recording"]
+        if let summary = phishInShowsByDate[date] {
+            meta.venue = summary.venue_name ?? summary.venue?.name
+            meta.coverage = summary.venue?.location
+        }
         return meta
     }
 }

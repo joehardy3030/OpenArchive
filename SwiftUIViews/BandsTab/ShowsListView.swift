@@ -29,7 +29,7 @@ struct ShowsListView: View {
                     ForEach(viewModel.phishInDates.sorted(), id: \.self) { date in
                         let meta = viewModel.phishInMetadata(for: date)
                         NavigationLink(value: ShowDestination(metadata: meta, showType: .phishIn)) {
-                            PhishInRowView(date: date)
+                            PhishInRowView(date: date, summary: viewModel.phishInShowsByDate[date])
                         }
                     }
                 }
@@ -114,6 +114,7 @@ struct ShowRowView: View {
 /// Row for a Phish.in recording entry.
 struct PhishInRowView: View {
     let date: String
+    let summary: PhishInShowSummary?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -121,6 +122,12 @@ struct PhishInRowView: View {
                 .font(.system(size: 18, weight: .bold))
             Text(date)
                 .font(.system(size: 17, weight: .bold))
+            if let venue = summary?.venue_name ?? summary?.venue?.name {
+                let loc = [venue, summary?.venue?.location].compactMap { $0 }.joined(separator: ", ")
+                Text(loc)
+                    .font(.system(size: 16))
+                    .foregroundColor(.secondary)
+            }
         }
         .padding(.vertical, 4)
     }

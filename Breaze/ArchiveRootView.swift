@@ -15,31 +15,35 @@ struct ArchiveRootView: View {
     }
 
     var body: some View {
-        TabView(selection: $selectedTab) {
-            CollectionsView()
-                .tag(Tab.bands)
-                .tabItem {
-                    Label("Bands", systemImage: "music.note.list")
-                }
+        ZStack(alignment: .bottom) {
+            TabView(selection: $selectedTab) {
+                CollectionsView()
+                    .contentMargins(.bottom, playerViewModel.currentShow != nil ? 70 : 0, for: .scrollContent)
+                    .tag(Tab.bands)
+                    .tabItem {
+                        Label("Bands", systemImage: "music.note.list")
+                    }
 
-            DownloadsView()
-                .tag(Tab.myTapes)
-                .tabItem {
-                    Label("My Tapes", systemImage: "tray.full")
-                }
+                DownloadsView()
+                    .contentMargins(.bottom, playerViewModel.currentShow != nil ? 70 : 0, for: .scrollContent)
+                    .tag(Tab.myTapes)
+                    .tabItem {
+                        Label("My Tapes", systemImage: "tray.full")
+                    }
 
-            SearchView()
-                .tag(Tab.search)
-                .tabItem {
-                    Label("Search", systemImage: "magnifyingglass")
-                }
-        }
-        .safeAreaInset(edge: .bottom) {
+                SearchView()
+                    .contentMargins(.bottom, playerViewModel.currentShow != nil ? 70 : 0, for: .scrollContent)
+                    .tag(Tab.search)
+                    .tabItem {
+                        Label("Search", systemImage: "magnifyingglass")
+                    }
+            }
+
             if playerViewModel.currentShow != nil {
                 MiniPlayerBar(showFullPlayer: $showFullPlayer)
                     .environmentObject(playerViewModel)
                     .padding(.horizontal)
-                    .padding(.bottom, 4)
+                    .padding(.bottom, 50)
             }
         }
         .sheet(isPresented: $showFullPlayer, onDismiss: {

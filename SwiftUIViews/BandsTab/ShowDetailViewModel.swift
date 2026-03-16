@@ -61,6 +61,10 @@ final class ShowDetailViewModel: ObservableObject {
             var stub = ShowMetadataModel()
             stub.metadata = metadata
             self.model = stub
+            // Show thumbnail immediately; fetchShowDetail will upgrade to full-res if available
+            if let id = metadata.identifier {
+                self.showImageURL = URL(string: "https://archive.org/services/img/\(id)")
+            }
             fetchShowDetail()
         }
 

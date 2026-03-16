@@ -120,6 +120,7 @@ final class PlayerViewModel: ObservableObject {
         currentShow = player.showMetadataModel
         currentTrackIndex = state.trackIndex
         isStreaming = state.isStreaming
+        currentShowType = state.showType
 
         // Load the player queue and seek to saved position (paused, ready to play)
         player.prepareRestoredPlayback(state: state) { [weak self] _ in

@@ -13,6 +13,15 @@ struct PlaybackState: Codable {
     let playbackPosition: Double  // Seconds into the track
     let isStreaming: Bool
     let savedAt: Date
+    let showTypeRaw: String?  // "archive", "phishIn", "downloaded"
+
+    var showType: ShowType {
+        switch showTypeRaw {
+        case "phishIn": return .phishIn
+        case "downloaded": return .downloaded
+        default: return .archive
+        }
+    }
     
     // Check if state is stale (older than 7 days)
     var isStale: Bool {

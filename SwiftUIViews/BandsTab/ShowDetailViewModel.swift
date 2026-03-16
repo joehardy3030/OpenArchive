@@ -134,6 +134,7 @@ final class ShowDetailViewModel: ObservableObject {
 
         player.pause()
         player.showMetadataModel = m
+        player.currentShowType = showType
 
         if showType == .phishIn, !phishInTrackURLs.isEmpty {
             // Stream directly from Phish.in MP3 URLs

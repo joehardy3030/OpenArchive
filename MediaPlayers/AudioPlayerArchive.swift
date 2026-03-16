@@ -45,6 +45,7 @@ class AudioPlayerArchive: NSObject {
     private weak var timerTokenPlayer: AVQueuePlayer?
     var showMetadataModel: ShowMetadataModel?
     var isStreaming: Bool = false  // Track whether we're streaming or playing local files
+    var currentShowType: ShowType = .archive
     private let notificationCenter: NotificationCenter
     private var playCommandTarget: Any?
     private var pauseCommandTarget: Any?
@@ -460,7 +461,8 @@ extension AudioPlayerArchive {
             trackIndex: trackIndex,
             playbackPosition: position,
             isStreaming: isStreaming,
-            savedAt: Date()
+            savedAt: Date(),
+            showTypeRaw: currentShowType == .phishIn ? "phishIn" : currentShowType == .downloaded ? "downloaded" : "archive"
         )
         
         PlaybackState.save(state)
@@ -474,6 +476,7 @@ extension AudioPlayerArchive {
         // Restore the show metadata
         self.showMetadataModel = state.showMetadataModel
         self.isStreaming = state.isStreaming
+        self.currentShowType = state.showType
         
         print("AudioPlayerArchive: Restored state - track \(state.trackIndex), position \(state.playbackPosition), streaming: \(state.isStreaming)")
         
@@ -499,7 +502,16 @@ extension AudioPlayerArchive {
         }
         
         // Load the queue
-        if isStreaming {
+        if state.showType == .phishIn {
+            // Phish.in tracks store direct MP3 URLs in the name field
+            let urls = tracks.compactMap { $0.name.flatMap { URL(string: $0) } }
+            if !urls.isEmpty {
+                loadStreamingFromURLs(urls, startingAt: state.trackIndex)
+            } else {
+                completion(false)
+                return
+            }
+        } else if isStreaming {
             loadStreamingQueuePlayer(startingAt: state.trackIndex)
         } else {
             loadQueuePlayer(tracks: tracks, startingAt: state.trackIndex)

@@ -18,6 +18,9 @@ struct ChateauArchiveApp: App {
                 .onOpenURL { url in
                     deepLinkRouter.handle(url: url)
                 }
+                .onAppear {
+                    playerViewModel.restorePlaybackIfAvailable()
+                }
         }
         .onChange(of: scenePhase) { _, phase in
             if phase == .background {

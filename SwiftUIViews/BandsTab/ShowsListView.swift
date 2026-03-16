@@ -6,25 +6,46 @@ struct ShowsListView: View {
     let collection: String
     let sbdOnly: Bool
     let prefetchedShows: [ShowMetadata]
+    let prefetchedPhishIn: [String: PhishInShowSummary]
 
     @StateObject private var viewModel: ShowsListViewModel
 
-    init(year: Int, month: Int, collection: String, sbdOnly: Bool, prefetchedShows: [ShowMetadata]) {
+    init(year: Int, month: Int, collection: String, sbdOnly: Bool,
+         prefetchedShows: [ShowMetadata], prefetchedPhishIn: [String: PhishInShowSummary] = [:]) {
         self.year = year
         self.month = month
         self.collection = collection
         self.sbdOnly = sbdOnly
         self.prefetchedShows = prefetchedShows
+        self.prefetchedPhishIn = prefetchedPhishIn
         _viewModel = StateObject(wrappedValue: ShowsListViewModel(
             year: year, month: month, collection: collection,
-            sbdOnly: sbdOnly, prefetchedShows: prefetchedShows
+            sbdOnly: sbdOnly, prefetchedShows: prefetchedShows,
+            prefetchedPhishIn: prefetchedPhishIn
         ))
     }
 
     var body: some View {
-        List(viewModel.shows, id: \.identifier) { show in
-            NavigationLink(value: ShowDestination(metadata: show, showType: .archive)) {
-                ShowRowView(show: show)
+        List {
+            // Phish.in recordings (shown first for Phish collection)
+            if !viewModel.phishInDates.isEmpty {
+                Section("Phish.in Recordings") {
+                    ForEach(viewModel.phishInDates.sorted(), id: \.self) { date in
+                        let meta = viewModel.phishInMetadata(for: date)
+                        NavigationLink(value: ShowDestination(metadata: meta, showType: .phishIn)) {
+                            PhishInRowView(date: date, summary: viewModel.phishInShowsByDate[date])
+                        }
+                    }
+                }
+            }
+
+            // Archive.org recordings
+            Section(viewModel.phishInDates.isEmpty ? "" : "Archive.org Recordings") {
+                ForEach(viewModel.shows, id: \.identifier) { show in
+                    NavigationLink(value: ShowDestination(metadata: show, showType: .archive)) {
+                        ShowRowView(show: show)
+                    }
+                }
             }
         }
         .navigationTitle(viewModel.navigationTitle)
@@ -40,6 +61,7 @@ struct ShowDestination: Hashable {
 
     func hash(into hasher: inout Hasher) {
         hasher.combine(metadata.identifier)
+        hasher.combine(String(describing: showType))
     }
 
     static func == (lhs: ShowDestination, rhs: ShowDestination) -> Bool {
@@ -90,5 +112,27 @@ struct ShowRowView: View {
             return formatter.string(from: date)
         }
         return dateString
+    }
+}
+
+/// Row for a Phish.in recording entry.
+struct PhishInRowView: View {
+    let date: String
+    let summary: PhishInShowSummary?
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text("Phish")
+                .font(.system(size: 18, weight: .bold))
+            Text(date)
+                .font(.system(size: 17, weight: .bold))
+            if let venue = summary?.venue_name ?? summary?.venue?.name {
+                let loc = [venue, summary?.venue?.location].compactMap { $0 }.joined(separator: ", ")
+                Text(loc)
+                    .font(.system(size: 16))
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding(.vertical, 4)
     }
 }

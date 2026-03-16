@@ -16,6 +16,10 @@ final class MonthListViewModel: ObservableObject {
     private let collection: String
     private let archiveAPI = ArchiveAPI()
     private var allShowsForYear: [ShowMetadata] = []
+    /// Phish.in show summaries for the year, keyed by date
+    @Published private(set) var phishInShowsByDate: [String: PhishInShowSummary] = [:]
+    /// Track pending fetches so isLoading stays true until all complete
+    private var pendingFetches = 0
 
     private static let monthNames = [
         "Jan", "Feb", "Mar", "April", "May", "June",
@@ -30,11 +34,12 @@ final class MonthListViewModel: ObservableObject {
 
     func fetchShows() {
         isLoading = true
+        pendingFetches = collection == "Phish" ? 2 : 1
+
         let url = archiveAPI.dateRangeYearURL(year: year, sbdOnly: sbdOnly, collection: collection)
         archiveAPI.getIARequestItemsDecodable(url: url) { [weak self] (response: ShowMetadatas?, error: Error?) in
             DispatchQueue.main.async {
                 guard let self = self else { return }
-                self.isLoading = false
 
                 let shows = response?.items ?? []
                 self.allShowsForYear = shows
@@ -50,6 +55,27 @@ final class MonthListViewModel: ObservableObject {
                 self.monthRows = Self.monthNames.enumerated().map { idx, name in
                     MonthRow(id: idx, monthIndex: idx + 1, name: name, count: counts[name] ?? 0)
                 }
+
+                self.pendingFetches -= 1
+                if self.pendingFetches <= 0 { self.isLoading = false }
+            }
+        }
+
+        // Fetch Phish.in show summaries once for the whole year
+        if collection == "Phish" {
+            PhishInAPI.shared.fetchShows(year: year) { [weak self] shows, _ in
+                DispatchQueue.main.async {
+                    guard let self = self else { return }
+                    if let shows = shows {
+                        for show in shows {
+                            if let date = show.date {
+                                self.phishInShowsByDate[date] = show
+                            }
+                        }
+                    }
+                    self.pendingFetches -= 1
+                    if self.pendingFetches <= 0 { self.isLoading = false }
+                }
             }
         }
     }
@@ -60,6 +86,12 @@ final class MonthListViewModel: ObservableObject {
                   let m = Int(monthStr) else { return false }
             return m == monthIndex
         }
+    }
+
+    func phishInShowsForMonth(_ monthIndex: Int) -> [String: PhishInShowSummary] {
+        let monthStr = monthIndex < 10 ? "0\(monthIndex)" : "\(monthIndex)"
+        let prefix = "\(year)-\(monthStr)"
+        return phishInShowsByDate.filter { $0.key.hasPrefix(prefix) }
     }
 
     private func monthName(from monthString: String) -> String? {

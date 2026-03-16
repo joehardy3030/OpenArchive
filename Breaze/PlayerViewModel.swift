@@ -17,6 +17,7 @@ final class PlayerViewModel: ObservableObject {
     @Published var currentTime: Double = 0
     @Published var totalTime: Double = 0
     @Published var sliderValue: Double = 0
+    @Published var currentShowType: ShowType = .archive
 
     private var isUserDraggingSlider = false
 

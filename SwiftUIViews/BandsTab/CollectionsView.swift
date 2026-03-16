@@ -40,9 +40,9 @@ struct CollectionsView: View {
                 ShowDetailView(metadata: dest.metadata, showType: dest.showType)
             }
             .onReceive(deepLinkRouter.$pendingShow) { show in
-                guard let show else { return }
-                _ = deepLinkRouter.consume()
-                deepLinkPath.append(ShowDestination(metadata: show, showType: .archive))
+                guard show != nil else { return }
+                guard let (metadata, showType) = deepLinkRouter.consume() else { return }
+                deepLinkPath.append(ShowDestination(metadata: metadata, showType: showType))
             }
             .sheet(isPresented: $showRemoveSheet) {
                 RemoveBandsSheet(entries: viewModel.entries) { entry in

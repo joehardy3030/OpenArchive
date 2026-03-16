@@ -3,6 +3,7 @@ import SwiftUI
 /// Root SwiftUI shell: hosts the tab layout and global mini player.
 struct ArchiveRootView: View {
     @EnvironmentObject private var playerViewModel: PlayerViewModel
+    @EnvironmentObject private var deepLinkRouter: DeepLinkRouter
 
     @State private var selectedTab: Tab = .bands
     @State private var showFullPlayer = false
@@ -45,6 +46,11 @@ struct ArchiveRootView: View {
         .sheet(isPresented: $showFullPlayer) {
             FullPlayerView()
                 .environmentObject(playerViewModel)
+                .environmentObject(deepLinkRouter)
+        }
+        .onReceive(deepLinkRouter.$pendingShow) { show in
+            guard show != nil else { return }
+            selectedTab = .bands
         }
     }
 }

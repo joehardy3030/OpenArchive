@@ -318,6 +318,26 @@ class AudioPlayerArchive: NSObject {
         //print(playerQueue)
     }
 
+    /// Load streaming queue from direct MP3 URLs (e.g., Phish.in tracks).
+    func loadStreamingFromURLs(_ urls: [URL], startingAt index: Int = 0) {
+        print("\(timestamp()) streaming from direct URLs, starting at index \(index)")
+        cleanQueue()
+        isStreaming = true
+
+        for url in urls {
+            prepareToPlay(url: url)
+        }
+        guard !playerItems.isEmpty else { return }
+        playerQueue = AVQueuePlayer(items: playerItems)
+
+        if index > 0 && index < playerItems.count {
+            print("AudioPlayerArchive: Advancing to index \(index) in loadStreamingFromURLs")
+            for _ in 0..<index {
+                playerQueue?.advanceToNextItem()
+            }
+        }
+    }
+
     func reLoadQueuePlayer(tracks: [ShowMP3]) {
         //cleanQueue()
         guard let pq = playerQueue else { return }
@@ -373,6 +393,7 @@ extension AudioPlayerArchive {
             let timerObserverToken = player.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { [weak self] (progressTime) in
                 if let s = self?.playerQueue?.currentTime().seconds {
                     completion(s)
+                    self?.updateNowPlayingInfo()
                 }
             }
             self.timerToken = timerObserverToken
@@ -514,13 +535,58 @@ private extension AudioPlayerArchive {
         switch state {
         case .idle:
             notificationCenter.post(name: .playbackStopped, object: nil)
+            MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
         case .playing:
             notificationCenter.post(name: .playbackStarted, object: self.playerQueue)
+            updateNowPlayingInfo(rate: 1.0)
         case .paused:
             notificationCenter.post(name: .playbackPaused, object: self.playerQueue)
+            updateNowPlayingInfo(rate: 0.0)
         case .rewind:
             notificationCenter.post(name: .playbackRewind, object: self.playerQueue)
+            updateNowPlayingInfo(rate: 1.0)
         }
+    }
+}
+
+// MARK: - Now Playing Info
+extension AudioPlayerArchive {
+    /// Updates the system Now Playing info center (lock screen, Control Center, CarPlay).
+    func updateNowPlayingInfo(rate: Float? = nil) {
+        guard let currentItem = playerQueue?.currentItem,
+              let mp3s = showMetadataModel?.mp3Array,
+              let md = showMetadataModel?.metadata else {
+            return
+        }
+
+        let currentIndex = getCurrentTrackIndex()
+        guard currentIndex < mp3s.count else { return }
+
+        var info = [String: Any]()
+
+        // Track info
+        info[MPMediaItemPropertyTitle] = mp3s[currentIndex].title ?? mp3s[currentIndex].name
+        if let date = md.date, let coverage = md.coverage {
+            info[MPMediaItemPropertyAlbumTitle] = "\(date), \(coverage)"
+        } else {
+            info[MPMediaItemPropertyAlbumTitle] = md.date ?? md.venue ?? ""
+        }
+        info[MPMediaItemPropertyArtist] = md.creator ?? md.collection?.first
+
+        // Playback position
+        let duration = CMTimeGetSeconds(currentItem.duration)
+        if duration.isFinite && duration > 0 {
+            info[MPMediaItemPropertyPlaybackDuration] = duration
+        }
+        info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = playerQueue?.currentTime().seconds ?? 0
+        info[MPNowPlayingInfoPropertyPlaybackRate] = rate ?? (playerQueue?.rate ?? 0.0)
+
+        // Artwork
+        if let image = UIImage(named: "Chateau80") {
+            info[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(boundsSize: image.size) { _ in image }
+        }
+
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = info
     }
 }
 

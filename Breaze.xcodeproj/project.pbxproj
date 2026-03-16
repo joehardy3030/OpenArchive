@@ -12,6 +12,9 @@
 		799C3C902345582F00D9341E /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C3C8F2345582F00D9341E /* HealthKit.framework */; };
 		9D7A3DC2BE26E90A8FE391D0 /* Pods_BreazeUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9D58EED31CE81FB1690A28E /* Pods_BreazeUITests.framework */; };
 		B5C3A8D3CBD83ACBD863E369 /* Pods_BreazeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EBF20D287E48F03823653E6 /* Pods_BreazeTests.framework */; };
+		D80ACFA02F676B5500EA9D45 /* PhishNetAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80ACF9F2F676B5500EA9D45 /* PhishNetAPI.swift */; };
+		D80ACFA22F676B8200EA9D45 /* PhishNetAPIKeys.plist in Resources */ = {isa = PBXBuildFile; fileRef = D80ACFA12F676B8200EA9D45 /* PhishNetAPIKeys.plist */; };
+		D80ACFA42F6775DA00EA9D45 /* PhishInAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80ACFA32F6775DA00EA9D45 /* PhishInAPI.swift */; };
 		D82C59192DDAA5ED0013BAC5 /* LocalDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82C59172DDAA5ED0013BAC5 /* LocalDatabase.swift */; };
 		D82C591B2DDAC1460013BAC5 /* CollectionConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82C591A2DDAC1460013BAC5 /* CollectionConfig.swift */; };
 		D843EBDD24B3B10300C128A5 /* AudioPlayerArchive.swift in Sources */ = {isa = PBXBuildFile; fileRef = D843EBDC24B3B10300C128A5 /* AudioPlayerArchive.swift */; };
@@ -21,6 +24,7 @@
 		D850B8FD24B26EAC00E3DC6B /* ShowMetadataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D850B8FC24B26EAC00E3DC6B /* ShowMetadataModel.swift */; };
 		D859CE402DF5081A00D6371F /* YearsTotalResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D859CE3F2DF5081700D6371F /* YearsTotalResponse.swift */; };
 		D85A4EEF2022D0B600E480FB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A4EEE2022D0B600E480FB /* AppDelegate.swift */; };
+		D87109F425ABF09D00CA133E /* CarPlaySceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87109F325ABF09D00CA133E /* CarPlaySceneDelegate.swift */; };
 		D85A4EF82022D0B600E480FB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D85A4EF72022D0B600E480FB /* Assets.xcassets */; };
 		D85A4EFB2022D0B600E480FB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D85A4EF92022D0B600E480FB /* LaunchScreen.storyboard */; };
 		D85A4F062022D0B600E480FB /* BreazeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A4F052022D0B600E480FB /* BreazeTests.swift */; };
@@ -80,6 +84,9 @@
 		BA40D6B8D9FFEE08A048EACE /* Pods_Breaze.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Breaze.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD90CD3FAF3DBFB84C42E535 /* Pods-BreazeUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BreazeUITests.release.xcconfig"; path = "Target Support Files/Pods-BreazeUITests/Pods-BreazeUITests.release.xcconfig"; sourceTree = "<group>"; };
 		C9D58EED31CE81FB1690A28E /* Pods_BreazeUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BreazeUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D80ACF9F2F676B5500EA9D45 /* PhishNetAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhishNetAPI.swift; sourceTree = "<group>"; };
+		D80ACFA12F676B8200EA9D45 /* PhishNetAPIKeys.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PhishNetAPIKeys.plist; sourceTree = "<group>"; };
+		D80ACFA32F6775DA00EA9D45 /* PhishInAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhishInAPI.swift; sourceTree = "<group>"; };
 		D82C59172DDAA5ED0013BAC5 /* LocalDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalDatabase.swift; sourceTree = "<group>"; };
 		D82C591A2DDAC1460013BAC5 /* CollectionConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionConfig.swift; sourceTree = "<group>"; };
 		D843EBDC24B3B10300C128A5 /* AudioPlayerArchive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerArchive.swift; sourceTree = "<group>"; };
@@ -90,6 +97,7 @@
 		D859CE3F2DF5081700D6371F /* YearsTotalResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearsTotalResponse.swift; sourceTree = "<group>"; };
 		D85A4EEB2022D0B500E480FB /* Chateau.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chateau.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D85A4EEE2022D0B600E480FB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		D87109F325ABF09D00CA133E /* CarPlaySceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarPlaySceneDelegate.swift; sourceTree = "<group>"; };
 		D85A4EF72022D0B600E480FB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D85A4EFA2022D0B600E480FB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D85A4EFC2022D0B600E480FB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -227,10 +235,12 @@
 				E1000002202601A000000003 /* ArchiveRootView.swift */,
 				E1000002202601A000000002 /* PlayerViewModel.swift */,
 				D85A4EEE2022D0B600E480FB /* AppDelegate.swift */,
+				D87109F325ABF09D00CA133E /* CarPlaySceneDelegate.swift */,
 				D85A4EF92022D0B600E480FB /* LaunchScreen.storyboard */,
 				7984F98924A4556400989DB8 /* Archive */,
 				D85A4EF72022D0B600E480FB /* Assets.xcassets */,
 				D85A4EFC2022D0B600E480FB /* Info.plist */,
+				D80ACFA12F676B8200EA9D45 /* PhishNetAPIKeys.plist */,
 			);
 			path = Breaze;
 			sourceTree = "<group>";
@@ -281,6 +291,8 @@
 			children = (
 				D84D6E2724BEB5140022A058 /* NetworkUtility.swift */,
 				7984F98E24A56EFD00989DB8 /* ArchiveAPI.swift */,
+				D80ACF9F2F676B5500EA9D45 /* PhishNetAPI.swift */,
+				D80ACFA32F6775DA00EA9D45 /* PhishInAPI.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -479,6 +491,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D80ACFA22F676B8200EA9D45 /* PhishNetAPIKeys.plist in Resources */,
 				D85A4EFB2022D0B600E480FB /* LaunchScreen.storyboard in Resources */,
 				D85A4EF82022D0B600E480FB /* Assets.xcassets in Resources */,
 			);
@@ -646,11 +659,14 @@
 				D82C59192DDAA5ED0013BAC5 /* LocalDatabase.swift in Sources */,
 				D848521929454EEF00CD3EA4 /* CarPlayTemplateManager.swift in Sources */,
 				D85A4EEF2022D0B600E480FB /* AppDelegate.swift in Sources */,
+				D87109F425ABF09D00CA133E /* CarPlaySceneDelegate.swift in Sources */,
 				D8DCF13425AFFEA200D28837 /* CarPlayDownloadsTemplate.swift in Sources */,
 				D82C591B2DDAC1460013BAC5 /* CollectionConfig.swift in Sources */,
 				D850B8FD24B26EAC00E3DC6B /* ShowMetadataModel.swift in Sources */,
 				FCA84AC2861A9103DECDED04 /* ShowTypes.swift in Sources */,
+				D80ACFA42F6775DA00EA9D45 /* PhishInAPI.swift in Sources */,
 				D859CE402DF5081A00D6371F /* YearsTotalResponse.swift in Sources */,
+				D80ACFA02F676B5500EA9D45 /* PhishNetAPI.swift in Sources */,
 				D8BA4E822F2155FE00B67F4F /* PlaybackState.swift in Sources */,
 				D8717D38258FE93E00C86954 /* SongDetailsModel.swift in Sources */,
 			);
@@ -827,7 +843,7 @@
 				CODE_SIGN_ENTITLEMENTS = Breaze/Breaze.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 740;
+				CURRENT_PROJECT_VERSION = 741;
 				INFOPLIST_FILE = Breaze/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Chateau Archive";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
@@ -836,7 +852,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 8.0.1;
+				MARKETING_VERSION = 9.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.carquinez.chateau;
 				PRODUCT_NAME = Chateau;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -853,7 +869,7 @@
 				CODE_SIGN_ENTITLEMENTS = Breaze/Breaze.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 740;
+				CURRENT_PROJECT_VERSION = 741;
 				INFOPLIST_FILE = Breaze/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Chateau Archive";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
@@ -862,7 +878,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 8.0.1;
+				MARKETING_VERSION = 9.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.carquinez.chateau;
 				PRODUCT_NAME = Chateau;
 				PROVISIONING_PROFILE_SPECIFIER = "";

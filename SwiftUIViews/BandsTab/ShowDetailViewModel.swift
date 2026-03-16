@@ -7,6 +7,20 @@ final class ShowDetailViewModel: ObservableObject {
     @Published var isDownloading = false
     @Published var isDownloaded = false
 
+    // Phish.net metadata enrichment (only populated for Phish shows)
+    @Published var phishNetSetlist: [SetlistSet] = []
+    @Published var phishNetVenue: String?
+    @Published var phishNetLocation: String?
+    @Published var phishNetTourName: String?
+    @Published var phishNetSetlistNotes: String?
+    @Published var isPhishNetLoading = false
+
+    // Phish.in direct streaming URLs (parallel to mp3Array)
+    var phishInTrackURLs: [URL] = []
+
+    /// Show image URL (archive.org thumbnail or Phish.in cover art)
+    @Published var showImageURL: URL?
+
     let showType: ShowType
     private let initialMetadata: ShowMetadata
     private let archiveAPI = ArchiveAPI()
@@ -16,6 +30,13 @@ final class ShowDetailViewModel: ObservableObject {
     private let player = AudioPlayerArchive.shared
     @Published var downloadingTrackIndex: Int? = nil
     var fullMetadata: ShowMetadata? { model?.metadata }
+
+    /// Whether this show is a Phish show (eligible for Phish.net enrichment)
+    var isPhishShow: Bool {
+        if let creator = initialMetadata.creator, creator.lowercased() == "phish" { return true }
+        if let colls = initialMetadata.collection, colls.contains(where: { $0.lowercased() == "phish" }) { return true }
+        return false
+    }
 
     var title: String {
         let formatted = utils.getDateFromDateTimeString(datetime: initialMetadata.date)
@@ -33,8 +54,18 @@ final class ShowDetailViewModel: ObservableObject {
 
         if let existingModel {
             self.model = existingModel
+        } else if showType == .phishIn {
+            fetchPhishInShowDetail()
         } else if showType == .archive {
+            // Seed the model with what we already have so info renders immediately
+            var stub = ShowMetadataModel()
+            stub.metadata = metadata
+            self.model = stub
             fetchShowDetail()
+        }
+
+        if isPhishShow {
+            fetchPhishNetMetadata()
         }
     }
 
@@ -73,6 +104,22 @@ final class ShowDetailViewModel: ObservableObject {
                     return self.fileManager.fileExists(atPath: localURL.path)
                 } ?? false
                 self.model = showData
+
+                // Find full-res show image from files (JPEG, not thumb/spectrogram)
+                if let files = showData.files, let id = self.initialMetadata.identifier {
+                    if let imageFile = files.first(where: { file in
+                        guard let name = file.name?.lowercased(),
+                              let format = file.format else { return false }
+                        return format == "JPEG"
+                            && !name.contains("_thumb")
+                            && !name.hasSuffix("__ia_thumb.jpg")
+                    }) {
+                        if let name = imageFile.name,
+                           let encoded = name.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) {
+                            self.showImageURL = URL(string: "https://archive.org/download/\(id)/\(encoded)")
+                        }
+                    }
+                }
             }
         }
     }
@@ -84,11 +131,16 @@ final class ShowDetailViewModel: ObservableObject {
         player.pause()
         player.showMetadataModel = m
 
-        let playLocally = showType == .downloaded || isDownloaded
-        if playLocally, let tracks = m.mp3Array {
-            player.loadQueuePlayer(tracks: tracks, startingAt: index)
+        if showType == .phishIn, !phishInTrackURLs.isEmpty {
+            // Stream directly from Phish.in MP3 URLs
+            player.loadStreamingFromURLs(phishInTrackURLs, startingAt: index)
         } else {
-            player.loadStreamingQueuePlayer(startingAt: index)
+            let playLocally = showType == .downloaded || isDownloaded
+            if playLocally, let tracks = m.mp3Array {
+                player.loadQueuePlayer(tracks: tracks, startingAt: index)
+            } else {
+                player.loadStreamingQueuePlayer(startingAt: index)
+            }
         }
 
         player.play()
@@ -96,7 +148,8 @@ final class ShowDetailViewModel: ObservableObject {
 
         // Push state into the shared view model
         playerViewModel.currentShow = m
-        playerViewModel.isStreaming = !playLocally
+        playerViewModel.isStreaming = showType == .phishIn || (showType != .downloaded && !isDownloaded)
+        playerViewModel.currentShowType = showType
     }
 
     // MARK: - Download
@@ -170,6 +223,122 @@ final class ShowDetailViewModel: ObservableObject {
         }
     }
 
+    // MARK: - Phish.in Show Detail
+
+    private func fetchPhishInShowDetail() {
+        guard let dateStr = initialMetadata.date else { return }
+        let showDate = String(dateStr.prefix(10))
+        guard showDate.count == 10 else { return }
+
+        isLoading = true
+
+        PhishInAPI.shared.fetchShow(date: showDate) { [weak self] show, _ in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                self.isLoading = false
+                guard let show = show, let tracks = show.tracks else { return }
+
+                // Filter out soundcheck tracks and sort by position
+                let playableTracks = tracks
+                    .filter { ($0.set_name ?? "").lowercased() != "soundcheck" }
+                    .sorted { ($0.position ?? 0) < ($1.position ?? 0) }
+
+                // Build ShowMP3 array for display compatibility
+                let mp3s = playableTracks.map { track in
+                    ShowMP3(
+                        identifier: "phishin-\(showDate)",
+                        name: track.mp3_url,
+                        title: track.title,
+                        track: track.position.map { String($0) }
+                    )
+                }
+
+                // Collect direct streaming URLs
+                self.phishInTrackURLs = playableTracks.compactMap { track in
+                    guard let urlStr = track.mp3_url else { return nil }
+                    return URL(string: urlStr)
+                }
+
+                // Build a ShowMetadataModel for the player
+                var metadata = ShowMetadata(identifier: "phishin-\(showDate)")
+                metadata.title = show.venue_name.map { "\(showDate) - \($0)" }
+                metadata.creator = "Phish"
+                metadata.date = show.date
+                metadata.venue = show.venue_name
+
+                if let venue = show.venue {
+                    metadata.coverage = venue.location
+                }
+
+                var showModel = ShowMetadataModel()
+                showModel.metadata = metadata
+                showModel.mp3Array = mp3s
+                self.model = showModel
+
+                // Set cover art URL
+                if let artURL = show.cover_art_urls?.medium ?? show.cover_art_urls?.large {
+                    self.showImageURL = URL(string: artURL)
+                }
+            }
+        }
+    }
+
+    // MARK: - Phish.net Metadata Enrichment
+
+    private func fetchPhishNetMetadata() {
+        guard let dateStr = initialMetadata.date else { return }
+        // Extract YYYY-MM-DD from the date string (may include time component)
+        let showDate = String(dateStr.prefix(10))
+        guard showDate.count == 10 else { return }
+
+        isPhishNetLoading = true
+
+        PhishNetAPI.shared.fetchSetlist(date: showDate) { [weak self] response, _ in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                self.isPhishNetLoading = false
+
+                guard let entries = response?.data, !entries.isEmpty else { return }
+
+                // Group setlist entries by set name
+                var setDict: [String: [SetlistSong]] = [:]
+                var setOrder: [String] = []
+
+                for entry in entries {
+                    let setName = entry.set ?? "Unknown"
+                    let song = SetlistSong(
+                        name: entry.song ?? "Unknown",
+                        position: entry.position ?? 0,
+                        isJamChart: (entry.isjamchart ?? 0) == 1,
+                        jamChartDescription: entry.jamchart_description
+                    )
+                    if setDict[setName] == nil {
+                        setDict[setName] = []
+                        setOrder.append(setName)
+                    }
+                    setDict[setName]?.append(song)
+                }
+
+                self.phishNetSetlist = setOrder.map { name in
+                    SetlistSet(name: name, songs: (setDict[name] ?? []).sorted { $0.position < $1.position })
+                }
+
+                // Extract venue/location/tour from first entry
+                if let first = entries.first {
+                    self.phishNetVenue = first.venue
+                    if let city = first.city {
+                        var loc = city
+                        if let state = first.state, !state.isEmpty { loc += ", \(state)" }
+                        if let country = first.country, !country.isEmpty { loc += ", \(country)" }
+                        self.phishNetLocation = loc
+                    }
+                    self.phishNetTourName = first.tourname
+                    self.phishNetSetlistNotes = first.setlistnotes
+                }
+            }
+        }
+    }
+
     // MARK: - Sort helpers (mirrors ShowViewController logic)
 
     private func sortKey(for mp3: ShowMP3) -> (Int, Int, String) {
@@ -210,4 +379,20 @@ final class ShowDetailViewModel: ObservableObject {
         }
         return (1, track, fallback)
     }
+}
+
+// MARK: - Setlist Models
+
+struct SetlistSong: Identifiable {
+    let id = UUID()
+    let name: String
+    let position: Int
+    let isJamChart: Bool
+    let jamChartDescription: String?
+}
+
+struct SetlistSet: Identifiable {
+    let id = UUID()
+    let name: String
+    let songs: [SetlistSong]
 }

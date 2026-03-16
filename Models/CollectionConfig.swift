@@ -1,10 +1,12 @@
 import Foundation
 
 struct CollectionConfig {
-    static let collectionsText = ["Grateful Dead", "Phil Lesh and Friends", "The Other Ones", "Further", "Dead And Company", "Billy Strings", "Goose", "The Radiators", "Phish"]
-    static let collections = ["GratefulDead", "PhilLeshandFriends", "TheOtherOnes", "Furthur", "DeadAndCompany", "BillyStrings", "GooseBand", "Radiators", "Phish"]
-    
+    static let collectionsText = ["Grateful Dead", "Phish", "Phil Lesh and Friends", "The Other Ones", "Further", "Dead And Company", "Billy Strings", "Goose", "The Radiators"]
+    static let collections = ["GratefulDead", "Phish", "PhilLeshandFriends", "TheOtherOnes", "Furthur", "DeadAndCompany", "BillyStrings", "GooseBand", "Radiators"]
+
     // Collections that use creator field instead of collection field for searching
+    // Phish metadata (setlists, ratings, venues) courtesy of Phish.net / The Mockingbird Foundation.
+    // Audio streaming for Phish sourced from Phish.in. See Network/PhishNetAPI.swift for API details.
     static let creatorBasedCollections = ["Phish"]
 
     // Expandable: allow runtime-added creator-based identifiers via UserDefaults key

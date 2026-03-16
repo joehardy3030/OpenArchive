@@ -34,7 +34,8 @@ struct MonthListView: View {
                         year: year,
                         collection: collection,
                         sbdOnly: viewModel.sbdOnly,
-                        prefetchedShows: viewModel.showsForMonth(row.monthIndex)
+                        prefetchedShows: viewModel.showsForMonth(row.monthIndex),
+                        prefetchedPhishIn: viewModel.phishInShowsForMonth(row.monthIndex)
                     )) {
                         if row.count > 0 {
                             Text("\(row.name) \(String(year)) (\(row.count) tapes)")
@@ -54,7 +55,8 @@ struct MonthListView: View {
                 month: dest.monthIndex,
                 collection: dest.collection,
                 sbdOnly: dest.sbdOnly,
-                prefetchedShows: dest.prefetchedShows
+                prefetchedShows: dest.prefetchedShows,
+                prefetchedPhishIn: dest.prefetchedPhishIn
             )
         }
         .onAppear {
@@ -69,6 +71,7 @@ struct MonthDestination: Hashable {
     let collection: String
     let sbdOnly: Bool
     let prefetchedShows: [ShowMetadata]
+    let prefetchedPhishIn: [String: PhishInShowSummary]
 
     func hash(into hasher: inout Hasher) {
         hasher.combine(monthIndex)

@@ -54,6 +54,10 @@ final class ShowDetailViewModel: ObservableObject {
         } else if showType == .phishIn {
             fetchPhishInShowDetail()
         } else if showType == .archive {
+            // Seed the model with what we already have so info renders immediately
+            var stub = ShowMetadataModel()
+            stub.metadata = metadata
+            self.model = stub
             fetchShowDetail()
         }
 

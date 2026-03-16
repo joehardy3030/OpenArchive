@@ -187,7 +187,7 @@ struct ShowDetailView: View {
         }
         .navigationTitle(viewModel.title)
         .overlay {
-            if viewModel.isLoading {
+            if viewModel.isLoading && viewModel.model?.metadata == nil {
                 ProgressView("Loading show...")
             }
         }

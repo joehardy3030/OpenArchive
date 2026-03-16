@@ -23,8 +23,7 @@ class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
     }
     
     // CarPlay disconnected
-    func templateApplicationScene(_ templateApplicationScene: CPTemplateApplicationScene,
-                                  didDisconnect interfaceController: CPInterfaceController) {
+    func sceneDidDisconnect(_ scene: UIScene) {
         self.templateManager = nil
         self.interfaceController = nil
     }

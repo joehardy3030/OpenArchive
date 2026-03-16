@@ -21,20 +21,25 @@ final class ShowsListViewModel: ObservableObject {
         return "\(year)"
     }
 
-    init(year: Int, month: Int, collection: String, sbdOnly: Bool, prefetchedShows: [ShowMetadata]) {
+    init(year: Int, month: Int, collection: String, sbdOnly: Bool,
+         prefetchedShows: [ShowMetadata], prefetchedPhishIn: [String: PhishInShowSummary] = [:]) {
         self.year = year
         self.month = month
         self.collection = collection
 
-        if !prefetchedShows.isEmpty {
-            self.shows = prefetchedShows.sorted { ($0.date ?? "") < ($1.date ?? "") }
-        } else {
-            fetchFromAPI(sbdOnly: sbdOnly)
+        // Use prefetched Phish.in data if available, otherwise fetch
+        if !prefetchedPhishIn.isEmpty {
+            self.phishInShowsByDate = prefetchedPhishIn
+            self.phishInDates = Set(prefetchedPhishIn.keys)
+        } else if collection == "Phish" {
+            fetchPhishInDates()
         }
 
-        // Fetch Phish.in show dates for Phish collection
-        if collection == "Phish" {
-            fetchPhishInDates()
+        if !prefetchedShows.isEmpty {
+            self.shows = Self.enrichWithPhishIn(prefetchedShows, phishIn: self.phishInShowsByDate)
+                .sorted { ($0.date ?? "") < ($1.date ?? "") }
+        } else {
+            fetchFromAPI(sbdOnly: sbdOnly)
         }
     }
 
@@ -63,6 +68,24 @@ final class ShowsListViewModel: ObservableObject {
                     }
                 }
             }
+        }
+    }
+
+    /// Enrich archive.org shows with venue/location from Phish.in when missing
+    private static func enrichWithPhishIn(_ shows: [ShowMetadata], phishIn: [String: PhishInShowSummary]) -> [ShowMetadata] {
+        guard !phishIn.isEmpty else { return shows }
+        return shows.map { show in
+            var enriched = show
+            let dateKey = String((show.date ?? "").prefix(10))
+            if let summary = phishIn[dateKey] {
+                if enriched.venue == nil {
+                    enriched.venue = summary.venue_name ?? summary.venue?.name
+                }
+                if enriched.coverage == nil {
+                    enriched.coverage = summary.venue?.location
+                }
+            }
+            return enriched
         }
     }
 

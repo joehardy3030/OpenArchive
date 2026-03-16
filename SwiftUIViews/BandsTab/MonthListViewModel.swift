@@ -16,6 +16,8 @@ final class MonthListViewModel: ObservableObject {
     private let collection: String
     private let archiveAPI = ArchiveAPI()
     private var allShowsForYear: [ShowMetadata] = []
+    /// Phish.in show summaries for the year, keyed by date
+    private(set) var phishInShowsByDate: [String: PhishInShowSummary] = [:]
 
     private static let monthNames = [
         "Jan", "Feb", "Mar", "April", "May", "June",
@@ -52,6 +54,20 @@ final class MonthListViewModel: ObservableObject {
                 }
             }
         }
+
+        // Fetch Phish.in show summaries once for the whole year
+        if collection == "Phish" {
+            PhishInAPI.shared.fetchShows(year: year) { [weak self] shows, _ in
+                DispatchQueue.main.async {
+                    guard let self = self, let shows = shows else { return }
+                    for show in shows {
+                        if let date = show.date {
+                            self.phishInShowsByDate[date] = show
+                        }
+                    }
+                }
+            }
+        }
     }
 
     func showsForMonth(_ monthIndex: Int) -> [ShowMetadata] {
@@ -60,6 +76,12 @@ final class MonthListViewModel: ObservableObject {
                   let m = Int(monthStr) else { return false }
             return m == monthIndex
         }
+    }
+
+    func phishInShowsForMonth(_ monthIndex: Int) -> [String: PhishInShowSummary] {
+        let monthStr = monthIndex < 10 ? "0\(monthIndex)" : "\(monthIndex)"
+        let prefix = "\(year)-\(monthStr)"
+        return phishInShowsByDate.filter { $0.key.hasPrefix(prefix) }
     }
 
     private func monthName(from monthString: String) -> String? {

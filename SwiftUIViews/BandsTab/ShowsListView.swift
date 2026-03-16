@@ -6,18 +6,22 @@ struct ShowsListView: View {
     let collection: String
     let sbdOnly: Bool
     let prefetchedShows: [ShowMetadata]
+    let prefetchedPhishIn: [String: PhishInShowSummary]
 
     @StateObject private var viewModel: ShowsListViewModel
 
-    init(year: Int, month: Int, collection: String, sbdOnly: Bool, prefetchedShows: [ShowMetadata]) {
+    init(year: Int, month: Int, collection: String, sbdOnly: Bool,
+         prefetchedShows: [ShowMetadata], prefetchedPhishIn: [String: PhishInShowSummary] = [:]) {
         self.year = year
         self.month = month
         self.collection = collection
         self.sbdOnly = sbdOnly
         self.prefetchedShows = prefetchedShows
+        self.prefetchedPhishIn = prefetchedPhishIn
         _viewModel = StateObject(wrappedValue: ShowsListViewModel(
             year: year, month: month, collection: collection,
-            sbdOnly: sbdOnly, prefetchedShows: prefetchedShows
+            sbdOnly: sbdOnly, prefetchedShows: prefetchedShows,
+            prefetchedPhishIn: prefetchedPhishIn
         ))
     }
 

@@ -75,12 +75,6 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
         // Set MyTapes as the root template directly (without tabs)
         Task {
             try? await self.interfaceController?.setRootTemplate(myTapesTemplate, animated: true)
-
-            // If audio is currently playing/loaded, jump straight to Now Playing
-            if let player = self.player,
-               player.playerQueue?.currentItem != nil {
-                try? await self.interfaceController?.pushTemplate(CPNowPlayingTemplate.shared, animated: true)
-            }
         }
     }
     

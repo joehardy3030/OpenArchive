@@ -46,6 +46,9 @@ class AudioPlayerArchive: NSObject {
     var showMetadataModel: ShowMetadataModel?
     var isStreaming: Bool = false  // Track whether we're streaming or playing local files
     var currentShowType: ShowType = .archive
+    /// Cached artwork image for Now Playing info (lock screen, CarPlay, Control Center)
+    var currentArtworkImage: UIImage?
+    private var currentArtworkURL: URL?
     private let notificationCenter: NotificationCenter
     private var playCommandTarget: Any?
     private var pauseCommandTarget: Any?
@@ -593,12 +596,33 @@ extension AudioPlayerArchive {
         info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = playerQueue?.currentTime().seconds ?? 0
         info[MPNowPlayingInfoPropertyPlaybackRate] = rate ?? (playerQueue?.rate ?? 0.0)
 
-        // Artwork
-        if let image = UIImage(named: "Chateau80") {
+        // Artwork — use cached cover art if available, otherwise fall back to app icon
+        let artworkImage = currentArtworkImage ?? UIImage(named: "Chateau80")
+        if let image = artworkImage {
             info[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(boundsSize: image.size) { _ in image }
         }
 
         MPNowPlayingInfoCenter.default().nowPlayingInfo = info
+    }
+
+    /// Set the cover art URL for the current show. Downloads the image asynchronously
+    /// and updates Now Playing info once loaded.
+    func setArtworkURL(_ url: URL?) {
+        guard url != currentArtworkURL else { return }
+        currentArtworkURL = url
+        currentArtworkImage = nil
+
+        guard let url = url else { return }
+
+        URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
+            guard let self = self, let data = data, let image = UIImage(data: data) else { return }
+            DispatchQueue.main.async {
+                // Only apply if the URL hasn't changed while we were downloading
+                guard self.currentArtworkURL == url else { return }
+                self.currentArtworkImage = image
+                self.updateNowPlayingInfo()
+            }
+        }.resume()
     }
 }
 

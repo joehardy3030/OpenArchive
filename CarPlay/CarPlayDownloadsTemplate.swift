@@ -280,14 +280,13 @@ class CarPlayDownloadsTemplate: NSObject, CPInterfaceControllerDelegate {
             nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = seconds
         }
         
-        if let image = UIImage(named: "Chateau80") {
+        let artworkImage = player?.currentArtworkImage ?? UIImage(named: "Chateau80")
+        if let image = artworkImage {
             nowPlayingInfo[MPMediaItemPropertyArtwork] =
                 MPMediaItemArtwork(boundsSize: image.size) { size in
                     return image
             }
         }
-        else { print("no image")}
-        //self.nowPlayingSongManager?.nowPlayingInfo = nowPlayingInfo
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
     }
     
@@ -400,13 +399,14 @@ class CarPlayDownloadsTemplate: NSObject, CPInterfaceControllerDelegate {
         nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = player.playerQueue?.currentTime().seconds ?? 0
         nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = player.playerQueue?.rate ?? 0.0
         
-        // Artwork
-        if let image = UIImage(named: "Chateau80") {
+        // Artwork — use cached cover art if available, otherwise fall back to app icon
+        let artworkImage = player.currentArtworkImage ?? UIImage(named: "Chateau80")
+        if let image = artworkImage {
             nowPlayingInfo[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(boundsSize: image.size) { _ in
                 return image
             }
         }
-        
+
         // Update the now playing info
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
     }

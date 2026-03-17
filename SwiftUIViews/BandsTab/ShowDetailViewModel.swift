@@ -151,6 +151,9 @@ final class ShowDetailViewModel: ObservableObject {
         player.play()
         pendingTrackIndex = nil
 
+        // Set cover art for Now Playing (lock screen, CarPlay, Control Center)
+        player.setArtworkURL(showImageURL)
+
         // Push state into the shared view model
         playerViewModel.currentShow = m
         playerViewModel.isStreaming = showType == .phishIn || (showType != .downloaded && !isDownloaded)

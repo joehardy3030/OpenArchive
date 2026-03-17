@@ -49,6 +49,8 @@ class AudioPlayerArchive: NSObject {
     /// Cached artwork image for Now Playing info (lock screen, CarPlay, Control Center)
     var currentArtworkImage: UIImage?
     private var currentArtworkURL: URL?
+    /// Suppresses playback state saves during advance-to-index loops
+    private var isSeeking = false
     private let notificationCenter: NotificationCenter
     private var playCommandTarget: Any?
     private var pauseCommandTarget: Any?
@@ -288,11 +290,12 @@ class AudioPlayerArchive: NSObject {
         // Advance to the desired starting index
         if index > 0 && index < playerItems.count {
             print("AudioPlayerArchive: Advancing to index \(index) in loadQueuePlayer")
+            isSeeking = true
             for _ in 0..<index {
-                playerQueue?.advanceToNextItem() // This should be synchronous enough
+                playerQueue?.advanceToNextItem()
             }
+            isSeeking = false
         }
-        //print(playerQueue)
     }
     
     func loadStreamingQueuePlayer(startingAt index: Int = 0) {
@@ -315,9 +318,11 @@ class AudioPlayerArchive: NSObject {
         // Advance to the desired starting index
         if index > 0 && index < playerItems.count {
             print("AudioPlayerArchive: Advancing to index \(index) in loadStreamingQueuePlayer")
+            isSeeking = true
             for _ in 0..<index {
-                playerQueue?.advanceToNextItem() // This should be synchronous enough
+                playerQueue?.advanceToNextItem()
             }
+            isSeeking = false
         }
         //print(playerQueue)
     }
@@ -336,9 +341,11 @@ class AudioPlayerArchive: NSObject {
 
         if index > 0 && index < playerItems.count {
             print("AudioPlayerArchive: Advancing to index \(index) in loadStreamingFromURLs")
+            isSeeking = true
             for _ in 0..<index {
                 playerQueue?.advanceToNextItem()
             }
+            isSeeking = false
         }
     }
 
@@ -444,6 +451,9 @@ extension AudioPlayerArchive {
     
     /// Save current playback state for later restoration
     func savePlaybackState() {
+        // Skip saves while advancing through the queue to reach a target index
+        guard !isSeeking else { return }
+
         guard let model = showMetadataModel,
               model.mp3Array?.isEmpty == false else {
             print("AudioPlayerArchive: No show loaded, skipping state save")

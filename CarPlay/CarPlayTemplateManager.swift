@@ -26,6 +26,7 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
     private var allDownloadedShows: [ShowMetadataModel] = []
     private var currentPage = 0
     private let itemsPerPage = 11 // Show 11 items + 1 "See more" = 12 total
+    private var myTapesRootTemplate: CPListTemplate?
     
     init(interfaceController: CPInterfaceController?) {
         self.interfaceController = interfaceController
@@ -73,6 +74,7 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
         */
         
         // Set MyTapes as the root template directly (without tabs)
+        self.myTapesRootTemplate = myTapesTemplate
         Task {
             try? await self.interfaceController?.setRootTemplate(myTapesTemplate, animated: true)
         }
@@ -298,16 +300,9 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
             }
         }
         
-        // Update the template with new content
+        // Update the existing template's sections in place
         let section = CPListSection(items: items)
-        let updatedTemplate = CPListTemplate(title: "My Tapes", sections: [section])
-        updatedTemplate.tabImage = UIImage(systemName: "icloud.and.arrow.down")
-        updatedTemplate.tabTitle = "My Tapes"
-        
-        // Update the template directly (without tabs)
-        Task {
-            try? await self.interfaceController?.setRootTemplate(updatedTemplate, animated: false)
-        }
+        myTapesRootTemplate?.updateSections([section])
         
         /* 
         // Original tab bar update code

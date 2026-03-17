@@ -6,6 +6,7 @@ struct CollectionsView: View {
     @State private var showBrowseSheet = false
     @State private var showRemoveSheet = false
     @State private var deepLinkPath = NavigationPath()
+    @State private var deepLinkModel: ShowMetadataModel? = nil
 
     var body: some View {
         NavigationStack(path: $deepLinkPath) {
@@ -37,11 +38,13 @@ struct CollectionsView: View {
                 }
             }
             .navigationDestination(for: ShowDestination.self) { dest in
-                ShowDetailView(metadata: dest.metadata, showType: dest.showType)
+                ShowDetailView(metadata: dest.metadata, showType: dest.showType, existingModel: deepLinkModel)
+                    .onAppear { deepLinkModel = nil }
             }
             .onReceive(deepLinkRouter.$pendingShow) { show in
                 guard show != nil else { return }
-                guard let (metadata, showType) = deepLinkRouter.consume() else { return }
+                guard let (metadata, showType, model) = deepLinkRouter.consume() else { return }
+                deepLinkModel = model
                 deepLinkPath.append(ShowDestination(metadata: metadata, showType: showType))
             }
             .sheet(isPresented: $showRemoveSheet) {

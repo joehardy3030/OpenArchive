@@ -47,9 +47,9 @@ struct ArchiveRootView: View {
             }
         }
         .sheet(isPresented: $showFullPlayer, onDismiss: {
-            if let (metadata, showType) = deepLinkRouter.pendingNavigation {
+            if let (metadata, showType, model) = deepLinkRouter.pendingNavigation {
                 deepLinkRouter.pendingNavigation = nil
-                deepLinkRouter.navigate(to: metadata, showType: showType)
+                deepLinkRouter.navigate(to: metadata, showType: showType, model: model)
             }
         }) {
             FullPlayerView()

@@ -170,6 +170,12 @@ class CarPlayDownloadsTemplate: NSObject, CPInterfaceControllerDelegate {
         }
         player?.pause()
         player?.showMetadataModel = show
+        // Sync state to PlayerViewModel so phone UI is in sync
+        DispatchQueue.main.async {
+            PlayerViewModel.shared.currentShow = show
+            PlayerViewModel.shared.currentShowType = .downloaded
+            PlayerViewModel.shared.isStreaming = false
+        }
         // Verify the show has tracks before proceeding
         guard let mp3s = show.mp3Array, !mp3s.isEmpty else {
             print("Show has no tracks")

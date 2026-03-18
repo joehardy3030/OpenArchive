@@ -16,7 +16,14 @@ struct MonthRow: Identifiable {
 final class MonthListViewModel: ObservableObject {
     @Published var monthRows: [MonthRow] = []
     @Published var isLoading = false
-    @Published var filter: ShowFilter
+    @Published var filter: ShowFilter {
+        didSet {
+            if isGratefulDead { Self.lastGDFilter = filter }
+        }
+    }
+
+    /// Remembers the last-used filter for Grateful Dead across year changes
+    private static var lastGDFilter: ShowFilter = .joesPicks
 
     /// Exposes sbdOnly for API calls and downstream use
     var sbdOnly: Bool { filter == .sbd || filter == .joesPicks }
@@ -41,7 +48,7 @@ final class MonthListViewModel: ObservableObject {
         self.year = year
         self.collection = collection
         self.isGratefulDead = (collection == "GratefulDead")
-        self.filter = (collection == "GratefulDead") ? .sbd : .all
+        self.filter = (collection == "GratefulDead") ? Self.lastGDFilter : .all
     }
 
     func fetchShows() {

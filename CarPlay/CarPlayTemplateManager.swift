@@ -25,7 +25,7 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
     // Pagination properties for My Tapes
     private var allDownloadedShows: [ShowMetadataModel] = []
     private var currentPage = 0
-    private let itemsPerPage = 11 // Show 11 items + 1 "See more" = 12 total
+    private let itemsPerPage = 10 // Show 10 items + 1 "See more" + 1 "Show previous" = 12 total
     private var myTapesRootTemplate: CPListTemplate?
     
     init(interfaceController: CPInterfaceController?) {

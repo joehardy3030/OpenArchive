@@ -47,7 +47,7 @@ struct MonthListView: View {
                         }
                     }
                 }
-                .contentMargins(.bottom, miniPlayerInset, for: .scrollContent)
+                .padding(.bottom, miniPlayerInset)
             }
         }
         .navigationTitle("Months")

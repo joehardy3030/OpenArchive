@@ -17,6 +17,7 @@ extension EnvironmentValues {
 struct ArchiveRootView: View {
     @EnvironmentObject private var playerViewModel: PlayerViewModel
     @EnvironmentObject private var deepLinkRouter: DeepLinkRouter
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     @State private var selectedTab: Tab = .bands
     @State private var showFullPlayer = false
@@ -48,7 +49,7 @@ struct ArchiveRootView: View {
                         Label("Search", systemImage: "magnifyingglass")
                     }
             }
-            .environment(\.miniPlayerInset, playerViewModel.currentShow != nil ? 70 : 0)
+            .environment(\.miniPlayerInset, playerViewModel.currentShow != nil ? (horizontalSizeClass == .regular ? 100 : 70) : 0)
 
             if playerViewModel.currentShow != nil {
                 MiniPlayerBar(showFullPlayer: $showFullPlayer)

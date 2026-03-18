@@ -52,7 +52,7 @@ struct SearchView: View {
                                 ShowRowView(show: show)
                             }
                         }
-                        .contentMargins(.bottom, miniPlayerInset, for: .scrollContent)
+                        .padding(.bottom, miniPlayerInset)
                     }
                 }
             }

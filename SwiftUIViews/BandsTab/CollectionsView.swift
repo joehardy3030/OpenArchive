@@ -24,7 +24,7 @@ struct CollectionsView: View {
                     }
                 }
             }
-            .contentMargins(.bottom, miniPlayerInset, for: .scrollContent)
+            .padding(.bottom, miniPlayerInset)
             .navigationTitle("Bands")
             .navigationDestination(for: CollectionEntry.self) { entry in
                 YearListView(collection: entry.identifier, title: entry.displayName)

@@ -25,7 +25,7 @@ struct YearListView: View {
                 }
             }
         }
-        .contentMargins(.bottom, miniPlayerInset, for: .scrollContent)
+        .padding(.bottom, miniPlayerInset)
         .navigationTitle(title)
         .navigationDestination(for: YearDestination.self) { dest in
             MonthListView(year: dest.year, collection: dest.collection)

@@ -49,7 +49,7 @@ struct ShowsListView: View {
                 }
             }
         }
-        .contentMargins(.bottom, miniPlayerInset, for: .scrollContent)
+        .padding(.bottom, miniPlayerInset)
         .navigationTitle(viewModel.navigationTitle)
         .navigationDestination(for: ShowDestination.self) { dest in
             ShowDetailView(metadata: dest.metadata, showType: dest.showType)

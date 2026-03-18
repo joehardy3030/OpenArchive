@@ -18,21 +18,27 @@ struct ArchiveRootView: View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedTab) {
                 CollectionsView()
-                    .contentMargins(.bottom, playerViewModel.currentShow != nil ? 70 : 0, for: .scrollContent)
+                    .safeAreaInset(edge: .bottom, spacing: 0) {
+                        Color.clear.frame(height: playerViewModel.currentShow != nil ? 70 : 0)
+                    }
                     .tag(Tab.bands)
                     .tabItem {
                         Label("Bands", systemImage: "music.note.list")
                     }
 
                 DownloadsView()
-                    .contentMargins(.bottom, playerViewModel.currentShow != nil ? 70 : 0, for: .scrollContent)
+                    .safeAreaInset(edge: .bottom, spacing: 0) {
+                        Color.clear.frame(height: playerViewModel.currentShow != nil ? 70 : 0)
+                    }
                     .tag(Tab.myTapes)
                     .tabItem {
                         Label("My Tapes", systemImage: "tray.full")
                     }
 
                 SearchView()
-                    .contentMargins(.bottom, playerViewModel.currentShow != nil ? 70 : 0, for: .scrollContent)
+                    .safeAreaInset(edge: .bottom, spacing: 0) {
+                        Color.clear.frame(height: playerViewModel.currentShow != nil ? 70 : 0)
+                    }
                     .tag(Tab.search)
                     .tabItem {
                         Label("Search", systemImage: "magnifyingglass")

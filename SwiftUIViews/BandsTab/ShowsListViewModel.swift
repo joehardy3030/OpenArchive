@@ -21,7 +21,7 @@ final class ShowsListViewModel: ObservableObject {
         return "\(year)"
     }
 
-    init(year: Int, month: Int, collection: String, sbdOnly: Bool,
+    init(year: Int, month: Int, collection: String, filter: ShowFilter,
          prefetchedShows: [ShowMetadata], prefetchedPhishIn: [String: PhishInShowSummary] = [:]) {
         self.year = year
         self.month = month
@@ -39,6 +39,7 @@ final class ShowsListViewModel: ObservableObject {
             self.shows = Self.enrichWithPhishIn(prefetchedShows, phishIn: self.phishInShowsByDate)
                 .sorted { ($0.date ?? "") < ($1.date ?? "") }
         } else {
+            let sbdOnly = (filter == .sbd || filter == .joesPicks)
             fetchFromAPI(sbdOnly: sbdOnly)
         }
     }

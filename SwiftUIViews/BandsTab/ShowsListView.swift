@@ -4,24 +4,24 @@ struct ShowsListView: View {
     let year: Int
     let month: Int
     let collection: String
-    let sbdOnly: Bool
+    let filter: ShowFilter
     let prefetchedShows: [ShowMetadata]
     let prefetchedPhishIn: [String: PhishInShowSummary]
 
     @Environment(\.miniPlayerInset) private var miniPlayerInset
     @StateObject private var viewModel: ShowsListViewModel
 
-    init(year: Int, month: Int, collection: String, sbdOnly: Bool,
+    init(year: Int, month: Int, collection: String, filter: ShowFilter,
          prefetchedShows: [ShowMetadata], prefetchedPhishIn: [String: PhishInShowSummary] = [:]) {
         self.year = year
         self.month = month
         self.collection = collection
-        self.sbdOnly = sbdOnly
+        self.filter = filter
         self.prefetchedShows = prefetchedShows
         self.prefetchedPhishIn = prefetchedPhishIn
         _viewModel = StateObject(wrappedValue: ShowsListViewModel(
             year: year, month: month, collection: collection,
-            sbdOnly: sbdOnly, prefetchedShows: prefetchedShows,
+            filter: filter, prefetchedShows: prefetchedShows,
             prefetchedPhishIn: prefetchedPhishIn
         ))
     }

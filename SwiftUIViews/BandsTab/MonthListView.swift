@@ -15,14 +15,27 @@ struct MonthListView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Picker("Source", selection: $viewModel.sbdOnly) {
-                Text("All").tag(false)
-                Text("SBD").tag(true)
+            Picker("Source", selection: $viewModel.filter) {
+                Text("All").tag(ShowFilter.all)
+                Text("SBD").tag(ShowFilter.sbd)
+                if viewModel.isGratefulDead {
+                    Text("Joe's Picks").tag(ShowFilter.joesPicks)
+                }
             }
             .pickerStyle(.segmented)
             .padding(.horizontal)
             .padding(.vertical, 8)
-            .onChange(of: viewModel.sbdOnly) { viewModel.fetchShows() }
+            .onChange(of: viewModel.filter) { oldValue, newValue in
+                // SBD and Joe's Picks use the same API data (sbdOnly=true).
+                // Only refetch if sbdOnly actually changed.
+                let wasSbd = (oldValue == .sbd || oldValue == .joesPicks)
+                let isSbd = (newValue == .sbd || newValue == .joesPicks)
+                if wasSbd != isSbd {
+                    viewModel.fetchShows()
+                } else {
+                    viewModel.rebuildMonthRows()
+                }
+            }
 
             if viewModel.isLoading {
                 Spacer()
@@ -34,7 +47,7 @@ struct MonthListView: View {
                         monthIndex: row.monthIndex,
                         year: year,
                         collection: collection,
-                        sbdOnly: viewModel.sbdOnly,
+                        filter: viewModel.filter,
                         prefetchedShows: viewModel.showsForMonth(row.monthIndex),
                         prefetchedPhishIn: viewModel.phishInShowsForMonth(row.monthIndex)
                     )) {
@@ -56,7 +69,7 @@ struct MonthListView: View {
                 year: dest.year,
                 month: dest.monthIndex,
                 collection: dest.collection,
-                sbdOnly: dest.sbdOnly,
+                filter: dest.filter,
                 prefetchedShows: dest.prefetchedShows,
                 prefetchedPhishIn: dest.prefetchedPhishIn
             )
@@ -71,7 +84,7 @@ struct MonthDestination: Hashable {
     let monthIndex: Int
     let year: Int
     let collection: String
-    let sbdOnly: Bool
+    let filter: ShowFilter
     let prefetchedShows: [ShowMetadata]
     let prefetchedPhishIn: [String: PhishInShowSummary]
 
@@ -79,11 +92,11 @@ struct MonthDestination: Hashable {
         hasher.combine(monthIndex)
         hasher.combine(year)
         hasher.combine(collection)
-        hasher.combine(sbdOnly)
+        hasher.combine(filter)
     }
 
     static func == (lhs: MonthDestination, rhs: MonthDestination) -> Bool {
         lhs.monthIndex == rhs.monthIndex && lhs.year == rhs.year &&
-        lhs.collection == rhs.collection && lhs.sbdOnly == rhs.sbdOnly
+        lhs.collection == rhs.collection && lhs.filter == rhs.filter
     }
 }

@@ -1,5 +1,11 @@
 import Foundation
 
+enum ShowFilter: Int, CaseIterable {
+    case all = 0
+    case sbd = 1
+    case joesPicks = 2
+}
+
 struct MonthRow: Identifiable {
     let id: Int
     let monthIndex: Int   // 1-based
@@ -10,7 +16,12 @@ struct MonthRow: Identifiable {
 final class MonthListViewModel: ObservableObject {
     @Published var monthRows: [MonthRow] = []
     @Published var isLoading = false
-    @Published var sbdOnly: Bool
+    @Published var filter: ShowFilter
+
+    /// Exposes sbdOnly for API calls and downstream use
+    var sbdOnly: Bool { filter == .sbd || filter == .joesPicks }
+
+    let isGratefulDead: Bool
 
     private let year: Int
     private let collection: String
@@ -29,7 +40,8 @@ final class MonthListViewModel: ObservableObject {
     init(year: Int, collection: String) {
         self.year = year
         self.collection = collection
-        self.sbdOnly = (collection == "GratefulDead")
+        self.isGratefulDead = (collection == "GratefulDead")
+        self.filter = (collection == "GratefulDead") ? .sbd : .all
     }
 
     func fetchShows() {
@@ -43,18 +55,7 @@ final class MonthListViewModel: ObservableObject {
 
                 let shows = response?.items ?? []
                 self.allShowsForYear = shows
-
-                var counts = [String: Int]()
-                let grouped = Dictionary(grouping: shows, by: { $0.month })
-                for (apiKey, showsInMonth) in grouped {
-                    if let key = apiKey, let name = self.monthName(from: key) {
-                        counts[name] = showsInMonth.count
-                    }
-                }
-
-                self.monthRows = Self.monthNames.enumerated().map { idx, name in
-                    MonthRow(id: idx, monthIndex: idx + 1, name: name, count: counts[name] ?? 0)
-                }
+                self.rebuildMonthRows()
 
                 self.pendingFetches -= 1
                 if self.pendingFetches <= 0 { self.isLoading = false }
@@ -80,12 +81,56 @@ final class MonthListViewModel: ObservableObject {
         }
     }
 
+    /// Rebuild month rows from allShowsForYear, applying current filter
+    func rebuildMonthRows() {
+        let shows: [ShowMetadata]
+        if filter == .joesPicks {
+            shows = Self.applyJoesPicks(allShowsForYear)
+        } else {
+            shows = allShowsForYear
+        }
+
+        var counts = [String: Int]()
+        let grouped = Dictionary(grouping: shows, by: { $0.month })
+        for (apiKey, showsInMonth) in grouped {
+            if let key = apiKey, let name = self.monthName(from: key) {
+                counts[name] = showsInMonth.count
+            }
+        }
+
+        self.monthRows = Self.monthNames.enumerated().map { idx, name in
+            MonthRow(id: idx, monthIndex: idx + 1, name: name, count: counts[name] ?? 0)
+        }
+    }
+
     func showsForMonth(_ monthIndex: Int) -> [ShowMetadata] {
-        allShowsForYear.filter { show in
+        let monthShows = allShowsForYear.filter { show in
             guard let monthStr = show.month?.split(separator: "-").last,
                   let m = Int(monthStr) else { return false }
             return m == monthIndex
         }
+        return filter == .joesPicks ? Self.applyJoesPicks(monthShows) : monthShows
+    }
+
+    /// Joe's Picks filter: SBD shows with avg_rating >= 4.5, num_reviews >= 2, one per date.
+    /// Prefers the show with highest rating among those with 10+ reviews; falls back to highest with 2+.
+    static func applyJoesPicks(_ shows: [ShowMetadata]) -> [ShowMetadata] {
+        let qualifying = shows.filter { show in
+            guard let rating = show.avg_rating, let reviews = show.num_reviews else { return false }
+            return rating >= 4.5 && reviews >= 2
+        }
+
+        let grouped = Dictionary(grouping: qualifying) { show -> String in
+            String((show.date ?? "").prefix(10))
+        }
+
+        return grouped.values.compactMap { dateShows -> ShowMetadata? in
+            // Prefer shows with 10+ reviews
+            let tenPlus = dateShows.filter { ($0.num_reviews ?? 0) >= 10 }
+            let candidates = tenPlus.isEmpty ? dateShows : tenPlus
+            return candidates.max(by: { ($0.avg_rating ?? 0) < ($1.avg_rating ?? 0) })
+        }
+        .sorted { ($0.date ?? "") < ($1.date ?? "") }
     }
 
     func phishInShowsForMonth(_ monthIndex: Int) -> [String: PhishInShowSummary] {

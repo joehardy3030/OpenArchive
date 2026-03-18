@@ -14,38 +14,25 @@ struct ArchiveRootView: View {
         case search
     }
 
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-
-    /// Height reserved for the miniplayer so list content doesn't get clipped
-    private var miniPlayerBottomInset: CGFloat {
-        playerViewModel.currentShow != nil ? 70 : 0
-    }
-
     var body: some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedTab) {
                 CollectionsView()
-                    .safeAreaInset(edge: .bottom, spacing: 0) {
-                        Spacer().frame(height: miniPlayerBottomInset)
-                    }
+                    .contentMargins(.bottom, playerViewModel.currentShow != nil ? 70 : 0, for: .scrollContent)
                     .tag(Tab.bands)
                     .tabItem {
                         Label("Bands", systemImage: "music.note.list")
                     }
 
                 DownloadsView()
-                    .safeAreaInset(edge: .bottom, spacing: 0) {
-                        Spacer().frame(height: miniPlayerBottomInset)
-                    }
+                    .contentMargins(.bottom, playerViewModel.currentShow != nil ? 70 : 0, for: .scrollContent)
                     .tag(Tab.myTapes)
                     .tabItem {
                         Label("My Tapes", systemImage: "tray.full")
                     }
 
                 SearchView()
-                    .safeAreaInset(edge: .bottom, spacing: 0) {
-                        Spacer().frame(height: miniPlayerBottomInset)
-                    }
+                    .contentMargins(.bottom, playerViewModel.currentShow != nil ? 70 : 0, for: .scrollContent)
                     .tag(Tab.search)
                     .tabItem {
                         Label("Search", systemImage: "magnifyingglass")
@@ -56,8 +43,7 @@ struct ArchiveRootView: View {
                 MiniPlayerBar(showFullPlayer: $showFullPlayer)
                     .environmentObject(playerViewModel)
                     .padding(.horizontal)
-                    // iPhone: sit above tab bar; iPad: tab bar is on top, sit near bottom
-                    .padding(.bottom, horizontalSizeClass == .regular ? 8 : 50)
+                    .padding(.bottom, 50)
             }
         }
         .sheet(isPresented: $showFullPlayer, onDismiss: {

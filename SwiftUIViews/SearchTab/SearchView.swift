@@ -3,6 +3,7 @@ import SwiftUI
 struct SearchView: View {
     @StateObject private var viewModel = SearchViewModel()
     @EnvironmentObject private var playerViewModel: PlayerViewModel
+    @Environment(\.miniPlayerInset) private var miniPlayerInset
 
     var body: some View {
         NavigationStack {
@@ -51,6 +52,7 @@ struct SearchView: View {
                                 ShowRowView(show: show)
                             }
                         }
+                        .contentMargins(.bottom, miniPlayerInset, for: .scrollContent)
                     }
                 }
             }

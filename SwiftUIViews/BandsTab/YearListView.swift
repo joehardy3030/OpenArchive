@@ -4,6 +4,7 @@ struct YearListView: View {
     let collection: String
     let title: String
 
+    @Environment(\.miniPlayerInset) private var miniPlayerInset
     @StateObject private var viewModel: YearListViewModel
 
     init(collection: String, title: String) {
@@ -24,6 +25,7 @@ struct YearListView: View {
                 }
             }
         }
+        .contentMargins(.bottom, miniPlayerInset, for: .scrollContent)
         .navigationTitle(title)
         .navigationDestination(for: YearDestination.self) { dest in
             MonthListView(year: dest.year, collection: dest.collection)

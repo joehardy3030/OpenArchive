@@ -2,6 +2,7 @@ import SwiftUI
 
 struct DownloadsView: View {
     @StateObject private var viewModel = DownloadsViewModel()
+    @Environment(\.miniPlayerInset) private var miniPlayerInset
 
     var body: some View {
         NavigationStack {
@@ -17,6 +18,7 @@ struct DownloadsView: View {
                     }
                 }
             }
+            .contentMargins(.bottom, miniPlayerInset, for: .scrollContent)
             .navigationTitle("My Tapes")
             .navigationDestination(for: DownloadedShowDestination.self) { dest in
                 ShowDetailView(metadata: dest.model.metadata ?? ShowMetadata(identifier: "unknown"),

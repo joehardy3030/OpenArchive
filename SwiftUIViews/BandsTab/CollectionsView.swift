@@ -3,6 +3,7 @@ import SwiftUI
 struct CollectionsView: View {
     @StateObject private var viewModel = CollectionsViewModel()
     @EnvironmentObject private var deepLinkRouter: DeepLinkRouter
+    @Environment(\.miniPlayerInset) private var miniPlayerInset
     @State private var showBrowseSheet = false
     @State private var showRemoveSheet = false
     @State private var deepLinkPath = NavigationPath()
@@ -23,6 +24,7 @@ struct CollectionsView: View {
                     }
                 }
             }
+            .contentMargins(.bottom, miniPlayerInset, for: .scrollContent)
             .navigationTitle("Bands")
             .navigationDestination(for: CollectionEntry.self) { entry in
                 YearListView(collection: entry.identifier, title: entry.displayName)

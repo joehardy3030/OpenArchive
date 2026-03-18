@@ -1,5 +1,18 @@
 import SwiftUI
 
+// MARK: - Environment key for miniplayer bottom inset
+
+private struct MiniPlayerInsetKey: EnvironmentKey {
+    static let defaultValue: CGFloat = 0
+}
+
+extension EnvironmentValues {
+    var miniPlayerInset: CGFloat {
+        get { self[MiniPlayerInsetKey.self] }
+        set { self[MiniPlayerInsetKey.self] = newValue }
+    }
+}
+
 /// Root SwiftUI shell: hosts the tab layout and global mini player.
 struct ArchiveRootView: View {
     @EnvironmentObject private var playerViewModel: PlayerViewModel
@@ -18,32 +31,24 @@ struct ArchiveRootView: View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedTab) {
                 CollectionsView()
-                    .safeAreaInset(edge: .bottom, spacing: 0) {
-                        Color.clear.frame(height: playerViewModel.currentShow != nil ? 70 : 0)
-                    }
                     .tag(Tab.bands)
                     .tabItem {
                         Label("Bands", systemImage: "music.note.list")
                     }
 
                 DownloadsView()
-                    .safeAreaInset(edge: .bottom, spacing: 0) {
-                        Color.clear.frame(height: playerViewModel.currentShow != nil ? 70 : 0)
-                    }
                     .tag(Tab.myTapes)
                     .tabItem {
                         Label("My Tapes", systemImage: "tray.full")
                     }
 
                 SearchView()
-                    .safeAreaInset(edge: .bottom, spacing: 0) {
-                        Color.clear.frame(height: playerViewModel.currentShow != nil ? 70 : 0)
-                    }
                     .tag(Tab.search)
                     .tabItem {
                         Label("Search", systemImage: "magnifyingglass")
                     }
             }
+            .environment(\.miniPlayerInset, playerViewModel.currentShow != nil ? 70 : 0)
 
             if playerViewModel.currentShow != nil {
                 MiniPlayerBar(showFullPlayer: $showFullPlayer)

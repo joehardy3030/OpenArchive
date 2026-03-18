@@ -8,6 +8,7 @@ struct ShowsListView: View {
     let prefetchedShows: [ShowMetadata]
     let prefetchedPhishIn: [String: PhishInShowSummary]
 
+    @Environment(\.miniPlayerInset) private var miniPlayerInset
     @StateObject private var viewModel: ShowsListViewModel
 
     init(year: Int, month: Int, collection: String, sbdOnly: Bool,
@@ -48,6 +49,7 @@ struct ShowsListView: View {
                 }
             }
         }
+        .contentMargins(.bottom, miniPlayerInset, for: .scrollContent)
         .navigationTitle(viewModel.navigationTitle)
         .navigationDestination(for: ShowDestination.self) { dest in
             ShowDetailView(metadata: dest.metadata, showType: dest.showType)

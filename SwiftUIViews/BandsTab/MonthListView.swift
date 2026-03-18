@@ -4,6 +4,7 @@ struct MonthListView: View {
     let year: Int
     let collection: String
 
+    @Environment(\.miniPlayerInset) private var miniPlayerInset
     @StateObject private var viewModel: MonthListViewModel
 
     init(year: Int, collection: String) {
@@ -46,6 +47,7 @@ struct MonthListView: View {
                         }
                     }
                 }
+                .contentMargins(.bottom, miniPlayerInset, for: .scrollContent)
             }
         }
         .navigationTitle("Months")

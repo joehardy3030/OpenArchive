@@ -14,32 +14,50 @@ struct ArchiveRootView: View {
         case search
     }
 
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+    /// Height reserved for the miniplayer so list content doesn't get clipped
+    private var miniPlayerBottomInset: CGFloat {
+        playerViewModel.currentShow != nil ? 70 : 0
+    }
+
     var body: some View {
-        TabView(selection: $selectedTab) {
-            CollectionsView()
-                .tag(Tab.bands)
-                .tabItem {
-                    Label("Bands", systemImage: "music.note.list")
-                }
+        ZStack(alignment: .bottom) {
+            TabView(selection: $selectedTab) {
+                CollectionsView()
+                    .safeAreaInset(edge: .bottom, spacing: 0) {
+                        Spacer().frame(height: miniPlayerBottomInset)
+                    }
+                    .tag(Tab.bands)
+                    .tabItem {
+                        Label("Bands", systemImage: "music.note.list")
+                    }
 
-            DownloadsView()
-                .tag(Tab.myTapes)
-                .tabItem {
-                    Label("My Tapes", systemImage: "tray.full")
-                }
+                DownloadsView()
+                    .safeAreaInset(edge: .bottom, spacing: 0) {
+                        Spacer().frame(height: miniPlayerBottomInset)
+                    }
+                    .tag(Tab.myTapes)
+                    .tabItem {
+                        Label("My Tapes", systemImage: "tray.full")
+                    }
 
-            SearchView()
-                .tag(Tab.search)
-                .tabItem {
-                    Label("Search", systemImage: "magnifyingglass")
-                }
-        }
-        .safeAreaInset(edge: .bottom) {
+                SearchView()
+                    .safeAreaInset(edge: .bottom, spacing: 0) {
+                        Spacer().frame(height: miniPlayerBottomInset)
+                    }
+                    .tag(Tab.search)
+                    .tabItem {
+                        Label("Search", systemImage: "magnifyingglass")
+                    }
+            }
+
             if playerViewModel.currentShow != nil {
                 MiniPlayerBar(showFullPlayer: $showFullPlayer)
                     .environmentObject(playerViewModel)
                     .padding(.horizontal)
-                    .padding(.bottom, 4)
+                    // iPhone: sit above tab bar; iPad: tab bar is on top, sit near bottom
+                    .padding(.bottom, horizontalSizeClass == .regular ? 8 : 50)
             }
         }
         .sheet(isPresented: $showFullPlayer, onDismiss: {

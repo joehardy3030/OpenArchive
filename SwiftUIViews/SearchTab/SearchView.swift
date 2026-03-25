@@ -4,6 +4,7 @@ struct SearchView: View {
     @StateObject private var viewModel = SearchViewModel()
     @EnvironmentObject private var playerViewModel: PlayerViewModel
     @Environment(\.miniPlayerInset) private var miniPlayerInset
+    @FocusState private var focusedField: Bool
 
     var body: some View {
         NavigationStack {
@@ -16,10 +17,13 @@ struct SearchView: View {
                     Section {
                         TextField("Start Year (YYYY)", text: $viewModel.startYear)
                             .keyboardType(.numberPad)
+                            .focused($focusedField)
                         TextField("End Year (YYYY)", text: $viewModel.endYear)
                             .keyboardType(.numberPad)
+                            .focused($focusedField)
                         TextField("Min Rating (1-5)", text: $viewModel.minRating)
                             .keyboardType(.decimalPad)
+                            .focused($focusedField)
                     }
                     Section {
                         Picker("Band", selection: $viewModel.selectedCollectionIndex) {
@@ -37,6 +41,12 @@ struct SearchView: View {
                     }
                 }
                 .formStyle(.grouped)
+                .toolbar {
+                    ToolbarItemGroup(placement: .keyboard) {
+                        Spacer()
+                        Button("Done") { focusedField = false }
+                    }
+                }
 
                 if viewModel.isLoading {
                     ProgressView()

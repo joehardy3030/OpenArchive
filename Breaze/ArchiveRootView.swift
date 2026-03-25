@@ -21,6 +21,7 @@ struct ArchiveRootView: View {
 
     @State private var selectedTab: Tab = .bands
     @State private var showFullPlayer = false
+    @State private var keyboardVisible = false
 
     enum Tab {
         case bands
@@ -51,7 +52,7 @@ struct ArchiveRootView: View {
             }
             .environment(\.miniPlayerInset, playerViewModel.currentShow != nil ? (horizontalSizeClass == .regular ? 140 : 70) : 0)
 
-            if playerViewModel.currentShow != nil {
+            if playerViewModel.currentShow != nil && !keyboardVisible {
                 MiniPlayerBar(showFullPlayer: $showFullPlayer)
                     .environmentObject(playerViewModel)
                     .padding(.horizontal)
@@ -71,6 +72,12 @@ struct ArchiveRootView: View {
         .onReceive(deepLinkRouter.$pendingShow) { show in
             guard show != nil else { return }
             selectedTab = .bands
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
+            keyboardVisible = true
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
+            keyboardVisible = false
         }
     }
 }

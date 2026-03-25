@@ -372,8 +372,8 @@ final class ShowDetailViewModel: ObservableObject {
             return (Int(lastComponent[dr]) ?? 1, Int(lastComponent[tr]) ?? 1, fallback)
         }
 
-        // 01_... leading track
-        if let regex = try? NSRegularExpression(pattern: "^(\\d{1,3})[ _-]"),
+        // 01_... or 01. leading track
+        if let regex = try? NSRegularExpression(pattern: "^(\\d{1,3})[. _-]"),
            let match = regex.firstMatch(in: lastComponent, range: NSRange(location: 0, length: lastComponent.utf16.count)),
            match.numberOfRanges >= 2,
            let tr = Range(match.range(at: 1), in: lastComponent) {

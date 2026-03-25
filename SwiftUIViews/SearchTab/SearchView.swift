@@ -34,6 +34,7 @@ struct SearchView: View {
                     }
                     Section {
                         Button("Search") {
+                            focusedField = false
                             viewModel.search()
                         }
                         .frame(maxWidth: .infinity)

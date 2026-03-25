@@ -6,6 +6,7 @@ struct ShowDetailView: View {
 
     @StateObject private var viewModel: ShowDetailViewModel
     @EnvironmentObject private var playerViewModel: PlayerViewModel
+    @Environment(\.miniPlayerInset) private var miniPlayerInset
     @State private var isNotesExpanded = false
     @State private var isSetlistExpanded = false
 
@@ -211,6 +212,7 @@ struct ShowDetailView: View {
                 }
             }
         }
+        .padding(.bottom, miniPlayerInset)
         .navigationTitle(viewModel.title)
         .overlay {
             if viewModel.isLoading && viewModel.model?.metadata == nil {

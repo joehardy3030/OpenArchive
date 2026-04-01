@@ -148,30 +148,24 @@ class AudioPlayerArchive: NSObject {
     
     @objc func rewindToPreviousItem() {
         let index = self.getCurrentTrackIndex()
+        let targetIndex = max(index - 1, 0)
         self.pause()
-        if let mp3s = self.showMetadataModel?.mp3Array {
-            if isStreaming {
-                self.reLoadStreamingQueuePlayer(tracks: mp3s)
-            } else {
-                self.reLoadQueuePlayer(tracks: mp3s)
-            }
-        }
-        print(index)
-        if index>0 {
-            for _ in 0..<index-1 {
-                if let q = self.playerQueue {
-                    print("skipped track")
-                    q.advanceToNextItem()
-                    
-                }
-            }
-        }
-        guard let currentItem = self.playerQueue?.currentItem else { return }
 
-        currentItem.seek(to: CMTime.zero, completionHandler: { _ in
-            self.state = .rewind
-            self.play()
-        })
+        guard let tracks = self.showMetadataModel?.mp3Array, !tracks.isEmpty else { return }
+
+        if currentShowType == .phishIn {
+            let urls = tracks.compactMap { $0.name.flatMap { URL(string: $0) } }
+            if !urls.isEmpty {
+                loadStreamingFromURLs(urls, startingAt: targetIndex)
+            }
+        } else if isStreaming {
+            loadStreamingQueuePlayer(startingAt: targetIndex)
+        } else {
+            loadQueuePlayer(tracks: tracks, startingAt: targetIndex)
+        }
+
+        self.state = .rewind
+        self.play()
    }
     
     func getCurrentTrackIndex() -> Int {
@@ -278,7 +272,8 @@ class AudioPlayerArchive: NSObject {
     func loadQueuePlayer(tracks: [ShowMP3], startingAt index: Int = 0) {
         cleanQueue()
         isStreaming = false  // Set flag for local playback
-        for track in tracks {
+        let startIndex = min(index, tracks.count)
+        for track in tracks[startIndex...] {
             guard let n = track.name else { return }
             if let url = utils.trackURLfromName(name: n) {
                 prepareToPlay(url: url)
@@ -286,16 +281,6 @@ class AudioPlayerArchive: NSObject {
         }
         guard !playerItems.isEmpty else { return }
         playerQueue = AVQueuePlayer(items: playerItems)
-        
-        // Advance to the desired starting index
-        if index > 0 && index < playerItems.count {
-            print("AudioPlayerArchive: Advancing to index \(index) in loadQueuePlayer")
-            isSeeking = true
-            for _ in 0..<index {
-                playerQueue?.advanceToNextItem()
-            }
-            isSeeking = false
-        }
     }
     
     func loadStreamingQueuePlayer(startingAt index: Int = 0) {
@@ -305,26 +290,16 @@ class AudioPlayerArchive: NSObject {
         guard let tracks = self.showMetadataModel?.mp3Array, let id = self.showMetadataModel?.metadata?.identifier else { return }
         guard !tracks.isEmpty else { return }
 
-        for track in tracks {
+        let startIndex = min(index, tracks.count)
+        for track in tracks[startIndex...] {
             guard let n = track.name else { return }
-            
+
             if let url = utils.trackStreamingURLfromNameAndIdentifier(identifier: id, name: n) {
                 prepareToPlay(url: url)
             }
         }
         guard !playerItems.isEmpty else { return }
         playerQueue = AVQueuePlayer(items: playerItems)
-
-        // Advance to the desired starting index
-        if index > 0 && index < playerItems.count {
-            print("AudioPlayerArchive: Advancing to index \(index) in loadStreamingQueuePlayer")
-            isSeeking = true
-            for _ in 0..<index {
-                playerQueue?.advanceToNextItem()
-            }
-            isSeeking = false
-        }
-        //print(playerQueue)
     }
 
     /// Load streaming queue from direct MP3 URLs (e.g., Phish.in tracks).
@@ -333,20 +308,12 @@ class AudioPlayerArchive: NSObject {
         cleanQueue()
         isStreaming = true
 
-        for url in urls {
+        let startIndex = min(index, urls.count)
+        for url in urls[startIndex...] {
             prepareToPlay(url: url)
         }
         guard !playerItems.isEmpty else { return }
         playerQueue = AVQueuePlayer(items: playerItems)
-
-        if index > 0 && index < playerItems.count {
-            print("AudioPlayerArchive: Advancing to index \(index) in loadStreamingFromURLs")
-            isSeeking = true
-            for _ in 0..<index {
-                playerQueue?.advanceToNextItem()
-            }
-            isSeeking = false
-        }
     }
 
     func reLoadQueuePlayer(tracks: [ShowMP3]) {

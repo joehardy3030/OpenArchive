@@ -112,6 +112,8 @@ final class PlayerViewModel: ObservableObject {
             if !urls.isEmpty {
                 player.loadStreamingFromURLs(urls, startingAt: index)
             }
+        } else if currentShowType == .downloaded, let tracks = show.mp3Array {
+            player.loadQueuePlayer(tracks: tracks, startingAt: index)
         } else if isStreaming {
             player.loadStreamingQueuePlayer(startingAt: index)
         } else if let tracks = show.mp3Array {

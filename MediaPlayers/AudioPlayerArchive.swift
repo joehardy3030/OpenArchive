@@ -55,6 +55,7 @@ class AudioPlayerArchive: NSObject {
     private var playCommandTarget: Any?
     private var pauseCommandTarget: Any?
     private var nextTrackCommandTarget: Any?
+    private var shouldResumeAfterInterruption = false
     private var state = State.idle {
         didSet { stateDidChange() }
     }
@@ -63,6 +64,41 @@ class AudioPlayerArchive: NSObject {
         self.notificationCenter = notificationCenter
         super.init()
         self.setupCommandCenter()
+        self.setupInterruptionHandling()
+    }
+
+    private func setupInterruptionHandling() {
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(handleAudioSessionInterruption(_:)),
+            name: AVAudioSession.interruptionNotification,
+            object: AVAudioSession.sharedInstance()
+        )
+    }
+
+    @objc private func handleAudioSessionInterruption(_ notification: Notification) {
+        guard let info = notification.userInfo,
+              let typeValue = info[AVAudioSessionInterruptionTypeKey] as? UInt,
+              let type = AVAudioSession.InterruptionType(rawValue: typeValue) else { return }
+
+        switch type {
+        case .began:
+            shouldResumeAfterInterruption = (state == .playing || state == .rewind)
+            if shouldResumeAfterInterruption {
+                state = .paused
+            }
+        case .ended:
+            guard let optionsValue = info[AVAudioSessionInterruptionOptionKey] as? UInt else { return }
+            let options = AVAudioSession.InterruptionOptions(rawValue: optionsValue)
+            if shouldResumeAfterInterruption, options.contains(.shouldResume) {
+                // Reactivate the session and resume playback.
+                try? AVAudioSession.sharedInstance().setActive(true)
+                self.play()
+            }
+            shouldResumeAfterInterruption = false
+        @unknown default:
+            break
+        }
     }
     
     deinit {

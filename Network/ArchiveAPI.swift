@@ -96,7 +96,7 @@ class ArchiveAPI: NSObject {
         case 4,6,9,11:
             endDay = "30"
         case 2:
-            endDay = "28"
+            endDay = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) ? "29" : "28"
         default:
             endDay = "30"
         }

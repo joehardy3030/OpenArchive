@@ -43,6 +43,14 @@ class BreazeTests: XCTestCase {
         let aprilURL = archiveAPI.dateRangeURL(year: 1987, month: 4, sbdOnly: false)
         XCTAssertTrue(aprilURL.contains("1987-04-01%20TO%201987-04-30"))
         XCTAssertFalse(aprilURL.contains("1987-04-31"))
+
+        // Leap year
+        let leapFebURL = archiveAPI.dateRangeURL(year: 2024, month: 2, sbdOnly: false)
+        XCTAssertTrue(leapFebURL.contains("2024-02-01%20TO%202024-02-29"))
+
+        // Non-leap year
+        let nonLeapFebURL = archiveAPI.dateRangeURL(year: 2023, month: 2, sbdOnly: false)
+        XCTAssertTrue(nonLeapFebURL.contains("2023-02-01%20TO%202023-02-28"))
     }
 
     func testNormalizedStartIndexClampsToValidBounds() {

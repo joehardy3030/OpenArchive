@@ -135,7 +135,11 @@ final class MonthListViewModel: ObservableObject {
             // Prefer shows with 10+ reviews
             let tenPlus = dateShows.filter { ($0.num_reviews ?? 0) >= 10 }
             let candidates = tenPlus.isEmpty ? dateShows : tenPlus
-            return candidates.max(by: { ($0.avg_rating ?? 0) < ($1.avg_rating ?? 0) })
+            return candidates.max(by: {
+                let r0 = $0.avg_rating ?? 0, r1 = $1.avg_rating ?? 0
+                if r0 != r1 { return r0 < r1 }
+                return ($0.num_reviews ?? 0) < ($1.num_reviews ?? 0)
+            })
         }
         .sorted { ($0.date ?? "") < ($1.date ?? "") }
     }

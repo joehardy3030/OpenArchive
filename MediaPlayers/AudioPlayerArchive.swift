@@ -67,6 +67,11 @@ class AudioPlayerArchive: NSObject {
         self.setupInterruptionHandling()
     }
 
+    static func normalizedStartIndex(_ index: Int, count: Int) -> Int? {
+        guard count > 0 else { return nil }
+        return min(max(index, 0), count - 1)
+    }
+
     private func setupInterruptionHandling() {
         notificationCenter.addObserver(
             self,
@@ -308,7 +313,7 @@ class AudioPlayerArchive: NSObject {
     func loadQueuePlayer(tracks: [ShowMP3], startingAt index: Int = 0) {
         cleanQueue()
         isStreaming = false  // Set flag for local playback
-        let startIndex = min(index, tracks.count)
+        guard let startIndex = Self.normalizedStartIndex(index, count: tracks.count) else { return }
         for track in tracks[startIndex...] {
             guard let n = track.name else { return }
             if let url = utils.trackURLfromName(name: n) {
@@ -324,9 +329,7 @@ class AudioPlayerArchive: NSObject {
         cleanQueue()
         isStreaming = true  // Set flag for streaming playback
         guard let tracks = self.showMetadataModel?.mp3Array, let id = self.showMetadataModel?.metadata?.identifier else { return }
-        guard !tracks.isEmpty else { return }
-
-        let startIndex = min(index, tracks.count)
+        guard let startIndex = Self.normalizedStartIndex(index, count: tracks.count) else { return }
         for track in tracks[startIndex...] {
             guard let n = track.name else { return }
 
@@ -343,8 +346,7 @@ class AudioPlayerArchive: NSObject {
         print("\(timestamp()) streaming from direct URLs, starting at index \(index)")
         cleanQueue()
         isStreaming = true
-
-        let startIndex = min(index, urls.count)
+        guard let startIndex = Self.normalizedStartIndex(index, count: urls.count) else { return }
         for url in urls[startIndex...] {
             prepareToPlay(url: url)
         }

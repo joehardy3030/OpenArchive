@@ -134,6 +134,16 @@ struct PhishInRowView: View {
                     .font(.system(size: 16))
                     .foregroundColor(.secondary)
             }
+            if let likes = summary?.likes_count, likes > 0 {
+                HStack(spacing: 4) {
+                    Image(systemName: "heart.fill")
+                        .foregroundColor(.red)
+                        .font(.caption2)
+                    Text("\(likes)")
+                        .font(.system(size: 14))
+                        .foregroundColor(.secondary)
+                }
+            }
         }
         .padding(.vertical, 4)
     }

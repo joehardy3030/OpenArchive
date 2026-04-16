@@ -16,8 +16,11 @@ final class ShowDetailViewModel: ObservableObject {
     @Published var phishNetSetlistNotes: String?
     @Published var isPhishNetLoading = false
 
-    // Phish.in direct streaming URLs (parallel to mp3Array)
+    // Phish.in direct streaming URLs and track metadata (parallel to mp3Array)
     var phishInTrackURLs: [URL] = []
+    var phishInTracks: [PhishInTrack] = []
+    @Published var phishInShowLikes: Int = 0
+    @Published var phishInTaperNotes: String?
 
     /// Show image URL (archive.org thumbnail or Phish.in cover art)
     @Published var showImageURL: URL?
@@ -284,11 +287,14 @@ final class ShowDetailViewModel: ObservableObject {
                     )
                 }
 
-                // Collect direct streaming URLs
+                // Collect direct streaming URLs and full track metadata
                 self.phishInTrackURLs = playableTracks.compactMap { track in
                     guard let urlStr = track.mp3_url else { return nil }
                     return URL(string: urlStr)
                 }
+                self.phishInTracks = playableTracks
+                self.phishInShowLikes = show.likes_count ?? 0
+                self.phishInTaperNotes = show.taper_notes
 
                 // Build a ShowMetadataModel for the player
                 var metadata = ShowMetadata(identifier: "phishin-\(showDate)")

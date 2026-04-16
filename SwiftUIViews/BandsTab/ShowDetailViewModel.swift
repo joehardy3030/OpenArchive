@@ -6,6 +6,7 @@ final class ShowDetailViewModel: ObservableObject {
     @Published var pendingTrackIndex: Int? = nil
     @Published var isDownloading = false
     @Published var isDownloaded = false
+    @Published var isFavorite = false
 
     // Phish.net metadata enrichment (only populated for Phish shows)
     @Published var phishNetSetlist: [SetlistSet] = []
@@ -70,6 +71,28 @@ final class ShowDetailViewModel: ObservableObject {
 
         if isPhishShow {
             fetchPhishNetMetadata()
+        }
+
+        self.isFavorite = FavoritesStore.shared.isFavorite(identifier: metadata.identifier)
+    }
+
+    func toggleFavorite() {
+        guard let identifier = initialMetadata.identifier else { return }
+        if isFavorite {
+            FavoritesStore.shared.removeFavorite(identifier: identifier)
+            isFavorite = false
+        } else {
+            // Use the full model if available, otherwise build from initial metadata
+            let showToSave: ShowMetadataModel
+            if let m = model {
+                showToSave = m
+            } else {
+                var stub = ShowMetadataModel()
+                stub.metadata = initialMetadata
+                showToSave = stub
+            }
+            FavoritesStore.shared.addFavorite(show: showToSave, showType: showType)
+            isFavorite = true
         }
     }
 

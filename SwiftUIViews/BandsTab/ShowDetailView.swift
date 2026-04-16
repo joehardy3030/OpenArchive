@@ -49,6 +49,13 @@ struct ShowDetailView: View {
                         .disabled(viewModel.isDownloading || viewModel.isDownloaded)
                     }
 
+                    Button {
+                        viewModel.toggleFavorite()
+                    } label: {
+                        Image(systemName: viewModel.isFavorite ? "star.fill" : "star")
+                            .foregroundColor(viewModel.isFavorite ? .yellow : .primary)
+                    }
+
                     ShareLink(item: viewModel.shareURL) {
                         Image(systemName: "square.and.arrow.up")
                     }

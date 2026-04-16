@@ -25,6 +25,7 @@ struct ArchiveRootView: View {
 
     enum Tab {
         case bands
+        case favorites
         case myTapes
         case search
     }
@@ -38,10 +39,16 @@ struct ArchiveRootView: View {
                         Label("Bands", systemImage: "music.note.list")
                     }
 
+                FavoritesView()
+                    .tag(Tab.favorites)
+                    .tabItem {
+                        Label("Favorites", systemImage: "star.fill")
+                    }
+
                 DownloadsView()
                     .tag(Tab.myTapes)
                     .tabItem {
-                        Label("My Tapes", systemImage: "tray.full")
+                        Label("Downloads", systemImage: "arrow.down.circle")
                     }
 
                 SearchView()

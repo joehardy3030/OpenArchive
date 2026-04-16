@@ -91,6 +91,25 @@ struct PhishInTrack: Codable {
     let mp3_url: String?
     let likes_count: Int?
     let slug: String?
+    let tags: [PhishInTag]?
+
+    /// Returns the Jamcharts tag notes if this track is a jamchart entry.
+    var jamchartsNotes: String? {
+        tags?.first(where: { $0.name?.lowercased() == "jamcharts" })?.notes
+    }
+
+    /// Whether this track is a jamchart entry.
+    var isJamchart: Bool {
+        tags?.contains(where: { $0.name?.lowercased() == "jamcharts" }) ?? false
+    }
+}
+
+struct PhishInTag: Codable {
+    let name: String?
+    let description: String?
+    let notes: String?
+    let starts_at_second: Int?
+    let ends_at_second: Int?
 }
 
 struct PhishInCoverArt: Codable {

@@ -6,6 +6,7 @@ final class ShowDetailViewModel: ObservableObject {
     @Published var pendingTrackIndex: Int? = nil
     @Published var isDownloading = false
     @Published var isDownloaded = false
+    @Published var isFavorite = false
 
     // Phish.net metadata enrichment (only populated for Phish shows)
     @Published var phishNetSetlist: [SetlistSet] = []
@@ -15,8 +16,11 @@ final class ShowDetailViewModel: ObservableObject {
     @Published var phishNetSetlistNotes: String?
     @Published var isPhishNetLoading = false
 
-    // Phish.in direct streaming URLs (parallel to mp3Array)
+    // Phish.in direct streaming URLs and track metadata (parallel to mp3Array)
     var phishInTrackURLs: [URL] = []
+    var phishInTracks: [PhishInTrack] = []
+    @Published var phishInShowLikes: Int = 0
+    @Published var phishInTaperNotes: String?
 
     /// Show image URL (archive.org thumbnail or Phish.in cover art)
     @Published var showImageURL: URL?
@@ -70,6 +74,28 @@ final class ShowDetailViewModel: ObservableObject {
 
         if isPhishShow {
             fetchPhishNetMetadata()
+        }
+
+        self.isFavorite = FavoritesStore.shared.isFavorite(identifier: metadata.identifier)
+    }
+
+    func toggleFavorite() {
+        guard let identifier = initialMetadata.identifier else { return }
+        if isFavorite {
+            FavoritesStore.shared.removeFavorite(identifier: identifier)
+            isFavorite = false
+        } else {
+            // Use the full model if available, otherwise build from initial metadata
+            let showToSave: ShowMetadataModel
+            if let m = model {
+                showToSave = m
+            } else {
+                var stub = ShowMetadataModel()
+                stub.metadata = initialMetadata
+                showToSave = stub
+            }
+            FavoritesStore.shared.addFavorite(show: showToSave, showType: showType)
+            isFavorite = true
         }
     }
 
@@ -261,11 +287,14 @@ final class ShowDetailViewModel: ObservableObject {
                     )
                 }
 
-                // Collect direct streaming URLs
+                // Collect direct streaming URLs and full track metadata
                 self.phishInTrackURLs = playableTracks.compactMap { track in
                     guard let urlStr = track.mp3_url else { return nil }
                     return URL(string: urlStr)
                 }
+                self.phishInTracks = playableTracks
+                self.phishInShowLikes = show.likes_count ?? 0
+                self.phishInTaperNotes = show.taper_notes
 
                 // Build a ShowMetadataModel for the player
                 var metadata = ShowMetadata(identifier: "phishin-\(showDate)")

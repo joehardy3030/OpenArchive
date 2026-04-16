@@ -42,6 +42,15 @@ final class LocalDatabase {
                 t.column("data", .text)
             }
         }
+        migrator.registerMigration("addFavorites") { db in
+            // Favorites table – stores one row per favorited show, JSON-encoded.
+            try db.create(table: "favorites", ifNotExists: true) { t in
+                t.column("identifier", .text).primaryKey(onConflict: .replace)
+                t.column("data", .text).notNull()
+                t.column("showType", .text).notNull()
+                t.column("created_at", .datetime).defaults(sql: "CURRENT_TIMESTAMP")
+            }
+        }
         return migrator
     }
 } 

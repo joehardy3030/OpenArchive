@@ -1,57 +1,58 @@
 import SwiftUI
 
-struct DownloadsView: View {
-    @StateObject private var viewModel = DownloadsViewModel()
+struct FavoritesView: View {
+    @StateObject private var viewModel = FavoritesViewModel()
     @Environment(\.miniPlayerInset) private var miniPlayerInset
 
     var body: some View {
         NavigationStack {
             List {
-                ForEach(viewModel.shows, id: \.metadata?.identifier) { show in
-                    NavigationLink(value: DownloadedShowDestination(model: show)) {
-                        DownloadedShowRow(show: show)
+                ForEach(Array(viewModel.favorites.enumerated()), id: \.element.show.metadata?.identifier) { index, fav in
+                    NavigationLink(value: FavoriteShowDestination(model: fav.show, showType: fav.showType)) {
+                        FavoriteShowRow(show: fav.show)
                     }
                 }
                 .onDelete { offsets in
                     for index in offsets {
-                        viewModel.deleteShow(at: index)
+                        viewModel.removeFavorite(at: index)
                     }
                 }
             }
             .padding(.bottom, miniPlayerInset)
-            .navigationTitle("Downloads")
-            .navigationDestination(for: DownloadedShowDestination.self) { dest in
+            .navigationTitle("Favorites")
+            .navigationDestination(for: FavoriteShowDestination.self) { dest in
                 ShowDetailView(metadata: dest.model.metadata ?? ShowMetadata(identifier: "unknown"),
-                               showType: .downloaded,
-                               existingModel: dest.model)
+                               showType: dest.showType,
+                               existingModel: dest.showType == .downloaded ? dest.model : nil)
             }
             .onAppear {
-                viewModel.loadDownloads()
+                viewModel.loadFavorites()
             }
             .overlay {
-                if viewModel.shows.isEmpty && !viewModel.isLoading {
-                    ContentUnavailableView("No Downloads",
-                                          systemImage: "arrow.down.circle",
-                                          description: Text("Shows you download will appear here."))
+                if viewModel.favorites.isEmpty && !viewModel.isLoading {
+                    ContentUnavailableView("No Favorites",
+                                          systemImage: "star",
+                                          description: Text("Tap the star on any show to add it to your favorites."))
                 }
             }
         }
     }
 }
 
-struct DownloadedShowDestination: Hashable {
+struct FavoriteShowDestination: Hashable {
     let model: ShowMetadataModel
+    let showType: ShowType
 
     func hash(into hasher: inout Hasher) {
         hasher.combine(model.metadata?.identifier)
     }
 
-    static func == (lhs: DownloadedShowDestination, rhs: DownloadedShowDestination) -> Bool {
+    static func == (lhs: FavoriteShowDestination, rhs: FavoriteShowDestination) -> Bool {
         lhs.model.metadata?.identifier == rhs.model.metadata?.identifier
     }
 }
 
-struct DownloadedShowRow: View {
+struct FavoriteShowRow: View {
     let show: ShowMetadataModel
 
     var body: some View {

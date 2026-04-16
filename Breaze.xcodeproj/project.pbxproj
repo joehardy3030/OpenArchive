@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		04BF9CE33DA20B6CE196A51E /* FavoritesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3A64231D6EEA39C367B0A1F /* FavoritesStore.swift */; };
 		183B25F5A89C93BF012411B3 /* Pods_Breaze.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA40D6B8D9FFEE08A048EACE /* Pods_Breaze.framework */; };
 		7984F98F24A56EFD00989DB8 /* ArchiveAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7984F98E24A56EFD00989DB8 /* ArchiveAPI.swift */; };
 		799C3C902345582F00D9341E /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C3C8F2345582F00D9341E /* HealthKit.framework */; };
@@ -15,6 +16,8 @@
 		D80ACFA02F676B5500EA9D45 /* PhishNetAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80ACF9F2F676B5500EA9D45 /* PhishNetAPI.swift */; };
 		D80ACFA22F676B8200EA9D45 /* PhishNetAPIKeys.plist in Resources */ = {isa = PBXBuildFile; fileRef = D80ACFA12F676B8200EA9D45 /* PhishNetAPIKeys.plist */; };
 		D80ACFA42F6775DA00EA9D45 /* PhishInAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80ACFA32F6775DA00EA9D45 /* PhishInAPI.swift */; };
+		D80D90712F90828D00DB7C61 /* FavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80D906E2F90828D00DB7C61 /* FavoritesView.swift */; };
+		D80D90722F90828D00DB7C61 /* FavoritesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80D906F2F90828D00DB7C61 /* FavoritesViewModel.swift */; };
 		D82C59192DDAA5ED0013BAC5 /* LocalDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82C59172DDAA5ED0013BAC5 /* LocalDatabase.swift */; };
 		D82C591B2DDAC1460013BAC5 /* CollectionConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82C591A2DDAC1460013BAC5 /* CollectionConfig.swift */; };
 		D843EBDD24B3B10300C128A5 /* AudioPlayerArchive.swift in Sources */ = {isa = PBXBuildFile; fileRef = D843EBDC24B3B10300C128A5 /* AudioPlayerArchive.swift */; };
@@ -74,19 +77,24 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2EDB5ECFF6BB6224D240D386 /* FavoritesViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FavoritesViewModel.swift; sourceTree = "<group>"; };
 		7113B147C27353071FE30CE2 /* Pods-Breaze.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Breaze.release.xcconfig"; path = "Target Support Files/Pods-Breaze/Pods-Breaze.release.xcconfig"; sourceTree = "<group>"; };
 		7984F98E24A56EFD00989DB8 /* ArchiveAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveAPI.swift; sourceTree = "<group>"; };
 		799C3C8E2345582E00D9341E /* Breaze.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Breaze.entitlements; sourceTree = "<group>"; };
 		799C3C8F2345582F00D9341E /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
 		7EBF20D287E48F03823653E6 /* Pods_BreazeTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BreazeTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FBCB92D59AB9274CE58047B /* Pods-BreazeUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BreazeUITests.debug.xcconfig"; path = "Target Support Files/Pods-BreazeUITests/Pods-BreazeUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		A7638514D17C9D2D2F611E98 /* FavoritesView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
 		ABA5BEA386E29B37365374C6 /* Pods-BreazeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BreazeTests.release.xcconfig"; path = "Target Support Files/Pods-BreazeTests/Pods-BreazeTests.release.xcconfig"; sourceTree = "<group>"; };
 		BA40D6B8D9FFEE08A048EACE /* Pods_Breaze.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Breaze.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD90CD3FAF3DBFB84C42E535 /* Pods-BreazeUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BreazeUITests.release.xcconfig"; path = "Target Support Files/Pods-BreazeUITests/Pods-BreazeUITests.release.xcconfig"; sourceTree = "<group>"; };
+		C3A64231D6EEA39C367B0A1F /* FavoritesStore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FavoritesStore.swift; sourceTree = "<group>"; };
 		C9D58EED31CE81FB1690A28E /* Pods_BreazeUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BreazeUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D80ACF9F2F676B5500EA9D45 /* PhishNetAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhishNetAPI.swift; sourceTree = "<group>"; };
 		D80ACFA12F676B8200EA9D45 /* PhishNetAPIKeys.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PhishNetAPIKeys.plist; sourceTree = "<group>"; };
 		D80ACFA32F6775DA00EA9D45 /* PhishInAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhishInAPI.swift; sourceTree = "<group>"; };
+		D80D906E2F90828D00DB7C61 /* FavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
+		D80D906F2F90828D00DB7C61 /* FavoritesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesViewModel.swift; sourceTree = "<group>"; };
 		D82C59172DDAA5ED0013BAC5 /* LocalDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalDatabase.swift; sourceTree = "<group>"; };
 		D82C591A2DDAC1460013BAC5 /* CollectionConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionConfig.swift; sourceTree = "<group>"; };
 		D843EBDC24B3B10300C128A5 /* AudioPlayerArchive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerArchive.swift; sourceTree = "<group>"; };
@@ -197,10 +205,29 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		CA4222C6264AB9A60384EA78 /* FavoritesTab */ = {
+			isa = PBXGroup;
+			children = (
+				A7638514D17C9D2D2F611E98 /* FavoritesView.swift */,
+				2EDB5ECFF6BB6224D240D386 /* FavoritesViewModel.swift */,
+			);
+			path = FavoritesTab;
+			sourceTree = "<group>";
+		};
+		D80D90702F90828D00DB7C61 /* FavoritesTab */ = {
+			isa = PBXGroup;
+			children = (
+				D80D906E2F90828D00DB7C61 /* FavoritesView.swift */,
+				D80D906F2F90828D00DB7C61 /* FavoritesViewModel.swift */,
+			);
+			path = FavoritesTab;
+			sourceTree = "<group>";
+		};
 		D82C59182DDAA5ED0013BAC5 /* Database */ = {
 			isa = PBXGroup;
 			children = (
 				D82C59172DDAA5ED0013BAC5 /* LocalDatabase.swift */,
+				C3A64231D6EEA39C367B0A1F /* FavoritesStore.swift */,
 			);
 			path = Database;
 			sourceTree = "<group>";
@@ -309,12 +336,14 @@
 		E2000003202603A000000001 /* SwiftUIViews */ = {
 			isa = PBXGroup;
 			children = (
+				D80D90702F90828D00DB7C61 /* FavoritesTab */,
 				E2000003202603A000000002 /* BandsTab */,
 				E2000003202603A000000003 /* DownloadsTab */,
 				E2000003202603A000000004 /* SearchTab */,
 				E2000003202603A000000005 /* Player */,
 				E2000002202603A00000000B /* SwiftUIExtensions.swift */,
 				E2000002202603A000000011 /* DeepLinkRouter.swift */,
+				CA4222C6264AB9A60384EA78 /* FavoritesTab */,
 			);
 			path = SwiftUIViews;
 			sourceTree = "<group>";
@@ -652,6 +681,8 @@
 				E2000001202603A000000010 /* FullPlayerView.swift in Sources */,
 				E2000001202603A000000011 /* DeepLinkRouter.swift in Sources */,
 				D843EBDD24B3B10300C128A5 /* AudioPlayerArchive.swift in Sources */,
+				D80D90712F90828D00DB7C61 /* FavoritesView.swift in Sources */,
+				D80D90722F90828D00DB7C61 /* FavoritesViewModel.swift in Sources */,
 				D84D6E2824BEB5140022A058 /* NetworkUtility.swift in Sources */,
 				D8ACD2E22B1D6CC30097224B /* ChateauGPTModel.swift in Sources */,
 				7984F98F24A56EFD00989DB8 /* ArchiveAPI.swift in Sources */,
@@ -669,6 +700,7 @@
 				D80ACFA02F676B5500EA9D45 /* PhishNetAPI.swift in Sources */,
 				D8BA4E822F2155FE00B67F4F /* PlaybackState.swift in Sources */,
 				D8717D38258FE93E00C86954 /* SongDetailsModel.swift in Sources */,
+				04BF9CE33DA20B6CE196A51E /* FavoritesStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -852,7 +884,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 9.1.1;
+				MARKETING_VERSION = 9.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.carquinez.chateau;
 				PRODUCT_NAME = Chateau;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -878,7 +910,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 9.1.1;
+				MARKETING_VERSION = 9.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.carquinez.chateau;
 				PRODUCT_NAME = Chateau;
 				PROVISIONING_PROFILE_SPECIFIER = "";

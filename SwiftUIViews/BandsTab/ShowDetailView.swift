@@ -49,6 +49,13 @@ struct ShowDetailView: View {
                         .disabled(viewModel.isDownloading || viewModel.isDownloaded)
                     }
 
+                    Button {
+                        viewModel.toggleFavorite()
+                    } label: {
+                        Image(systemName: viewModel.isFavorite ? "star.fill" : "star")
+                            .foregroundColor(viewModel.isFavorite ? .yellow : .primary)
+                    }
+
                     ShareLink(item: viewModel.shareURL) {
                         Image(systemName: "square.and.arrow.up")
                     }
@@ -105,6 +112,12 @@ struct ShowDetailView: View {
                 }
                 if let tour = viewModel.phishNetTourName {
                     InfoRow(label: "Tour", value: tour)
+                }
+                if showType == .phishIn && viewModel.phishInShowLikes > 0 {
+                    InfoRow(label: "Likes", value: "\(viewModel.phishInShowLikes)")
+                }
+                if let taperNotes = viewModel.phishInTaperNotes, !taperNotes.isEmpty {
+                    InfoRow(label: "Taper Notes", value: taperNotes)
                 }
             }
 
@@ -176,36 +189,65 @@ struct ShowDetailView: View {
             if let tracks = viewModel.model?.mp3Array, !tracks.isEmpty {
                 Section("Tracks") {
                     ForEach(Array(tracks.enumerated()), id: \.offset) { index, track in
-                        Button {
-                            viewModel.streamOrPlay(startingAt: index, playerViewModel: playerViewModel)
-                        } label: {
-                            HStack {
-                                let isCurrentShow = playerViewModel.currentShow?.metadata?.identifier == metadata.identifier
-                                let isCurrentTrack = isCurrentShow && playerViewModel.currentTrackIndex == index
-                                if isCurrentTrack {
-                                    Image(systemName: playerViewModel.isPlaying ? "speaker.wave.2.fill" : "speaker.fill")
-                                        .foregroundColor(.accentColor)
-                                        .frame(width: 24)
-                                } else {
-                                    Text("\(index + 1)")
-                                        .font(.system(size: 14))
-                                        .foregroundColor(.secondary)
-                                        .frame(width: 24)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Button {
+                                viewModel.streamOrPlay(startingAt: index, playerViewModel: playerViewModel)
+                            } label: {
+                                HStack {
+                                    let isCurrentShow = playerViewModel.currentShow?.metadata?.identifier == metadata.identifier
+                                    let isCurrentTrack = isCurrentShow && playerViewModel.currentTrackIndex == index
+                                    if isCurrentTrack {
+                                        Image(systemName: playerViewModel.isPlaying ? "speaker.wave.2.fill" : "speaker.fill")
+                                            .foregroundColor(.accentColor)
+                                            .frame(width: 24)
+                                    } else {
+                                        Text("\(index + 1)")
+                                            .font(.system(size: 14))
+                                            .foregroundColor(.secondary)
+                                            .frame(width: 24)
+                                    }
+                                    Text(track.title ?? track.name ?? "Track \(index + 1)")
+                                        .font(.system(size: 18))
+                                        .foregroundColor(.primary)
+                                    Spacer()
+                                    // Phish.in track indicators
+                                    if showType == .phishIn, index < viewModel.phishInTracks.count {
+                                        let phishTrack = viewModel.phishInTracks[index]
+                                        if phishTrack.isJamchart {
+                                            Image(systemName: "flame.fill")
+                                                .foregroundColor(.orange)
+                                                .font(.caption)
+                                        }
+                                        if let likes = phishTrack.likes_count, likes > 0 {
+                                            HStack(spacing: 2) {
+                                                Image(systemName: "heart.fill")
+                                                    .foregroundColor(.red)
+                                                    .font(.caption2)
+                                                Text("\(likes)")
+                                                    .font(.system(size: 12))
+                                                    .foregroundColor(.secondary)
+                                            }
+                                        }
+                                    }
+                                    if viewModel.pendingTrackIndex == index {
+                                        ProgressView()
+                                    } else if viewModel.downloadingTrackIndex == index {
+                                        ProgressView()
+                                            .tint(.blue)
+                                    } else if track.destination != nil {
+                                        Image(systemName: "arrow.down.circle.fill")
+                                            .foregroundColor(.accentColor)
+                                            .font(.caption)
+                                    }
                                 }
-                                Text(track.title ?? track.name ?? "Track \(index + 1)")
-                                    .font(.system(size: 18))
-                                    .foregroundColor(.primary)
-                                Spacer()
-                                if viewModel.pendingTrackIndex == index {
-                                    ProgressView()
-                                } else if viewModel.downloadingTrackIndex == index {
-                                    ProgressView()
-                                        .tint(.blue)
-                                } else if track.destination != nil {
-                                    Image(systemName: "arrow.down.circle.fill")
-                                        .foregroundColor(.accentColor)
-                                        .font(.caption)
-                                }
+                            }
+                            // Jamcharts annotation below the track
+                            if showType == .phishIn, index < viewModel.phishInTracks.count,
+                               let notes = viewModel.phishInTracks[index].jamchartsNotes {
+                                Text(notes)
+                                    .font(.system(size: 13))
+                                    .foregroundColor(.orange)
+                                    .padding(.leading, 28)
                             }
                         }
                     }

@@ -74,6 +74,13 @@ struct FavoriteShowRow: View {
                     .lineLimit(1)
                     .truncationMode(.tail)
             }
+            if let transferer = show.metadata?.transferer, !transferer.isEmpty {
+                Text(transferer)
+                    .font(.system(size: 15))
+                    .foregroundColor(.secondary)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+            }
             if let rating = show.metadata?.avg_rating, let reviews = show.metadata?.num_reviews {
                 Text("\(String(format: "%.1f", rating)) stars  \(reviews) ratings")
                     .font(.system(size: 16))

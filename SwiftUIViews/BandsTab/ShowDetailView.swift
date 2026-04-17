@@ -106,6 +106,9 @@ struct ShowDetailView: View {
                 if let src = viewModel.fullMetadata?.source, !src.isEmpty {
                     InfoRow(label: "Source", value: src.joined(separator: "; "))
                 }
+                if let transferer = viewModel.fullMetadata?.transferer, !transferer.isEmpty {
+                    InfoRow(label: "Transferer", value: transferer)
+                }
                 if let rating = viewModel.fullMetadata?.avg_rating {
                     let reviews = viewModel.fullMetadata?.num_reviews ?? 0
                     InfoRow(label: "Recording Rating", value: "\(String(format: "%.1f", rating)) stars (\(reviews) reviews)")

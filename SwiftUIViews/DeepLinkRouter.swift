@@ -12,7 +12,7 @@ final class DeepLinkRouter: ObservableObject {
 
     func handle(url: URL) {
         guard let identifier = url.host, !identifier.isEmpty else { return }
-        pendingShowType = .archive
+        pendingShowType = identifier.hasPrefix("phishin-") ? .phishIn : .archive
         pendingModel = nil
         pendingShow = ShowMetadata(identifier: identifier)
     }

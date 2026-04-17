@@ -54,29 +54,18 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
         bandsTemplate.tabTitle = "Bands"
         */
         
-        // Create the My Tapes tab (downloaded shows) - load content immediately
+        // Create the My Tapes tab (downloaded shows)
         let myTapesTemplate = createMyTapesTabTemplate()
         myTapesTemplate.tabImage = UIImage(systemName: "icloud.and.arrow.down")
         myTapesTemplate.tabTitle = "My Tapes"
-        loadDownloadedShowsForTemplate(myTapesTemplate)
-        
-        /*
-        // Create the tab bar template
-        let tabBarTemplate = CPTabBarTemplate(templates: [myTapesTemplate, bandsTemplate])
-        
-        // Set as root template
-        self.interfaceController?.setRootTemplate(tabBarTemplate, animated: true) { success, error in
-            print("Set root template success: \(success)")
-            if let error = error {
-                print("Set root template error: \(error)")
-            }
-        }
-        */
-        
-        // Set MyTapes as the root template directly (without tabs)
         self.myTapesRootTemplate = myTapesTemplate
+
+        // Install the root template first; only then populate it. Mutating a
+        // template before it's attached to the interface controller can crash
+        // under CarPlay's assertion checks on some iOS versions.
         Task {
             try? await self.interfaceController?.setRootTemplate(myTapesTemplate, animated: true)
+            self.loadDownloadedShowsForTemplate(myTapesTemplate)
         }
     }
     

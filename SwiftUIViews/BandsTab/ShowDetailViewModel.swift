@@ -260,7 +260,11 @@ final class ShowDetailViewModel: ObservableObject {
     // MARK: - Phish.in Show Detail
 
     private func fetchPhishInShowDetail() {
-        guard let dateStr = initialMetadata.date else { return }
+        let dateStr = initialMetadata.date
+            ?? initialMetadata.identifier.flatMap { id in
+                id.hasPrefix("phishin-") ? String(id.dropFirst("phishin-".count)) : nil
+            }
+        guard let dateStr else { return }
         let showDate = String(dateStr.prefix(10))
         guard showDate.count == 10 else { return }
 

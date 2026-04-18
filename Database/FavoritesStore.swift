@@ -63,7 +63,7 @@ final class FavoritesStore {
                 var results: [(show: ShowMetadataModel, showType: ShowType)] = []
                 try self.dbQueue.read { db in
                     let rows = try Row.fetchAll(db,
-                        sql: "SELECT data, showType FROM favorites ORDER BY created_at DESC")
+                        sql: "SELECT data, showType FROM favorites")
                     for row in rows {
                         if let jsonString: String = row["data"],
                            let data = jsonString.data(using: .utf8),
@@ -74,6 +74,7 @@ final class FavoritesStore {
                         }
                     }
                 }
+                results.sort { ($0.show.metadata?.date ?? "") < ($1.show.metadata?.date ?? "") }
                 completion(results)
             } catch {
                 print("FavoritesStore read all error: \(error)")

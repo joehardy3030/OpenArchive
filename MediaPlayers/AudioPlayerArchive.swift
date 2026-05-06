@@ -51,6 +51,10 @@ class AudioPlayerArchive: NSObject {
     private var currentArtworkURL: URL?
     /// Suppresses playback state saves during advance-to-index loops
     private var isSeeking = false
+    /// Counts consecutive AVPlayerItem failures so we can skip a few bad tracks
+    /// before giving up entirely. Reset whenever an item successfully becomes ready.
+    private var consecutiveFailures = 0
+    private static let maxConsecutiveFailures = 3
     private let notificationCenter: NotificationCenter
     private var playCommandTarget: Any?
     private var pauseCommandTarget: Any?
@@ -251,6 +255,7 @@ class AudioPlayerArchive: NSObject {
             removePeriodicTimeObserver()
             playerQueue = nil
         }
+        consecutiveFailures = 0
     }
 
 
@@ -682,6 +687,7 @@ extension AudioPlayerArchive {
                 let status = playerItem.status
                 switch status {
                 case .readyToPlay:
+                    consecutiveFailures = 0
                     if self.playerQueue?.rate ?? 0.0 > 0.0 || self.state == .playing {
                         self.state = .playing
                     }
@@ -693,7 +699,18 @@ extension AudioPlayerArchive {
                         }
                         notificationCenter.post(name: .playbackFailed, object: self.playerQueue, userInfo: userInfo)
                     }
-                    self.state = .idle
+
+                    let wasActive = (self.state == .playing || self.state == .rewind)
+                    let hasMoreItems = (self.playerQueue?.items().count ?? 0) > 1
+                    if wasActive && hasMoreItems && consecutiveFailures < AudioPlayerArchive.maxConsecutiveFailures {
+                        consecutiveFailures += 1
+                        print("AudioPlayerArchive: item failed, skipping to next track (attempt \(consecutiveFailures)/\(AudioPlayerArchive.maxConsecutiveFailures))")
+                        self.playerQueue?.advanceToNextItem()
+                        self.playerQueue?.play()
+                    } else {
+                        consecutiveFailures = 0
+                        self.state = .idle
+                    }
                 case .unknown:
                     break
                 @unknown default:

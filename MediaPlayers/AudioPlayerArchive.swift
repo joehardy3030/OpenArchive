@@ -286,6 +286,19 @@ class AudioPlayerArchive: NSObject {
     }
     */
     
+    /// Returns the best URL to play a track: a local file if one exists on disk,
+    /// otherwise an archive.org streaming URL. Ensures downloaded tracks always
+    /// play offline even when the show was loaded via a streaming entry point.
+    private func resolveTrackURL(for track: ShowMP3, identifier: String?) -> URL? {
+        guard let name = track.name else { return nil }
+        if let localURL = utils.trackURLfromName(name: name),
+           FileManager.default.fileExists(atPath: localURL.path) {
+            return localURL
+        }
+        guard let id = identifier else { return nil }
+        return utils.trackStreamingURLfromNameAndIdentifier(identifier: id, name: name)
+    }
+
     func prepareToPlay(url: URL) {
         let asset = AVURLAsset(url: url)
         let assetKeys = ["playable"]
@@ -318,17 +331,17 @@ class AudioPlayerArchive: NSObject {
     func loadQueuePlayer(tracks: [ShowMP3], startingAt index: Int = 0) {
         cleanQueue()
         isStreaming = false  // Set flag for local playback
+        let identifier = showMetadataModel?.metadata?.identifier
         guard let startIndex = Self.normalizedStartIndex(index, count: tracks.count) else { return }
         for track in tracks[startIndex...] {
-            guard let n = track.name else { return }
-            if let url = utils.trackURLfromName(name: n) {
+            if let url = resolveTrackURL(for: track, identifier: identifier) {
                 prepareToPlay(url: url)
             }
         }
         guard !playerItems.isEmpty else { return }
         playerQueue = AVQueuePlayer(items: playerItems)
     }
-    
+
     func loadStreamingQueuePlayer(startingAt index: Int = 0) {
         print("\(timestamp()) streaming, starting at index \(index)")
         cleanQueue()
@@ -336,9 +349,7 @@ class AudioPlayerArchive: NSObject {
         guard let tracks = self.showMetadataModel?.mp3Array, let id = self.showMetadataModel?.metadata?.identifier else { return }
         guard let startIndex = Self.normalizedStartIndex(index, count: tracks.count) else { return }
         for track in tracks[startIndex...] {
-            guard let n = track.name else { return }
-
-            if let url = utils.trackStreamingURLfromNameAndIdentifier(identifier: id, name: n) {
+            if let url = resolveTrackURL(for: track, identifier: id) {
                 prepareToPlay(url: url)
             }
         }
@@ -363,9 +374,9 @@ class AudioPlayerArchive: NSObject {
         //cleanQueue()
         guard let pq = playerQueue else { return }
         pq.removeAllItems()
+        let identifier = showMetadataModel?.metadata?.identifier
         for track in tracks {
-            guard let n = track.name else { return }
-            if let url = utils.trackURLfromName(name: n) {
+            if let url = resolveTrackURL(for: track, identifier: identifier) {
                 prepareToPlay(url: url)
             }
         }
@@ -373,15 +384,14 @@ class AudioPlayerArchive: NSObject {
             pq.insert(item, after: nil)
         }
     }
-    
+
     func reLoadStreamingQueuePlayer(tracks: [ShowMP3]) {
         guard let pq = playerQueue, let id = self.showMetadataModel?.metadata?.identifier else { return }
         pq.removeAllItems()
         playerItems = []  // Clear the items array
-        
+
         for track in tracks {
-            guard let n = track.name else { return }
-            if let url = utils.trackStreamingURLfromNameAndIdentifier(identifier: id, name: n) {
+            if let url = resolveTrackURL(for: track, identifier: id) {
                 prepareToPlay(url: url)
             }
         }
@@ -694,9 +704,10 @@ extension AudioPlayerArchive {
                 case .failed:
                     if let item = self.playerQueue?.currentItem, let error = item.error {
                         var userInfo: [String: Any] = ["error": error]
-                        if let urlAsset = item.asset as? AVURLAsset {
-                            userInfo["failedURL"] = urlAsset.url
-                        }
+                        let failedURL = (item.asset as? AVURLAsset)?.url
+                        if let url = failedURL { userInfo["failedURL"] = url }
+                        let nsErr = error as NSError
+                        print("AudioPlayerArchive: item failed — domain=\(nsErr.domain) code=\(nsErr.code) url=\(failedURL?.absoluteString ?? "nil") underlying=\(nsErr.userInfo[NSUnderlyingErrorKey] ?? "nil")")
                         notificationCenter.post(name: .playbackFailed, object: self.playerQueue, userInfo: userInfo)
                     }
 

@@ -21,7 +21,9 @@ class ArchiveAPI: NSObject {
     
     override init() {
         configuration = URLSessionConfiguration.default
-        configuration.timeoutIntervalForRequest = 10000
+        // Idle timeout: detect stalled transfers (no bytes for N seconds) so we can retry
+        // rather than hanging indefinitely. Total resource time stays unlimited.
+        configuration.timeoutIntervalForRequest = 60
         sessionManager = Alamofire.Session(configuration: configuration)
         super.init()
     }
@@ -357,6 +359,7 @@ class ArchiveAPI: NSObject {
         }
 
         self.sessionManager.download(downloadURL, to: destination)
+            .validate(statusCode: 200..<300)
             .downloadProgress { (progressObject) in
                 progressHandler?(progressObject.fractionCompleted)
             }
@@ -365,13 +368,70 @@ class ArchiveAPI: NSObject {
                     print("Download failed with error: \(error.localizedDescription) for URL: \(downloadURL)")
                     completion(nil, error)
                 } else if let fileURL = response.fileURL {
-                    print("Download finished. File saved to: \(fileURL.path) for URL: \(downloadURL)")
-                    completion(fileURL, nil)
+                    let expectedSize = response.response?.expectedContentLength ?? -1
+                    if let validationError = ArchiveAPI.validateDownloadedMP3(at: fileURL, expectedSize: expectedSize) {
+                        print("Download validation failed for \(fileURL.path): \(validationError.localizedDescription)")
+                        try? FileManager.default.removeItem(at: fileURL)
+                        completion(nil, validationError)
+                    } else {
+                        print("Download finished. File saved to: \(fileURL.path) for URL: \(downloadURL)")
+                        completion(fileURL, nil)
+                    }
                 } else {
                     print("Download completed with no file URL and no error for URL: \(downloadURL)")
                     completion(nil, NSError(domain: "ArchiveAPIError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Download finished with an unknown state."]))
                 }
             }
+    }
+
+    /// Validates a freshly downloaded MP3 file. Catches HTML error pages saved as .mp3,
+    /// truncated downloads, and other corruption that the network layer didn't flag.
+    /// Returns an error describing the problem, or nil if the file looks valid.
+    static func validateDownloadedMP3(at url: URL, expectedSize: Int64) -> NSError? {
+        func err(_ code: Int, _ message: String) -> NSError {
+            NSError(domain: "ArchiveAPIDownloadValidation", code: code, userInfo: [NSLocalizedDescriptionKey: message])
+        }
+
+        let attrs: [FileAttributeKey: Any]
+        do {
+            attrs = try FileManager.default.attributesOfItem(atPath: url.path)
+        } catch {
+            return err(100, "Could not read attributes of downloaded file")
+        }
+        guard let actualSize = (attrs[.size] as? NSNumber)?.int64Value else {
+            return err(101, "Downloaded file has no size attribute")
+        }
+
+        // Concert MP3 tracks are at minimum hundreds of KB. Anything under 10KB is
+        // almost certainly an HTML error page or a truncated start.
+        if actualSize < 10_000 {
+            return err(102, "Downloaded file is suspiciously small (\(actualSize) bytes)")
+        }
+
+        // If the server told us the size, the file should match. Allow a small slack
+        // for the off chance the server reports differently than what was written.
+        if expectedSize > 0 && llabs(actualSize - expectedSize) > 1024 {
+            return err(103, "Size mismatch — expected \(expectedSize) bytes, got \(actualSize)")
+        }
+
+        // Magic bytes: MP3 files start with either an "ID3" tag or an MPEG frame sync
+        // (0xFF followed by a byte whose top 3 bits are set).
+        guard let handle = try? FileHandle(forReadingFrom: url) else {
+            return err(104, "Could not open downloaded file for header check")
+        }
+        defer { try? handle.close() }
+        let header = handle.readData(ofLength: 3)
+        guard header.count == 3 else {
+            return err(105, "Downloaded file is too short to contain a valid MP3 header")
+        }
+        let b0 = header[0], b1 = header[1], b2 = header[2]
+        let isID3 = (b0 == 0x49 && b1 == 0x44 && b2 == 0x33)        // "ID3"
+        let isFrameSync = (b0 == 0xFF && (b1 & 0xE0) == 0xE0)        // MPEG sync
+        if !isID3 && !isFrameSync {
+            return err(106, "Downloaded file does not start with a valid MP3 header (got \(String(format: "%02X %02X %02X", b0, b1, b2)))")
+        }
+
+        return nil
     }
     
     private func timestamp() -> String {

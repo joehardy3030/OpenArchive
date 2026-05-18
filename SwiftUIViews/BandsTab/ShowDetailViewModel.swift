@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 final class ShowDetailViewModel: ObservableObject {
     @Published var model: ShowMetadataModel?
@@ -194,10 +195,30 @@ final class ShowDetailViewModel: ObservableObject {
         isDownloading = true
         downloadingTrackIndex = 0
         self.downloadPlayerViewModel = playerViewModel
+        beginDownloadBackgroundTask()
         downloadSyncRun()
     }
 
     private weak var downloadPlayerViewModel: PlayerViewModel?
+    private var downloadBackgroundTaskID: UIBackgroundTaskIdentifier = .invalid
+    private static let maxDownloadAttempts = 3
+
+    private func beginDownloadBackgroundTask() {
+        endDownloadBackgroundTask()  // defensive — never leak a previous handle
+        downloadBackgroundTaskID = UIApplication.shared.beginBackgroundTask(withName: "ShowDownload") { [weak self] in
+            // iOS is about to suspend us. Release the assertion; in-flight downloads
+            // may be cancelled by the OS, and the chain will resume next foregrounding
+            // (or surface as errors that the retry logic handles).
+            print("ShowDetailViewModel: background download time expired")
+            self?.endDownloadBackgroundTask()
+        }
+    }
+
+    private func endDownloadBackgroundTask() {
+        guard downloadBackgroundTaskID != .invalid else { return }
+        UIApplication.shared.endBackgroundTask(downloadBackgroundTaskID)
+        downloadBackgroundTaskID = .invalid
+    }
 
     private func downloadSyncRun() {
         guard let mp3s = model?.mp3Array, let idx = downloadingTrackIndex else { return }
@@ -216,7 +237,8 @@ final class ShowDetailViewModel: ObservableObject {
                 let justFinishedIndex = self.downloadingTrackIndex ?? 0
 
                 // Start playing as soon as the first track finishes downloading
-                if justFinishedIndex == 0, let pvm = self.downloadPlayerViewModel {
+                // (only if it actually succeeded — destination is non-nil)
+                if justFinishedIndex == 0, destination != nil, let pvm = self.downloadPlayerViewModel {
                     self.streamOrPlay(startingAt: 0, playerViewModel: pvm)
                 }
 
@@ -226,18 +248,34 @@ final class ShowDetailViewModel: ObservableObject {
         }
     }
 
-    private func downloadSong(showMP3: ShowMP3, completion: @escaping (URL?) -> Void) {
+    private func downloadSong(showMP3: ShowMP3,
+                              attempt: Int = 1,
+                              completion: @escaping (URL?) -> Void) {
         guard let trackName = showMP3.name else { completion(nil); return }
         let url = archiveAPI.downloadURL(identifier: initialMetadata.identifier, filename: trackName)
         guard let localURL = utils.trackURLfromName(name: trackName) else { completion(nil); return }
 
         if fileManager.fileExists(atPath: localURL.path) {
             completion(localURL)
-        } else {
-            archiveAPI.getIADownload(url: url) { localFileURL, error in
-                guard error == nil else { return }
-                completion(localFileURL)
+            return
+        }
+
+        archiveAPI.getIADownload(url: url) { [weak self] localFileURL, error in
+            guard let self = self else { completion(nil); return }
+            if let error = error {
+                if attempt < Self.maxDownloadAttempts {
+                    let backoff = pow(2.0, Double(attempt - 1))  // 1s, 2s, 4s
+                    print("Download attempt \(attempt) failed for \(trackName): \(error.localizedDescription) — retrying in \(backoff)s")
+                    DispatchQueue.main.asyncAfter(deadline: .now() + backoff) { [weak self] in
+                        self?.downloadSong(showMP3: showMP3, attempt: attempt + 1, completion: completion)
+                    }
+                } else {
+                    print("Download permanently failed for \(trackName) after \(Self.maxDownloadAttempts) attempts: \(error.localizedDescription)")
+                    completion(nil)
+                }
+                return
             }
+            completion(localFileURL)
         }
     }
 
@@ -250,10 +288,22 @@ final class ShowDetailViewModel: ObservableObject {
 
     private func saveDownloadData() {
         _ = network.addDownloadDataDoc(showMetadataModel: model)
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
             self.isDownloading = false
             self.downloadingTrackIndex = nil
             self.isDownloaded = true
+            self.endDownloadBackgroundTask()
+        }
+    }
+
+    deinit {
+        let taskID = downloadBackgroundTaskID
+        guard taskID != .invalid else { return }
+        // Can't capture self inside deinit; release the assertion on the main queue
+        // by passing the raw identifier.
+        DispatchQueue.main.async {
+            UIApplication.shared.endBackgroundTask(taskID)
         }
     }
 

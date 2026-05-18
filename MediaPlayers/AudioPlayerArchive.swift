@@ -55,6 +55,9 @@ class AudioPlayerArchive: NSObject {
     /// before giving up entirely. Reset whenever an item successfully becomes ready.
     private var consecutiveFailures = 0
     private static let maxConsecutiveFailures = 3
+    /// Tracks local file URLs we've already tried to recover from via the streaming
+    /// fallback, so we don't loop forever if the stream also fails.
+    private var streamingFallbackAttempted = Set<String>()
     private let notificationCenter: NotificationCenter
     private var playCommandTarget: Any?
     private var pauseCommandTarget: Any?
@@ -256,6 +259,7 @@ class AudioPlayerArchive: NSObject {
             playerQueue = nil
         }
         consecutiveFailures = 0
+        streamingFallbackAttempted.removeAll()
     }
 
 
@@ -286,6 +290,44 @@ class AudioPlayerArchive: NSObject {
     }
     */
     
+    /// Attempts to swap a failed local-file item with a streaming version of the
+    /// same track. Returns true if a streaming item was queued and playback was
+    /// resumed. Used to recover from corrupt/truncated downloaded files.
+    private func attemptStreamingFallback(forFailedURL failedURL: URL) -> Bool {
+        guard failedURL.isFileURL,
+              !streamingFallbackAttempted.contains(failedURL.absoluteString),
+              let identifier = showMetadataModel?.metadata?.identifier,
+              let queue = self.playerQueue,
+              let failedItem = queue.currentItem else {
+            return false
+        }
+
+        // Use the track's stored name (preserves nested paths) rather than the
+        // file URL's last component, which would lose subdirectories.
+        let trackIndex = getCurrentTrackIndex()
+        let tracks = showMetadataModel?.mp3Array
+        let trackName = (tracks != nil && trackIndex < tracks!.count ? tracks![trackIndex].name : nil) ?? failedURL.lastPathComponent
+        guard let streamURL = utils.trackStreamingURLfromNameAndIdentifier(identifier: identifier, name: trackName) else {
+            return false
+        }
+
+        streamingFallbackAttempted.insert(failedURL.absoluteString)
+        print("AudioPlayerArchive: local file failed, falling back to stream — \(streamURL.absoluteString)")
+
+        let asset = AVURLAsset(url: streamURL)
+        let streamItem = AVPlayerItem(asset: asset, automaticallyLoadedAssetKeys: ["playable"])
+
+        // Defer so we're not mutating the queue from inside the failed item's KVO callback.
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self, let queue = self.playerQueue else { return }
+            guard queue.canInsert(streamItem, after: failedItem) else { return }
+            queue.insert(streamItem, after: failedItem)
+            queue.advanceToNextItem()  // discards the failed item, streamItem becomes current
+            queue.play()
+        }
+        return true
+    }
+
     /// Returns the best URL to play a track: a local file if one exists on disk,
     /// otherwise an archive.org streaming URL. Ensures downloaded tracks always
     /// play offline even when the show was loaded via a streaming entry point.
@@ -702,13 +744,20 @@ extension AudioPlayerArchive {
                         self.state = .playing
                     }
                 case .failed:
+                    var failedURL: URL?
                     if let item = self.playerQueue?.currentItem, let error = item.error {
                         var userInfo: [String: Any] = ["error": error]
-                        let failedURL = (item.asset as? AVURLAsset)?.url
+                        failedURL = (item.asset as? AVURLAsset)?.url
                         if let url = failedURL { userInfo["failedURL"] = url }
                         let nsErr = error as NSError
                         print("AudioPlayerArchive: item failed — domain=\(nsErr.domain) code=\(nsErr.code) url=\(failedURL?.absoluteString ?? "nil") underlying=\(nsErr.userInfo[NSUnderlyingErrorKey] ?? "nil")")
                         notificationCenter.post(name: .playbackFailed, object: self.playerQueue, userInfo: userInfo)
+                    }
+
+                    // If a downloaded local file failed (corrupt/truncated), try the
+                    // streaming version of the same track before skipping.
+                    if let url = failedURL, attemptStreamingFallback(forFailedURL: url) {
+                        break
                     }
 
                     let wasActive = (self.state == .playing || self.state == .rewind)

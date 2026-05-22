@@ -43,7 +43,16 @@ class AudioPlayerArchive: NSObject {
     var songDetailsModel = SongDetailsModel()
     private var timerToken: Any?
     private weak var timerTokenPlayer: AVQueuePlayer?
-    var showMetadataModel: ShowMetadataModel?
+    var showMetadataModel: ShowMetadataModel? {
+        didSet {
+            // Reset per-show fallback state when the user switches shows.
+            let oldId = oldValue?.metadata?.identifier
+            let newId = showMetadataModel?.metadata?.identifier
+            if oldId != newId {
+                pathsToForceStream.removeAll()
+            }
+        }
+    }
     var isStreaming: Bool = false  // Track whether we're streaming or playing local files
     var currentShowType: ShowType = .archive
     /// Cached artwork image for Now Playing info (lock screen, CarPlay, Control Center)
@@ -55,9 +64,10 @@ class AudioPlayerArchive: NSObject {
     /// before giving up entirely. Reset whenever an item successfully becomes ready.
     private var consecutiveFailures = 0
     private static let maxConsecutiveFailures = 3
-    /// Tracks local file URLs we've already tried to recover from via the streaming
-    /// fallback, so we don't loop forever if the stream also fails.
-    private var streamingFallbackAttempted = Set<String>()
+    /// Local file paths that have failed in-session and should be skipped in favor
+    /// of the streaming URL. Persists across queue rebuilds within the same show;
+    /// cleared when `showMetadataModel` switches to a different show.
+    private var pathsToForceStream = Set<String>()
     private let notificationCenter: NotificationCenter
     private var playCommandTarget: Any?
     private var pauseCommandTarget: Any?
@@ -259,7 +269,8 @@ class AudioPlayerArchive: NSObject {
             playerQueue = nil
         }
         consecutiveFailures = 0
-        streamingFallbackAttempted.removeAll()
+        // Note: pathsToForceStream is NOT cleared here — it must survive queue
+        // rebuilds within the same show so the failed local file stays skipped.
     }
 
 
@@ -290,50 +301,42 @@ class AudioPlayerArchive: NSObject {
     }
     */
     
-    /// Attempts to swap a failed local-file item with a streaming version of the
-    /// same track. Returns true if a streaming item was queued and playback was
-    /// resumed. Used to recover from corrupt/truncated downloaded files.
+    /// Marks a failed local file path as "force stream" and rebuilds the queue from
+    /// the current track. The next pass through `resolveTrackURL` will pick the
+    /// streaming URL for the bad track and keep local URLs for everything else.
+    /// Returns true if a rebuild was scheduled. Used to recover from corrupt or
+    /// truncated downloaded files without surgically mutating the live queue
+    /// around a failed item (which AVQueuePlayer doesn't reliably recover from).
     private func attemptStreamingFallback(forFailedURL failedURL: URL) -> Bool {
         guard failedURL.isFileURL,
-              !streamingFallbackAttempted.contains(failedURL.absoluteString),
-              let identifier = showMetadataModel?.metadata?.identifier,
-              let queue = self.playerQueue,
-              let failedItem = queue.currentItem else {
+              !pathsToForceStream.contains(failedURL.path),
+              showMetadataModel?.metadata?.identifier != nil,
+              let tracks = showMetadataModel?.mp3Array,
+              !tracks.isEmpty else {
             return false
         }
 
-        // Use the track's stored name (preserves nested paths) rather than the
-        // file URL's last component, which would lose subdirectories.
-        let trackIndex = getCurrentTrackIndex()
-        let tracks = showMetadataModel?.mp3Array
-        let trackName = (tracks != nil && trackIndex < tracks!.count ? tracks![trackIndex].name : nil) ?? failedURL.lastPathComponent
-        guard let streamURL = utils.trackStreamingURLfromNameAndIdentifier(identifier: identifier, name: trackName) else {
-            return false
-        }
+        pathsToForceStream.insert(failedURL.path)
+        let currentIndex = getCurrentTrackIndex()
+        print("AudioPlayerArchive: local file failed, rebuilding queue with streaming fallback for \(failedURL.lastPathComponent), starting at track \(currentIndex)")
 
-        streamingFallbackAttempted.insert(failedURL.absoluteString)
-        print("AudioPlayerArchive: local file failed, falling back to stream — \(streamURL.absoluteString)")
-
-        let asset = AVURLAsset(url: streamURL)
-        let streamItem = AVPlayerItem(asset: asset, automaticallyLoadedAssetKeys: ["playable"])
-
-        // Defer so we're not mutating the queue from inside the failed item's KVO callback.
+        // Defer so we're not rebuilding the queue from inside the failed item's KVO callback.
         DispatchQueue.main.async { [weak self] in
-            guard let self = self, let queue = self.playerQueue else { return }
-            guard queue.canInsert(streamItem, after: failedItem) else { return }
-            queue.insert(streamItem, after: failedItem)
-            queue.advanceToNextItem()  // discards the failed item, streamItem becomes current
-            queue.play()
+            guard let self = self, let tracks = self.showMetadataModel?.mp3Array else { return }
+            self.loadQueuePlayer(tracks: tracks, startingAt: currentIndex)
+            self.play()
         }
         return true
     }
 
-    /// Returns the best URL to play a track: a local file if one exists on disk,
-    /// otherwise an archive.org streaming URL. Ensures downloaded tracks always
-    /// play offline even when the show was loaded via a streaming entry point.
+    /// Returns the best URL to play a track: a local file if one exists on disk
+    /// and hasn't been marked bad this session, otherwise an archive.org streaming
+    /// URL. Ensures downloaded tracks play offline by default, and that a known-bad
+    /// downloaded file falls back to streaming for the rest of the show.
     private func resolveTrackURL(for track: ShowMP3, identifier: String?) -> URL? {
         guard let name = track.name else { return nil }
         if let localURL = utils.trackURLfromName(name: name),
+           !pathsToForceStream.contains(localURL.path),
            FileManager.default.fileExists(atPath: localURL.path) {
             return localURL
         }

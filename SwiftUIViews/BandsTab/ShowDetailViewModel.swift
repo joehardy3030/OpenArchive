@@ -1,5 +1,4 @@
 import Foundation
-import UIKit
 
 final class ShowDetailViewModel: ObservableObject {
     @Published var model: ShowMetadataModel?
@@ -34,6 +33,9 @@ final class ShowDetailViewModel: ObservableObject {
     private let fileManager = FileManager.default
     private let player = AudioPlayerArchive.shared
     @Published var downloadingTrackIndex: Int? = nil
+    /// Fractional download progress (0.0–1.0) of the currently-downloading track.
+    /// Reset to 0 when the chain advances to the next track.
+    @Published var currentTrackProgress: Double = 0
     var fullMetadata: ShowMetadata? { model?.metadata }
 
     /// Whether this show is a Phish show (eligible for Phish.net enrichment)
@@ -189,36 +191,23 @@ final class ShowDetailViewModel: ObservableObject {
 
     // MARK: - Download
 
-    func downloadShow(playerViewModel: PlayerViewModel) {
-        guard !isDownloading, !isDownloaded else { return }
-        guard let mp3s = model?.mp3Array, !mp3s.isEmpty else { return }
+    func downloadShow() {
+        print("ShowDetailViewModel: downloadShow called — isDownloading=\(isDownloading) isDownloaded=\(isDownloaded) trackCount=\(model?.mp3Array?.count ?? 0)")
+        guard !isDownloading, !isDownloaded else {
+            print("ShowDetailViewModel: downloadShow bailed early (already downloading or downloaded)")
+            return
+        }
+        guard let mp3s = model?.mp3Array, !mp3s.isEmpty else {
+            print("ShowDetailViewModel: downloadShow bailed — no tracks")
+            return
+        }
         isDownloading = true
         downloadingTrackIndex = 0
-        self.downloadPlayerViewModel = playerViewModel
-        beginDownloadBackgroundTask()
+        print("ShowDetailViewModel: starting download chain for \(mp3s.count) tracks")
         downloadSyncRun()
     }
 
-    private weak var downloadPlayerViewModel: PlayerViewModel?
-    private var downloadBackgroundTaskID: UIBackgroundTaskIdentifier = .invalid
     private static let maxDownloadAttempts = 3
-
-    private func beginDownloadBackgroundTask() {
-        endDownloadBackgroundTask()  // defensive — never leak a previous handle
-        downloadBackgroundTaskID = UIApplication.shared.beginBackgroundTask(withName: "ShowDownload") { [weak self] in
-            // iOS is about to suspend us. Release the assertion; in-flight downloads
-            // may be cancelled by the OS, and the chain will resume next foregrounding
-            // (or surface as errors that the retry logic handles).
-            print("ShowDetailViewModel: background download time expired")
-            self?.endDownloadBackgroundTask()
-        }
-    }
-
-    private func endDownloadBackgroundTask() {
-        guard downloadBackgroundTaskID != .invalid else { return }
-        UIApplication.shared.endBackgroundTask(downloadBackgroundTaskID)
-        downloadBackgroundTaskID = .invalid
-    }
 
     private func downloadSyncRun() {
         guard let mp3s = model?.mp3Array, let idx = downloadingTrackIndex else { return }
@@ -230,19 +219,19 @@ final class ShowDetailViewModel: ObservableObject {
     }
 
     private func downloadSync(showMP3: ShowMP3) {
+        currentTrackProgress = 0
         downloadSong(showMP3: showMP3) { [weak self] destination in
             guard let self else { return }
             DispatchQueue.main.async {
                 self.setDownloadComplete(destination: destination, name: showMP3.name)
                 let justFinishedIndex = self.downloadingTrackIndex ?? 0
-
-                // Start playing as soon as the first track finishes downloading
-                // (only if it actually succeeded — destination is non-nil)
-                if justFinishedIndex == 0, destination != nil, let pvm = self.downloadPlayerViewModel {
-                    self.streamOrPlay(startingAt: 0, playerViewModel: pvm)
-                }
-
+                // Note: previously we auto-started playback once the first track
+                // finished, but AVPlayer's pre-buffering of remaining streaming
+                // URLs stalls background downloads (iOS deprioritizes background
+                // URLSession traffic when the app is actively pulling from the
+                // network). The user can tap play once the show is downloaded.
                 self.downloadingTrackIndex = justFinishedIndex + 1
+                self.currentTrackProgress = 0
                 self.downloadSyncRun()
             }
         }
@@ -260,7 +249,10 @@ final class ShowDetailViewModel: ObservableObject {
             return
         }
 
-        archiveAPI.getIADownload(url: url) { [weak self] localFileURL, error in
+        guard let downloadURL = url else { completion(nil); return }
+        BackgroundDownloadManager.shared.download(from: downloadURL, progress: { [weak self] fraction in
+            self?.currentTrackProgress = fraction
+        }) { [weak self] localFileURL, error in
             guard let self = self else { completion(nil); return }
             if let error = error {
                 if attempt < Self.maxDownloadAttempts {
@@ -293,17 +285,6 @@ final class ShowDetailViewModel: ObservableObject {
             self.isDownloading = false
             self.downloadingTrackIndex = nil
             self.isDownloaded = true
-            self.endDownloadBackgroundTask()
-        }
-    }
-
-    deinit {
-        let taskID = downloadBackgroundTaskID
-        guard taskID != .invalid else { return }
-        // Can't capture self inside deinit; release the assertion on the main queue
-        // by passing the raw identifier.
-        DispatchQueue.main.async {
-            UIApplication.shared.endBackgroundTask(taskID)
         }
     }
 

@@ -34,7 +34,7 @@ struct ShowDetailView: View {
 
                     if showType == .archive {
                         Button {
-                            viewModel.downloadShow(playerViewModel: playerViewModel)
+                            viewModel.downloadShow()
                         } label: {
                             if viewModel.isDownloading {
                                 ProgressView()
@@ -235,8 +235,14 @@ struct ShowDetailView: View {
                                     if viewModel.pendingTrackIndex == index {
                                         ProgressView()
                                     } else if viewModel.downloadingTrackIndex == index {
-                                        ProgressView()
-                                            .tint(.blue)
+                                        if viewModel.currentTrackProgress > 0 {
+                                            Text("\(Int(viewModel.currentTrackProgress * 100))%")
+                                                .font(.caption.monospacedDigit())
+                                                .foregroundColor(.blue)
+                                        } else {
+                                            ProgressView()
+                                                .tint(.blue)
+                                        }
                                     } else if track.destination != nil {
                                         Image(systemName: "arrow.down.circle.fill")
                                             .foregroundColor(.accentColor)

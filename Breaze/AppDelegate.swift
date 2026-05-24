@@ -25,8 +25,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("application did finish")
         // Firebase authentication removed; local database used instead
         _ = sharedSetup()
+        // Instantiate the background download session early so any pending delegate
+        // events (delivered by iOS when the app was relaunched to handle completions)
+        // have somewhere to land.
+        BackgroundDownloadManager.shared.prepare()
         return true
- 
+
+    }
+
+    // Called by iOS when the system needs to deliver background URLSession events
+    // (download completions that occurred while the app was suspended or terminated).
+    // We must forward the completion handler so iOS can suspend us again when done.
+    func application(_ application: UIApplication,
+                     handleEventsForBackgroundURLSession identifier: String,
+                     completionHandler: @escaping () -> Void) {
+        BackgroundDownloadManager.shared.handleEventsForBackgroundURLSession(
+            identifier: identifier,
+            completionHandler: completionHandler
+        )
     }
     
 

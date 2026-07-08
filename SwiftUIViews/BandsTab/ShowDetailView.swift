@@ -42,6 +42,9 @@ struct ShowDetailView: View {
                             } else if viewModel.isDownloaded {
                                 Image(systemName: "checkmark.circle.fill")
                                     .foregroundColor(.accentColor)
+                            } else if !viewModel.failedTrackNames.isEmpty {
+                                Image(systemName: "exclamationmark.arrow.circlepath")
+                                    .foregroundColor(.orange)
                             } else {
                                 Image(systemName: "arrow.down.circle")
                             }
@@ -269,6 +272,14 @@ struct ShowDetailView: View {
             if viewModel.isLoading && viewModel.model?.metadata == nil {
                 ProgressView("Loading show...")
             }
+        }
+        .alert("Download Incomplete",
+               isPresented: Binding(
+                   get: { viewModel.downloadAlertMessage != nil },
+                   set: { if !$0 { viewModel.downloadAlertMessage = nil } })) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(viewModel.downloadAlertMessage ?? "")
         }
     }
 }

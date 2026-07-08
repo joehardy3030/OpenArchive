@@ -36,6 +36,11 @@ final class ShowDetailViewModel: ObservableObject {
     /// Fractional download progress (0.0–1.0) of the currently-downloading track.
     /// Reset to 0 when the chain advances to the next track.
     @Published var currentTrackProgress: Double = 0
+    /// Tracks that permanently failed during the current/most recent download run.
+    @Published var failedTrackNames: [String] = []
+    /// Non-nil when the last download run finished with failures; drives the alert.
+    @Published var downloadAlertMessage: String?
+    private var didRetryFailedTracks = false
     var fullMetadata: ShowMetadata? { model?.metadata }
 
     /// Whether this show is a Phish show (eligible for Phish.net enrichment)
@@ -203,6 +208,9 @@ final class ShowDetailViewModel: ObservableObject {
         }
         isDownloading = true
         downloadingTrackIndex = 0
+        failedTrackNames = []
+        downloadAlertMessage = nil
+        didRetryFailedTracks = false
         print("ShowDetailViewModel: starting download chain for \(mp3s.count) tracks")
         downloadSyncRun()
     }
@@ -213,6 +221,14 @@ final class ShowDetailViewModel: ObservableObject {
         guard let mp3s = model?.mp3Array, let idx = downloadingTrackIndex else { return }
         if idx < mp3s.count {
             downloadSync(showMP3: mp3s[idx])
+        } else if !failedTrackNames.isEmpty && !didRetryFailedTracks {
+            // One extra sweep over the whole show: tracks already on disk complete
+            // instantly, so this only re-attempts the failures.
+            didRetryFailedTracks = true
+            print("ShowDetailViewModel: retrying \(failedTrackNames.count) failed track(s)")
+            failedTrackNames = []
+            downloadingTrackIndex = 0
+            downloadSyncRun()
         } else {
             saveDownloadData()
         }
@@ -223,7 +239,11 @@ final class ShowDetailViewModel: ObservableObject {
         downloadSong(showMP3: showMP3) { [weak self] destination in
             guard let self else { return }
             DispatchQueue.main.async {
-                self.setDownloadComplete(destination: destination, name: showMP3.name)
+                if destination != nil {
+                    self.setDownloadComplete(destination: destination, name: showMP3.name)
+                } else if let name = showMP3.name {
+                    self.failedTrackNames.append(name)
+                }
                 let justFinishedIndex = self.downloadingTrackIndex ?? 0
                 // Note: previously we auto-started playback once the first track
                 // finished, but AVPlayer's pre-buffering of remaining streaming
@@ -279,12 +299,20 @@ final class ShowDetailViewModel: ObservableObject {
     }
 
     private func saveDownloadData() {
+        // Save even when some tracks failed — the Downloads tab shows incomplete
+        // shows with a Repair option rather than losing the partial download.
         _ = network.addDownloadDataDoc(showMetadataModel: model)
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             self.isDownloading = false
             self.downloadingTrackIndex = nil
-            self.isDownloaded = true
+            let failedCount = self.failedTrackNames.count
+            let totalCount = self.model?.mp3Array?.count ?? 0
+            self.isDownloaded = failedCount == 0
+            if failedCount > 0 {
+                print("ShowDetailViewModel: download finished with \(failedCount) failed track(s): \(self.failedTrackNames)")
+                self.downloadAlertMessage = "\(totalCount - failedCount) of \(totalCount) tracks downloaded. You can retry the missing tracks with the download button, or repair the show later from My Tapes."
+            }
         }
     }
 

@@ -8,8 +8,12 @@ struct DownloadsView: View {
         NavigationStack {
             List {
                 ForEach(viewModel.shows, id: \.metadata?.identifier) { show in
+                    let id = show.metadata?.identifier ?? ""
                     NavigationLink(value: DownloadedShowDestination(model: show)) {
-                        DownloadedShowRow(show: show)
+                        DownloadedShowRow(show: show,
+                                          missingCount: viewModel.missingTracks[id]?.count ?? 0,
+                                          isRepairing: viewModel.repairingShowIDs.contains(id),
+                                          onRepair: { viewModel.repairShow(show) })
                     }
                 }
                 .onDelete { offsets in
@@ -53,9 +57,33 @@ struct DownloadedShowDestination: Hashable {
 
 struct DownloadedShowRow: View {
     let show: ShowMetadataModel
+    var missingCount: Int = 0
+    var isRepairing: Bool = false
+    var onRepair: () -> Void = {}
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
+            if isRepairing {
+                HStack(spacing: 8) {
+                    ProgressView()
+                        .scaleEffect(0.7)
+                    Text("Repairing…")
+                        .font(.system(size: 15))
+                        .foregroundColor(.secondary)
+                }
+            } else if missingCount > 0 {
+                HStack(spacing: 12) {
+                    Label("\(missingCount) track\(missingCount == 1 ? "" : "s") missing",
+                          systemImage: "exclamationmark.triangle.fill")
+                        .font(.system(size: 15))
+                        .foregroundColor(.orange)
+                    Button("Repair") {
+                        onRepair()
+                    }
+                    .font(.system(size: 15, weight: .semibold))
+                    .buttonStyle(.borderless)
+                }
+            }
             Text(show.metadata?.creator ?? show.metadata?.collection?.joined(separator: ", ") ?? "")
                 .font(.system(size: 18, weight: .bold))
             Text(formatDate(show.metadata?.date))

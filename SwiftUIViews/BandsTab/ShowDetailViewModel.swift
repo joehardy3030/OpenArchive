@@ -66,6 +66,7 @@ final class ShowDetailViewModel: ObservableObject {
 
         if let existingModel {
             self.model = existingModel
+            self.isDownloaded = utils.isShowFullyDownloaded(existingModel)
         } else if showType == .phishIn {
             fetchPhishInShowDetail()
         } else if showType == .archive || showType == .downloaded {
@@ -313,6 +314,24 @@ final class ShowDetailViewModel: ObservableObject {
                 print("ShowDetailViewModel: download finished with \(failedCount) failed track(s): \(self.failedTrackNames)")
                 self.downloadAlertMessage = "\(totalCount - failedCount) of \(totalCount) tracks downloaded. You can retry the missing tracks with the download button, or repair the show later from My Tapes."
             }
+        }
+    }
+
+    /// Deletes the downloaded copy of this show (files + database record) so it
+    /// can be freshly redownloaded. The show itself stays browsable/streamable.
+    func deleteDownload() {
+        guard let identifier = initialMetadata.identifier else { return }
+        network.deleteDownloadedShow(identifier: identifier) { [weak self] in
+            guard let self = self else { return }
+            // Clear stale local destinations so playback doesn't point at deleted files
+            if let count = self.model?.mp3Array?.count {
+                for i in 0..<count {
+                    self.model?.mp3Array?[i].destination = nil
+                }
+            }
+            self.isDownloaded = false
+            self.failedTrackNames = []
+            self.downloadAlertMessage = nil
         }
     }
 

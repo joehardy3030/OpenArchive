@@ -12,7 +12,6 @@ final class DownloadsViewModel: ObservableObject {
     private let network = NetworkUtility()
     private let archiveAPI = ArchiveAPI()
     private let utils = Utils()
-    private let fileManager = FileManager.default
 
     func loadDownloads() {
         isLoading = true
@@ -54,23 +53,18 @@ final class DownloadsViewModel: ObservableObject {
     func deleteShow(at index: Int) {
         guard index < shows.count else { return }
         let show = shows[index]
-
-        // Delete track files
-        if let mp3s = show.mp3Array {
-            for mp3 in mp3s {
-                if let localURL = utils.trackURLfromName(name: mp3.name),
-                   fileManager.fileExists(atPath: localURL.path) {
-                    try? fileManager.removeItem(at: localURL)
-                }
-            }
-        }
-
-        // Remove from database
-        network.removeDownloadDataDoc(docID: show.metadata?.identifier)
+        network.deleteDownloadedShow(identifier: show.metadata?.identifier)
         if let id = show.metadata?.identifier {
             missingTracks[id] = nil
         }
         shows.remove(at: index)
+    }
+
+    func deleteShow(_ show: ShowMetadataModel) {
+        guard let index = shows.firstIndex(where: {
+            $0.metadata?.identifier == show.metadata?.identifier
+        }) else { return }
+        deleteShow(at: index)
     }
 
     // MARK: - Repair
@@ -116,14 +110,6 @@ final class DownloadsViewModel: ObservableObject {
     }
 
     private func missingTrackNames(for show: ShowMetadataModel) -> [String] {
-        guard let mp3s = show.mp3Array else { return [] }
-        return mp3s.compactMap { song in
-            guard let name = song.name else { return nil }
-            guard let trackURL = utils.trackURLfromName(name: name),
-                  (try? trackURL.checkResourceIsReachable()) == true else {
-                return name
-            }
-            return nil
-        }
+        utils.missingTrackNames(for: show)
     }
 }

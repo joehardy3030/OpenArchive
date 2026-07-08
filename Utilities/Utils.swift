@@ -215,6 +215,26 @@ class Utils {
         return url
     }
     
+    /// Names of tracks in the show whose files are not on disk. Empty means the
+    /// show is fully downloaded (assuming it has tracks at all).
+    func missingTrackNames(for show: ShowMetadataModel) -> [String] {
+        guard let mp3s = show.mp3Array else { return [] }
+        return mp3s.compactMap { song in
+            guard let name = song.name else { return nil }
+            guard let trackURL = trackURLfromName(name: name),
+                  (try? trackURL.checkResourceIsReachable()) == true else {
+                return name
+            }
+            return nil
+        }
+    }
+
+    /// True when the show has tracks and every one of them is on disk.
+    func isShowFullyDownloaded(_ show: ShowMetadataModel) -> Bool {
+        guard let mp3s = show.mp3Array, !mp3s.isEmpty else { return false }
+        return missingTrackNames(for: show).isEmpty
+    }
+
     func trackStreamingURLfromNameAndIdentifier(identifier: String?, name: String?) -> URL? {
         let baseURLString =  "https://archive.org/download/"
         guard let id = identifier, let nm = name, let bURL = URL(string: baseURLString) else { return nil }

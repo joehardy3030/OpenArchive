@@ -301,6 +301,29 @@ class AudioPlayerArchive: NSObject {
     }
     */
     
+    /// Silently re-downloads a track whose local file failed playback. The
+    /// download manager will overwrite the bad file on success and validate the
+    /// new copy. On success we drop the path from `pathsToForceStream` so the
+    /// rest of the current session also benefits from the fresh file.
+    private func triggerAutoRedownload(forFailedURL failedURL: URL, trackIndex: Int) {
+        guard let identifier = showMetadataModel?.metadata?.identifier else { return }
+        let tracks = showMetadataModel?.mp3Array
+        let trackName = (tracks != nil && trackIndex < tracks!.count ? tracks![trackIndex].name : nil) ?? failedURL.lastPathComponent
+        guard let downloadURL = utils.trackStreamingURLfromNameAndIdentifier(identifier: identifier, name: trackName) else { return }
+
+        print("AudioPlayerArchive: auto-redownloading bad local file \(trackName)")
+        BackgroundDownloadManager.shared.download(from: downloadURL) { [weak self] localURL, error in
+            if let error = error {
+                print("AudioPlayerArchive: auto-redownload failed for \(trackName): \(error.localizedDescription)")
+                return
+            }
+            print("AudioPlayerArchive: auto-redownload succeeded for \(trackName) → \(localURL?.path ?? "?")")
+            DispatchQueue.main.async {
+                self?.pathsToForceStream.remove(failedURL.path)
+            }
+        }
+    }
+
     /// Marks a failed local file path as "force stream" and rebuilds the queue from
     /// the current track. The next pass through `resolveTrackURL` will pick the
     /// streaming URL for the bad track and keep local URLs for everything else.
@@ -319,6 +342,11 @@ class AudioPlayerArchive: NSObject {
         pathsToForceStream.insert(failedURL.path)
         let currentIndex = getCurrentTrackIndex()
         print("AudioPlayerArchive: local file failed, rebuilding queue with streaming fallback for \(failedURL.lastPathComponent), starting at track \(currentIndex)")
+
+        // Kick off a silent re-download of the bad file so future sessions have
+        // a good copy. The user gets streaming playback now; the disk gets
+        // repaired in the background.
+        triggerAutoRedownload(forFailedURL: failedURL, trackIndex: currentIndex)
 
         // Defer so we're not rebuilding the queue from inside the failed item's KVO callback.
         DispatchQueue.main.async { [weak self] in

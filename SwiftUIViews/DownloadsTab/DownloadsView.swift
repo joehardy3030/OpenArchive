@@ -8,8 +8,13 @@ struct DownloadsView: View {
         NavigationStack {
             List {
                 ForEach(viewModel.shows, id: \.metadata?.identifier) { show in
+                    let id = show.metadata?.identifier ?? ""
                     NavigationLink(value: DownloadedShowDestination(model: show)) {
-                        DownloadedShowRow(show: show)
+                        DownloadedShowRow(show: show,
+                                          missingCount: viewModel.missingTracks[id]?.count ?? 0,
+                                          isRepairing: viewModel.repairingShowIDs.contains(id),
+                                          onRepair: { viewModel.repairShow(show) },
+                                          onDeleteDownload: { viewModel.deleteShow(show) })
                     }
                 }
                 .onDelete { offsets in
@@ -53,40 +58,89 @@ struct DownloadedShowDestination: Hashable {
 
 struct DownloadedShowRow: View {
     let show: ShowMetadataModel
+    var missingCount: Int = 0
+    var isRepairing: Bool = false
+    var onRepair: () -> Void = {}
+    var onDeleteDownload: () -> Void = {}
+
+    @State private var showDeleteConfirmation = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(show.metadata?.creator ?? show.metadata?.collection?.joined(separator: ", ") ?? "")
-                .font(.system(size: 18, weight: .bold))
-            Text(formatDate(show.metadata?.date))
-                .font(.system(size: 17, weight: .bold))
-            if let venue = show.metadata?.venue {
-                let loc = [venue, show.metadata?.coverage].compactMap { $0 }.joined(separator: ", ")
-                Text(loc)
-                    .font(.system(size: 16))
-                    .foregroundColor(.secondary)
+        HStack(alignment: .top) {
+            VStack(alignment: .leading, spacing: 4) {
+                if isRepairing {
+                    HStack(spacing: 8) {
+                        ProgressView()
+                            .scaleEffect(0.7)
+                        Text("Repairing…")
+                            .font(.system(size: 15))
+                            .foregroundColor(.secondary)
+                    }
+                } else if missingCount > 0 {
+                    HStack(spacing: 12) {
+                        Label("\(missingCount) track\(missingCount == 1 ? "" : "s") missing",
+                              systemImage: "exclamationmark.triangle.fill")
+                            .font(.system(size: 15))
+                            .foregroundColor(.orange)
+                        Button("Repair") {
+                            onRepair()
+                        }
+                        .font(.system(size: 15, weight: .semibold))
+                        .buttonStyle(.borderless)
+                    }
+                }
+                Text(show.metadata?.creator ?? show.metadata?.collection?.joined(separator: ", ") ?? "")
+                    .font(.system(size: 18, weight: .bold))
+                Text(formatDate(show.metadata?.date))
+                    .font(.system(size: 17, weight: .bold))
+                if let venue = show.metadata?.venue {
+                    let loc = [venue, show.metadata?.coverage].compactMap { $0 }.joined(separator: ", ")
+                    Text(loc)
+                        .font(.system(size: 16))
+                        .foregroundColor(.secondary)
+                }
+                if let src = show.metadata?.source, !src.isEmpty {
+                    Text(src.joined(separator: "; "))
+                        .font(.system(size: 15))
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                }
+                if let transferer = show.metadata?.transferer, !transferer.isEmpty {
+                    Text(transferer)
+                        .font(.system(size: 15))
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                }
+                if let rating = show.metadata?.avg_rating, let reviews = show.metadata?.num_reviews {
+                    Text("\(String(format: "%.1f", rating)) stars  \(reviews) ratings")
+                        .font(.system(size: 16))
+                        .foregroundColor(.secondary)
+                }
             }
-            if let src = show.metadata?.source, !src.isEmpty {
-                Text(src.joined(separator: "; "))
-                    .font(.system(size: 15))
-                    .foregroundColor(.secondary)
-                    .lineLimit(1)
-                    .truncationMode(.tail)
-            }
-            if let transferer = show.metadata?.transferer, !transferer.isEmpty {
-                Text(transferer)
-                    .font(.system(size: 15))
-                    .foregroundColor(.secondary)
-                    .lineLimit(1)
-                    .truncationMode(.tail)
-            }
-            if let rating = show.metadata?.avg_rating, let reviews = show.metadata?.num_reviews {
-                Text("\(String(format: "%.1f", rating)) stars  \(reviews) ratings")
-                    .font(.system(size: 16))
-                    .foregroundColor(.secondary)
+
+            Spacer()
+
+            if !isRepairing && missingCount == 0 {
+                Button {
+                    showDeleteConfirmation = true
+                } label: {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(.accentColor)
+                }
+                .buttonStyle(.borderless)
             }
         }
         .padding(.vertical, 4)
+        .alert("Delete Download?", isPresented: $showDeleteConfirmation) {
+            Button("Delete", role: .destructive) {
+                onDeleteDownload()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This removes the downloaded files from this device. You can download the show again afterward.")
+        }
     }
 
     private func formatDate(_ dateString: String?) -> String {

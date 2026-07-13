@@ -45,6 +45,39 @@ class NetworkUtility: NSObject {
         }
     }
 
+    /// Deletes a downloaded show: removes its track files from disk (using the
+    /// mp3 list stored in its download record) and deletes the record itself.
+    /// `completion` fires on main.
+    func deleteDownloadedShow(identifier: String?, completion: (() -> Void)? = nil) {
+        guard let identifier = identifier else {
+            completion?()
+            return
+        }
+        DispatchQueue.global(qos: .userInitiated).async {
+            var show: ShowMetadataModel?
+            try? self.dbQueue.read { db in
+                if let row = try Row.fetchOne(db, sql: "SELECT data FROM downloads WHERE identifier = ?",
+                                              arguments: [identifier]),
+                   let jsonString: String = row["data"],
+                   let data = jsonString.data(using: .utf8) {
+                    show = try? JSONDecoder().decode(ShowMetadataModel.self, from: data)
+                }
+            }
+            let utils = Utils()
+            let fileManager = FileManager.default
+            if let mp3s = show?.mp3Array {
+                for mp3 in mp3s {
+                    if let localURL = utils.trackURLfromName(name: mp3.name),
+                       fileManager.fileExists(atPath: localURL.path) {
+                        try? fileManager.removeItem(at: localURL)
+                    }
+                }
+            }
+            self.removeDownloadDataDoc(docID: identifier)
+            DispatchQueue.main.async { completion?() }
+        }
+    }
+
     func removeDownloadDataDoc(docID: String?) {
         guard let docID = docID else { return }
         do {

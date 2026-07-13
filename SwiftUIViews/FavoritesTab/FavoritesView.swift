@@ -8,8 +8,11 @@ struct FavoritesView: View {
         NavigationStack {
             List {
                 ForEach(Array(viewModel.favorites.enumerated()), id: \.element.show.metadata?.identifier) { index, fav in
+                    let id = fav.show.metadata?.identifier ?? ""
                     NavigationLink(value: FavoriteShowDestination(model: fav.show, showType: fav.showType)) {
-                        FavoriteShowRow(show: fav.show)
+                        FavoriteShowRow(show: fav.show,
+                                        isDownloaded: viewModel.downloadedIDs.contains(id),
+                                        onDeleteDownload: { viewModel.deleteDownload(for: fav.show) })
                     }
                 }
                 .onDelete { offsets in
@@ -54,40 +57,66 @@ struct FavoriteShowDestination: Hashable {
 
 struct FavoriteShowRow: View {
     let show: ShowMetadataModel
+    var isDownloaded: Bool = false
+    var onDeleteDownload: () -> Void = {}
+
+    @State private var showDeleteConfirmation = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(show.metadata?.creator ?? show.metadata?.collection?.joined(separator: ", ") ?? "")
-                .font(.system(size: 18, weight: .bold))
-            Text(formatDate(show.metadata?.date))
-                .font(.system(size: 17, weight: .bold))
-            if let venue = show.metadata?.venue {
-                let loc = [venue, show.metadata?.coverage].compactMap { $0 }.joined(separator: ", ")
-                Text(loc)
-                    .font(.system(size: 16))
-                    .foregroundColor(.secondary)
+        HStack(alignment: .top) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(show.metadata?.creator ?? show.metadata?.collection?.joined(separator: ", ") ?? "")
+                    .font(.system(size: 18, weight: .bold))
+                Text(formatDate(show.metadata?.date))
+                    .font(.system(size: 17, weight: .bold))
+                if let venue = show.metadata?.venue {
+                    let loc = [venue, show.metadata?.coverage].compactMap { $0 }.joined(separator: ", ")
+                    Text(loc)
+                        .font(.system(size: 16))
+                        .foregroundColor(.secondary)
+                }
+                if let src = show.metadata?.source, !src.isEmpty {
+                    Text(src.joined(separator: "; "))
+                        .font(.system(size: 15))
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                }
+                if let transferer = show.metadata?.transferer, !transferer.isEmpty {
+                    Text(transferer)
+                        .font(.system(size: 15))
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                }
+                if let rating = show.metadata?.avg_rating, let reviews = show.metadata?.num_reviews {
+                    Text("\(String(format: "%.1f", rating)) stars  \(reviews) ratings")
+                        .font(.system(size: 16))
+                        .foregroundColor(.secondary)
+                }
             }
-            if let src = show.metadata?.source, !src.isEmpty {
-                Text(src.joined(separator: "; "))
-                    .font(.system(size: 15))
-                    .foregroundColor(.secondary)
-                    .lineLimit(1)
-                    .truncationMode(.tail)
-            }
-            if let transferer = show.metadata?.transferer, !transferer.isEmpty {
-                Text(transferer)
-                    .font(.system(size: 15))
-                    .foregroundColor(.secondary)
-                    .lineLimit(1)
-                    .truncationMode(.tail)
-            }
-            if let rating = show.metadata?.avg_rating, let reviews = show.metadata?.num_reviews {
-                Text("\(String(format: "%.1f", rating)) stars  \(reviews) ratings")
-                    .font(.system(size: 16))
-                    .foregroundColor(.secondary)
+
+            Spacer()
+
+            if isDownloaded {
+                Button {
+                    showDeleteConfirmation = true
+                } label: {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(.accentColor)
+                }
+                .buttonStyle(.borderless)
             }
         }
         .padding(.vertical, 4)
+        .alert("Delete Download?", isPresented: $showDeleteConfirmation) {
+            Button("Delete", role: .destructive) {
+                onDeleteDownload()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This removes the downloaded files from this device. You can download the show again afterward. The show stays in your favorites.")
+        }
     }
 
     private func formatDate(_ dateString: String?) -> String {

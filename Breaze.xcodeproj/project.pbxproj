@@ -25,6 +25,7 @@
 		D848521929454EEF00CD3EA4 /* CarPlayTemplateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D848521829454EEF00CD3EA4 /* CarPlayTemplateManager.swift */; };
 		D84D6E2824BEB5140022A058 /* NetworkUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84D6E2724BEB5140022A058 /* NetworkUtility.swift */; };
 		D850B8FD24B26EAC00E3DC6B /* ShowMetadataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D850B8FC24B26EAC00E3DC6B /* ShowMetadataModel.swift */; };
+		D8553EE72FC354360044A53C /* BackgroundDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8553EE62FC354360044A53C /* BackgroundDownloadManager.swift */; };
 		D859CE402DF5081A00D6371F /* YearsTotalResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D859CE3F2DF5081700D6371F /* YearsTotalResponse.swift */; };
 		D85A4EEF2022D0B600E480FB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A4EEE2022D0B600E480FB /* AppDelegate.swift */; };
 		D85A4EF82022D0B600E480FB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D85A4EF72022D0B600E480FB /* Assets.xcassets */; };
@@ -102,6 +103,7 @@
 		D848521829454EEF00CD3EA4 /* CarPlayTemplateManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CarPlayTemplateManager.swift; sourceTree = "<group>"; };
 		D84D6E2724BEB5140022A058 /* NetworkUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkUtility.swift; sourceTree = "<group>"; };
 		D850B8FC24B26EAC00E3DC6B /* ShowMetadataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowMetadataModel.swift; sourceTree = "<group>"; };
+		D8553EE62FC354360044A53C /* BackgroundDownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundDownloadManager.swift; sourceTree = "<group>"; };
 		D859CE3F2DF5081700D6371F /* YearsTotalResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearsTotalResponse.swift; sourceTree = "<group>"; };
 		D85A4EEB2022D0B500E480FB /* Chateau.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chateau.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D85A4EEE2022D0B600E480FB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -320,6 +322,7 @@
 				7984F98E24A56EFD00989DB8 /* ArchiveAPI.swift */,
 				D80ACF9F2F676B5500EA9D45 /* PhishNetAPI.swift */,
 				D80ACFA32F6775DA00EA9D45 /* PhishInAPI.swift */,
+				D8553EE62FC354360044A53C /* BackgroundDownloadManager.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -677,6 +680,7 @@
 				E2000001202603A00000000C /* DownloadsView.swift in Sources */,
 				E2000001202603A00000000D /* DownloadsViewModel.swift in Sources */,
 				E2000001202603A00000000E /* SearchView.swift in Sources */,
+				D8553EE72FC354360044A53C /* BackgroundDownloadManager.swift in Sources */,
 				E2000001202603A00000000F /* SearchViewModel.swift in Sources */,
 				E2000001202603A000000010 /* FullPlayerView.swift in Sources */,
 				E2000001202603A000000011 /* DeepLinkRouter.swift in Sources */,
@@ -875,7 +879,7 @@
 				CODE_SIGN_ENTITLEMENTS = Breaze/Breaze.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 741;
+				CURRENT_PROJECT_VERSION = 743;
 				INFOPLIST_FILE = Breaze/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Chateau Archive";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
@@ -884,7 +888,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 9.2.2;
+				MARKETING_VERSION = 9.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.carquinez.chateau;
 				PRODUCT_NAME = Chateau;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -901,7 +905,7 @@
 				CODE_SIGN_ENTITLEMENTS = Breaze/Breaze.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 741;
+				CURRENT_PROJECT_VERSION = 743;
 				INFOPLIST_FILE = Breaze/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Chateau Archive";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
@@ -910,7 +914,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 9.2.2;
+				MARKETING_VERSION = 9.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.carquinez.chateau;
 				PRODUCT_NAME = Chateau;
 				PROVISIONING_PROFILE_SPECIFIER = "";

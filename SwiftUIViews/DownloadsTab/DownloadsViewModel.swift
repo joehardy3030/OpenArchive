@@ -3,10 +3,15 @@ import Foundation
 final class DownloadsViewModel: ObservableObject {
     @Published var shows: [ShowMetadataModel] = []
     @Published var isLoading = false
+    /// Missing track names keyed by show identifier, for shows with an
+    /// incomplete download on disk.
+    @Published var missingTracks: [String: [String]] = [:]
+    /// Identifiers of shows currently being repaired (redownloading missing tracks).
+    @Published var repairingShowIDs: Set<String> = []
 
     private let network = NetworkUtility()
+    private let archiveAPI = ArchiveAPI()
     private let utils = Utils()
-    private let fileManager = FileManager.default
 
     func loadDownloads() {
         isLoading = true
@@ -15,20 +20,23 @@ final class DownloadsViewModel: ObservableObject {
                 guard let self = self else { return }
                 self.isLoading = false
 
-                guard var downloadedShows = response else {
+                guard let downloadedShows = response else {
                     self.shows = []
+                    self.missingTracks = [:]
                     return
                 }
 
-                // Remove shows whose tracks no longer exist on disk
-                downloadedShows = downloadedShows.filter { show in
-                    if self.tracksExist(for: show) {
-                        return true
-                    } else {
-                        self.network.removeDownloadDataDoc(docID: show.metadata?.identifier)
-                        return false
+                // Flag shows with tracks missing on disk so they can be repaired,
+                // rather than hiding them and deleting their records.
+                var missing: [String: [String]] = [:]
+                for show in downloadedShows {
+                    guard let id = show.metadata?.identifier else { continue }
+                    let names = self.missingTrackNames(for: show)
+                    if !names.isEmpty {
+                        missing[id] = names
                     }
                 }
+                self.missingTracks = missing
 
                 // Sort by date
                 self.shows = downloadedShows.sorted { s1, s2 in
@@ -45,30 +53,63 @@ final class DownloadsViewModel: ObservableObject {
     func deleteShow(at index: Int) {
         guard index < shows.count else { return }
         let show = shows[index]
-
-        // Delete track files
-        if let mp3s = show.mp3Array {
-            for mp3 in mp3s {
-                if let localURL = utils.trackURLfromName(name: mp3.name),
-                   fileManager.fileExists(atPath: localURL.path) {
-                    try? fileManager.removeItem(at: localURL)
-                }
-            }
+        network.deleteDownloadedShow(identifier: show.metadata?.identifier)
+        if let id = show.metadata?.identifier {
+            missingTracks[id] = nil
         }
-
-        // Remove from database
-        network.removeDownloadDataDoc(docID: show.metadata?.identifier)
         shows.remove(at: index)
     }
 
-    private func tracksExist(for show: ShowMetadataModel) -> Bool {
-        guard let mp3s = show.mp3Array else { return false }
-        for song in mp3s {
-            guard let trackURL = utils.trackURLfromName(name: song.name),
-                  (try? trackURL.checkResourceIsReachable()) == true else {
-                return false
+    func deleteShow(_ show: ShowMetadataModel) {
+        guard let index = shows.firstIndex(where: {
+            $0.metadata?.identifier == show.metadata?.identifier
+        }) else { return }
+        deleteShow(at: index)
+    }
+
+    // MARK: - Repair
+
+    /// Redownloads the missing tracks of an incomplete show, then re-checks it.
+    func repairShow(_ show: ShowMetadataModel) {
+        guard let id = show.metadata?.identifier,
+              let names = missingTracks[id], !names.isEmpty,
+              !repairingShowIDs.contains(id) else { return }
+        repairingShowIDs.insert(id)
+        print("DownloadsViewModel: repairing \(id) — \(names.count) missing track(s)")
+        downloadMissingTrack(names, index: 0, identifier: id)
+    }
+
+    private func downloadMissingTrack(_ names: [String], index: Int, identifier: String) {
+        guard index < names.count else {
+            finishRepair(identifier: identifier)
+            return
+        }
+        let name = names[index]
+        guard let url = archiveAPI.downloadURL(identifier: identifier, filename: name) else {
+            downloadMissingTrack(names, index: index + 1, identifier: identifier)
+            return
+        }
+        BackgroundDownloadManager.shared.download(from: url) { [weak self] _, error in
+            if let error = error {
+                print("DownloadsViewModel: repair failed for \(name): \(error.localizedDescription)")
+            }
+            self?.downloadMissingTrack(names, index: index + 1, identifier: identifier)
+        }
+    }
+
+    private func finishRepair(identifier: String) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.repairingShowIDs.remove(identifier)
+            if let show = self.shows.first(where: { $0.metadata?.identifier == identifier }) {
+                let stillMissing = self.missingTrackNames(for: show)
+                self.missingTracks[identifier] = stillMissing.isEmpty ? nil : stillMissing
+                print("DownloadsViewModel: repair of \(identifier) finished — \(stillMissing.count) track(s) still missing")
             }
         }
-        return true
+    }
+
+    private func missingTrackNames(for show: ShowMetadataModel) -> [String] {
+        utils.missingTrackNames(for: show)
     }
 }

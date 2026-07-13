@@ -9,6 +9,7 @@ struct ShowDetailView: View {
     @Environment(\.miniPlayerInset) private var miniPlayerInset
     @State private var isNotesExpanded = false
     @State private var isSetlistExpanded = false
+    @State private var showDeleteDownloadConfirmation = false
 
     init(metadata: ShowMetadata, showType: ShowType, existingModel: ShowMetadataModel? = nil) {
         self.metadata = metadata
@@ -24,7 +25,7 @@ struct ShowDetailView: View {
                     Button {
                         viewModel.streamOrPlay(startingAt: 0, playerViewModel: playerViewModel)
                     } label: {
-                        let isStreaming = showType == .phishIn || (showType == .archive && !viewModel.isDownloaded)
+                        let isStreaming = showType == .phishIn || !viewModel.isDownloaded
                         Label(isStreaming ? "Stream" : "Play",
                               systemImage: isStreaming ? "dot.radiowaves.left.and.right" : "play.fill")
                             .lineLimit(1)
@@ -32,9 +33,13 @@ struct ShowDetailView: View {
 
                     Spacer()
 
-                    if showType == .archive {
+                    if showType == .archive || showType == .downloaded {
                         Button {
-                            viewModel.downloadShow(playerViewModel: playerViewModel)
+                            if viewModel.isDownloaded {
+                                showDeleteDownloadConfirmation = true
+                            } else {
+                                viewModel.downloadShow()
+                            }
                         } label: {
                             if viewModel.isDownloading {
                                 ProgressView()
@@ -42,11 +47,14 @@ struct ShowDetailView: View {
                             } else if viewModel.isDownloaded {
                                 Image(systemName: "checkmark.circle.fill")
                                     .foregroundColor(.accentColor)
+                            } else if !viewModel.failedTrackNames.isEmpty {
+                                Image(systemName: "exclamationmark.arrow.circlepath")
+                                    .foregroundColor(.orange)
                             } else {
                                 Image(systemName: "arrow.down.circle")
                             }
                         }
-                        .disabled(viewModel.isDownloading || viewModel.isDownloaded)
+                        .disabled(viewModel.isDownloading)
                     }
 
                     Button {
@@ -235,8 +243,14 @@ struct ShowDetailView: View {
                                     if viewModel.pendingTrackIndex == index {
                                         ProgressView()
                                     } else if viewModel.downloadingTrackIndex == index {
-                                        ProgressView()
-                                            .tint(.blue)
+                                        if viewModel.currentTrackProgress > 0 {
+                                            Text("\(Int(viewModel.currentTrackProgress * 100))%")
+                                                .font(.caption.monospacedDigit())
+                                                .foregroundColor(.blue)
+                                        } else {
+                                            ProgressView()
+                                                .tint(.blue)
+                                        }
                                     } else if track.destination != nil {
                                         Image(systemName: "arrow.down.circle.fill")
                                             .foregroundColor(.accentColor)
@@ -263,6 +277,22 @@ struct ShowDetailView: View {
             if viewModel.isLoading && viewModel.model?.metadata == nil {
                 ProgressView("Loading show...")
             }
+        }
+        .alert("Delete Download?", isPresented: $showDeleteDownloadConfirmation) {
+            Button("Delete", role: .destructive) {
+                viewModel.deleteDownload()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This removes the downloaded files from this device. You can download the show again afterward.")
+        }
+        .alert("Download Incomplete",
+               isPresented: Binding(
+                   get: { viewModel.downloadAlertMessage != nil },
+                   set: { if !$0 { viewModel.downloadAlertMessage = nil } })) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(viewModel.downloadAlertMessage ?? "")
         }
     }
 }

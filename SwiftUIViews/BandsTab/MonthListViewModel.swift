@@ -29,6 +29,8 @@ final class MonthListViewModel: ObservableObject {
     var sbdOnly: Bool { filter == .sbd || filter == .joesPicks }
 
     let isGratefulDead: Bool
+    /// Whether this collection uses the stream_only flag (drives the All/SBD picker)
+    let supportsSBD: Bool
 
     private let year: Int
     private let collection: String
@@ -48,6 +50,7 @@ final class MonthListViewModel: ObservableObject {
         self.year = year
         self.collection = collection
         self.isGratefulDead = (collection == "GratefulDead")
+        self.supportsSBD = CollectionConfig.supportsSBDFilter(collection: collection)
         self.filter = (collection == "GratefulDead") ? Self.lastGDFilter : .all
     }
 

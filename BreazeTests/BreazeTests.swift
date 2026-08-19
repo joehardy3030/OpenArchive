@@ -221,6 +221,15 @@ class BreazeTests: XCTestCase {
         XCTAssertFalse(CollectionConfig.isCreatorBased(collection: "BillyStrings"))
     }
 
+    func testSBDCapableCollections() {
+        XCTAssertTrue(CollectionConfig.supportsSBDFilter(collection: "GratefulDead"))
+        XCTAssertTrue(CollectionConfig.supportsSBDFilter(collection: "Furthur"))
+        XCTAssertTrue(CollectionConfig.supportsSBDFilter(collection: "TheOtherOnes"))
+        XCTAssertFalse(CollectionConfig.supportsSBDFilter(collection: "Phish"))
+        XCTAssertFalse(CollectionConfig.supportsSBDFilter(collection: "BillyStrings"))
+        XCTAssertFalse(CollectionConfig.supportsSBDFilter(collection: "taperssection"))
+    }
+
     // MARK: - ShowMetadata
 
     func testShowMetadataMonth() {

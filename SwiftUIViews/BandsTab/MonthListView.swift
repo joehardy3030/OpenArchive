@@ -15,25 +15,27 @@ struct MonthListView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Picker("Source", selection: $viewModel.filter) {
-                Text("All").tag(ShowFilter.all)
-                Text("SBD").tag(ShowFilter.sbd)
-                if viewModel.isGratefulDead {
-                    Text("Joe's Picks").tag(ShowFilter.joesPicks)
+            if viewModel.supportsSBD {
+                Picker("Source", selection: $viewModel.filter) {
+                    Text("All").tag(ShowFilter.all)
+                    Text("SBD").tag(ShowFilter.sbd)
+                    if viewModel.isGratefulDead {
+                        Text("Joe's Picks").tag(ShowFilter.joesPicks)
+                    }
                 }
-            }
-            .pickerStyle(.segmented)
-            .padding(.horizontal)
-            .padding(.vertical, 8)
-            .onChange(of: viewModel.filter) { oldValue, newValue in
-                // SBD and Joe's Picks use the same API data (sbdOnly=true).
-                // Only refetch if sbdOnly actually changed.
-                let wasSbd = (oldValue == .sbd || oldValue == .joesPicks)
-                let isSbd = (newValue == .sbd || newValue == .joesPicks)
-                if wasSbd != isSbd {
-                    viewModel.fetchShows()
-                } else {
-                    viewModel.rebuildMonthRows()
+                .pickerStyle(.segmented)
+                .padding(.horizontal)
+                .padding(.vertical, 8)
+                .onChange(of: viewModel.filter) { oldValue, newValue in
+                    // SBD and Joe's Picks use the same API data (sbdOnly=true).
+                    // Only refetch if sbdOnly actually changed.
+                    let wasSbd = (oldValue == .sbd || oldValue == .joesPicks)
+                    let isSbd = (newValue == .sbd || newValue == .joesPicks)
+                    if wasSbd != isSbd {
+                        viewModel.fetchShows()
+                    } else {
+                        viewModel.rebuildMonthRows()
+                    }
                 }
             }
 

@@ -1,8 +1,18 @@
 import Foundation
 
 struct CollectionConfig {
-    static let collectionsText = ["Grateful Dead", "Phish", "Phil Lesh and Friends", "The Other Ones", "Further", "Dead And Company", "Billy Strings", "Goose", "The Radiators"]
-    static let collections = ["GratefulDead", "Phish", "PhilLeshandFriends", "TheOtherOnes", "Furthur", "DeadAndCompany", "BillyStrings", "GooseBand", "Radiators"]
+    static let collectionsText = ["Grateful Dead", "Phish", "Phil Lesh and Friends", "The Other Ones", "Further", "Dead And Company", "Billy Strings", "Goose", "The Radiators", "Taper's Section"]
+    static let collections = ["GratefulDead", "Phish", "PhilLeshandFriends", "TheOtherOnes", "Furthur", "DeadAndCompany", "BillyStrings", "GooseBand", "Radiators", "taperssection"]
+
+    // Collections whose archive.org items mark soundboards with the stream_only
+    // flag (the Dead-family streaming policy). Only these get the All/SBD filter;
+    // other bands' SBDs exist but aren't flagged stream_only, so the filter
+    // would silently return nothing.
+    static let sbdCapableCollections = ["GratefulDead", "Furthur", "TheOtherOnes"]
+
+    static func supportsSBDFilter(collection: String) -> Bool {
+        return sbdCapableCollections.contains(collection)
+    }
 
     // Collections that use creator field instead of collection field for searching
     // Phish metadata (setlists, ratings, venues) courtesy of Phish.net / The Mockingbird Foundation.

@@ -46,7 +46,8 @@ final class ShowsListViewModel: ObservableObject {
 
     private func fetchFromAPI(sbdOnly: Bool) {
         let url = archiveAPI.dateRangeURL(year: year, month: month, sbdOnly: sbdOnly, collection: collection)
-        archiveAPI.getIARequestItemsDecodable(url: url) { [weak self] (response: ShowMetadatas?, error: Error?) in
+        // Cache-first; the completion body is idempotent for the double-fire
+        archiveAPI.getIARequestItemsCached(url: url) { [weak self] (response: ShowMetadatas?, error: Error?) in
             DispatchQueue.main.async {
                 if let items = response?.items, !items.isEmpty {
                     self?.shows = items.sorted { ($0.date ?? "") < ($1.date ?? "") }

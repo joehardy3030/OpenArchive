@@ -112,7 +112,9 @@ final class ShowDetailViewModel: ObservableObject {
         guard let id = initialMetadata.identifier else { return }
         isLoading = true
         let url = archiveAPI.metadataURL(identifier: id)
-        archiveAPI.getIARequestMetadataDecodable(url: url) { [weak self] (response: ShowMetadataModel?, error: Error?) in
+        // Cache-first: can fire twice (cached, then network diff); the body is
+        // idempotent — it rebuilds the mp3 array and republishes the model.
+        archiveAPI.getIARequestMetadataCached(url: url) { [weak self] (response: ShowMetadataModel?, error: Error?) in
             DispatchQueue.main.async {
                 guard let self = self else { return }
                 self.isLoading = false

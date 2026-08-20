@@ -10,6 +10,7 @@
 		04BF9CE33DA20B6CE196A51E /* FavoritesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3A64231D6EEA39C367B0A1F /* FavoritesStore.swift */; };
 		183B25F5A89C93BF012411B3 /* Pods_Breaze.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA40D6B8D9FFEE08A048EACE /* Pods_Breaze.framework */; };
 		7984F98F24A56EFD00989DB8 /* ArchiveAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7984F98E24A56EFD00989DB8 /* ArchiveAPI.swift */; };
+		D8CAC4E00000000000000002 /* MetadataCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8CAC4E00000000000000001 /* MetadataCache.swift */; };
 		799C3C902345582F00D9341E /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C3C8F2345582F00D9341E /* HealthKit.framework */; };
 		9D7A3DC2BE26E90A8FE391D0 /* Pods_BreazeUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9D58EED31CE81FB1690A28E /* Pods_BreazeUITests.framework */; };
 		B5C3A8D3CBD83ACBD863E369 /* Pods_BreazeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EBF20D287E48F03823653E6 /* Pods_BreazeTests.framework */; };
@@ -81,6 +82,7 @@
 		2EDB5ECFF6BB6224D240D386 /* FavoritesViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FavoritesViewModel.swift; sourceTree = "<group>"; };
 		7113B147C27353071FE30CE2 /* Pods-Breaze.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Breaze.release.xcconfig"; path = "Target Support Files/Pods-Breaze/Pods-Breaze.release.xcconfig"; sourceTree = "<group>"; };
 		7984F98E24A56EFD00989DB8 /* ArchiveAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveAPI.swift; sourceTree = "<group>"; };
+		D8CAC4E00000000000000001 /* MetadataCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataCache.swift; sourceTree = "<group>"; };
 		799C3C8E2345582E00D9341E /* Breaze.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Breaze.entitlements; sourceTree = "<group>"; };
 		799C3C8F2345582F00D9341E /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
 		7EBF20D287E48F03823653E6 /* Pods_BreazeTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BreazeTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -320,6 +322,7 @@
 			children = (
 				D84D6E2724BEB5140022A058 /* NetworkUtility.swift */,
 				7984F98E24A56EFD00989DB8 /* ArchiveAPI.swift */,
+				D8CAC4E00000000000000001 /* MetadataCache.swift */,
 				D80ACF9F2F676B5500EA9D45 /* PhishNetAPI.swift */,
 				D80ACFA32F6775DA00EA9D45 /* PhishInAPI.swift */,
 				D8553EE62FC354360044A53C /* BackgroundDownloadManager.swift */,
@@ -690,6 +693,7 @@
 				D84D6E2824BEB5140022A058 /* NetworkUtility.swift in Sources */,
 				D8ACD2E22B1D6CC30097224B /* ChateauGPTModel.swift in Sources */,
 				7984F98F24A56EFD00989DB8 /* ArchiveAPI.swift in Sources */,
+				D8CAC4E00000000000000002 /* MetadataCache.swift in Sources */,
 				D8484AA42B97FB4200CEE940 /* SearchTermsModel.swift in Sources */,
 				D82C59192DDAA5ED0013BAC5 /* LocalDatabase.swift in Sources */,
 				D848521929454EEF00CD3EA4 /* CarPlayTemplateManager.swift in Sources */,

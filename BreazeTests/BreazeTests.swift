@@ -203,6 +203,45 @@ class BreazeTests: XCTestCase {
         XCTAssertEqual(AudioPlayerArchive.normalizedStartIndex(-1, count: 1), 0)
     }
 
+    // MARK: - MetadataCache
+
+    func testMetadataCacheCanonicalEncodingIsDeterministic() {
+        var a = ShowMetadata(identifier: "x")
+        a.venue = "Winterland"
+        var b = ShowMetadata(identifier: "x")
+        b.venue = "Winterland"
+        XCTAssertNotNil(MetadataCache.canonical(a))
+        XCTAssertEqual(MetadataCache.canonical(a), MetadataCache.canonical(b))
+
+        b.venue = "Fillmore"
+        XCTAssertNotEqual(MetadataCache.canonical(a), MetadataCache.canonical(b))
+    }
+
+    func testMetadataCacheSaveLoadRoundTrip() {
+        let cache = MetadataCache(directoryName: "MetadataCacheTests-\(UUID().uuidString)")
+        let payload = Data("hello".utf8)
+        cache.save(key: "https://example.org/some?query=1", data: payload)
+
+        let exp = expectation(description: "load")
+        cache.load(key: "https://example.org/some?query=1") { data, savedAt in
+            XCTAssertEqual(data, payload)
+            XCTAssertNotNil(savedAt)
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 5)
+    }
+
+    func testMetadataCacheMissReturnsNil() {
+        let cache = MetadataCache(directoryName: "MetadataCacheTests-\(UUID().uuidString)")
+        let exp = expectation(description: "miss")
+        cache.load(key: "never-saved") { data, savedAt in
+            XCTAssertNil(data)
+            XCTAssertNil(savedAt)
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 5)
+    }
+
     // MARK: - AudioPlayerArchive.seekTime
 
     func testSeekTimeRejectsNaNAndInfiniteDurations() {

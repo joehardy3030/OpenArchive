@@ -18,10 +18,12 @@ Naming history: the project began life in 2018 as a weather app called **Breaze*
 
 ## Testing
 
-`BreazeTests/BreazeTests.swift` is a real unit test suite (~85 tests) run via Xcode (Cmd+U) or `xcodebuild test -workspace Breaze.xcworkspace -scheme Breaze`. It covers:
+`BreazeTests/BreazeTests.swift` is a real unit test suite (~95 tests) run via Xcode (Cmd+U) or `xcodebuild test -workspace Breaze.xcworkspace -scheme Breaze`. It covers:
 
 - `ArchiveAPI` URL construction (date ranges, leap years, SBD flag, creator- vs collection-based queries, search URLs, `encodeQueryValue` percent-encoding)
-- `AudioPlayerArchive.normalizedStartIndex`
+- `AudioPlayerArchive.normalizedStartIndex` and `AudioPlayerArchive.seekTime` (NaN/indefinite-duration rejection, fraction clamping)
+- Title venue parsing and metadata backfill (`ShowMetadata.titleVenueLocation`, `displayVenueLine`, `ShowDetailViewModel.backfillMissingMetadata`)
+- `MetadataCache` (canonical-encoding determinism, disk round-trip and miss paths)
 - `CollectionConfig` display-name/identifier mapping, creator-based and SBD-capable lists
 - `ShowMetadata` decoding (string-or-array fields: description, collection, source)
 - `ShowDetailViewModel.buildMP3Array` (track title/track-number inheritance from lossless originals, cross-set sort order)
@@ -50,6 +52,8 @@ ChateauArchiveApp (@main) → AppDelegate (audio session, notifications permissi
 
 Bands tab browse hierarchy: `CollectionsView` (bands) → `YearListView` → `MonthListView` → `ShowsListView` → `ShowDetailView`. Month/show lists pass prefetched data down via `NavigationStack` destination values to avoid refetching.
 
+Each `navigationDestination` type must be declared exactly **once per stack**, closest to the root — SwiftUI ignores later duplicates and logs a runtime warning. In the Bands stack, `ShowDestination` is declared at the root in `CollectionsView` (it also serves the deep-link path); the Search tab's separate stack declares its own.
+
 ### Key Singletons
 
 | Singleton | Role |
@@ -60,6 +64,7 @@ Bands tab browse hierarchy: `CollectionsView` (bands) → `YearListView` → `Mo
 | `BackgroundDownloadManager.shared` | Hybrid URLSession downloader (foreground + background sessions) |
 | `FavoritesStore.shared` | Favorites table access (show metadata + show type) |
 | `PhishInAPI.shared` / `PhishNetAPI.shared` | Phish.in / Phish.net API clients |
+| `MetadataCache.shared` | Disk cache for API responses with stale-while-revalidate fetches |
 
 ### Layer Breakdown
 
@@ -69,6 +74,7 @@ Bands tab browse hierarchy: `CollectionsView` (bands) → `YearListView` → `Mo
 - **Network/BackgroundDownloadManager.swift** — Hybrid track downloader: default URLSession while the app is active (fast), background URLSession when suspended (survives backgrounding); validates HTTP status and file contents, reports per-track progress
 - **Network/PhishInAPI.swift** — Phish.in API v2 client for Phish audience recordings (no API key required)
 - **Network/PhishNetAPI.swift** — Phish.net API v5 client for Phish setlists, ratings, venues (API key in `PhishNetAPIKeys.plist`, gitignored; features silently disabled if the plist is absent)
+- **Network/MetadataCache.swift** — Disk cache (Caches directory, URL-keyed) with the shared `fetchDecodable` stale-while-revalidate fetch used by ArchiveAPI/PhishInAPI/PhishNetAPI (see Metadata Caching)
 - **Network/NetworkUtility.swift** — Download record CRUD (`downloads` table) and downloaded-show deletion
 - **MediaPlayers/AudioPlayerArchive.swift** — AVQueuePlayer, remote command center, Now Playing info + artwork, audio-session interruption handling, background audio, playback state persistence, failure recovery (see below)
 - **Database/LocalDatabase.swift** — GRDB schema/migrations
@@ -103,9 +109,19 @@ Items in multi-artist collections (taperssection especially) often have **no ven
 - **List rows** (Months/Search/Downloads/Favorites): search queries request the `title` field, and `ShowMetadata.displayVenueLine` falls back to `titleVenueLocation` (parsed from the "live at … on date" title convention) when the venue field is empty.
 - **Detail fetch**: `ShowDetailViewModel.backfillMissingMetadata` fills empty venue/coverage from the title parse (venue = first comma component, coverage = the rest) or the files' `album` tag, and empty source from the description's "Source:" line — before the model is displayed or saved, so downloads and favorites persist the enriched copy. Existing field values are never overwritten.
 
+### Metadata Caching
+
+Browse and detail fetches are **cache-first** (`MetadataCache.fetchDecodable`): the cached copy is served immediately (no spinner), the network is revalidated in the background, and the completion fires a **second time only when the payload changed** — so every caller's completion must be idempotent (each converted call site carries a comment saying so). Key facts:
+
+- Entries live in the Caches directory (purgeable by iOS), keyed by request URL (SHA256 filename). No manual eviction.
+- Diffing compares **canonical re-encoded models** (`MetadataCache.canonical`, sorted-keys JSON), not raw response bytes — archive.org metadata responses embed a per-request `uniq` nonce and rotating server names that would make byte-diffs always fire; encoding through the app's models strips them.
+- Copies younger than `revalidationInterval` (10 min) skip revalidation entirely, so rapid back-and-forth navigation doesn't hammer archive.org.
+- Network errors surface only when there is no cached copy — with a cache, a failed refresh is silent and the stale copy stands.
+- Cache-first call sites: year/month scrapes (`getIARequestItemsCached`), show metadata (`getIARequestMetadataCached`), Phish.in year/show fetches, Phish.net setlists/shows. **Search stays on the live methods** deliberately — ad-hoc queries would pollute the cache. `MonthListViewModel`'s `pendingFetches` decrement is guarded against the double-fire.
+
 ### Data Flow
 
-1. `ArchiveAPI` / `PhishInAPI` / `PhishNetAPI` fetch show/track metadata from their respective sources
+1. `ArchiveAPI` / `PhishInAPI` / `PhishNetAPI` fetch show/track metadata from their respective sources (cache-first for browse/detail; see Metadata Caching)
 2. `AudioPlayerArchive` queues and plays tracks (streaming URLs or local files)
 3. `PlayerViewModel` observes `AudioPlayerArchive` via Notifications (`.playbackStarted`, `.playbackPaused`, `.playbackStopped`) and a periodic time observer, publishing state to SwiftUI
 4. SwiftUI views subscribe to `PlayerViewModel` via `@EnvironmentObject`
@@ -116,6 +132,7 @@ Items in multi-artist collections (taperssection especially) often have **no ven
 - `AudioPlayerArchive.resolveTrackURL` prefers the local file when it exists on disk, else the archive.org streaming URL — so a partially downloaded show plays local tracks offline and streams the rest.
 - Failure recovery: when a **local** item fails (corrupt/truncated file), the path is added to `pathsToForceStream` (per-show, in-session), the queue is rebuilt from the current track using the streaming URL for the bad file, and a silent re-download repairs the disk copy. When a **streaming** item fails, up to 3 consecutive failures are skipped before going idle.
 - System integration: `MPRemoteCommandCenter` (play/pause/next/previous), `MPNowPlayingInfoCenter` with downloaded cover art (`setArtworkURL`, falls back to app icon), and audio-session interruption handling with auto-resume.
+- Seek safety: `AVPlayerItem.duration` is NaN/indefinite while an item is loading or after it fails; `AudioPlayerArchive.seekTime` rejects non-finite durations (converting NaN to Int64 is a fatal trap — this crashed slider seeks during queue rebuilds before the guard). Any new Double→Int conversion in the playback path needs the same care.
 
 ### Downloads
 
@@ -124,6 +141,10 @@ Items in multi-artist collections (taperssection especially) often have **no ven
 - The show record is saved to the `downloads` table even if some tracks failed. The Downloads tab (`DownloadsViewModel`) flags incomplete shows ("N tracks missing") with a Repair button that redownloads only the missing files — it never silently deletes records.
 - A blue checkmark indicates a fully downloaded show consistently across the show detail page, Downloads rows, and Favorites rows. Tapping it offers to delete the downloaded files (via `NetworkUtility.deleteDownloadedShow`), after which the show can be downloaded fresh.
 - Track filenames may contain nested paths; destination paths are sanitized against traversal (`Utils.trackURLfromName`, `BackgroundDownloadManager.destinationURL`) and files land in the app's Documents directory.
+- Downloads are **deliberately sequential** (one track at a time), even though the foreground session allows 4 connections per host: it stays polite to archive.org (which rate-limits aggressive clients, and serves 500s freely when degraded), and it front-loads the first track so listening can start as soon as possible.
+- **Threading rule:** downloaded-status checks (`Utils.missingTrackNames` / `isShowFullyDownloaded`) are one file-system call per track per show and contend with active download writes. They must run off the main thread — `DownloadsViewModel.loadDownloads`, `FavoritesViewModel.refreshDownloadedStatus`, and `CarPlayTemplateManager.loadDownloadedShowsForTemplate` all scan on a background queue and hop to main only to publish. Keep any new status-scanning code on that pattern.
+
+**Planned, not implemented — mixed streaming + downloading:** the "start listening immediately" experience during a download would come from streaming playback of the show while the sequential chain fills the disk, not from parallelizing downloads. Half the machinery exists: `resolveTrackURL` already prefers local files per-track and streams the rest, so a mid-download play naturally uses finished tracks from disk. The blocker, previously hit and backed out (see the comment in `ShowDetailViewModel.downloadSync`): AVPlayer aggressively pre-buffers upcoming streaming items, starving the download traffic — iOS deprioritizes background URLSession transfers while the app is actively pulling from the network. An implementation would need to constrain player buffering (`AVPlayerItem.preferredForwardBufferDuration`) so streaming stays just-in-time while downloads keep the bandwidth. Concurrent multi-track downloading was considered and parked for the same throttling/politeness reasons noted above.
 
 ### Phish Integration
 

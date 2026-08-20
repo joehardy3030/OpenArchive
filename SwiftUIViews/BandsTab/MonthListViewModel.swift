@@ -59,7 +59,9 @@ final class MonthListViewModel: ObservableObject {
         pendingFetches = collection == "Phish" ? 2 : 1
 
         let url = archiveAPI.dateRangeYearURL(year: year, sbdOnly: sbdOnly, collection: collection)
-        archiveAPI.getIARequestItemsDecodable(url: url) { [weak self] (response: ShowMetadatas?, error: Error?) in
+        // Cache-first: this completion can fire twice (cached copy, then a
+        // network diff), so the pendingFetches decrement is guarded.
+        archiveAPI.getIARequestItemsCached(url: url) { [weak self] (response: ShowMetadatas?, error: Error?) in
             DispatchQueue.main.async {
                 guard let self = self else { return }
 
@@ -67,12 +69,12 @@ final class MonthListViewModel: ObservableObject {
                 self.allShowsForYear = shows
                 self.rebuildMonthRows()
 
-                self.pendingFetches -= 1
+                if self.pendingFetches > 0 { self.pendingFetches -= 1 }
                 if self.pendingFetches <= 0 { self.isLoading = false }
             }
         }
 
-        // Fetch Phish.in show summaries once for the whole year
+        // Fetch Phish.in show summaries once for the whole year (also cache-first)
         if collection == "Phish" {
             PhishInAPI.shared.fetchShows(year: year) { [weak self] shows, _ in
                 DispatchQueue.main.async {
@@ -84,7 +86,7 @@ final class MonthListViewModel: ObservableObject {
                             }
                         }
                     }
-                    self.pendingFetches -= 1
+                    if self.pendingFetches > 0 { self.pendingFetches -= 1 }
                     if self.pendingFetches <= 0 { self.isLoading = false }
                 }
             }

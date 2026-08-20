@@ -43,38 +43,30 @@ final class PhishNetAPI {
     // MARK: - Setlists
 
     /// Fetch the setlist for a given show date (format: "YYYY-MM-DD").
+    /// Cache-first: the completion can fire twice (cached, then network-if-changed).
     func fetchSetlist(date: String, completion: @escaping (PhishNetSetlistResponse?, Error?) -> Void) {
         guard isConfigured else { completion(nil, nil); return }
         let url = baseURL + "setlists/showdate/\(date).json?apikey=\(apiKey)"
-        print("[PhishNetAPI] Fetching setlist for \(date)")
-        AF.request(url).responseDecodable(of: PhishNetSetlistResponse.self) { response in
-            switch response.result {
-            case .success(let setlistResponse):
-                print("[PhishNetAPI] Setlist response for \(date): \(setlistResponse.data?.count ?? 0) entries")
-                completion(setlistResponse, nil)
-            case .failure(let error):
+        MetadataCache.shared.fetchDecodable(url: url) { (setlistResponse: PhishNetSetlistResponse?, error: Error?) in
+            if let error = error {
                 print("[PhishNetAPI] Setlist error for \(date): \(error.localizedDescription)")
-                completion(nil, error)
             }
+            completion(setlistResponse, error)
         }
     }
 
     // MARK: - Shows
 
     /// Fetch show details for a given date.
+    /// Cache-first: the completion can fire twice (cached, then network-if-changed).
     func fetchShow(date: String, completion: @escaping (PhishNetShowResponse?, Error?) -> Void) {
         guard isConfigured else { completion(nil, nil); return }
         let url = baseURL + "shows/showdate/\(date).json?apikey=\(apiKey)"
-        print("[PhishNetAPI] Fetching show for \(date)")
-        AF.request(url).responseDecodable(of: PhishNetShowResponse.self) { response in
-            switch response.result {
-            case .success(let showResponse):
-                print("[PhishNetAPI] Show response for \(date): \(showResponse.data?.count ?? 0) entries")
-                completion(showResponse, nil)
-            case .failure(let error):
+        MetadataCache.shared.fetchDecodable(url: url) { (showResponse: PhishNetShowResponse?, error: Error?) in
+            if let error = error {
                 print("[PhishNetAPI] Show error for \(date): \(error.localizedDescription)")
-                completion(nil, error)
             }
+            completion(showResponse, error)
         }
     }
 }

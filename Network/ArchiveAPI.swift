@@ -285,6 +285,19 @@ class ArchiveAPI: NSObject {
         }
     }
     
+    // MARK: - Cached variants (stale-while-revalidate)
+    // Completions can fire twice — cached copy first, then the network result
+    // only if it changed — so callers must be idempotent. Used by browse and
+    // detail views; ad-hoc searches stay on the live methods below.
+
+    func getIARequestItemsCached(url: String, completion: @escaping (ShowMetadatas?, Error?) -> Void) {
+        MetadataCache.shared.fetchDecodable(url: url, completion: completion)
+    }
+
+    func getIARequestMetadataCached(url: String, completion: @escaping (ShowMetadataModel?, Error?) -> Void) {
+        MetadataCache.shared.fetchDecodable(url: url, completion: completion)
+    }
+
     func getIARequestItemsDecodable(url: String, completion: @escaping (ShowMetadatas?, Error?) -> Void) {
         let startTime = Date()
         AF.request(url).responseDecodable(of: ShowMetadatas.self) { response in

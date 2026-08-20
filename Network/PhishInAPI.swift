@@ -23,38 +23,28 @@ final class PhishInAPI {
     // MARK: - Shows
 
     /// Fetch a show by date (format: "YYYY-MM-DD"). Returns tracks with MP3 URLs.
+    /// Cache-first: the completion can fire twice (cached, then network-if-changed).
     func fetchShow(date: String, completion: @escaping (PhishInShow?, Error?) -> Void) {
         let url = baseURL + "shows/\(date)"
-        print("[PhishInAPI] Fetching show for \(date)")
-        AF.request(url, headers: ["Accept": "application/json"])
-            .responseDecodable(of: PhishInShow.self) { response in
-            switch response.result {
-            case .success(let show):
-                let trackCount = show.tracks?.count ?? 0
-                print("[PhishInAPI] Show response for \(date): \(trackCount) tracks")
-                completion(show, nil)
-            case .failure(let error):
+        MetadataCache.shared.fetchDecodable(url: url, headers: ["Accept": "application/json"]) { (show: PhishInShow?, error: Error?) in
+            if let error = error {
                 print("[PhishInAPI] Show error for \(date): \(error.localizedDescription)")
-                completion(nil, error)
             }
+            completion(show, error)
         }
     }
 
     /// Fetch shows for a given year. Returns show summaries (without tracks).
+    /// Cache-first: the completion can fire twice (cached, then network-if-changed).
     func fetchShows(year: Int, completion: @escaping ([PhishInShowSummary]?, Error?) -> Void) {
         let url = baseURL + "shows?year=\(year)&per_page=200"
-        print("[PhishInAPI] Fetching shows for year \(year)")
-        AF.request(url, headers: ["Accept": "application/json"])
-            .responseDecodable(of: PhishInYearResponse.self) { response in
-            switch response.result {
-            case .success(let yearResponse):
-                let shows = yearResponse.shows ?? []
-                print("[PhishInAPI] Year \(year): \(shows.count) shows")
-                completion(shows, nil)
-            case .failure(let error):
+        MetadataCache.shared.fetchDecodable(url: url, headers: ["Accept": "application/json"]) { (yearResponse: PhishInYearResponse?, error: Error?) in
+            if let error = error {
                 print("[PhishInAPI] Year error for \(year): \(error.localizedDescription)")
                 completion(nil, error)
+                return
             }
+            completion(yearResponse?.shows ?? [], nil)
         }
     }
 }

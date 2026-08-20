@@ -645,6 +645,74 @@ class BreazeTests: XCTestCase {
         XCTAssertTrue(picks.isEmpty)
     }
 
+    // MARK: - ShowDetailViewModel.buildMP3Array
+
+    private func decodeShowFiles(_ json: String) throws -> [ShowFile] {
+        try JSONDecoder().decode([ShowFile].self, from: json.data(using: .utf8)!)
+    }
+
+    func testBuildMP3ArrayInheritsTitlesFromUntaggedDerivatives() throws {
+        // Mirrors goose2026-08-18: VBR MP3 derivatives carry no title/track;
+        // the tags live only on the 24bit Flac originals.
+        let files = try decodeShowFiles("""
+        [
+            {"name": "goose2026-08-18s1t01.flac", "format": "24bit Flac", "title": "Intro", "track": "01"},
+            {"name": "goose2026-08-18s1t02.flac", "format": "24bit Flac", "title": "Yeti", "track": "02"},
+            {"name": "goose2026-08-18s1t01.mp3", "format": "VBR MP3"},
+            {"name": "goose2026-08-18s1t02.mp3", "format": "VBR MP3"},
+            {"name": "goose2026-08-18s1t01.png", "format": "Spectrogram"}
+        ]
+        """)
+        let mp3s = ShowDetailViewModel.buildMP3Array(from: files, identifier: "goose2026-08-18")
+        XCTAssertEqual(mp3s.count, 2)
+        XCTAssertEqual(mp3s[0].title, "Intro")
+        XCTAssertEqual(mp3s[0].track, "01")
+        XCTAssertEqual(mp3s[1].title, "Yeti")
+        XCTAssertEqual(mp3s[1].track, "02")
+        XCTAssertEqual(mp3s[0].identifier, "goose2026-08-18")
+    }
+
+    func testBuildMP3ArrayKeepsOwnTitleWhenTagged() throws {
+        let files = try decodeShowFiles("""
+        [
+            {"name": "gd77-05-08d1t01.flac", "format": "Flac", "title": "Flac Title"},
+            {"name": "gd77-05-08d1t01.mp3", "format": "VBR MP3", "title": "MP3 Title", "track": "01"}
+        ]
+        """)
+        let mp3s = ShowDetailViewModel.buildMP3Array(from: files, identifier: "gd77-05-08")
+        XCTAssertEqual(mp3s.count, 1)
+        XCTAssertEqual(mp3s[0].title, "MP3 Title")
+        XCTAssertEqual(mp3s[0].track, "01")
+    }
+
+    func testBuildMP3ArrayLeavesTitleNilWithoutSibling() throws {
+        let files = try decodeShowFiles("""
+        [
+            {"name": "showd1t01.mp3", "format": "VBR MP3"}
+        ]
+        """)
+        let mp3s = ShowDetailViewModel.buildMP3Array(from: files, identifier: "show")
+        XCTAssertEqual(mp3s.count, 1)
+        XCTAssertNil(mp3s[0].title)
+    }
+
+    func testBuildMP3ArraySortsAcrossSets() throws {
+        // s2 tracks must follow s1 regardless of file-list order
+        let files = try decodeShowFiles("""
+        [
+            {"name": "goose2026-08-18s2t01.mp3", "format": "VBR MP3"},
+            {"name": "goose2026-08-18s1t02.mp3", "format": "VBR MP3"},
+            {"name": "goose2026-08-18s1t01.mp3", "format": "VBR MP3"}
+        ]
+        """)
+        let mp3s = ShowDetailViewModel.buildMP3Array(from: files, identifier: "goose2026-08-18")
+        XCTAssertEqual(mp3s.map { $0.name }, [
+            "goose2026-08-18s1t01.mp3",
+            "goose2026-08-18s1t02.mp3",
+            "goose2026-08-18s2t01.mp3"
+        ])
+    }
+
     // MARK: - DeepLinkRouter
 
     func testDeepLinkRouterHandleURL() {

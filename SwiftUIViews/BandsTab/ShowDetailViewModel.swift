@@ -128,14 +128,8 @@ final class ShowDetailViewModel: ObservableObject {
 
                 // Build and sort mp3 array
                 if let files = showData.files {
-                    var mp3s = [ShowMP3]()
-                    for f in files {
-                        if (f.format?.contains("MP3")) ?? false {
-                            mp3s.append(ShowMP3(identifier: self.initialMetadata.identifier,
-                                                name: f.name, title: f.title, track: f.track))
-                        }
-                    }
-                    showData.mp3Array = mp3s.sorted { self.sortKey(for: $0) < self.sortKey(for: $1) }
+                    showData.mp3Array = Self.buildMP3Array(from: files,
+                                                           identifier: self.initialMetadata.identifier)
                 }
                 self.isDownloaded = showData.mp3Array?.allSatisfy { mp3 in
                     guard let name = mp3.name,
@@ -458,9 +452,39 @@ final class ShowDetailViewModel: ObservableObject {
         }
     }
 
+    // MARK: - Track list construction
+
+    /// Builds the sorted MP3 track array from an item's file list. Derived MP3s
+    /// often carry no tags (e.g. items whose originals are 24bit Flac), so when
+    /// an MP3 entry lacks a title it inherits title/track from a same-basename
+    /// sibling — archive.org derivatives keep the original's basename.
+    static func buildMP3Array(from files: [ShowFile], identifier: String?) -> [ShowMP3] {
+        var tagsByBasename = [String: (title: String, track: String?)]()
+        for f in files {
+            guard let name = f.name, let title = f.title, !title.isEmpty else { continue }
+            let base = (name as NSString).deletingPathExtension
+            if tagsByBasename[base] == nil {
+                tagsByBasename[base] = (title, f.track)
+            }
+        }
+
+        var mp3s = [ShowMP3]()
+        for f in files where (f.format?.contains("MP3")) ?? false {
+            var title = f.title
+            var track = f.track
+            if (title ?? "").isEmpty, let name = f.name,
+               let inherited = tagsByBasename[(name as NSString).deletingPathExtension] {
+                title = inherited.title
+                if (track ?? "").isEmpty { track = inherited.track }
+            }
+            mp3s.append(ShowMP3(identifier: identifier, name: f.name, title: title, track: track))
+        }
+        return mp3s.sorted { sortKey(for: $0) < sortKey(for: $1) }
+    }
+
     // MARK: - Sort helpers (mirrors ShowViewController logic)
 
-    private func sortKey(for mp3: ShowMP3) -> (Int, Int, String) {
+    private static func sortKey(for mp3: ShowMP3) -> (Int, Int, String) {
         let name = mp3.name ?? ""
         let lastComponent = URL(fileURLWithPath: name).lastPathComponent
         let fallback = mp3.title ?? lastComponent

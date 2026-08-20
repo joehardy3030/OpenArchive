@@ -148,50 +148,64 @@ struct BrowseCollectionsSheet: View {
         return artists.filter { $0.name.lowercased().contains(q) }
     }
 
+    enum BrowseSource {
+        case lma
+        case tapers
+    }
+
+    @State private var source: BrowseSource = .lma
+
     var body: some View {
         NavigationStack {
-            Group {
-                if isLoading {
-                    ProgressView("Loading bands...")
-                } else {
-                    List {
-                        Section("Live Music Archive") {
-                            ForEach(filtered, id: \.identifier) { item in
-                                Button {
-                                    onSelect(item)
-                                } label: {
-                                    Text((item.title ?? item.identifier) ?? "Unknown")
-                                        .font(.system(size: 18, weight: .bold))
-                                }
+            VStack(spacing: 0) {
+                Picker("Source", selection: $source) {
+                    Text("Live Music Archive").tag(BrowseSource.lma)
+                    Text("Taper's Section").tag(BrowseSource.tapers)
+                }
+                .pickerStyle(.segmented)
+                .padding(.horizontal)
+                .padding(.vertical, 8)
+
+                switch source {
+                case .lma:
+                    if isLoading {
+                        Spacer()
+                        ProgressView("Loading bands...")
+                        Spacer()
+                    } else {
+                        List(filtered, id: \.identifier) { item in
+                            Button {
+                                onSelect(item)
+                            } label: {
+                                Text((item.title ?? item.identifier) ?? "Unknown")
+                                    .font(.system(size: 18, weight: .bold))
                             }
                         }
-                        Section("Taper's Section Artists") {
-                            if isArtistsLoading {
-                                HStack(spacing: 8) {
-                                    ProgressView()
-                                    Text("Loading artists...")
+                    }
+                case .tapers:
+                    if isArtistsLoading {
+                        Spacer()
+                        ProgressView("Loading artists...")
+                        Spacer()
+                    } else {
+                        List(filteredArtists, id: \.name) { artist in
+                            Button {
+                                onSelectArtist(artist)
+                            } label: {
+                                HStack {
+                                    Text(artist.name)
+                                        .font(.system(size: 18, weight: .bold))
+                                    Spacer()
+                                    Text("\(artist.count) tapes")
+                                        .font(.system(size: 15))
                                         .foregroundColor(.secondary)
-                                }
-                            }
-                            ForEach(filteredArtists, id: \.name) { artist in
-                                Button {
-                                    onSelectArtist(artist)
-                                } label: {
-                                    HStack {
-                                        Text(artist.name)
-                                            .font(.system(size: 18, weight: .bold))
-                                        Spacer()
-                                        Text("\(artist.count) tapes")
-                                            .font(.system(size: 15))
-                                            .foregroundColor(.secondary)
-                                    }
                                 }
                             }
                         }
                     }
-                    .searchable(text: $searchText, prompt: "Search")
                 }
             }
+            .searchable(text: $searchText, prompt: "Search")
             .navigationTitle("Browse Bands")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

@@ -454,7 +454,7 @@ class ArchiveAPI: NSObject {
         let title: String?
     }
 
-    struct ArchiveCreator {
+    struct ArchiveCreator: Codable {
         let name: String
         let count: Int
     }

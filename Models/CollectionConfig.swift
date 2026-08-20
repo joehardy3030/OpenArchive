@@ -1,8 +1,8 @@
 import Foundation
 
 struct CollectionConfig {
-    static let collectionsText = ["Grateful Dead", "Phish", "Phil Lesh and Friends", "The Other Ones", "Further", "Dead And Company", "Billy Strings", "Goose", "The Radiators"]
-    static let collections = ["GratefulDead", "Phish", "PhilLeshandFriends", "TheOtherOnes", "Furthur", "DeadAndCompany", "BillyStrings", "GooseBand", "Radiators"]
+    static let collectionsText = ["Grateful Dead", "Phish", "Jerry Garcia", "Phil Lesh and Friends", "The Other Ones", "Further", "Dead And Company", "Billy Strings", "Goose", "The Radiators"]
+    static let collections = ["GratefulDead", "Phish", "Jerry Garcia", "PhilLeshandFriends", "TheOtherOnes", "Furthur", "DeadAndCompany", "BillyStrings", "GooseBand", "Radiators"]
 
     // Collections whose archive.org items mark soundboards with the stream_only
     // flag (the Dead-family streaming policy). Only these get the All/SBD filter;
@@ -17,7 +17,9 @@ struct CollectionConfig {
     // Collections that use creator field instead of collection field for searching
     // Phish metadata (setlists, ratings, venues) courtesy of Phish.net / The Mockingbird Foundation.
     // Audio streaming for Phish sourced from Phish.in. See Network/PhishNetAPI.swift for API details.
-    static let creatorBasedCollections = ["Phish"]
+    // Jerry Garcia has no archive.org collection; creator search also picks up
+    // "Jerry Garcia Band", "Jerry Garcia Acoustic Band", etc. (phrase match).
+    static let creatorBasedCollections = ["Phish", "Jerry Garcia"]
 
     // Expandable: allow runtime-added creator-based identifiers via UserDefaults key
     static func isCreatorBased(collection: String) -> Bool {

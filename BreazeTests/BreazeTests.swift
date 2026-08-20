@@ -238,6 +238,7 @@ class BreazeTests: XCTestCase {
 
     func testCreatorBasedCollections() {
         XCTAssertTrue(CollectionConfig.isCreatorBased(collection: "Phish"))
+        XCTAssertTrue(CollectionConfig.isCreatorBased(collection: "Jerry Garcia"))
         XCTAssertFalse(CollectionConfig.isCreatorBased(collection: "GratefulDead"))
         XCTAssertFalse(CollectionConfig.isCreatorBased(collection: "BillyStrings"))
     }

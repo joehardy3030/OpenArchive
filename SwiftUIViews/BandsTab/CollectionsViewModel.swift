@@ -46,28 +46,72 @@ final class CollectionsViewModel: ObservableObject {
         }
     }
 
+    // MARK: - Browse data cache
+    // Both browse lists are expensive (etree: one 50k-row request; taperssection
+    // artists: three 10k-row scrape pages), so they're kept for the session and
+    // persisted with a TTL to survive relaunches.
+
+    private struct CachedBrowseList<T: Codable>: Codable {
+        let savedAt: Date
+        let items: [T]
+    }
+
+    private static let browseCacheTTL: TimeInterval = 7 * 24 * 60 * 60
+
+    private func loadBrowseCache<T: Codable>(key: String) -> [T]? {
+        guard let data = UserDefaults.standard.data(forKey: key),
+              let cached = try? JSONDecoder().decode(CachedBrowseList<T>.self, from: data),
+              Date().timeIntervalSince(cached.savedAt) < Self.browseCacheTTL else { return nil }
+        return cached.items
+    }
+
+    private func saveBrowseCache<T: Codable>(_ items: [T], key: String) {
+        if let data = try? JSONEncoder().encode(CachedBrowseList(savedAt: Date(), items: items)) {
+            UserDefaults.standard.set(data, forKey: key)
+        }
+    }
+
     func fetchTapersSectionArtists() {
         guard browseArtists.isEmpty, !isArtistsLoading else { return }
+        if let cached: [ArchiveAPI.ArchiveCreator] = loadBrowseCache(key: "browseArtistsCache") {
+            browseArtists = cached
+            return
+        }
         isArtistsLoading = true
         archiveAPI.fetchCreators(inCollection: "taperssection") { [weak self] creators, _ in
             DispatchQueue.main.async {
-                self?.isArtistsLoading = false
+                guard let self = self else { return }
+                self.isArtistsLoading = false
                 // Skip one-off uploads so the list stays browsable
-                self?.browseArtists = (creators ?? []).filter { $0.count >= 2 }
+                let artists = (creators ?? []).filter { $0.count >= 2 }
+                self.browseArtists = artists
+                if !artists.isEmpty {
+                    self.saveBrowseCache(artists, key: "browseArtistsCache")
+                }
             }
         }
     }
 
     func fetchBrowseCollections() {
+        guard browseCollections.isEmpty, !isBrowseLoading else { return }
+        if let cached: [ArchiveAPI.ArchiveCollection] = loadBrowseCache(key: "browseCollectionsCache") {
+            browseCollections = cached
+            return
+        }
         isBrowseLoading = true
         archiveAPI.fetchEtreeCollections { [weak self] collections, error in
             DispatchQueue.main.async {
-                self?.isBrowseLoading = false
+                guard let self = self else { return }
+                self.isBrowseLoading = false
                 if let collections = collections {
-                    self?.browseCollections = collections.sorted {
+                    let sorted = collections.sorted {
                         let a = ($0.title ?? $0.identifier) ?? ""
                         let b = ($1.title ?? $1.identifier) ?? ""
                         return a.localizedCaseInsensitiveCompare(b) == .orderedAscending
+                    }
+                    self.browseCollections = sorted
+                    if !sorted.isEmpty {
+                        self.saveBrowseCache(sorted, key: "browseCollectionsCache")
                     }
                 }
             }

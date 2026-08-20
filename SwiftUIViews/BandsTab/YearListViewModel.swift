@@ -26,6 +26,8 @@ final class YearListViewModel: ObservableObject {
         case "DeadAndCompany": return Array(2015...2026)
         case "Radiators": return Array(1983...2026)
         case "Phish": return Array(1990...2026)
+        // Creator-based; ends 1995 to exclude phrase-matched tribute acts
+        case "Jerry Garcia": return Array(1963...1995)
         default: return Array(1965...1995)
         }
     }

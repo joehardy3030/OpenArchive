@@ -527,11 +527,19 @@ extension AudioPlayerArchive {
         return "00:00"
     }
     
+    /// Converts a slider fraction into a seek target. Returns nil when the
+    /// duration is NaN/indefinite (item still loading, or failed) — converting
+    /// that to Int64 is a fatal trap.
+    static func seekTime(fraction: Float, totalSeconds: Double) -> CMTime? {
+        guard totalSeconds.isFinite, totalSeconds > 0 else { return nil }
+        let clamped = min(max(fraction, 0), 1)
+        return CMTime(value: Int64(Double(clamped) * totalSeconds), timescale: 1)
+    }
+
     func timerSliderHandler(timerValue: Float) {
         if let duration = self.playerQueue?.currentItem?.duration {
             let totalSeconds = CMTimeGetSeconds(duration)
-            let value = Float64(timerValue) * totalSeconds
-            let seekTime = CMTime(value: Int64(value), timescale: 1)
+            guard let seekTime = Self.seekTime(fraction: timerValue, totalSeconds: totalSeconds) else { return }
             self.playerQueue?.seek(to: seekTime, completionHandler: { (completedSeek) in
             })
         }

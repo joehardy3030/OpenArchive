@@ -203,6 +203,24 @@ class BreazeTests: XCTestCase {
         XCTAssertEqual(AudioPlayerArchive.normalizedStartIndex(-1, count: 1), 0)
     }
 
+    // MARK: - AudioPlayerArchive.seekTime
+
+    func testSeekTimeRejectsNaNAndInfiniteDurations() {
+        // AVPlayerItem.duration is NaN/indefinite while loading or after a
+        // failure; converting it to Int64 crashes without the guard.
+        XCTAssertNil(AudioPlayerArchive.seekTime(fraction: 0.5, totalSeconds: Double.nan))
+        XCTAssertNil(AudioPlayerArchive.seekTime(fraction: 0.5, totalSeconds: Double.infinity))
+        XCTAssertNil(AudioPlayerArchive.seekTime(fraction: 0.5, totalSeconds: 0))
+        XCTAssertNil(AudioPlayerArchive.seekTime(fraction: 0.5, totalSeconds: -10))
+    }
+
+    func testSeekTimeComputesAndClamps() {
+        XCTAssertEqual(AudioPlayerArchive.seekTime(fraction: 0.5, totalSeconds: 100)?.seconds, 50)
+        XCTAssertEqual(AudioPlayerArchive.seekTime(fraction: 0, totalSeconds: 100)?.seconds, 0)
+        XCTAssertEqual(AudioPlayerArchive.seekTime(fraction: 1.5, totalSeconds: 100)?.seconds, 100)
+        XCTAssertEqual(AudioPlayerArchive.seekTime(fraction: -0.5, totalSeconds: 100)?.seconds, 0)
+    }
+
     // MARK: - CollectionConfig
 
     func testCollectionConfigGetCollection() {

@@ -16,15 +16,11 @@ final class DownloadsViewModel: ObservableObject {
     func loadDownloads() {
         isLoading = true
         network.getAllDownloadDocs(decade: nil) { [weak self] response in
-            DispatchQueue.main.async {
+            // Scan disk off the main thread: this is one file check per track per
+            // show, and the checks contend with active download writes.
+            DispatchQueue.global(qos: .userInitiated).async {
                 guard let self = self else { return }
-                self.isLoading = false
-
-                guard let downloadedShows = response else {
-                    self.shows = []
-                    self.missingTracks = [:]
-                    return
-                }
+                let downloadedShows = response ?? []
 
                 // Flag shows with tracks missing on disk so they can be repaired,
                 // rather than hiding them and deleting their records.
@@ -36,15 +32,20 @@ final class DownloadsViewModel: ObservableObject {
                         missing[id] = names
                     }
                 }
-                self.missingTracks = missing
 
                 // Sort by date
-                self.shows = downloadedShows.sorted { s1, s2 in
+                let sorted = downloadedShows.sorted { s1, s2 in
                     guard let d1 = s1.metadata?.date,
                           let date1 = self.utils.getDateFromDateString(datetime: d1) else { return false }
                     guard let d2 = s2.metadata?.date,
                           let date2 = self.utils.getDateFromDateString(datetime: d2) else { return true }
                     return date1 < date2
+                }
+
+                DispatchQueue.main.async {
+                    self.isLoading = false
+                    self.missingTracks = missing
+                    self.shows = sorted
                 }
             }
         }

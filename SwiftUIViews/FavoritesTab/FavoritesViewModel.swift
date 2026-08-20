@@ -41,7 +41,9 @@ final class FavoritesViewModel: ObservableObject {
 
     private func refreshDownloadedStatus() {
         network.getAllDownloadDocs(decade: nil) { [weak self] shows in
-            DispatchQueue.main.async {
+            // Per-track file checks off the main thread — they contend with
+            // active download writes and stall the Favorites list otherwise.
+            DispatchQueue.global(qos: .userInitiated).async {
                 guard let self, let shows else { return }
                 var ids = Set<String>()
                 for show in shows {
@@ -50,7 +52,9 @@ final class FavoritesViewModel: ObservableObject {
                         ids.insert(id)
                     }
                 }
-                self.downloadedIDs = ids
+                DispatchQueue.main.async {
+                    self.downloadedIDs = ids
+                }
             }
         }
     }

@@ -51,9 +51,9 @@ struct ShowsListView: View {
         }
         .padding(.bottom, miniPlayerInset)
         .navigationTitle(viewModel.navigationTitle)
-        .navigationDestination(for: ShowDestination.self) { dest in
-            ShowDetailView(metadata: dest.metadata, showType: dest.showType)
-        }
+        // Note: the navigationDestination for ShowDestination is declared once,
+        // at the stack root in CollectionsView — declaring it again here is
+        // ignored by SwiftUI and logs a runtime warning.
     }
 }
 

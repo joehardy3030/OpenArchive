@@ -168,39 +168,37 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
     
     private func loadDownloadedShowsForTemplate(_ template: CPListTemplate) {
         network.getAllDownloadDocs(decade: nil) { [weak self] (response: [ShowMetadataModel]?) in
-            DispatchQueue.main.async {
+            // Per-track file checks off the main thread — they contend with
+            // active download writes.
+            DispatchQueue.global(qos: .userInitiated).async {
                 guard let self = self else { return }
-                
+
+                var sortedShows: [ShowMetadataModel] = []
                 if let shows = response {
                     // Filter out shows with missing tracks
                     let validShows = shows.filter { show in
                         return self.checkTracksAndRemove(show: show)
                     }
-                    
+
                     // Sort by date
-                    let sortedShows = validShows.sorted { (show1, show2) -> Bool in
+                    sortedShows = validShows.sorted { (show1, show2) -> Bool in
                         guard let date1Str = show1.metadata?.date,
                               let date1 = self.utils.getDateFromDateString(datetime: date1Str) else {
                             return false
                         }
-                        
+
                         guard let date2Str = show2.metadata?.date,
                               let date2 = self.utils.getDateFromDateString(datetime: date2Str) else {
                             return true
                         }
-                        
+
                         return date1 < date2
                     }
-                    
+                }
+
+                DispatchQueue.main.async {
                     // Store all shows and reset pagination
                     self.allDownloadedShows = sortedShows
-                    self.currentPage = 0
-                    
-                    // Create the first page
-                    self.createMyTapesPage()
-                } else {
-                    // No shows available
-                    self.allDownloadedShows = []
                     self.currentPage = 0
                     self.createMyTapesPage()
                 }

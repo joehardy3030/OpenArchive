@@ -252,6 +252,35 @@ class BreazeTests: XCTestCase {
         XCTAssertFalse(CollectionConfig.supportsSBDFilter(collection: "taperssection"))
     }
 
+    // MARK: - YearListViewModel year ranges
+
+    func testCuratedYearRangeBeatsStoredInference() {
+        // A stored years_<id> range (inferred at add time, possibly skewed by
+        // phrase-matched strays) must not override a curated band's range.
+        let defaults = UserDefaults.standard
+        let key = "years_Jerry Garcia"
+        let saved = defaults.array(forKey: key)
+        defaults.set([1963, 2026], forKey: key)
+        defer {
+            if let saved { defaults.set(saved, forKey: key) }
+            else { defaults.removeObject(forKey: key) }
+        }
+
+        let vm = YearListViewModel(collection: "Jerry Garcia")
+        XCTAssertEqual(vm.years.first, 1963)
+        XCTAssertEqual(vm.years.last, 1995)
+    }
+
+    func testStoredYearRangeUsedForUnknownBands() {
+        let defaults = UserDefaults.standard
+        let key = "years_SomeTestBand"
+        defaults.set([2001, 2003], forKey: key)
+        defer { defaults.removeObject(forKey: key) }
+
+        let vm = YearListViewModel(collection: "SomeTestBand")
+        XCTAssertEqual(vm.years, [2001, 2002, 2003])
+    }
+
     // MARK: - ShowMetadata
 
     func testShowMetadataMonth() {
@@ -733,6 +762,90 @@ class BreazeTests: XCTestCase {
             "goose2026-08-18s1t02.mp3",
             "goose2026-08-18s2t01.mp3"
         ])
+    }
+
+    // MARK: - Title venue parsing & metadata backfill
+
+    func testTitleVenueLocationStandardConvention() {
+        var md = ShowMetadata(identifier: "x")
+        md.title = "Jerry Garcia live at Keystone, Berkeley, CA on 1974-01-17"
+        XCTAssertEqual(md.titleVenueLocation, "Keystone, Berkeley, CA")
+    }
+
+    func testTitleVenueLocationVenueContainingOn() {
+        var md = ShowMetadata(identifier: "x")
+        md.title = "Some Band live at House of Blues on Sunset on 1995-03-04"
+        XCTAssertEqual(md.titleVenueLocation, "House of Blues on Sunset")
+    }
+
+    func testTitleVenueLocationNoDateFallback() {
+        var md = ShowMetadata(identifier: "x")
+        md.title = "Some Band Live At The Fillmore"
+        XCTAssertEqual(md.titleVenueLocation, "The Fillmore")
+    }
+
+    func testTitleVenueLocationNoConvention() {
+        var md = ShowMetadata(identifier: "x")
+        md.title = "A random album title"
+        XCTAssertNil(md.titleVenueLocation)
+        md.title = nil
+        XCTAssertNil(md.titleVenueLocation)
+    }
+
+    func testDisplayVenueLinePrefersRealFields() {
+        var md = ShowMetadata(identifier: "x")
+        md.venue = "Winterland"
+        md.coverage = "San Francisco, CA"
+        md.title = "X live at Somewhere Else on 1977-01-01"
+        XCTAssertEqual(md.displayVenueLine, "Winterland, San Francisco, CA")
+    }
+
+    func testDisplayVenueLineFallsBackToTitle() {
+        var md = ShowMetadata(identifier: "x")
+        md.title = "Jerry Garcia live at Keystone, Berkeley, CA on 1974-01-17"
+        XCTAssertEqual(md.displayVenueLine, "Keystone, Berkeley, CA")
+    }
+
+    func testBackfillFromTitleAndDescription() {
+        var md = ShowMetadata(identifier: "jg74-01-17")
+        md.title = "Jerry Garcia live at Keystone, Berkeley, CA on 1974-01-17"
+        md.description = "Jerry Garcia and Merl Saunders\nSet II\n\nSource: Soundboard > Master Reel > DAT (48k)\n\n01 tuning"
+        var model = ShowMetadataModel()
+        model.metadata = md
+
+        ShowDetailViewModel.backfillMissingMetadata(&model)
+        XCTAssertEqual(model.metadata?.venue, "Keystone")
+        XCTAssertEqual(model.metadata?.coverage, "Berkeley, CA")
+        XCTAssertEqual(model.metadata?.source, ["Soundboard > Master Reel > DAT (48k)"])
+    }
+
+    func testBackfillFromFileAlbumTag() throws {
+        var md = ShowMetadata(identifier: "x")
+        md.title = "A random album title"  // unparseable
+        var model = ShowMetadataModel()
+        model.metadata = md
+        model.files = try decodeShowFiles("""
+        [
+            {"name": "t01.mp3", "format": "VBR MP3", "album": "The Keystone, Berkley, CA 01/17/1974 Set II"}
+        ]
+        """)
+
+        ShowDetailViewModel.backfillMissingMetadata(&model)
+        XCTAssertEqual(model.metadata?.venue, "The Keystone, Berkley, CA 01/17/1974 Set II")
+    }
+
+    func testBackfillDoesNotOverwriteExistingFields() {
+        var md = ShowMetadata(identifier: "x")
+        md.venue = "Winterland"
+        md.source = ["SBD master"]
+        md.title = "X live at Somewhere Else on 1977-01-01"
+        md.description = "Source: something worse"
+        var model = ShowMetadataModel()
+        model.metadata = md
+
+        ShowDetailViewModel.backfillMissingMetadata(&model)
+        XCTAssertEqual(model.metadata?.venue, "Winterland")
+        XCTAssertEqual(model.metadata?.source, ["SBD master"])
     }
 
     // MARK: - DeepLinkRouter

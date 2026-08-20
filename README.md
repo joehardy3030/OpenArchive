@@ -4,7 +4,7 @@ An iOS music player for streaming and downloading live concert recordings from a
 
 ## Supported Artists
 
-Default collections include Grateful Dead, Phish, Phil Lesh and Friends, The Other Ones, Furthur, Dead and Company, Billy Strings, Goose, and The Radiators. Users can add or remove collections at runtime.
+Default collections include Grateful Dead, Phish, Jerry Garcia, Phil Lesh and Friends, The Other Ones, Furthur, Dead and Company, Billy Strings, Goose, and The Radiators. Users can add or remove bands at runtime.
 
 ## Features
 
@@ -17,7 +17,7 @@ Default collections include Grateful Dead, Phish, Phil Lesh and Friends, The Oth
 - **Full player** with track list, skip, rewind, fast-forward, and scrubbing
 - **Mini player** bar persists across tabs while audio is playing
 - **Joe's Picks** — curated Grateful Dead filter: top-rated soundboards, one per show date
-- **Add any band** — browse archive.org's Live Music Archive and add collections at runtime
+- **Add any band** — browse archive.org's Live Music Archive collections or Taper's Section artists and add them at runtime
 - **CarPlay** support for browsing and playing downloaded shows
 - **Deep links** via `chateauarchive://` URL scheme
 - **Playback persistence** — resumes where you left off after app restart

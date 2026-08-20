@@ -81,8 +81,7 @@ struct ShowRowView: View {
                 .font(.system(size: 18, weight: .bold))
             Text(formatDate(show.date))
                 .font(.system(size: 17, weight: .bold))
-            if let venue = show.venue {
-                let loc = [venue, show.coverage].compactMap { $0 }.joined(separator: ", ")
+            if let loc = show.displayVenueLine {
                 Text(loc)
                     .font(.system(size: 16))
                     .foregroundColor(.secondary)

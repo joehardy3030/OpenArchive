@@ -12,10 +12,20 @@ final class YearListViewModel: ObservableObject {
     }
 
     private static func buildYears(for collection: String) -> [Int] {
+        // Curated ranges for known bands take precedence over the API-inferred
+        // years_<id> range, which can be skewed by phrase-matched strays
+        // (e.g. Jerry Garcia tribute acts dated after 1995).
+        if let curated = curatedYears(for: collection) {
+            return curated
+        }
         if let stored = UserDefaults.standard.array(forKey: "years_\(collection)") as? [Int],
            stored.count == 2, stored[0] <= stored[1] {
             return Array(stored[0]...stored[1])
         }
+        return Array(1965...1995)
+    }
+
+    private static func curatedYears(for collection: String) -> [Int]? {
         switch collection {
         case "GratefulDead": return Array(1965...1995)
         case "BillyStrings": return Array(2015...2026)
@@ -28,7 +38,7 @@ final class YearListViewModel: ObservableObject {
         case "Phish": return Array(1990...2026)
         // Creator-based; ends 1995 to exclude phrase-matched tribute acts
         case "Jerry Garcia": return Array(1963...1995)
-        default: return Array(1965...1995)
+        default: return nil
         }
     }
 }

@@ -69,8 +69,7 @@ struct FavoriteShowRow: View {
                     .font(.system(size: 18, weight: .bold))
                 Text(formatDate(show.metadata?.date))
                     .font(.system(size: 17, weight: .bold))
-                if let venue = show.metadata?.venue {
-                    let loc = [venue, show.metadata?.coverage].compactMap { $0 }.joined(separator: ", ")
+                if let loc = show.metadata?.displayVenueLine {
                     Text(loc)
                         .font(.system(size: 16))
                         .foregroundColor(.secondary)

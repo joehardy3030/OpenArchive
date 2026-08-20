@@ -18,12 +18,14 @@ Naming history: the project began life in 2018 as a weather app called **Breaze*
 
 ## Testing
 
-`BreazeTests/BreazeTests.swift` is a real unit test suite (~80 tests) run via Xcode (Cmd+U) or `xcodebuild test -workspace Breaze.xcworkspace -scheme Breaze`. It covers:
+`BreazeTests/BreazeTests.swift` is a real unit test suite (~85 tests) run via Xcode (Cmd+U) or `xcodebuild test -workspace Breaze.xcworkspace -scheme Breaze`. It covers:
 
-- `ArchiveAPI` URL construction (date ranges, leap years, SBD flag, creator- vs collection-based queries, search URLs)
+- `ArchiveAPI` URL construction (date ranges, leap years, SBD flag, creator- vs collection-based queries, search URLs, `encodeQueryValue` percent-encoding)
 - `AudioPlayerArchive.normalizedStartIndex`
-- `CollectionConfig` display-name/identifier mapping
+- `CollectionConfig` display-name/identifier mapping, creator-based and SBD-capable lists
 - `ShowMetadata` decoding (string-or-array fields: description, collection, source)
+- `ShowDetailViewModel.buildMP3Array` (track title/track-number inheritance from lossless originals, cross-set sort order)
+- `YearListViewModel` year ranges (curated ranges beat stored API-inferred ranges)
 - `PlaybackState` (show type mapping, staleness, Codable round-trip)
 - `SongDetailsModel`, `Utils` (timers, dates, track URLs, path-traversal rejection)
 - Joe's Picks filtering (`MonthListViewModel.applyJoesPicks`)
@@ -82,13 +84,24 @@ The app supports three show types (see `Models/ShowTypes.swift`):
 - `ShowType.downloaded` — Locally downloaded shows
 - `ShowType.phishIn` — Streams from Phish.in
 
-Collections are configured in `Models/CollectionConfig.swift`. Users can add/remove collections at runtime via `CollectionStore` (UserDefaults-backed; defaults can be hidden, additions persisted). The Bands tab "+" button offers two sections: child collections of archive.org's Live Music Archive (`ArchiveAPI.fetchEtreeCollections`) and **Taper's Section artists** (`ArchiveAPI.fetchCreators`, which pages the scrape API over the multi-artist `taperssection` collection and aggregates per-artist tape counts). On add, `detectCreatorBased` decides whether the identifier is a collection or a creator (Phish-style), and `fetchCollectionYearRange` infers the year range (stored in UserDefaults key `years_<identifier>`; hardcoded fallbacks per known band in `YearListViewModel`).
+Collections are configured in `Models/CollectionConfig.swift`. Users can add/remove collections at runtime via `CollectionStore` (UserDefaults-backed; defaults can be hidden, additions persisted). The Bands tab "+" button opens a browse sheet with a **segmented toggle** between two sources: child collections of archive.org's Live Music Archive (`ArchiveAPI.fetchEtreeCollections`) and **Taper's Section artists** (`ArchiveAPI.fetchCreators`, which pages the scrape API over the multi-artist `taperssection` collection and aggregates per-artist tape counts, filtered to artists with 2+ tapes). Both browse lists are expensive to fetch, so `CollectionsViewModel` keeps them for the session and persists them in UserDefaults with a 7-day TTL. On add, `detectCreatorBased` decides whether the identifier is a collection or a creator (Phish-style), and `fetchCollectionYearRange` infers the year range (stored in UserDefaults key `years_<identifier>`).
 
-Phish uses **creator-based** search (`creator:"Phish"`) rather than collection-based; extra runtime-detected creator-based identifiers live in UserDefaults key `creatorBasedCollectionsExtra`. Taper's Section artists are added creator-based too, which finds their tapes across all archive.org collections; creator names are percent-encoded in hand-built query URLs via `ArchiveAPI.encodeQueryValue` (names can contain spaces and `&`). The All/SBD month filter only renders for collections in `CollectionConfig.sbdCapableCollections` (the Dead-family collections that use archive.org's `stream_only` flag).
+Year ranges: curated per-band ranges in `YearListViewModel.curatedYears` take **precedence** over the stored API-inferred `years_<identifier>` range — inference can be skewed by phrase-matched strays (see below). Stored ranges apply only to runtime-added bands.
+
+**Creator-based search:** Phish and Jerry Garcia are creator-based defaults (`creator:"X"` instead of `collection:(X)`); extra runtime-detected creator-based identifiers live in UserDefaults key `creatorBasedCollectionsExtra`, and Taper's Section artists are added creator-based too, which finds their tapes across all archive.org collections. Creator names are percent-encoded in hand-built query URLs via `ArchiveAPI.encodeQueryValue` (names can contain spaces and `&`). Important: archive.org's `creator:"X"` is a **phrase match, not exact equality** — `creator:"Jerry Garcia"` also matches "Jerry Garcia Band" and "Jerry Garcia Acoustic Band" (desired) as well as post-1995 tribute acts (excluded via the curated 1963–1995 year range).
+
+**Planned, not implemented:** the modern band **JGB** has a legitimate claim to the "Jerry Garcia Band" name post-1995. When added, it must be a separate band entry named exactly "JGB" (the acronym) — not folded into the Jerry Garcia entry, whose 1995 year cap intentionally excludes post-Jerry material.
 
 ### Browse Filters
 
-`MonthListView` offers a segmented filter: **All** / **SBD** (soundboard, `stream_only` collection) / **Joe's Picks** (Grateful Dead only, and the remembered default for GD). Joe's Picks = SBD shows with `avg_rating ≥ 4.5` and `num_reviews ≥ 2`, deduplicated to one show per date (preferring the highest-rated among those with 10+ reviews). Logic in `MonthListViewModel.applyJoesPicks`.
+`MonthListView` offers a segmented filter: **All** / **SBD** (soundboard, `stream_only` collection) / **Joe's Picks** (Grateful Dead only, and the remembered default for GD). The filter only renders for collections in `CollectionConfig.sbdCapableCollections` (GratefulDead, Furthur, TheOtherOnes — the Dead-family collections whose items use the `stream_only` flag); other bands' SBDs exist but aren't flagged, so the filter would silently return nothing. Joe's Picks = SBD shows with `avg_rating ≥ 4.5` and `num_reviews ≥ 2`, deduplicated to one show per date (preferring the highest-rated among those with 10+ reviews). Logic in `MonthListViewModel.applyJoesPicks`.
+
+### List Metadata & Backfill
+
+Items in multi-artist collections (taperssection especially) often have **no venue/coverage/source/transferer fields at all** — that info lives instead in the conventional item title ("X live at Venue, City, ST on date"), the description (a "Source:" lineage line, setlist, personnel), and the audio files' embedded tags (per-file title/track/album, extracted by archive.org into the metadata files array). The app recovers it at two levels:
+
+- **List rows** (Months/Search/Downloads/Favorites): search queries request the `title` field, and `ShowMetadata.displayVenueLine` falls back to `titleVenueLocation` (parsed from the "live at … on date" title convention) when the venue field is empty.
+- **Detail fetch**: `ShowDetailViewModel.backfillMissingMetadata` fills empty venue/coverage from the title parse (venue = first comma component, coverage = the rest) or the files' `album` tag, and empty source from the description's "Source:" line — before the model is displayed or saved, so downloads and favorites persist the enriched copy. Existing field values are never overwritten.
 
 ### Data Flow
 
@@ -99,7 +112,7 @@ Phish uses **creator-based** search (`creator:"Phish"`) rather than collection-b
 
 ### Playback Engine Details
 
-- Track order is derived in `ShowDetailViewModel.sortKey` from filename conventions (`d1t01`/`s2t05`, `1-03_`, leading `01_`), falling back to the metadata track number.
+- The track list is built by `ShowDetailViewModel.buildMP3Array`: derived MP3 entries that carry no tags (common when an item's originals are 24bit Flac) inherit title/track from the same-basename original file entry — archive.org derivatives keep the original's basename. Track order comes from `sortKey`, which parses filename conventions (`d1t01`/`s2t05`, `1-03_`, leading `01_`) and falls back to the metadata track number.
 - `AudioPlayerArchive.resolveTrackURL` prefers the local file when it exists on disk, else the archive.org streaming URL — so a partially downloaded show plays local tracks offline and streams the rest.
 - Failure recovery: when a **local** item fails (corrupt/truncated file), the path is added to `pathsToForceStream` (per-show, in-session), the queue is rebuilt from the current track using the streaming URL for the bad file, and a silent re-download repairs the disk copy. When a **streaming** item fails, up to 3 consecutive failures are skipped before going idle.
 - System integration: `MPRemoteCommandCenter` (play/pause/next/previous), `MPNowPlayingInfoCenter` with downloaded cover art (`setArtworkURL`, falls back to app icon), and audio-session interruption handling with auto-resume.

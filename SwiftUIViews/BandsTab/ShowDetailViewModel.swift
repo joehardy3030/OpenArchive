@@ -131,6 +131,7 @@ final class ShowDetailViewModel: ObservableObject {
                     showData.mp3Array = Self.buildMP3Array(from: files,
                                                            identifier: self.initialMetadata.identifier)
                 }
+                Self.backfillMissingMetadata(&showData)
                 self.isDownloaded = showData.mp3Array?.allSatisfy { mp3 in
                     guard let name = mp3.name,
                           let localURL = self.utils.trackURLfromName(name: name) else { return false }
@@ -450,6 +451,51 @@ final class ShowDetailViewModel: ObservableObject {
                 }
             }
         }
+    }
+
+    // MARK: - Metadata backfill
+
+    /// Fills empty venue/coverage/source from the places tapers actually put
+    /// them when the item-level fields are blank (endemic in taperssection):
+    /// the conventional item title ("X live at Venue, City, ST on date"), the
+    /// audio files' embedded album tag, and the description's "Source:" line.
+    /// Runs before the model is displayed or saved, so downloads and favorites
+    /// keep the enriched copy.
+    static func backfillMissingMetadata(_ model: inout ShowMetadataModel) {
+        guard var md = model.metadata else { return }
+
+        if md.venue == nil, let parsed = md.titleVenueLocation {
+            // "Keystone, Berkeley, CA" → venue "Keystone", coverage "Berkeley, CA"
+            let parts = parsed.split(separator: ",", maxSplits: 1)
+                .map { $0.trimmingCharacters(in: .whitespaces) }
+            md.venue = parts.first
+            if md.coverage == nil, parts.count > 1 {
+                md.coverage = parts[1]
+            }
+        }
+
+        // Album tag extracted from the audio files' embedded metadata,
+        // e.g. "The Keystone, Berkley, CA 01/17/1974 Set II"
+        if md.venue == nil,
+           let album = model.files?.compactMap({ $0.album }).first(where: { !$0.isEmpty }) {
+            md.venue = album
+        }
+
+        if md.source == nil || md.source?.isEmpty == true, let desc = md.description {
+            for line in desc.components(separatedBy: .newlines) {
+                let trimmed = line.trimmingCharacters(in: .whitespaces)
+                if trimmed.lowercased().hasPrefix("source:") {
+                    let value = trimmed.dropFirst("source:".count)
+                        .trimmingCharacters(in: .whitespaces)
+                    if !value.isEmpty {
+                        md.source = [value]
+                        break
+                    }
+                }
+            }
+        }
+
+        model.metadata = md
     }
 
     // MARK: - Track list construction

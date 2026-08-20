@@ -98,6 +98,37 @@ extension ShowMetadata {
         let index = date.index(date.startIndex, offsetBy: 7)
         return String(date[..<index]) // Extracts the "yyyy-MM" part
     }
+
+    /// Venue-and-location parsed from archive.org's conventional item title,
+    /// e.g. "Jerry Garcia live at Keystone, Berkeley, CA on 1974-01-17".
+    /// Multi-artist collections like taperssection often have no venue/coverage
+    /// fields at all — the title is the only structured place this info lives.
+    var titleVenueLocation: String? {
+        guard let title = title else { return nil }
+        // Non-greedy up to an " on <date>" suffix, so venues containing " on "
+        // ("House of Blues on Sunset") don't get truncated.
+        if let regex = try? NSRegularExpression(pattern: "(?i)\\blive at (.+?) on \\d{4}-\\d{2}-\\d{2}"),
+           let match = regex.firstMatch(in: title, range: NSRange(title.startIndex..., in: title)),
+           let r = Range(match.range(at: 1), in: title) {
+            let venue = title[r].trimmingCharacters(in: .whitespaces)
+            return venue.isEmpty ? nil : venue
+        }
+        // No trailing date — take everything after "live at"
+        if let range = title.range(of: " live at ", options: .caseInsensitive) {
+            let venue = title[range.upperBound...].trimmingCharacters(in: .whitespaces)
+            return venue.isEmpty ? nil : venue
+        }
+        return nil
+    }
+
+    /// One-line venue + location for list rows, falling back to the title parse
+    /// when the item has no venue/coverage fields.
+    var displayVenueLine: String? {
+        if let venue = venue {
+            return [venue, coverage].compactMap { $0 }.joined(separator: ", ")
+        }
+        return titleVenueLocation
+    }
 }
 
 struct ShowMetadatas:Codable {

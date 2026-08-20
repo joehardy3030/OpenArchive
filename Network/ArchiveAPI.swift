@@ -67,7 +67,7 @@ class ArchiveAPI: NSObject {
         var monthString: String
                 
         url += "services/search/v1/scrape?"
-        url += "fields=identifier,date,venue,transferer,source,coverage,stars,avg_rating,num_reviews,collection,creator&"
+        url += "fields=identifier,title,date,venue,transferer,source,coverage,stars,avg_rating,num_reviews,collection,creator&"
         
         // Check if this is a creator-based search
         if CollectionConfig.isCreatorBased(collection: collection) {
@@ -119,7 +119,7 @@ class ArchiveAPI: NSObject {
         var url = baseURLString
                 
         url += "services/search/v1/scrape?"
-        url += "fields=identifier,date,venue,transferer,source,coverage,stars,avg_rating,num_reviews,collection,creator&"
+        url += "fields=identifier,title,date,venue,transferer,source,coverage,stars,avg_rating,num_reviews,collection,creator&"
         
         // Check if this is a creator-based search
         if CollectionConfig.isCreatorBased(collection: collection) {
@@ -190,7 +190,7 @@ class ArchiveAPI: NSObject {
         var queryItems = [URLQueryItem]()
 
         // Fields
-        let fields = "identifier,date,venue,transferer,source,coverage,stars,avg_rating,num_reviews,collection,creator"
+        let fields = "identifier,title,date,venue,transferer,source,coverage,stars,avg_rating,num_reviews,collection,creator"
         queryItems.append(URLQueryItem(name: "fields", value: fields))
 
         // Query

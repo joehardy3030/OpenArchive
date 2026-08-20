@@ -26,8 +26,6 @@ final class YearListViewModel: ObservableObject {
         case "DeadAndCompany": return Array(2015...2026)
         case "Radiators": return Array(1983...2026)
         case "Phish": return Array(1990...2026)
-        // Multi-artist taper collection (audio_music, not etree); spans 1965–present
-        case "taperssection": return Array(1965...2026)
         default: return Array(1965...1995)
         }
     }

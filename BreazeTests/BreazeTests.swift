@@ -93,6 +93,27 @@ class BreazeTests: XCTestCase {
         XCTAssertFalse(url.contains("collection%3A"))
     }
 
+    func testEncodeQueryValue() {
+        XCTAssertEqual(ArchiveAPI.encodeQueryValue("Phish"), "Phish")
+        XCTAssertEqual(ArchiveAPI.encodeQueryValue("Pearl Jam"), "Pearl%20Jam")
+        XCTAssertEqual(ArchiveAPI.encodeQueryValue("Medeski Martin & Wood"),
+                       "Medeski%20Martin%20%26%20Wood")
+    }
+
+    func testDateRangeURLCreatorWithSpaces() {
+        // Creator-based band whose name needs percent-encoding (taperssection adds)
+        let defaults = UserDefaults.standard
+        let key = "creatorBasedCollectionsExtra"
+        let saved = defaults.stringArray(forKey: key)
+        defaults.set((saved ?? []) + ["Pearl Jam"], forKey: key)
+        defer { defaults.set(saved, forKey: key) }
+
+        let api = ArchiveAPI()
+        let url = api.dateRangeURL(year: 1992, month: 2, sbdOnly: false, collection: "Pearl Jam")
+        XCTAssertTrue(url.contains("creator%3A%22Pearl%20Jam%22"))
+        XCTAssertNotNil(URL(string: url), "URL with encoded creator must be valid")
+    }
+
     func testDateRangeURLCollectionBased() {
         let api = ArchiveAPI()
         let url = api.dateRangeURL(year: 1977, month: 5, sbdOnly: false, collection: "GratefulDead")

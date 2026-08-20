@@ -82,9 +82,9 @@ The app supports three show types (see `Models/ShowTypes.swift`):
 - `ShowType.downloaded` — Locally downloaded shows
 - `ShowType.phishIn` — Streams from Phish.in
 
-Collections are configured in `Models/CollectionConfig.swift`. Users can add/remove collections at runtime via `CollectionStore` (UserDefaults-backed; defaults can be hidden, additions persisted). The Bands tab "+" button lists all child collections of archive.org's Live Music Archive (`ArchiveAPI.fetchEtreeCollections`); on add, `detectCreatorBased` decides whether the identifier is a collection or a creator (Phish-style), and `fetchCollectionYearRange` infers the year range (stored in UserDefaults key `years_<identifier>`; hardcoded fallbacks per known band in `YearListViewModel`).
+Collections are configured in `Models/CollectionConfig.swift`. Users can add/remove collections at runtime via `CollectionStore` (UserDefaults-backed; defaults can be hidden, additions persisted). The Bands tab "+" button offers two sections: child collections of archive.org's Live Music Archive (`ArchiveAPI.fetchEtreeCollections`) and **Taper's Section artists** (`ArchiveAPI.fetchCreators`, which pages the scrape API over the multi-artist `taperssection` collection and aggregates per-artist tape counts). On add, `detectCreatorBased` decides whether the identifier is a collection or a creator (Phish-style), and `fetchCollectionYearRange` infers the year range (stored in UserDefaults key `years_<identifier>`; hardcoded fallbacks per known band in `YearListViewModel`).
 
-Phish uses **creator-based** search (`creator:"Phish"`) rather than collection-based; extra runtime-detected creator-based identifiers live in UserDefaults key `creatorBasedCollectionsExtra`.
+Phish uses **creator-based** search (`creator:"Phish"`) rather than collection-based; extra runtime-detected creator-based identifiers live in UserDefaults key `creatorBasedCollectionsExtra`. Taper's Section artists are added creator-based too, which finds their tapes across all archive.org collections; creator names are percent-encoded in hand-built query URLs via `ArchiveAPI.encodeQueryValue` (names can contain spaces and `&`). The All/SBD month filter only renders for collections in `CollectionConfig.sbdCapableCollections` (the Dead-family collections that use archive.org's `stream_only` flag).
 
 ### Browse Filters
 

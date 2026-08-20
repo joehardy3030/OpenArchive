@@ -1,8 +1,8 @@
 import Foundation
 
 struct CollectionConfig {
-    static let collectionsText = ["Grateful Dead", "Phish", "Phil Lesh and Friends", "The Other Ones", "Further", "Dead And Company", "Billy Strings", "Goose", "The Radiators", "Taper's Section"]
-    static let collections = ["GratefulDead", "Phish", "PhilLeshandFriends", "TheOtherOnes", "Furthur", "DeadAndCompany", "BillyStrings", "GooseBand", "Radiators", "taperssection"]
+    static let collectionsText = ["Grateful Dead", "Phish", "Phil Lesh and Friends", "The Other Ones", "Further", "Dead And Company", "Billy Strings", "Goose", "The Radiators"]
+    static let collections = ["GratefulDead", "Phish", "PhilLeshandFriends", "TheOtherOnes", "Furthur", "DeadAndCompany", "BillyStrings", "GooseBand", "Radiators"]
 
     // Collections whose archive.org items mark soundboards with the stream_only
     // flag (the Dead-family streaming policy). Only these get the All/SBD filter;

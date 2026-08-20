@@ -34,7 +34,11 @@ struct CollectionsView: View {
                     Button(action: { showRemoveSheet = true }) {
                         Image(systemName: "minus")
                     }
-                    Button(action: { viewModel.fetchBrowseCollections(); showBrowseSheet = true }) {
+                    Button(action: {
+                        viewModel.fetchBrowseCollections()
+                        viewModel.fetchTapersSectionArtists()
+                        showBrowseSheet = true
+                    }) {
                         Image(systemName: "plus")
                     }
                 }
@@ -57,13 +61,22 @@ struct CollectionsView: View {
             .sheet(isPresented: $showBrowseSheet) {
                 BrowseCollectionsSheet(
                     collections: viewModel.browseCollections,
-                    isLoading: viewModel.isBrowseLoading
-                ) { selected in
-                    let title = (selected.title ?? selected.identifier) ?? "Unknown"
-                    let id = selected.identifier ?? title
-                    viewModel.addAndInferYears(displayName: title, identifier: id)
-                    showBrowseSheet = false
-                }
+                    artists: viewModel.browseArtists,
+                    isLoading: viewModel.isBrowseLoading,
+                    isArtistsLoading: viewModel.isArtistsLoading,
+                    onSelect: { selected in
+                        let title = (selected.title ?? selected.identifier) ?? "Unknown"
+                        let id = selected.identifier ?? title
+                        viewModel.addAndInferYears(displayName: title, identifier: id)
+                        showBrowseSheet = false
+                    },
+                    onSelectArtist: { artist in
+                        // Creator-based add (the Phish pattern): finds the artist's
+                        // tapes across all collections, not just taperssection
+                        viewModel.addAndInferYears(displayName: artist.name, identifier: artist.name)
+                        showBrowseSheet = false
+                    }
+                )
             }
         }
     }
@@ -107,8 +120,11 @@ struct RemoveBandsSheet: View {
 
 struct BrowseCollectionsSheet: View {
     let collections: [ArchiveAPI.ArchiveCollection]
+    var artists: [ArchiveAPI.ArchiveCreator] = []
     let isLoading: Bool
+    var isArtistsLoading: Bool = false
     let onSelect: (ArchiveAPI.ArchiveCollection) -> Void
+    var onSelectArtist: (ArchiveAPI.ArchiveCreator) -> Void = { _ in }
 
     @Environment(\.dismiss) private var dismiss
     @State private var searchText = ""
@@ -124,18 +140,53 @@ struct BrowseCollectionsSheet: View {
         }
     }
 
+    private var filteredArtists: [ArchiveAPI.ArchiveCreator] {
+        if searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return artists
+        }
+        let q = searchText.lowercased()
+        return artists.filter { $0.name.lowercased().contains(q) }
+    }
+
     var body: some View {
         NavigationStack {
             Group {
                 if isLoading {
                     ProgressView("Loading bands...")
                 } else {
-                    List(filtered, id: \.identifier) { item in
-                        Button {
-                            onSelect(item)
-                        } label: {
-                            Text((item.title ?? item.identifier) ?? "Unknown")
-                                .font(.system(size: 18, weight: .bold))
+                    List {
+                        Section("Live Music Archive") {
+                            ForEach(filtered, id: \.identifier) { item in
+                                Button {
+                                    onSelect(item)
+                                } label: {
+                                    Text((item.title ?? item.identifier) ?? "Unknown")
+                                        .font(.system(size: 18, weight: .bold))
+                                }
+                            }
+                        }
+                        Section("Taper's Section Artists") {
+                            if isArtistsLoading {
+                                HStack(spacing: 8) {
+                                    ProgressView()
+                                    Text("Loading artists...")
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            ForEach(filteredArtists, id: \.name) { artist in
+                                Button {
+                                    onSelectArtist(artist)
+                                } label: {
+                                    HStack {
+                                        Text(artist.name)
+                                            .font(.system(size: 18, weight: .bold))
+                                        Spacer()
+                                        Text("\(artist.count) tapes")
+                                            .font(.system(size: 15))
+                                            .foregroundColor(.secondary)
+                                    }
+                                }
+                            }
                         }
                     }
                     .searchable(text: $searchText, prompt: "Search")

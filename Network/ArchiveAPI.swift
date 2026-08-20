@@ -71,7 +71,7 @@ class ArchiveAPI: NSObject {
         
         // Check if this is a creator-based search
         if CollectionConfig.isCreatorBased(collection: collection) {
-                url += "q=creator%3A%22" + collection + "%22"
+                url += "q=creator%3A%22" + Self.encodeQueryValue(collection) + "%22"
         } else {
             // Original collection-based search
             if sbdOnly {
@@ -123,7 +123,7 @@ class ArchiveAPI: NSObject {
         
         // Check if this is a creator-based search
         if CollectionConfig.isCreatorBased(collection: collection) {
-                url += "q=creator%3A%22" + collection + "%22"
+                url += "q=creator%3A%22" + Self.encodeQueryValue(collection) + "%22"
         } else {
             // Original collection-based search
             if sbdOnly {
@@ -157,7 +157,7 @@ class ArchiveAPI: NSObject {
         
         // Check if this is a creator-based search
         if CollectionConfig.isCreatorBased(collection: collection) {
-                url += "q=creator%3A%22" + collection + "%22"
+                url += "q=creator%3A%22" + Self.encodeQueryValue(collection) + "%22"
         } else {
             // Original collection-based search
             if sbdOnly {
@@ -442,9 +442,86 @@ class ArchiveAPI: NSObject {
 
     // MARK: - Collections Discovery
 
+    /// Percent-encodes a value for the manually assembled query URLs above.
+    /// Creator names can contain spaces, ampersands, and quotes ("Pearl Jam",
+    /// "Medeski Martin & Wood") which would otherwise produce invalid URLs.
+    static func encodeQueryValue(_ value: String) -> String {
+        return value.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? value
+    }
+
     struct ArchiveCollection: Codable {
         let identifier: String?
         let title: String?
+    }
+
+    struct ArchiveCreator {
+        let name: String
+        let count: Int
+    }
+
+    private struct ScrapeCreatorsResponse: Codable {
+        struct Item: Codable {
+            let creator: [String]?
+
+            enum CodingKeys: String, CodingKey { case creator }
+
+            init(from decoder: Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                // creator can be a string or an array, like other archive.org fields
+                if let array = try? container.decodeIfPresent([String].self, forKey: .creator) {
+                    creator = array
+                } else if let single = try? container.decodeIfPresent(String.self, forKey: .creator) {
+                    creator = [single]
+                } else {
+                    creator = nil
+                }
+            }
+        }
+        let items: [Item]?
+        let cursor: String?
+    }
+
+    /// Enumerates the distinct artists (creator field) inside an archive.org
+    /// collection by paging the scrape API, with per-artist tape counts.
+    /// Used to browse multi-artist collections like taperssection per band;
+    /// selected artists are then added as creator-based entries (the Phish
+    /// pattern), which finds their tapes across all collections.
+    func fetchCreators(inCollection collection: String,
+                       completion: @escaping ([ArchiveCreator]?, Error?) -> Void) {
+        var counts = [String: Int]()
+
+        func fetchPage(cursor: String?) {
+            var url = baseURLString + "services/search/v1/scrape?fields=creator&count=10000"
+            url += "&q=collection%3A%28" + Self.encodeQueryValue(collection) + "%29"
+            if let cursor = cursor {
+                url += "&cursor=" + Self.encodeQueryValue(cursor)
+            }
+            AF.request(url).responseDecodable(of: ScrapeCreatorsResponse.self) { response in
+                switch response.result {
+                case .success(let resp):
+                    for item in resp.items ?? [] {
+                        if let name = item.creator?.first?.trimmingCharacters(in: .whitespaces),
+                           !name.isEmpty {
+                            counts[name, default: 0] += 1
+                        }
+                    }
+                    if let next = resp.cursor {
+                        fetchPage(cursor: next)
+                    } else {
+                        let creators = counts
+                            .map { ArchiveCreator(name: $0.key, count: $0.value) }
+                            .sorted {
+                                if $0.count != $1.count { return $0.count > $1.count }
+                                return $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending
+                            }
+                        completion(creators, nil)
+                    }
+                case .failure(let error):
+                    completion(nil, error)
+                }
+            }
+        }
+        fetchPage(cursor: nil)
     }
 
     private struct AdvancedSearchDoc: Codable {
@@ -479,7 +556,7 @@ class ArchiveAPI: NSObject {
 
     func detectCreatorBased(collectionOrCreator id: String, completion: @escaping (Bool) -> Void) {
         // Heuristic: if collection:id has 0 results but creator:"id" has >0, treat as creator-based
-        let qCollection = "collection%3A%28" + id + "%29"
+        let qCollection = "collection%3A%28" + Self.encodeQueryValue(id) + "%29"
         let urlCollection = baseURLString + "advancedsearch.php?q=" + qCollection + "&rows=0&output=json"
         AF.request(urlCollection).responseDecodable(of: AdvancedSearchResponse.self) { [weak self] response in
             guard let self = self else { return }
@@ -488,7 +565,7 @@ class ArchiveAPI: NSObject {
                 completion(false)
                 return
             }
-            let qCreator = "creator%3A%22" + id + "%22"
+            let qCreator = "creator%3A%22" + Self.encodeQueryValue(id) + "%22"
             let urlCreator = self.baseURLString + "advancedsearch.php?q=" + qCreator + "&rows=0&output=json"
             AF.request(urlCreator).responseDecodable(of: AdvancedSearchResponse.self) { resp2 in
                 let creatorCount = resp2.value?.response?.numFound ?? 0
@@ -501,9 +578,9 @@ class ArchiveAPI: NSObject {
         // Query earliest and latest dates
         let fieldQuery: String
         if isCreatorBased {
-            fieldQuery = "creator%3A%22" + identifier + "%22"
+            fieldQuery = "creator%3A%22" + Self.encodeQueryValue(identifier) + "%22"
         } else {
-            fieldQuery = "collection%3A%28" + identifier + "%29"
+            fieldQuery = "collection%3A%28" + Self.encodeQueryValue(identifier) + "%29"
         }
         let dateQuery = "date%3A%5B0000-01-01%20TO%209999-12-31%5D"
 

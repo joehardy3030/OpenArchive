@@ -4,6 +4,9 @@ final class CollectionsViewModel: ObservableObject {
     @Published var entries: [CollectionEntry] = []
     @Published var browseCollections: [ArchiveAPI.ArchiveCollection] = []
     @Published var isBrowseLoading = false
+    /// Artists inside taperssection, addable as creator-based bands
+    @Published var browseArtists: [ArchiveAPI.ArchiveCreator] = []
+    @Published var isArtistsLoading = false
 
     private let store = CollectionStore()
     private let archiveAPI = ArchiveAPI()
@@ -39,6 +42,18 @@ final class CollectionsViewModel: ObservableObject {
                     self?.store.addCollection(displayName: displayName, identifier: identifier)
                     self?.reload()
                 }
+            }
+        }
+    }
+
+    func fetchTapersSectionArtists() {
+        guard browseArtists.isEmpty, !isArtistsLoading else { return }
+        isArtistsLoading = true
+        archiveAPI.fetchCreators(inCollection: "taperssection") { [weak self] creators, _ in
+            DispatchQueue.main.async {
+                self?.isArtistsLoading = false
+                // Skip one-off uploads so the list stays browsable
+                self?.browseArtists = (creators ?? []).filter { $0.count >= 2 }
             }
         }
     }

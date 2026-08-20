@@ -51,6 +51,13 @@ struct ShowsListView: View {
         }
         .padding(.bottom, miniPlayerInset)
         .navigationTitle(viewModel.navigationTitle)
+        .toolbar {
+            if viewModel.isLoading {
+                ToolbarItem(placement: .topBarTrailing) {
+                    ProgressView()
+                }
+            }
+        }
         // Note: the navigationDestination for ShowDestination is declared once,
         // at the stack root in CollectionsView — declaring it again here is
         // ignored by SwiftUI and logs a runtime warning.

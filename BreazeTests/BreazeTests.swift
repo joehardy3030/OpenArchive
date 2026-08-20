@@ -668,6 +668,18 @@ class BreazeTests: XCTestCase {
         XCTAssertTrue(url!.path.hasSuffix("gd1977-05-08/track01.mp3"))
     }
 
+    // MARK: - MonthListViewModel month skeleton
+
+    func testMonthRowsSkeletonRendersAllTwelveMonthsWithoutData() {
+        // The month list must be tappable before any network data arrives.
+        let vm = MonthListViewModel(year: 1977, collection: "GratefulDead")
+        vm.rebuildMonthRows()
+        XCTAssertEqual(vm.monthRows.count, 12)
+        XCTAssertTrue(vm.monthRows.allSatisfy { $0.count == 0 })
+        XCTAssertEqual(vm.monthRows.first?.name, "Jan")
+        XCTAssertEqual(vm.monthRows.last?.name, "Dec")
+    }
+
     // MARK: - Joe's Picks (MonthListViewModel.applyJoesPicks)
 
     func testJoesPicksBasicFiltering() {

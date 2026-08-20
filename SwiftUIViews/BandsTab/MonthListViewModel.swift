@@ -55,6 +55,10 @@ final class MonthListViewModel: ObservableObject {
     }
 
     func fetchShows() {
+        // Render the 12 tappable month rows immediately — the network only
+        // supplies the tape counts. A tapped month with no prefetched data
+        // fetches its own single-month query in ShowsListViewModel.
+        if monthRows.isEmpty { rebuildMonthRows() }
         isLoading = true
         pendingFetches = collection == "Phish" ? 2 : 1
 

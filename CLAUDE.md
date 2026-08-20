@@ -118,6 +118,7 @@ Browse and detail fetches are **cache-first** (`MetadataCache.fetchDecodable`): 
 - Copies younger than `revalidationInterval` (10 min) skip revalidation entirely, so rapid back-and-forth navigation doesn't hammer archive.org.
 - Network errors surface only when there is no cached copy — with a cache, a failed refresh is silent and the stale copy stands.
 - Cache-first call sites: year/month scrapes (`getIARequestItemsCached`), show metadata (`getIARequestMetadataCached`), Phish.in year/show fetches, Phish.net setlists/shows. **Search stays on the live methods** deliberately — ad-hoc queries would pollute the cache. `MonthListViewModel`'s `pendingFetches` decrement is guarded against the double-fire.
+- The month list never blocks on the network: `MonthListViewModel.fetchShows` renders the 12 tappable month rows immediately (counts fill in when the year scrape lands, signaled by a toolbar spinner), and a month entered before then fetches its own single-month query in `ShowsListViewModel`. Loading states are toolbar spinners, not full-screen blockers.
 
 ### Data Flow
 

@@ -2,6 +2,7 @@ import Foundation
 
 final class ShowsListViewModel: ObservableObject {
     @Published var shows: [ShowMetadata] = []
+    @Published var isLoading = false
     /// Phish.in show dates available for this month (only for Phish collection)
     @Published var phishInDates: Set<String> = []
     /// Full Phish.in show summaries keyed by date
@@ -45,10 +46,12 @@ final class ShowsListViewModel: ObservableObject {
     }
 
     private func fetchFromAPI(sbdOnly: Bool) {
+        isLoading = true
         let url = archiveAPI.dateRangeURL(year: year, month: month, sbdOnly: sbdOnly, collection: collection)
         // Cache-first; the completion body is idempotent for the double-fire
         archiveAPI.getIARequestItemsCached(url: url) { [weak self] (response: ShowMetadatas?, error: Error?) in
             DispatchQueue.main.async {
+                self?.isLoading = false
                 if let items = response?.items, !items.isEmpty {
                     self?.shows = items.sorted { ($0.date ?? "") < ($1.date ?? "") }
                 }

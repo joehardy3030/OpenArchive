@@ -39,33 +39,34 @@ struct MonthListView: View {
                 }
             }
 
-            if viewModel.isLoading {
-                Spacer()
-                ProgressView()
-                Spacer()
-            } else {
-                List(viewModel.monthRows) { row in
-                    NavigationLink(value: MonthDestination(
-                        monthIndex: row.monthIndex,
-                        year: year,
-                        collection: collection,
-                        filter: viewModel.filter,
-                        prefetchedShows: viewModel.showsForMonth(row.monthIndex),
-                        prefetchedPhishIn: viewModel.phishInShowsForMonth(row.monthIndex)
-                    )) {
-                        if row.count > 0 {
-                            Text("\(row.name) \(String(year)) (\(row.count) tapes)")
-                                .font(.system(size: 18))
-                        } else {
-                            Text("\(row.name) \(String(year))")
-                                .font(.system(size: 18))
-                        }
+            List(viewModel.monthRows) { row in
+                NavigationLink(value: MonthDestination(
+                    monthIndex: row.monthIndex,
+                    year: year,
+                    collection: collection,
+                    filter: viewModel.filter,
+                    prefetchedShows: viewModel.showsForMonth(row.monthIndex),
+                    prefetchedPhishIn: viewModel.phishInShowsForMonth(row.monthIndex)
+                )) {
+                    if row.count > 0 {
+                        Text("\(row.name) \(String(year)) (\(row.count) tapes)")
+                            .font(.system(size: 18))
+                    } else {
+                        Text("\(row.name) \(String(year))")
+                            .font(.system(size: 18))
                     }
                 }
-                .padding(.bottom, miniPlayerInset)
             }
+            .padding(.bottom, miniPlayerInset)
         }
         .navigationTitle("Months")
+        .toolbar {
+            if viewModel.isLoading {
+                ToolbarItem(placement: .topBarTrailing) {
+                    ProgressView()
+                }
+            }
+        }
         .navigationDestination(for: MonthDestination.self) { dest in
             ShowsListView(
                 year: dest.year,

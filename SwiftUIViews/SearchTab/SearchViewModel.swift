@@ -7,6 +7,9 @@ final class SearchViewModel: ObservableObject {
     @Published var endYear = ""
     @Published var minRating = ""
     @Published var selectedCollectionIndex = 0
+    /// Recording-type filter ("" = any); applied client-side via the same
+    /// identifier/source sniffing that powers the row badges
+    @Published var recordingTypeFilter = ""
     @Published var results: [ShowMetadata]? = nil
     @Published var isLoading = false
     @Published var collectionEntries: [CollectionEntry] = []
@@ -20,6 +23,12 @@ final class SearchViewModel: ObservableObject {
 
     var collectionIdentifiers: [String] {
         collectionEntries.map { $0.identifier }
+    }
+
+    var filteredResults: [ShowMetadata] {
+        guard let results else { return [] }
+        guard !recordingTypeFilter.isEmpty else { return results }
+        return results.filter { $0.recordingType == recordingTypeFilter }
     }
 
     func loadCollections() {
@@ -41,6 +50,7 @@ final class SearchViewModel: ObservableObject {
         )
 
         isLoading = true
+        results = nil  // results page shows its spinner until these arrive
         let url = archiveAPI.searchTermURL(
             searchTerm: model.searchTerm,
             venue: model.venue,

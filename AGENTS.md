@@ -123,6 +123,10 @@ Browse and detail fetches are **cache-first** (`MetadataCache.fetchDecodable`): 
 - Network policy: cache-revalidation traffic uses a dedicated session with a 35s idle timeout and Alamofire `RetryPolicy` (2 retries spaced 3s/6s, on timeouts and 5xx). The tuning is deliberate: creator-based scrape queries legitimately take 20s+ when archive.org's query cache is cold (a tighter cap made them fail outright — measured: same query 3s warm, 20s+ cold), and archive.org keeps computing after a client disconnect, so spaced retries land on the warmed cache. Requests are `.validate()`d so archive.org's load-shedding 503s (HTML error pages) fail cleanly and retryably instead of reaching the decoder. Don't tighten the timeout without measuring the creator-query cold path.
 - Failure states: when a fetch fails with no data to show (cached or fresh), months get a tap-to-retry banner above the still-usable skeleton, shows lists get a `ContentUnavailableView` with a Retry button, and show detail gets a retry row in place of the tracks section (`loadFailed` on all three view models). With any data on hand, failures stay silent and the stale copy stands. Show detail also runs a toolbar spinner while fetching — archive shows seed stub metadata, so the full-screen loading overlay never fires for them and the spinner is their only loading indication.
 
+### Search Tab
+
+The Search tab is a criteria form (term, venue, year range, min rating, band from `CollectionStore`, and a Recording Type picker — Any/SBD/AUD/MTX/FM). Submitting pushes a full-page `SearchResultsView` that observes the same view model (spinner while in flight, then the list). The recording-type filter is applied client-side via `SearchViewModel.filteredResults` using the same `recordingType` sniffing as the row badges — archive.org has no queryable field for it. Searches stay on the live (uncached) API methods.
+
 ### Data Flow
 
 1. `ArchiveAPI` / `PhishInAPI` / `PhishNetAPI` fetch show/track metadata from their respective sources (cache-first for browse/detail; see Metadata Caching)

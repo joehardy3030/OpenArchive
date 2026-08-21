@@ -1068,6 +1068,32 @@ class BreazeTests: XCTestCase {
         XCTAssertEqual(model.metadata?.source, ["SBD master"])
     }
 
+    // MARK: - Search recording-type filter
+
+    func testSearchFilteredResultsByRecordingType() {
+        let vm = SearchViewModel()
+        vm.results = [
+            ShowMetadata(identifier: "gd77-05-08.sbd.hicks.flac16"),
+            ShowMetadata(identifier: "gd77-05-08.aud.taper.flac16"),
+            ShowMetadata(identifier: "gd77-05-08.mtx.seamons.flac16")
+        ]
+
+        vm.recordingTypeFilter = ""
+        XCTAssertEqual(vm.filteredResults.count, 3)
+
+        vm.recordingTypeFilter = "SBD"
+        XCTAssertEqual(vm.filteredResults.map { $0.identifier }, ["gd77-05-08.sbd.hicks.flac16"])
+
+        vm.recordingTypeFilter = "AUD"
+        XCTAssertEqual(vm.filteredResults.map { $0.identifier }, ["gd77-05-08.aud.taper.flac16"])
+
+        vm.recordingTypeFilter = "FM"
+        XCTAssertTrue(vm.filteredResults.isEmpty)
+
+        vm.results = nil
+        XCTAssertTrue(vm.filteredResults.isEmpty)
+    }
+
     // MARK: - DeepLinkRouter
 
     func testDeepLinkRouterHandleURL() {

@@ -125,14 +125,14 @@ Browse and detail fetches are **cache-first** (`MetadataCache.fetchDecodable`): 
 
 ### Search Tab
 
-The Search tab is a criteria form (term, venue, year range, min rating, band from `CollectionStore`, and a Recording Type picker — Any/SBD/AUD/MTX/FM). Submitting pushes a full-page `SearchResultsView` that observes the same view model (spinner while in flight, then the list). The recording-type filter is applied client-side via `SearchViewModel.filteredResults` using the same `recordingType` sniffing as the row badges — archive.org has no queryable field for it. Searches stay on the live (uncached) API methods.
+The Search tab is a criteria form (term, venue, year range, min rating, band from `CollectionStore`, and a Recording Type picker — Any/SBD/AUD/MTX/FM). The Search action lives in the navigation bar (never buried under the keyboard); return in a text field also submits, and the form uses `.scrollDismissesKeyboard(.interactively)` for swipe-down dismissal. Submitting appends a `SearchResultsDestination` (carrying the results title — the search term, or "Results") to the stack's explicit `NavigationPath`; the pushed `SearchResultsView` observes the same view model (spinner while in flight, then the list). The Search stack must stay uniformly value-based — mixing `navigationDestination(isPresented:)` with value pushes makes SwiftUI pop back to the results page when a result is tapped. The recording-type filter is applied client-side via `SearchViewModel.filteredResults` using the same `recordingType` sniffing as the row badges — archive.org has no queryable field for it. Searches stay on the live (uncached) API methods.
 
 ### Data Flow
 
 1. `ArchiveAPI` / `PhishInAPI` / `PhishNetAPI` fetch show/track metadata from their respective sources (cache-first for browse/detail; see Metadata Caching)
 2. `AudioPlayerArchive` queues and plays tracks (streaming URLs or local files)
 3. `PlayerViewModel` observes `AudioPlayerArchive` via Notifications (`.playbackStarted`, `.playbackPaused`, `.playbackStopped`) and a periodic time observer, publishing state to SwiftUI
-4. SwiftUI views subscribe to `PlayerViewModel` via `@EnvironmentObject`
+4. SwiftUI views subscribe to `PlayerViewModel` via `@EnvironmentObject` — but ONLY views that render playback state (ArchiveRootView/MiniPlayerBar, FullPlayerView, ShowDetailView). PlayerViewModel republishes every 0.5s during playback, so a gratuitous observer re-renders at that rate — which makes open picker menus flicker (this bit the Search form once).
 
 ### Playback Engine Details
 

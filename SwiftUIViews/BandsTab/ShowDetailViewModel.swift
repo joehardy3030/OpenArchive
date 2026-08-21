@@ -67,8 +67,14 @@ final class ShowDetailViewModel: ObservableObject {
         self.showType = showType
 
         if let existingModel {
-            self.model = existingModel
-            self.isDownloaded = utils.isShowFullyDownloaded(existingModel)
+            // Saved models may predate metadata backfill; the description is
+            // persisted with them, so enrich offline here too — otherwise a
+            // downloaded show's empty source/venue stays frozen forever.
+            var enriched = existingModel
+            Self.backfillMissingMetadata(&enriched)
+            self.model = enriched
+            self.isDownloaded = utils.isShowFullyDownloaded(enriched)
+            refreshTrackDestinations()
         } else if showType == .phishIn {
             fetchPhishInShowDetail()
         } else if showType == .archive || showType == .downloaded {
@@ -154,6 +160,8 @@ final class ShowDetailViewModel: ObservableObject {
                     return self.fileManager.fileExists(atPath: localURL.path)
                 } ?? false
                 self.model = showData
+                // Freshly fetched models carry no destinations; reconcile with disk
+                self.refreshTrackDestinations()
 
                 // Find full-res show image from files (JPEG, not thumb/spectrogram)
                 if let files = showData.files, let id = self.initialMetadata.identifier {
@@ -465,6 +473,40 @@ final class ShowDetailViewModel: ObservableObject {
                     self.phishNetTourName = first.tourname
                     self.phishNetSetlistNotes = first.setlistnotes
                 }
+            }
+        }
+    }
+
+    // MARK: - Track destination reconciliation
+
+    /// Fills in destinations for tracks whose files exist on disk but weren't
+    /// recorded in the model — the repair flow downloads files without touching
+    /// the saved model, so per-track checkmarks can undercount. Disk is truth.
+    static func reconcileDestinations(_ tracks: [ShowMP3],
+                                      utils: Utils = Utils(),
+                                      fileManager: FileManager = .default) -> [ShowMP3] {
+        var updated = tracks
+        for i in updated.indices where updated[i].destination == nil {
+            if let name = updated[i].name,
+               let localURL = utils.trackURLfromName(name: name),
+               fileManager.fileExists(atPath: localURL.path) {
+                updated[i].destination = localURL
+            }
+        }
+        return updated
+    }
+
+    /// Runs the reconciliation off the main thread (file checks contend with
+    /// active download writes) and republishes the model if anything changed.
+    private func refreshTrackDestinations() {
+        guard let mp3s = model?.mp3Array, !mp3s.isEmpty else { return }
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            guard let self = self else { return }
+            let updated = Self.reconcileDestinations(mp3s)
+            guard updated.contains(where: { $0.destination != nil }),
+                  updated.map({ $0.destination }) != mp3s.map({ $0.destination }) else { return }
+            DispatchQueue.main.async {
+                self.model?.mp3Array = updated
             }
         }
     }

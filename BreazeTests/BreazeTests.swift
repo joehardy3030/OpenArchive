@@ -864,6 +864,27 @@ class BreazeTests: XCTestCase {
         ])
     }
 
+    // MARK: - Track destination reconciliation
+
+    func testReconcileDestinationsFillsFromDisk() throws {
+        // A track whose file exists on disk gets its destination filled in
+        // (the repair flow downloads files without updating the saved model)
+        let utils = Utils()
+        let name = "reconcile-test-\(UUID().uuidString).mp3"
+        let url = try XCTUnwrap(utils.trackURLfromName(name: name))
+        try Data("ID3fake".utf8).write(to: url)
+        defer { try? FileManager.default.removeItem(at: url) }
+
+        let tracks = [
+            ShowMP3(identifier: "x", name: name, title: "On Disk", track: "1", destination: nil),
+            ShowMP3(identifier: "x", name: "reconcile-missing-\(UUID().uuidString).mp3",
+                    title: "Not On Disk", track: "2", destination: nil)
+        ]
+        let updated = ShowDetailViewModel.reconcileDestinations(tracks)
+        XCTAssertNotNil(updated[0].destination)
+        XCTAssertNil(updated[1].destination)
+    }
+
     // MARK: - Title venue parsing & metadata backfill
 
     func testTitleVenueLocationStandardConvention() {
@@ -1011,6 +1032,26 @@ class BreazeTests: XCTestCase {
 
         md = ShowMetadata(identifier: "gd90-03-29.dsbd.miller.12345.flac16")
         XCTAssertEqual(md.recordingType, "SBD")
+    }
+
+
+    func testBackfillRealJG91FullDescription() throws {
+        // The complete real description of jg91-11-19 (base64 to preserve it
+        // byte-for-byte), whose lineage line is unlabeled taper freeform.
+        let descB64 = "VGhpcyBpcyBhIGZsYWMgZW5jb2RlZCAmIHRhZ2dlZCB2ZXJzaW9uIG9mIHNobmlkOiAxMTg1OAoKSmVycnkgR2FyY2lhIEJhbmQKMTEvMTkvMTk5MQoKUHJvdmlkZW5jZSBDaXZpYyBDZW50ZXIKUHJvdmlkZW5jZSBSSQoKbWFzdGVyIHJlY29yZGluZyBieSBDYXB0YWluIEpvZSBMZUNsYWlyCkRBVCB0cmFuc2ZlciBhbmQgc2huIG1hc3RlcmluZyBieSBUb255IE1hc2llbGxvCgpTY2hvZXBzIENNQzU0IChoYW5kIGhlbGQgNHRoIHJvdyktLT4gUGV0ZXIgR3JhY2UgcG93ZXIgc3VwcGx5IDEyVi0tPiBEQVQtLT4gWkEyICg0OC80NC4xKS0tPiBDRVAtLT4gU0hOCgpTZXQgMQoKMS4gSG93IFN3ZWV0IEl0IElzIAoyLiBIZSBBaW4ndCBHaXZlIFlvdSBOb25lIAozLiBUaGF0J3MgV2hhdCBMb3ZlIFdpbGwgTWFrZSBZb3UgRG8gCjQuIEFuZCBJdCBTdG9uZWQgTWUgCjUuIERlYXIgUHJ1ZGVuY2UgCjYuIFJ1biBGb3IgVGhlIFJvc2VzIAo3LiBTZW5vciAKOC4gRGVhbAoKU2V0IDIKCjEuIExheSBEb3duIFNhbGx5IAoyLiBTaGluaW5nIFN0YXIgCjMuIFdhaXRpbmcgRm9yIEEgTWlyYWNsZSAKNC4gQWluJ3QgTm8gQnJlYWQgSW4gVGhlIEJyZWFkYm94IAo1LiBUb3JlIFVwIE92ZXIgWW91IAo2LiBEb24ndCBMZXQgR28gCjcuIFRoYXQgTHVja3kgT2xkIFN1biAKOC4gTWlkbmlnaHQgTW9vbmxpZ2h0CgpTZXQgMiBjYW4gcHJvYmFibHkgYmUgYnVybmVkIG9uIGFuIDgwIG1pbiBjZCAoODA6MzYpLiBPdGhlcndpc2UgdGhlIHNob3cgd2lsbCByZXF1aXJlIDMgY2RzLiBJZiB0aGVyZSBpcyBhIGJldHRlciBhdWQgcmVjb3JkaW5nIG1hZGUgaW4gYSBob2NrZXkgcmluaywgSSd2ZSB5ZXQgdG8gaGVhciBpdCEgVGhpcyByZWNvcmRpbmcgaXMgc28gd2FybSBpdCBjYW4gbWV0IGNob2NvbGF0ZSEKCkNvbW1lbnQ6Ck5vbmUgb2YgdGhlIHRyYWNrcyB3ZXJlIGN1dCBvbiBzZWN0b3IgYm91bmRyaWVzIHNvIHNobnRvb2wgd2FzIHVzZWQgdG8gY29ycmVjdCB0aGlzLiBDRHdhdiB3YXMgdXNlZCB0byByZW1vdmUgYSAwLjA5IHNlY29uZCBnbGl0Y2ggYXQgdGhlIGVuZCBvZiBkMXQwMy4gCldoaWxlIEkgd2FzIGF0IGl0IEkgcmVtb3ZlZCAzNiBzZWNvbmRzIG9mIGNyb3dkIG5vaXNlIGZyb20gdGhlIGJlZ2lubmluZyBhbmQgZW5kIG9mIGQyIHNvIHRoZSBzaG93IHdpbGwgZml0IG9uIDIgZGlzY3Mgd2l0aG91dCB0aGUgbmVlZCB0byBvdmVyYnVybi4KCkNvcnJlY3RlZCAwOS0wNi0yMDAyIGJ5IGdseWRlQG1hc29uc2NoaWxkcmVuLm9yZwoKRmxhYyBlbmNvZGluZyBub3RlczoKQWxsIHByb2Nlc3Npbmcgd2l0aCBUcmFkZXIncyBMaXR0bGUgSGVscGVyClNobiAtIHN0NSBnZW5lcmF0ZWQKU2huID4gRmxhYyAoIGxldmVsIDggKQpGbGFjIC0gc3Q1IGdlbmVyYXRlZCBhbmQgbWF0Y2hlZCB0byBTaG4gc3Q1CgpUYWdnaW5nIG5vdGVzOgpTaG93IGluZm9ybWF0aW9uIGlzIGVtYmVkZGVkIHdpdGhpbiB0aGUgaGVhZGVyCm9mIGVhY2ggZmxhYyBmaWxlLiBJdCB3aWxsIGRpc3BsYXkgb24gYW55IHBsYXllciAKY2FwYWJsZSBvZiBkaXJlY3RseSBwbGF5aW5nIGZsYWMgZmlsZXMuIApJZiBjb252ZXJ0ZWQgdG8gd2F2IGR1cmluZyBwcm9jZXNzaW5nLCBhbGwgdGFncyAKd2lsbCBiZSBzdHJpcHBlZCwgaG93ZXZlciBhdWRpbyBkYXRhIHdpbGwgcmVtYWluIAp1bmFmZmVjdGVkLiBJZiB5b3UgbXVzdCB0cmFuc2NvZGUgdG8gYSBsb3NzeSBmb3JtYXQsIApkbyBzbyBkaXJlY3RseSBGbGFjID4gTG9zc3kuClVzZSBzdDUgdG8gdmFsaWRhdGUgYXVkaW8gaW50ZWdyaXR5LgpNZDUgdmFsdWVzIHdpbGwgY2hhbmdlIGlmIHRhZ2dpbmcgaXMgYWx0ZXJlZC4KQSBNaWxscyAyLzE2LzE1Cgo7IHNobnRvb2wgbWQ1IGZpbmdlcnByaW50IGZpbGUKMGQwM2ZhNTAxODZkNGY3MTU5MzVlOTY4MDQxODBhNzYgIFtzaG50b29sXSAgamdiMTk5MS0xMS0xOWQxdDAxLnNobgo0NGNkY2U3NDNjYmQ1MzQ4OTIwZTVkYmViNWJmYTRiMiAgW3NobnRvb2xdICBqZ2IxOTkxLTExLTE5ZDF0MDIuc2huCjAwZWNjYTU2OGYzNTY5YmRlMTMzMWYzNDAzMGIxZWYwICBbc2hudG9vbF0gIGpnYjE5OTEtMTEtMTlkMXQwMy5zaG4KNDFmYjUwYmU5YTIyNDBlMTE0ZGY1OWMyZDIxYmMxZGEgIFtzaG50b29sXSAgamdiMTk5MS0xMS0xOWQxdDA0LnNobgphOWQ4MjA1MjAwOTFjMzMxYzgzMjg1OWZhOTFjY2Q2NiAgW3NobnRvb2xdICBqZ2IxOTkxLTExLTE5ZDF0MDUuc2huCjdmZmU3NTUyOTg2ZjhkYjY1NGViOWM1ZjZjMTQ3M2NlICBbc2hudG9vbF0gIGpnYjE5OTEtMTEtMTlkMXQwNi5zaG4KYmU3M2U3NzBmMDFhOTk2NjU0ZDM5MDIzNDMwNzE5MzMgIFtzaG50b29sXSAgamdiMTk5MS0xMS0xOWQxdDA3LnNobgpkMGRjODY4YTliZWZhMmYwODQ2OTUxMzY2ZDJiODdlYiAgW3NobnRvb2xdICBqZ2IxOTkxLTExLTE5ZDF0MDguc2huCmY2NmIwZTRmMDk5YzJjZTJmN2Y0MTY5M2ZkNjgyODczICBbc2hudG9vbF0gIGpnYjE5OTEtMTEtMTlkMnQwMS5zaG4KZjRkNTY0OTI0MmM3NmUwNWVkMWI3NjFhNmVjMTBlMGUgIFtzaG50b29sXSAgamdiMTk5MS0xMS0xOWQydDAyLnNobgo3NGZjYzY5MDVmYjUxMjdiOGEzODVlNmZmZWVlMTk4MCAgW3NobnRvb2xdICBqZ2IxOTkxLTExLTE5ZDJ0MDMuc2huCjNjMmE0ODMzY2M3ODBhNDBkMjViN2I4NjI0OTkxYzc1ICBbc2hudG9vbF0gIGpnYjE5OTEtMTEtMTlkMnQwNC5zaG4KNTFkYTMzOWFlMTViNGE2ZDY3MmZjZWY1OTM0YWUxZGQgIFtzaG50b29sXSAgamdiMTk5MS0xMS0xOWQydDA1LnNobgo4M2EwYWZmMGFlNTk3Y2I5YTI0ZjJhZDcxODNkZTFjYSAgW3NobnRvb2xdICBqZ2IxOTkxLTExLTE5ZDJ0MDYuc2huCjM5Mjc3MTgyZDkwMGIzMDU4YjJjN2IxZjcyNzgzMTU2ICBbc2hudG9vbF0gIGpnYjE5OTEtMTEtMTlkMnQwNy5zaG4KMzc1ODY1MDJhMTJhMTIzOTNjMDg0MDA3OTQ3ZGZhZWYgIFtzaG50b29sXSAgamdiMTk5MS0xMS0xOWQydDA4LnNobgoKOyBzaG50b29sIG1kNSBmaW5nZXJwcmludCBmaWxlCjBkMDNmYTUwMTg2ZDRmNzE1OTM1ZTk2ODA0MTgwYTc2ICBbc2hudG9vbF0gIGpnYjE5OTEtMTEtMTlkMXQwMS5mbGFjCjQ0Y2RjZTc0M2NiZDUzNDg5MjBlNWRiZWI1YmZhNGIyICBbc2hudG9vbF0gIGpnYjE5OTEtMTEtMTlkMXQwMi5mbGFjCjAwZWNjYTU2OGYzNTY5YmRlMTMzMWYzNDAzMGIxZWYwICBbc2hudG9vbF0gIGpnYjE5OTEtMTEtMTlkMXQwMy5mbGFjCjQxZmI1MGJlOWEyMjQwZTExNGRmNTljMmQyMWJjMWRhICBbc2hudG9vbF0gIGpnYjE5OTEtMTEtMTlkMXQwNC5mbGFjCmE5ZDgyMDUyMDA5MWMzMzFjODMyODU5ZmE5MWNjZDY2ICBbc2hudG9vbF0gIGpnYjE5OTEtMTEtMTlkMXQwNS5mbGFjCjdmZmU3NTUyOTg2ZjhkYjY1NGViOWM1ZjZjMTQ3M2NlICBbc2hudG9vbF0gIGpnYjE5OTEtMTEtMTlkMXQwNi5mbGFjCmJlNzNlNzcwZjAxYTk5NjY1NGQzOTAyMzQzMDcxOTMzICBbc2hudG9vbF0gIGpnYjE5OTEtMTEtMTlkMXQwNy5mbGFjCmQwZGM4NjhhOWJlZmEyZjA4NDY5NTEzNjZkMmI4N2ViICBbc2hudG9vbF0gIGpnYjE5OTEtMTEtMTlkMXQwOC5mbGFjCmY2NmIwZTRmMDk5YzJjZTJmN2Y0MTY5M2ZkNjgyODczICBbc2hudG9vbF0gIGpnYjE5OTEtMTEtMTlkMnQwMS5mbGFjCmY0ZDU2NDkyNDJjNzZlMDVlZDFiNzYxYTZlYzEwZTBlICBbc2hudG9vbF0gIGpnYjE5OTEtMTEtMTlkMnQwMi5mbGFjCjc0ZmNjNjkwNWZiNTEyN2I4YTM4NWU2ZmZlZWUxOTgwICBbc2hudG9vbF0gIGpnYjE5OTEtMTEtMTlkMnQwMy5mbGFjCjNjMmE0ODMzY2M3ODBhNDBkMjViN2I4NjI0OTkxYzc1ICBbc2hudG9vbF0gIGpnYjE5OTEtMTEtMTlkMnQwNC5mbGFjCjUxZGEzMzlhZTE1YjRhNmQ2NzJmY2VmNTkzNGFlMWRkICBbc2hudG9vbF0gIGpnYjE5OTEtMTEtMTlkMnQwNS5mbGFjCjgzYTBhZmYwYWU1OTdjYjlhMjRmMmFkNzE4M2RlMWNhICBbc2hudG9vbF0gIGpnYjE5OTEtMTEtMTlkMnQwNi5mbGFjCjM5Mjc3MTgyZDkwMGIzMDU4YjJjN2IxZjcyNzgzMTU2ICBbc2hudG9vbF0gIGpnYjE5OTEtMTEtMTlkMnQwNy5mbGFjCjM3NTg2NTAyYTEyYTEyMzkzYzA4NDAwNzk0N2RmYWVmICBbc2hudG9vbF0gIGpnYjE5OTEtMTEtMTlkMnQwOC5mbGFj"
+        let desc = String(data: Data(base64Encoded: descB64)!, encoding: .utf8)!
+
+        var md = ShowMetadata(identifier: "jg91-11-19.011858.jgb.fob-schoepsCMC54.leclair.masiello.sbeok.t-flac16")
+        md.title = "Jerry Garcia live at Providence Civic Center, Providence, RI on 1991-11-19"
+        md.description = desc
+        var model = ShowMetadataModel()
+        model.metadata = md
+
+        ShowDetailViewModel.backfillMissingMetadata(&model)
+        XCTAssertEqual(model.metadata?.source?.first,
+                       "Schoeps CMC54 (hand held 4th row)--> Peter Grace power supply 12V--> DAT--> ZA2 (48/44.1)--> CEP--> SHN")
+        XCTAssertEqual(model.metadata?.venue, "Providence Civic Center")
+        XCTAssertEqual(model.metadata?.coverage, "Providence, RI")
     }
 
     func testBackfillDoesNotOverwriteExistingFields() {

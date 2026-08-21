@@ -33,19 +33,27 @@ struct ArchiveRootView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedTab) {
+                // Tabs without text fields opt out of keyboard avoidance: iOS can
+                // leave a phantom keyboard inset stuck after share-sheet dismissal,
+                // which squeezed content into the top half of the screen and
+                // floated the mini player to mid-screen. Search keeps avoidance —
+                // its form actually hosts the keyboard.
                 CollectionsView()
+                    .ignoresSafeArea(.keyboard)
                     .tag(Tab.bands)
                     .tabItem {
                         Label("Bands", systemImage: "music.note.list")
                     }
 
                 FavoritesView()
+                    .ignoresSafeArea(.keyboard)
                     .tag(Tab.favorites)
                     .tabItem {
                         Label("Favorites", systemImage: "star.fill")
                     }
 
                 DownloadsView()
+                    .ignoresSafeArea(.keyboard)
                     .tag(Tab.myTapes)
                     .tabItem {
                         Label("Downloads", systemImage: "arrow.down.circle")
@@ -60,10 +68,13 @@ struct ArchiveRootView: View {
             .environment(\.miniPlayerInset, playerViewModel.currentShow != nil ? (horizontalSizeClass == .regular ? 140 : 70) : 0)
 
             if playerViewModel.currentShow != nil && !keyboardVisible {
+                // Pinned to the true bottom regardless of (phantom) keyboard
+                // insets — it's hidden during real keyboard use anyway
                 MiniPlayerBar(showFullPlayer: $showFullPlayer)
                     .environmentObject(playerViewModel)
                     .padding(.horizontal)
                     .padding(.bottom, 50)
+                    .ignoresSafeArea(.keyboard)
             }
         }
         .sheet(isPresented: $showFullPlayer, onDismiss: {

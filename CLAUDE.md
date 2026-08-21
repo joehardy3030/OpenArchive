@@ -48,7 +48,7 @@ ChateauArchiveApp (@main) → AppDelegate (audio session, notifications permissi
                           → ArchiveRootView (4-tab SwiftUI nav: Bands, Favorites, Downloads, Search)
 ```
 
-`ArchiveRootView` also owns the global **MiniPlayerBar** (shown above the tab bar whenever a show is loaded, hidden while the keyboard is up) and presents **FullPlayerView** as a sheet. A `miniPlayerInset` EnvironmentKey pads scrolling lists so content isn't hidden behind the mini player.
+`ArchiveRootView` also owns the global **MiniPlayerBar** (shown above the tab bar whenever a show is loaded, hidden while the keyboard is up) and presents **FullPlayerView** as a sheet. The mini player and the three tabs without text fields use `.ignoresSafeArea(.keyboard)` — iOS can leave a phantom keyboard inset stuck after share-sheet dismissal, which squeezed content to the top half of the screen; Search keeps keyboard avoidance for its form. A `miniPlayerInset` EnvironmentKey pads scrolling lists so content isn't hidden behind the mini player.
 
 Bands tab browse hierarchy: `CollectionsView` (bands) → `YearListView` → `MonthListView` → `ShowsListView` → `ShowDetailView`. Month/show lists pass prefetched data down via `NavigationStack` destination values to avoid refetching.
 

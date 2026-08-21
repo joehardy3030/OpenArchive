@@ -16,6 +16,8 @@ struct MonthRow: Identifiable {
 final class MonthListViewModel: ObservableObject {
     @Published var monthRows: [MonthRow] = []
     @Published var isLoading = false
+    /// True when the year fetch failed and we have no data (cached or fresh)
+    @Published var loadFailed = false
     @Published var filter: ShowFilter {
         didSet {
             if isGratefulDead { Self.lastGDFilter = filter }
@@ -60,6 +62,7 @@ final class MonthListViewModel: ObservableObject {
         // fetches its own single-month query in ShowsListViewModel.
         if monthRows.isEmpty { rebuildMonthRows() }
         isLoading = true
+        loadFailed = false
         pendingFetches = collection == "Phish" ? 2 : 1
 
         let url = archiveAPI.dateRangeYearURL(year: year, sbdOnly: sbdOnly, collection: collection)
@@ -69,9 +72,12 @@ final class MonthListViewModel: ObservableObject {
             DispatchQueue.main.async {
                 guard let self = self else { return }
 
-                let shows = response?.items ?? []
-                self.allShowsForYear = shows
-                self.rebuildMonthRows()
+                if let items = response?.items {
+                    self.allShowsForYear = items
+                    self.rebuildMonthRows()
+                } else if error != nil, self.allShowsForYear.isEmpty {
+                    self.loadFailed = true
+                }
 
                 if self.pendingFetches > 0 { self.pendingFetches -= 1 }
                 if self.pendingFetches <= 0 { self.isLoading = false }

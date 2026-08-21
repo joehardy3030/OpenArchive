@@ -196,6 +196,18 @@ struct ShowDetailView: View {
                 }
             }
 
+            // MARK: - Load Failure Section
+            if viewModel.loadFailed, viewModel.model?.mp3Array?.isEmpty != false {
+                Section {
+                    Button {
+                        viewModel.retryLoad()
+                    } label: {
+                        Label("archive.org didn't respond — tap to retry", systemImage: "arrow.clockwise")
+                            .font(.system(size: 16))
+                    }
+                }
+            }
+
             // MARK: - Tracks Section
             if let tracks = viewModel.model?.mp3Array, !tracks.isEmpty {
                 Section("Tracks") {
@@ -273,6 +285,15 @@ struct ShowDetailView: View {
         }
         .padding(.bottom, miniPlayerInset)
         .navigationTitle(viewModel.title)
+        .toolbar {
+            // Archive shows seed stub metadata so the full-screen loading overlay
+            // never fires for them — this is their only loading indication.
+            if viewModel.isLoading {
+                ToolbarItem(placement: .topBarTrailing) {
+                    ProgressView()
+                }
+            }
+        }
         .overlay {
             if viewModel.isLoading && viewModel.model?.metadata == nil {
                 ProgressView("Loading show...")

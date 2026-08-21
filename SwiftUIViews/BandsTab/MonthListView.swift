@@ -39,6 +39,16 @@ struct MonthListView: View {
                 }
             }
 
+            if viewModel.loadFailed {
+                Button {
+                    viewModel.fetchShows()
+                } label: {
+                    Label("archive.org didn't respond — tap to retry", systemImage: "arrow.clockwise")
+                        .font(.system(size: 14))
+                }
+                .padding(.vertical, 6)
+            }
+
             List(viewModel.monthRows) { row in
                 NavigationLink(value: MonthDestination(
                     monthIndex: row.monthIndex,

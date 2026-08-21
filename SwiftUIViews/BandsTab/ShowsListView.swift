@@ -58,6 +58,17 @@ struct ShowsListView: View {
                 }
             }
         }
+        .overlay {
+            if viewModel.loadFailed && viewModel.shows.isEmpty && viewModel.phishInDates.isEmpty {
+                ContentUnavailableView {
+                    Label("Couldn't Load Shows", systemImage: "wifi.exclamationmark")
+                } description: {
+                    Text("archive.org didn't respond. It may be busy.")
+                } actions: {
+                    Button("Retry") { viewModel.retry() }
+                }
+            }
+        }
         // Note: the navigationDestination for ShowDestination is declared once,
         // at the stack root in CollectionsView — declaring it again here is
         // ignored by SwiftUI and logs a runtime warning.
@@ -78,6 +89,30 @@ struct ShowDestination: Hashable {
     }
 }
 
+/// Small capsule badge for the sniffed recording type (SBD/AUD/MTX/FM).
+struct RecordingTypeBadge: View {
+    let type: String
+
+    private var color: Color {
+        switch type {
+        case "SBD": return .blue
+        case "MTX": return .purple
+        case "FM": return .orange
+        default: return .secondary
+        }
+    }
+
+    var body: some View {
+        Text(type)
+            .font(.system(size: 11, weight: .bold))
+            .foregroundColor(color)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 2)
+            .background(color.opacity(0.15))
+            .clipShape(Capsule())
+    }
+}
+
 /// A single row showing artist, date, venue, source info, and ratings.
 struct ShowRowView: View {
     let show: ShowMetadata
@@ -86,8 +121,13 @@ struct ShowRowView: View {
         VStack(alignment: .leading, spacing: 4) {
             Text(show.creator ?? show.collection?.joined(separator: ", ") ?? "")
                 .font(.system(size: 18, weight: .bold))
-            Text(formatDate(show.date))
-                .font(.system(size: 17, weight: .bold))
+            HStack(spacing: 8) {
+                Text(formatDate(show.date))
+                    .font(.system(size: 17, weight: .bold))
+                if let type = show.recordingType {
+                    RecordingTypeBadge(type: type)
+                }
+            }
             if let loc = show.displayVenueLine {
                 Text(loc)
                     .font(.system(size: 16))

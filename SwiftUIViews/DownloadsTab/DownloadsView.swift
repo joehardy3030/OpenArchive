@@ -91,8 +91,13 @@ struct DownloadedShowRow: View {
                 }
                 Text(show.metadata?.creator ?? show.metadata?.collection?.joined(separator: ", ") ?? "")
                     .font(.system(size: 18, weight: .bold))
-                Text(formatDate(show.metadata?.date))
-                    .font(.system(size: 17, weight: .bold))
+                HStack(spacing: 8) {
+                    Text(formatDate(show.metadata?.date))
+                        .font(.system(size: 17, weight: .bold))
+                    if let type = show.metadata?.recordingType {
+                        RecordingTypeBadge(type: type)
+                    }
+                }
                 if let loc = show.metadata?.displayVenueLine {
                     Text(loc)
                         .font(.system(size: 16))

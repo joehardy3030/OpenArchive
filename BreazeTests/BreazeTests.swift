@@ -409,6 +409,37 @@ class BreazeTests: XCTestCase {
         XCTAssertEqual(meta.source, ["SBD", "AUD"])
     }
 
+    func testShowMetadataDecodingArrayCreator() throws {
+        // The real 1991 poison pill: one item with an array creator failed the
+        // decode of the entire year's response.
+        let json = """
+        {"identifier": "1991.11.12-jgb-philly", "creator": ["Jerry Garcia Band", "Playboy", "WAGA", "Love & War"]}
+        """
+        let md = try JSONDecoder().decode(ShowMetadata.self, from: json.data(using: .utf8)!)
+        XCTAssertEqual(md.creator, "Jerry Garcia Band")
+    }
+
+    func testShowMetadataDecodingArrayCreatorDoesNotPoisonList() throws {
+        let json = """
+        {"items": [
+            {"identifier": "a", "creator": "Jerry Garcia"},
+            {"identifier": "b", "creator": ["Jerry Garcia Band", "WAGA"]},
+            {"identifier": "c", "creator": "Jerry Garcia"}
+        ]}
+        """
+        let list = try JSONDecoder().decode(ShowMetadatas.self, from: json.data(using: .utf8)!)
+        XCTAssertEqual(list.items?.count, 3)
+        XCTAssertEqual(list.items?[1].creator, "Jerry Garcia Band")
+    }
+
+    func testShowMetadataDecodingNumericYear() throws {
+        let json = """
+        {"identifier": "x", "year": 1991}
+        """
+        let md = try JSONDecoder().decode(ShowMetadata.self, from: json.data(using: .utf8)!)
+        XCTAssertEqual(md.year, "1991")
+    }
+
     func testShowMetadataDecodingRatings() throws {
         let json = """
         {"identifier":"test","avg_rating":4.75,"num_reviews":42}
@@ -861,6 +892,44 @@ class BreazeTests: XCTestCase {
         XCTAssertNil(md.titleVenueLocation)
     }
 
+    func testRecordingTypeSniffsIdentifierTokens() {
+        var md = ShowMetadata(identifier: "jg85-10-11.030623.jgjk.set1.sbd.jjoops.sbeok.t-flac16")
+        XCTAssertEqual(md.recordingType, "SBD")
+
+        md = ShowMetadata(identifier: "jg81-01-23.097205.jgb.aud.latvala.knudsen-df.t-flac16")
+        XCTAssertEqual(md.recordingType, "AUD")
+
+        md = ShowMetadata(identifier: "gd77-05-08.mtx.seamons.32106.flac16")
+        XCTAssertEqual(md.recordingType, "MTX")
+
+        md = ShowMetadata(identifier: "gd89-08-04.fm.wagner.12345.flac16")
+        XCTAssertEqual(md.recordingType, "FM")
+    }
+
+    func testRecordingTypeNoFalsePositives() {
+        // "sbeok" must not match "sbd"; a plain identifier yields nil
+        var md = ShowMetadata(identifier: "gd77-05-08.hicks.4982.sbeok.shnf")
+        XCTAssertNil(md.recordingType)
+
+        md = ShowMetadata(identifier: "phishin-1994-10-31")
+        XCTAssertNil(md.recordingType)
+    }
+
+    func testRecordingTypeFallsBackToSourceField() {
+        var md = ShowMetadata(identifier: "gd77-05-08.hicks.4982.sbeok.shnf")
+        md.source = ["Soundboard > Master Reel > DAT"]
+        XCTAssertEqual(md.recordingType, "SBD")
+
+        md.source = ["Audience: Nakamichi 300s > cassette"]
+        XCTAssertEqual(md.recordingType, "AUD")
+    }
+
+    func testRecordingTypePrefersMatrixOverComponents() {
+        // A matrix identifier can also mention sbd/aud sources
+        let md = ShowMetadata(identifier: "gd90-03-29.mtx.sbd.aud.hanno.flac16")
+        XCTAssertEqual(md.recordingType, "MTX")
+    }
+
     func testDisplayVenueLinePrefersRealFields() {
         var md = ShowMetadata(identifier: "x")
         md.venue = "Winterland"
@@ -901,6 +970,47 @@ class BreazeTests: XCTestCase {
 
         ShowDetailViewModel.backfillMissingMetadata(&model)
         XCTAssertEqual(model.metadata?.venue, "The Keystone, Berkley, CA 01/17/1974 Set II")
+    }
+
+    func testSourceLineageFromUnlabeledGearChain() {
+        // The real jg91-11-19 description: lineage present but no "Source:" label
+        let desc = """
+        Jerry Garcia Band
+        11/19/1991
+
+        Providence Civic Center
+        Providence RI
+
+        master recording by Captain Joe LeClair
+        DAT transfer and shn mastering by Tony Masiello
+
+        Schoeps CMC54 (hand held 4th row)--> Peter Grace power supply 12V--> DAT--> ZA2 (48/44.1)--> CEP--> SHN
+
+        Set 1
+
+        1. How Sweet It Is
+        """
+        XCTAssertEqual(ShowDetailViewModel.sourceLineage(fromDescription: desc),
+                       "Schoeps CMC54 (hand held 4th row)--> Peter Grace power supply 12V--> DAT--> ZA2 (48/44.1)--> CEP--> SHN")
+    }
+
+    func testSourceLineagePrefersLabeledSourceLine() {
+        let desc = "Jerry Garcia Band\nSource:  DSBD>D>CM>CD\n\ndisc 1:\nHow Sweet It Is"
+        XCTAssertEqual(ShowDetailViewModel.sourceLineage(fromDescription: desc), "DSBD>D>CM>CD")
+    }
+
+    func testSourceLineageIgnoresSetlistSegues() {
+        // Arrow-heavy segue lines must not be mistaken for gear chains
+        let desc = "Set 2:\nHelp on the Way > Slipknot! > Franklin's Tower\nEyes of the World > Drums > Space"
+        XCTAssertNil(ShowDetailViewModel.sourceLineage(fromDescription: desc))
+    }
+
+    func testRecordingTypeFOBAndDSBD() {
+        var md = ShowMetadata(identifier: "jg91-11-19.011858.jgb.fob-schoepsCMC54.leclair.masiello.sbeok.t-flac16")
+        XCTAssertEqual(md.recordingType, "AUD")
+
+        md = ShowMetadata(identifier: "gd90-03-29.dsbd.miller.12345.flac16")
+        XCTAssertEqual(md.recordingType, "SBD")
     }
 
     func testBackfillDoesNotOverwriteExistingFields() {

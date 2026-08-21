@@ -53,7 +53,16 @@ struct ShowMetadata: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         identifier = try container.decodeIfPresent(String.self, forKey: .identifier)
         title = try container.decodeIfPresent(String.self, forKey: .title)
-        creator = try container.decodeIfPresent(String.self, forKey: .creator)
+        // creator can be a string or an array (multi-artist billings); a strict
+        // String decode here poisoned entire year responses — one array-creator
+        // item fails the whole ShowMetadatas decode. Take the primary artist.
+        if let creatorString = try? container.decodeIfPresent(String.self, forKey: .creator) {
+            creator = creatorString
+        } else if let creatorArray = try? container.decodeIfPresent([String].self, forKey: .creator) {
+            creator = creatorArray.first
+        } else {
+            creator = nil
+        }
         mediatype = try container.decodeIfPresent(String.self, forKey: .mediatype)
         type = try container.decodeIfPresent(String.self, forKey: .type)
         // Handle description field that could be either a string or array
@@ -65,7 +74,14 @@ struct ShowMetadata: Codable {
             description = nil
         }
         date = try container.decodeIfPresent(String.self, forKey: .date)
-        year = try container.decodeIfPresent(String.self, forKey: .year)
+        // year is usually a string but occasionally a bare number
+        if let yearString = try? container.decodeIfPresent(String.self, forKey: .year) {
+            year = yearString
+        } else if let yearInt = try? container.decodeIfPresent(Int.self, forKey: .year) {
+            year = String(yearInt)
+        } else {
+            year = nil
+        }
         venue = try container.decodeIfPresent(String.self, forKey: .venue)
         transferer = try container.decodeIfPresent(String.self, forKey: .transferer)
         coverage = try container.decodeIfPresent(String.self, forKey: .coverage)
@@ -128,6 +144,28 @@ extension ShowMetadata {
             return [venue, coverage].compactMap { $0 }.joined(separator: ", ")
         }
         return titleVenueLocation
+    }
+
+    /// Recording type ("SBD"/"AUD"/"MTX"/"FM") sniffed from taper naming
+    /// conventions in the identifier (dot-separated tokens like
+    /// "jg85-10-11.030623.jgjk.set1.sbd.jjoops"), with the source field as a
+    /// fallback. Zero network cost — powers the row badges, which matters for
+    /// collections whose items have no source field in the search index.
+    var recordingType: String? {
+        func sniff(_ tokens: [String]) -> String? {
+            if tokens.contains("mtx") || tokens.contains("matrix") || tokens.contains("ultramatrix") { return "MTX" }
+            if tokens.contains("sbd") || tokens.contains("dsbd") || tokens.contains("soundboard") { return "SBD" }
+            if tokens.contains("fm") || tokens.contains("prefm") { return "FM" }
+            // "fob" = front-of-board: an audience-mic placement convention
+            if tokens.contains("aud") || tokens.contains("audience") || tokens.contains("fob") { return "AUD" }
+            return nil
+        }
+        func tokenize(_ s: String) -> [String] {
+            s.lowercased().split(whereSeparator: { !$0.isLetter && !$0.isNumber }).map(String.init)
+        }
+        if let id = identifier, let type = sniff(tokenize(id)) { return type }
+        if let src = source?.joined(separator: " "), let type = sniff(tokenize(src)) { return type }
+        return nil
     }
 }
 

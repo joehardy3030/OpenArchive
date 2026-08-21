@@ -3,6 +3,8 @@ import Foundation
 final class ShowDetailViewModel: ObservableObject {
     @Published var model: ShowMetadataModel?
     @Published var isLoading = false
+    /// True when the metadata fetch failed and we have no track list to show
+    @Published var loadFailed = false
     @Published var pendingTrackIndex: Int? = nil
     @Published var isDownloading = false
     @Published var isDownloaded = false
@@ -108,9 +110,14 @@ final class ShowDetailViewModel: ObservableObject {
         }
     }
 
+    func retryLoad() {
+        fetchShowDetail()
+    }
+
     private func fetchShowDetail() {
         guard let id = initialMetadata.identifier else { return }
         isLoading = true
+        loadFailed = false
         let url = archiveAPI.metadataURL(identifier: id)
         // Cache-first: can fire twice (cached, then network diff); the body is
         // idempotent — it rebuilds the mp3 array and republishes the model.
@@ -118,7 +125,14 @@ final class ShowDetailViewModel: ObservableObject {
             DispatchQueue.main.async {
                 guard let self = self else { return }
                 self.isLoading = false
-                guard var showData = response else { return }
+                guard var showData = response else {
+                    // Failed with nothing to show — surface a retry affordance
+                    if error != nil, self.model?.mp3Array?.isEmpty != false {
+                        self.loadFailed = true
+                    }
+                    return
+                }
+                self.loadFailed = false
 
                 // Carry over ratings from initial shallow metadata
                 if let ar = self.initialMetadata.avg_rating {
@@ -484,20 +498,45 @@ final class ShowDetailViewModel: ObservableObject {
         }
 
         if md.source == nil || md.source?.isEmpty == true, let desc = md.description {
-            for line in desc.components(separatedBy: .newlines) {
-                let trimmed = line.trimmingCharacters(in: .whitespaces)
-                if trimmed.lowercased().hasPrefix("source:") {
-                    let value = trimmed.dropFirst("source:".count)
-                        .trimmingCharacters(in: .whitespaces)
-                    if !value.isEmpty {
-                        md.source = [value]
-                        break
-                    }
-                }
+            if let lineage = Self.sourceLineage(fromDescription: desc) {
+                md.source = [lineage]
             }
         }
 
         model.metadata = md
+    }
+
+    /// Pulls a recording lineage out of a free-text description: an explicit
+    /// "Source:" line when present, else the first line that looks like a gear
+    /// chain — 2+ ">" arrows plus a recording-gear keyword. The keyword check
+    /// keeps arrow-heavy setlist segue lines ("Help > Slip > Franklin's") out.
+    static func sourceLineage(fromDescription desc: String) -> String? {
+        let lines = desc.components(separatedBy: .newlines)
+
+        for line in lines {
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            if trimmed.lowercased().hasPrefix("source:") {
+                let value = trimmed.dropFirst("source:".count)
+                    .trimmingCharacters(in: .whitespaces)
+                if !value.isEmpty { return value }
+            }
+        }
+
+        let gearKeywords: Set<String> = ["dat", "sbd", "dsbd", "shn", "flac", "cd", "cdr", "wav",
+                                         "cass", "cassette", "reel", "master", "soundboard", "aud",
+                                         "mic", "mics", "schoeps", "neumann", "nakamichi", "nak",
+                                         "akg", "sennheiser", "beyer", "sony"]
+        for line in lines {
+            let cleaned = line.strippingHTML().trimmingCharacters(in: .whitespaces)
+            guard cleaned.filter({ $0 == ">" }).count >= 2 else { continue }
+            let tokens = cleaned.lowercased()
+                .split(whereSeparator: { !$0.isLetter && !$0.isNumber })
+                .map(String.init)
+            if tokens.contains(where: { gearKeywords.contains($0) }) {
+                return cleaned
+            }
+        }
+        return nil
     }
 
     // MARK: - Track list construction

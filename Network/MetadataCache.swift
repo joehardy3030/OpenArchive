@@ -25,6 +25,20 @@ final class MetadataCache {
     private let directory: URL
     private let queue = DispatchQueue(label: "com.chateauarchive.metadatacache", qos: .utility)
 
+    /// Interactive metadata session. Timeout/retry tuning is deliberate:
+    /// creator-based scrape queries legitimately take 20s+ when archive.org's
+    /// query cache is cold (a 20s cap made them fail outright), and the server
+    /// keeps computing after a client disconnect — so retries are spaced out
+    /// (3s, 6s) to land on the warmed cache. The whole cycle runs behind
+    /// non-blocking UI (month skeleton + toolbar spinner), so a slow fetch
+    /// costs patience, not usability.
+    private let session: Session = {
+        let config = URLSessionConfiguration.default
+        config.timeoutIntervalForRequest = 35
+        let retry = RetryPolicy(retryLimit: 2, exponentialBackoffBase: 2, exponentialBackoffScale: 3)
+        return Session(configuration: config, interceptor: retry)
+    }()
+
     init(directoryName: String = "MetadataCache") {
         let caches = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
         directory = caches.appendingPathComponent(directoryName, isDirectory: true)
@@ -85,7 +99,10 @@ final class MetadataCache {
                     return
                 }
             }
-            AF.request(url, headers: headers).responseDecodable(of: T.self) { response in
+            // validate() makes HTTP errors (archive.org load-shedding 503s serve
+            // an HTML error page) fail cleanly instead of reaching the decoder,
+            // and guarantees RetryPolicy sees them as retryable.
+            self.session.request(url, headers: headers).validate().responseDecodable(of: T.self) { response in
                 switch response.result {
                 case .success(let fresh):
                     guard let canonical = Self.canonical(fresh) else { return }

@@ -25,7 +25,7 @@ Naming history: the project began life in 2018 as a weather app called **Breaze*
 - Title venue parsing and metadata backfill (`ShowMetadata.titleVenueLocation`, `displayVenueLine`, `ShowDetailViewModel.backfillMissingMetadata`)
 - `MetadataCache` (canonical-encoding determinism, disk round-trip and miss paths)
 - `CollectionConfig` display-name/identifier mapping, creator-based and SBD-capable lists
-- `ShowMetadata` decoding (string-or-array fields: description, collection, source)
+- `ShowMetadata` decoding (string-or-array fields: description, collection, source, creator; numeric-or-string year — one array-creator item used to fail an entire year's decode)
 - `ShowDetailViewModel.buildMP3Array` (track title/track-number inheritance from lossless originals, cross-set sort order)
 - `YearListViewModel` year ranges (curated ranges beat stored API-inferred ranges)
 - `PlaybackState` (show type mapping, staleness, Codable round-trip)
@@ -107,7 +107,8 @@ Year ranges: curated per-band ranges in `YearListViewModel.curatedYears` take **
 Items in multi-artist collections (taperssection especially) often have **no venue/coverage/source/transferer fields at all** — that info lives instead in the conventional item title ("X live at Venue, City, ST on date"), the description (a "Source:" lineage line, setlist, personnel), and the audio files' embedded tags (per-file title/track/album, extracted by archive.org into the metadata files array). The app recovers it at two levels:
 
 - **List rows** (Months/Search/Downloads/Favorites): search queries request the `title` field, and `ShowMetadata.displayVenueLine` falls back to `titleVenueLocation` (parsed from the "live at … on date" title convention) when the venue field is empty.
-- **Detail fetch**: `ShowDetailViewModel.backfillMissingMetadata` fills empty venue/coverage from the title parse (venue = first comma component, coverage = the rest) or the files' `album` tag, and empty source from the description's "Source:" line — before the model is displayed or saved, so downloads and favorites persist the enriched copy. Existing field values are never overwritten.
+- **Recording-type badges**: `ShowMetadata.recordingType` sniffs SBD/AUD/MTX/FM from exact identifier tokens (taper naming conventions; `sbeok` never matches `sbd`), falling back to a source-field token sniff. Zero network cost; rendered as `RecordingTypeBadge` capsules next to the date on browse/Downloads/Favorites rows — the key source signal for collections whose items lack an index-level source field.
+- **Detail fetch**: `ShowDetailViewModel.backfillMissingMetadata` fills empty venue/coverage from the title parse (venue = first comma component, coverage = the rest) or the files' `album` tag, and empty source from the description — an explicit "Source:" line, else the first unlabeled gear-chain line (2+ ">" arrows plus a recording-gear keyword; the keyword requirement keeps setlist segue lines out — `ShowDetailViewModel.sourceLineage`) — before the model is displayed or saved, so downloads and favorites persist the enriched copy. Existing field values are never overwritten.
 
 ### Metadata Caching
 
@@ -119,6 +120,8 @@ Browse and detail fetches are **cache-first** (`MetadataCache.fetchDecodable`): 
 - Network errors surface only when there is no cached copy — with a cache, a failed refresh is silent and the stale copy stands.
 - Cache-first call sites: year/month scrapes (`getIARequestItemsCached`), show metadata (`getIARequestMetadataCached`), Phish.in year/show fetches, Phish.net setlists/shows. **Search stays on the live methods** deliberately — ad-hoc queries would pollute the cache. `MonthListViewModel`'s `pendingFetches` decrement is guarded against the double-fire.
 - The month list never blocks on the network: `MonthListViewModel.fetchShows` renders the 12 tappable month rows immediately (counts fill in when the year scrape lands, signaled by a toolbar spinner), and a month entered before then fetches its own single-month query in `ShowsListViewModel`. Loading states are toolbar spinners, not full-screen blockers.
+- Network policy: cache-revalidation traffic uses a dedicated session with a 35s idle timeout and Alamofire `RetryPolicy` (2 retries spaced 3s/6s, on timeouts and 5xx). The tuning is deliberate: creator-based scrape queries legitimately take 20s+ when archive.org's query cache is cold (a tighter cap made them fail outright — measured: same query 3s warm, 20s+ cold), and archive.org keeps computing after a client disconnect, so spaced retries land on the warmed cache. Requests are `.validate()`d so archive.org's load-shedding 503s (HTML error pages) fail cleanly and retryably instead of reaching the decoder. Don't tighten the timeout without measuring the creator-query cold path.
+- Failure states: when a fetch fails with no data to show (cached or fresh), months get a tap-to-retry banner above the still-usable skeleton, shows lists get a `ContentUnavailableView` with a Retry button, and show detail gets a retry row in place of the tracks section (`loadFailed` on all three view models). With any data on hand, failures stay silent and the stale copy stands. Show detail also runs a toolbar spinner while fetching — archive shows seed stub metadata, so the full-screen loading overlay never fires for them and the spinner is their only loading indication.
 
 ### Data Flow
 

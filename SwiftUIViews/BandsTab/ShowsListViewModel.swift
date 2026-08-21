@@ -3,6 +3,8 @@ import Foundation
 final class ShowsListViewModel: ObservableObject {
     @Published var shows: [ShowMetadata] = []
     @Published var isLoading = false
+    /// True when the month fetch failed and we have no data (cached or fresh)
+    @Published var loadFailed = false
     /// Phish.in show dates available for this month (only for Phish collection)
     @Published var phishInDates: Set<String> = []
     /// Full Phish.in show summaries keyed by date
@@ -11,6 +13,7 @@ final class ShowsListViewModel: ObservableObject {
     let year: Int
     let month: Int
     let collection: String
+    private let sbdOnly: Bool
 
     private let archiveAPI = ArchiveAPI()
 
@@ -27,6 +30,7 @@ final class ShowsListViewModel: ObservableObject {
         self.year = year
         self.month = month
         self.collection = collection
+        self.sbdOnly = (filter == .sbd || filter == .joesPicks)
 
         // Use prefetched Phish.in data if available, otherwise fetch
         if !prefetchedPhishIn.isEmpty {
@@ -40,20 +44,27 @@ final class ShowsListViewModel: ObservableObject {
             self.shows = Self.enrichWithPhishIn(prefetchedShows, phishIn: self.phishInShowsByDate)
                 .sorted { ($0.date ?? "") < ($1.date ?? "") }
         } else {
-            let sbdOnly = (filter == .sbd || filter == .joesPicks)
-            fetchFromAPI(sbdOnly: sbdOnly)
+            fetchFromAPI()
         }
     }
 
-    private func fetchFromAPI(sbdOnly: Bool) {
+    func retry() {
+        fetchFromAPI()
+    }
+
+    private func fetchFromAPI() {
         isLoading = true
+        loadFailed = false
         let url = archiveAPI.dateRangeURL(year: year, month: month, sbdOnly: sbdOnly, collection: collection)
         // Cache-first; the completion body is idempotent for the double-fire
         archiveAPI.getIARequestItemsCached(url: url) { [weak self] (response: ShowMetadatas?, error: Error?) in
             DispatchQueue.main.async {
-                self?.isLoading = false
+                guard let self = self else { return }
+                self.isLoading = false
                 if let items = response?.items, !items.isEmpty {
-                    self?.shows = items.sorted { ($0.date ?? "") < ($1.date ?? "") }
+                    self.shows = items.sorted { ($0.date ?? "") < ($1.date ?? "") }
+                } else if error != nil, self.shows.isEmpty {
+                    self.loadFailed = true
                 }
             }
         }

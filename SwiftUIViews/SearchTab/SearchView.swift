@@ -1,4 +1,32 @@
 import SwiftUI
+import Combine
+
+/// Keyboard overlap height for manual avoidance (the root shell opts out of
+/// SwiftUI's — see ArchiveRootView). Derived from keyboard *frame geometry*
+/// rather than show/hide booleans: iOS fires spurious frame-change
+/// notifications with no keyboard present (after share sheets, tab switches),
+/// and a frame sitting off-screen simply computes to zero overlap, so nothing
+/// can get stuck.
+final class KeyboardObserver: ObservableObject {
+    @Published var height: CGFloat = 0
+    private var cancellables = Set<AnyCancellable>()
+
+    init() {
+        let center = NotificationCenter.default
+        center.publisher(for: UIResponder.keyboardWillChangeFrameNotification)
+            .merge(with: center.publisher(for: UIResponder.keyboardWillHideNotification))
+            .sink { [weak self] note in
+                guard let self else { return }
+                if note.name == UIResponder.keyboardWillHideNotification {
+                    self.height = 0
+                    return
+                }
+                guard let end = (note.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
+                self.height = max(0, UIScreen.main.bounds.height - end.minY)
+            }
+            .store(in: &cancellables)
+    }
+}
 
 /// Value-typed destination for the results page. The whole Search stack is
 /// value-based on one NavigationPath — mixing navigationDestination(isPresented:)
@@ -13,11 +41,13 @@ struct SearchResultsDestination: Hashable {
 // open picker menus flicker. Only views that render playback state may observe it.
 struct SearchView: View {
     @StateObject private var viewModel = SearchViewModel()
+    @StateObject private var keyboard = KeyboardObserver()
     @FocusState private var focusedField: Bool
     @State private var path = NavigationPath()
 
     var body: some View {
         NavigationStack(path: $path) {
+            GeometryReader { geo in
             Form {
                 Section {
                     TextField("Search term", text: $viewModel.searchTerm)
@@ -52,6 +82,12 @@ struct SearchView: View {
             .formStyle(.grouped)
             .scrollDismissesKeyboard(.interactively)
             .onSubmit { submitSearch() }
+            // Manual keyboard avoidance: keyboard overlap beyond the tab-bar inset
+            .safeAreaInset(edge: .bottom) {
+                Color.clear.frame(height: max(0, keyboard.height - geo.safeAreaInsets.bottom))
+            }
+            .animation(.easeOut(duration: 0.25), value: keyboard.height)
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: submitSearch) {

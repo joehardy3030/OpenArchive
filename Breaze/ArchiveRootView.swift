@@ -21,7 +21,6 @@ struct ArchiveRootView: View {
 
     @State private var selectedTab: Tab = .bands
     @State private var showFullPlayer = false
-    @State private var keyboardVisible = false
 
     enum Tab {
         case bands
@@ -33,27 +32,19 @@ struct ArchiveRootView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedTab) {
-                // Tabs without text fields opt out of keyboard avoidance: iOS can
-                // leave a phantom keyboard inset stuck after share-sheet dismissal,
-                // which squeezed content into the top half of the screen and
-                // floated the mini player to mid-screen. Search keeps avoidance —
-                // its form actually hosts the keyboard.
                 CollectionsView()
-                    .ignoresSafeArea(.keyboard)
                     .tag(Tab.bands)
                     .tabItem {
                         Label("Bands", systemImage: "music.note.list")
                     }
 
                 FavoritesView()
-                    .ignoresSafeArea(.keyboard)
                     .tag(Tab.favorites)
                     .tabItem {
                         Label("Favorites", systemImage: "star.fill")
                     }
 
                 DownloadsView()
-                    .ignoresSafeArea(.keyboard)
                     .tag(Tab.myTapes)
                     .tabItem {
                         Label("Downloads", systemImage: "arrow.down.circle")
@@ -67,16 +58,19 @@ struct ArchiveRootView: View {
             }
             .environment(\.miniPlayerInset, playerViewModel.currentShow != nil ? (horizontalSizeClass == .regular ? 140 : 70) : 0)
 
-            if playerViewModel.currentShow != nil && !keyboardVisible {
-                // Pinned to the true bottom regardless of (phantom) keyboard
-                // insets — it's hidden during real keyboard use anyway
+            if playerViewModel.currentShow != nil {
                 MiniPlayerBar(showFullPlayer: $showFullPlayer)
                     .environmentObject(playerViewModel)
                     .padding(.horizontal)
                     .padding(.bottom, 50)
-                    .ignoresSafeArea(.keyboard)
             }
         }
+        // The whole shell opts out of SwiftUI keyboard avoidance: iOS can leave a
+        // phantom keyboard inset stuck after share sheets / tab switches, which
+        // squeezed content to the top half of the screen. A real keyboard simply
+        // covers the mini player (no hide/show state to get stuck), and the Search
+        // form does its own frame-based avoidance (see KeyboardObserver).
+        .ignoresSafeArea(.keyboard)
         .sheet(isPresented: $showFullPlayer, onDismiss: {
             if let (metadata, showType, model) = deepLinkRouter.pendingNavigation {
                 deepLinkRouter.pendingNavigation = nil
@@ -90,12 +84,6 @@ struct ArchiveRootView: View {
         .onReceive(deepLinkRouter.$pendingShow) { show in
             guard show != nil else { return }
             selectedTab = .bands
-        }
-        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
-            keyboardVisible = true
-        }
-        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
-            keyboardVisible = false
         }
     }
 }

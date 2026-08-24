@@ -913,6 +913,31 @@ class BreazeTests: XCTestCase {
         XCTAssertNil(md.titleVenueLocation)
     }
 
+    func testDisplayCreatorRefinesJerryGarciaBandCodes() {
+        var md = ShowMetadata(identifier: "jg85-10-16.078849.jgjk.mtx.tobin.t-flac16")
+        md.creator = "Jerry Garcia"
+        XCTAssertEqual(md.displayCreator, "Jerry Garcia & John Kahn")
+
+        md = ShowMetadata(identifier: "jg89-09-05.083466.jgb.sbd.patched.tetzeli.sbeok.t-flac16")
+        md.creator = "Jerry Garcia"
+        XCTAssertEqual(md.displayCreator, "Jerry Garcia Band")
+
+        md = ShowMetadata(identifier: "jg73-11-04.085027.oaitw.sbd.tamarkin.sbeok.t-flac16")
+        md.creator = "Jerry Garcia"
+        XCTAssertEqual(md.displayCreator, "Old & In the Way")
+    }
+
+    func testDisplayCreatorFallsBackToCreator() {
+        // No band code in the identifier → the creator field stands
+        var md = ShowMetadata(identifier: "gd77-05-08.sbd.hicks.4982.sbeok.shnf")
+        md.creator = "Grateful Dead"
+        XCTAssertEqual(md.displayCreator, "Grateful Dead")
+
+        md = ShowMetadata(identifier: "phishin-1994-10-31")
+        md.creator = "Phish"
+        XCTAssertEqual(md.displayCreator, "Phish")
+    }
+
     func testRecordingTypeSniffsIdentifierTokens() {
         var md = ShowMetadata(identifier: "jg85-10-11.030623.jgjk.set1.sbd.jjoops.sbeok.t-flac16")
         XCTAssertEqual(md.recordingType, "SBD")

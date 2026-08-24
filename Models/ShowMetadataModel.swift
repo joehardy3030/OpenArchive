@@ -146,6 +146,39 @@ extension ShowMetadata {
         return titleVenueLocation
     }
 
+    /// Band-code tokens from taper identifier conventions → the actual
+    /// performing band. The Jerry Garcia creator entry phrase-matches many of
+    /// Jerry's bands whose index-level creator is just "Jerry Garcia"; the
+    /// identifier encodes who actually played. Codes verified against token
+    /// frequencies across the full creator:"Jerry Garcia" catalog.
+    private static let bandCodes: [String: String] = [
+        "jgb": "Jerry Garcia Band",
+        "jgab": "Jerry Garcia Acoustic Band",
+        "jgms": "Jerry Garcia & Merl Saunders",
+        "jgjk": "Jerry Garcia & John Kahn",
+        "jgdg": "Jerry Garcia & David Grisman",
+        "oaitw": "Old & In the Way",
+        "lom": "Legion of Mary",
+        "recon": "Reconstruction",
+        "nrps": "New Riders of the Purple Sage",
+        "gasb": "Great American String Band",
+        "jgf": "Jerry Garcia & Friends",
+    ]
+
+    /// Creator refined by the identifier's band-code token — used everywhere a
+    /// band name is displayed (rows, detail, players, Now Playing). Grouping
+    /// under the "Jerry Garcia" band entry is unaffected (query-level).
+    var displayCreator: String? {
+        if let id = identifier {
+            for token in id.lowercased().split(whereSeparator: { !$0.isLetter && !$0.isNumber }) {
+                if let band = Self.bandCodes[String(token)] {
+                    return band
+                }
+            }
+        }
+        return creator
+    }
+
     /// Recording type ("SBD"/"AUD"/"MTX"/"FM") sniffed from taper naming
     /// conventions in the identifier (dot-separated tokens like
     /// "jg85-10-11.030623.jgjk.set1.sbd.jjoops"), with the source field as a

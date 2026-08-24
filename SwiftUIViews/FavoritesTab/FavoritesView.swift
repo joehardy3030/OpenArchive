@@ -65,7 +65,7 @@ struct FavoriteShowRow: View {
     var body: some View {
         HStack(alignment: .top) {
             VStack(alignment: .leading, spacing: 4) {
-                Text(show.metadata?.creator ?? show.metadata?.collection?.joined(separator: ", ") ?? "")
+                Text(show.metadata?.displayCreator ?? show.metadata?.collection?.joined(separator: ", ") ?? "")
                     .font(.system(size: 18, weight: .bold))
                 HStack(spacing: 8) {
                     Text(formatDate(show.metadata?.date))

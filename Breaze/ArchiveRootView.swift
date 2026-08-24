@@ -96,7 +96,7 @@ struct MiniPlayerBar: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
-                Text(playerViewModel.currentShow?.metadata?.creator ?? "Chateau Archive")
+                Text(playerViewModel.currentShow?.metadata?.displayCreator ?? "Chateau Archive")
                     .font(.headline)
                     .lineLimit(1)
                 if let venue = playerViewModel.currentShow?.metadata?.venue {

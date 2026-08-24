@@ -100,7 +100,7 @@ struct ShowDetailView: View {
 
             // MARK: - Info Section
             Section {
-                if let band = viewModel.fullMetadata?.creator ?? viewModel.fullMetadata?.collection?.first {
+                if let band = viewModel.fullMetadata?.displayCreator ?? viewModel.fullMetadata?.collection?.first {
                     InfoRow(label: "Band", value: band)
                 }
                 if let date = viewModel.fullMetadata?.date { InfoRow(label: "Date", value: date) }

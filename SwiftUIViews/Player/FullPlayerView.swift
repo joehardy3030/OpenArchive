@@ -51,7 +51,7 @@ struct FullPlayerView: View {
             VStack(spacing: 12) {
                 // Show info
                 VStack(spacing: 2) {
-                    Text(playerViewModel.currentShow?.metadata?.creator ?? "")
+                    Text(playerViewModel.currentShow?.metadata?.displayCreator ?? "")
                         .font(.system(size: 20, weight: .bold))
                         .lineLimit(2)
                         .multilineTextAlignment(.center)

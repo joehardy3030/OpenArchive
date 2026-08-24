@@ -697,7 +697,7 @@ extension AudioPlayerArchive {
         } else {
             info[MPMediaItemPropertyAlbumTitle] = md.date ?? md.venue ?? ""
         }
-        info[MPMediaItemPropertyArtist] = md.creator ?? md.collection?.first
+        info[MPMediaItemPropertyArtist] = md.displayCreator ?? md.collection?.first
 
         // Playback position
         let duration = CMTimeGetSeconds(currentItem.duration)

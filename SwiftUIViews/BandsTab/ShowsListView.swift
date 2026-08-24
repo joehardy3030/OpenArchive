@@ -119,7 +119,7 @@ struct ShowRowView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(show.creator ?? show.collection?.joined(separator: ", ") ?? "")
+            Text(show.displayCreator ?? show.collection?.joined(separator: ", ") ?? "")
                 .font(.system(size: 18, weight: .bold))
             HStack(spacing: 8) {
                 Text(formatDate(show.date))

@@ -65,7 +65,7 @@ class AudioPlayerArchive: NSObject {
     /// Car head units send a remote `play` on CarPlay connect (resuming the last
     /// audio source). Remote play is ignored until this date when we weren't
     /// already playing, so a paused/restored session stays paused on plug-in.
-    private var suppressRemotePlayUntil: Date?
+    private var suppressRemotePlayUntil = Date.distantPast
     /// Counts consecutive AVPlayerItem failures so we can skip a few bad tracks
     /// before giving up entirely. Reset whenever an item successfully becomes ready.
     private var consecutiveFailures = 0
@@ -77,6 +77,7 @@ class AudioPlayerArchive: NSObject {
     private let notificationCenter: NotificationCenter
     private var playCommandTarget: Any?
     private var pauseCommandTarget: Any?
+    private var togglePlayPauseCommandTarget: Any?
     private var nextTrackCommandTarget: Any?
     private var shouldResumeAfterInterruption = false
     private var state = State.idle {
@@ -138,6 +139,10 @@ class AudioPlayerArchive: NSObject {
             commandCenter.pauseCommand.removeTarget(target)
         }
 
+        if let target = togglePlayPauseCommandTarget {
+            commandCenter.togglePlayPauseCommand.removeTarget(target)
+        }
+
         if let target = nextTrackCommandTarget {
             commandCenter.nextTrackCommand.removeTarget(target)
         }
@@ -154,18 +159,8 @@ class AudioPlayerArchive: NSObject {
     func setupCommandCenter() {
         // Add a handler for the play command.
         commandCenter.playCommand.isEnabled = true
-        playCommandTarget = commandCenter.playCommand.addTarget { [unowned self] event in
-            if let until = self.suppressRemotePlayUntil, Date() < until {
-                // CarPlay's automatic resume-on-connect — swallow it; a deliberate
-                // play seconds later still works
-                print("AudioPlayerArchive: ignoring remote play during CarPlay connect grace window")
-                return .success
-            }
-            if self.playerQueue?.rate == 0.0 {
-                self.play()
-                return .success
-            }
-            return .commandFailed
+        playCommandTarget = commandCenter.playCommand.addTarget { [unowned self] _ in
+            self.handleRemotePlay()
         }
         
         commandCenter.pauseCommand.isEnabled = true
@@ -175,6 +170,12 @@ class AudioPlayerArchive: NSObject {
                 return .success
             }
             return .commandFailed
+        }
+
+        // Some head units send toggle rather than play/pause
+        commandCenter.togglePlayPauseCommand.isEnabled = true
+        togglePlayPauseCommandTarget = commandCenter.togglePlayPauseCommand.addTarget { [unowned self] _ in
+            self.handleRemoteTogglePlayPause()
         }
         
         commandCenter.nextTrackCommand.isEnabled = true
@@ -195,28 +196,58 @@ class AudioPlayerArchive: NSObject {
     }
     
     
+    /// True while the engine considers itself playing (state-based, not rate-based)
+    var isActivelyPlaying: Bool { state == .playing || state == .rewind }
+
+    /// Whether a remote play would currently be swallowed (CarPlay connect window)
+    var remotePlaySuppressed: Bool { Date() < suppressRemotePlayUntil }
+
     /// Called on CarPlay connect: keep a paused session paused despite the
     /// head unit's automatic play command. No-op if already playing.
     func suppressAutoResumeOnConnect(for seconds: TimeInterval = 3) {
-        guard state != .playing && state != .rewind else { return }
+        guard !isActivelyPlaying else { return }
         suppressRemotePlayUntil = Date().addingTimeInterval(seconds)
     }
 
+    /// Remote play (lock screen, CarPlay, headset). Kept out of the command
+    /// target closure so the decision is unit-testable.
+    @discardableResult
+    func handleRemotePlay() -> MPRemoteCommandHandlerStatus {
+        if remotePlaySuppressed {
+            // CarPlay's automatic resume-on-connect — swallow it; a deliberate
+            // play seconds later still works
+            print("AudioPlayerArchive: ignoring remote play during CarPlay connect grace window")
+            return .success
+        }
+        if playerQueue?.rate == 0.0 {
+            play()
+            return .success
+        }
+        return .commandFailed
+    }
+
+    /// Remote toggle; honors the same connect grace window as play.
+    @discardableResult
+    func handleRemoteTogglePlayPause() -> MPRemoteCommandHandlerStatus {
+        if playerQueue?.rate ?? 0.0 > 0.0 {
+            pause()
+        } else if !remotePlaySuppressed {
+            play()
+        }
+        return .success
+    }
+
     @objc func play() {
-        suppressRemotePlayUntil = nil   // an explicit play from our own UI always wins
+        suppressRemotePlayUntil = .distantPast   // an explicit play from our own UI always wins
         self.playerQueue?.play()
         print("AudioPlayerArchive: play() called")
         state = .playing
     }
 
-    @objc func pause() {
-        pause(persist: true)
-    }
-
     /// `persist: false` is for pre-rebuild stops — the queue is replaced moments
     /// later and the track-change KVO saves the real state. User/system pauses
     /// persist so CarPlay/phone handoffs capture the exact stop point.
-    func pause(persist: Bool) {
+    func pause(persist: Bool = true) {
         switch state {
         case .idle, .paused:
             // Don't need to send a signal if it's already paused
@@ -799,7 +830,6 @@ extension Notification.Name {
         return .init(rawValue: "AudioPlayer.playbackRewind")
     }
 
-    static let playerQueueItemStatusChanged = Notification.Name("AudioPlayerArchive.playerQueueItemStatusChanged")
     static let playbackFailed = Notification.Name("playbackFailed")
 }
 

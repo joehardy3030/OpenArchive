@@ -18,26 +18,47 @@ Naming history: the project began life in 2018 as a weather app called **Breaze*
 
 ## Testing
 
-`BreazeTests/BreazeTests.swift` is a real unit test suite (~95 tests) run via Xcode (Cmd+U) or `xcodebuild test -workspace Breaze.xcworkspace -scheme Breaze`. It covers:
+`BreazeTests/BreazeTests.swift` is a real unit test suite (136 tests) run via Xcode (Cmd+U) or `xcodebuild test -workspace Breaze.xcworkspace -scheme Breaze -destination 'platform=iOS Simulator,name=<device>'`. Every behavior fix in this codebase's recent history is pinned by a test, often built from the exact archive.org payload that exposed it. Coverage:
 
-- `ArchiveAPI` URL construction (date ranges, leap years, SBD flag, creator- vs collection-based queries, search URLs, `encodeQueryValue` percent-encoding)
+- `ArchiveAPI` URL construction (date ranges, leap years, SBD flag, creator- vs collection-based queries, search URLs, `encodeQueryValue` percent-encoding of creator names with spaces/`&`)
 - `AudioPlayerArchive.normalizedStartIndex` and `AudioPlayerArchive.seekTime` (NaN/indefinite-duration rejection, fraction clamping)
-- Title venue parsing and metadata backfill (`ShowMetadata.titleVenueLocation`, `displayVenueLine`, `ShowDetailViewModel.backfillMissingMetadata`)
+- **Playback engine / CarPlay handoff**, driven against the shared engine with a dummy `AVQueuePlayer` (the item's file doesn't exist — these exercise state, not audio): the remote-play connect grace window (swallowed when idle, honored once expired, no-op when already playing, cleared by an explicit `play()`, mirrored by toggle), `pause(persist:)` semantics, saves skipped when nothing is loaded, the restore guard (no-op with a show loaded; loads the saved session paused when idle), and `getCurrentTrackIndex` (plain, nested, and space-containing filenames). Every engine test resets the singleton in a `defer`.
+- Download validation (`ArchiveAPI.validateDownloadedMP3`: tiny file, bad header, size mismatch, valid ID3/frame-sync) and destination derivation (`BackgroundDownloadManager.destinationURL`: nested paths, traversal rejection, suggested-name fallback)
+- `PlaybackState` UserDefaults round trip (save/load/clear) and the display helpers (`displayBandName`, `displayTitle`)
+- Title venue parsing and metadata backfill (`ShowMetadata.titleVenueLocation`, `displayVenueLine`, `ShowDetailViewModel.backfillMissingMetadata`), including `sourceLineage` (labeled "Source:" lines, unlabeled gear chains, setlist-segue exclusion) — one test embeds a complete real description base64-encoded
+- Recording-type badges (`ShowMetadata.recordingType`: identifier-token sniffing, source-field fallback, matrix-beats-components priority, no false positives on `sbeok`/`phishin-`)
+- Band-code refinement (`ShowMetadata.displayCreator`: `jgjk`/`jgb`/`oaitw` → real band names; non-Jerry identifiers pass through)
 - `MetadataCache` (canonical-encoding determinism, disk round-trip and miss paths)
 - `CollectionConfig` display-name/identifier mapping, creator-based and SBD-capable lists
 - `ShowMetadata` decoding (string-or-array fields: description, collection, source, creator; numeric-or-string year — one array-creator item used to fail an entire year's decode)
-- `ShowDetailViewModel.buildMP3Array` (track title/track-number inheritance from lossless originals, cross-set sort order)
-- `YearListViewModel` year ranges (curated ranges beat stored API-inferred ranges)
+- `ShowDetailViewModel.buildMP3Array` (track title/track-number inheritance from lossless originals, cross-set sort order) and `reconcileDestinations` (per-track checkmarks reconciled with a real file on disk)
+- `YearListViewModel` year ranges (curated ranges beat stored API-inferred ranges) and `MonthListViewModel` month skeleton (12 tappable rows before any network data)
+- `SearchViewModel.filteredResults` (recording-type filter, "Any" passthrough)
 - `PlaybackState` (show type mapping, staleness, Codable round-trip)
 - `SongDetailsModel`, `Utils` (timers, dates, track URLs, path-traversal rejection)
 - Joe's Picks filtering (`MonthListViewModel.applyJoesPicks`)
 - `DeepLinkRouter` URL handling
+
+Tests that touch `UserDefaults`, the Documents/temp directories, or the shared playback engine clean up after themselves with `defer`; each test method gets a fresh instance, so no state leaks between tests. Still untested by design: SwiftUI layouts, the network timeout/retry policy, real head-unit timing — and, pending a fetch-injection point, `MetadataCache.fetchDecodable`'s stale-while-revalidate contract.
 
 `BreazeUITests/` is an untouched Xcode template — no real UI tests.
 
 ## Architecture
 
 The app uses **SwiftUI** throughout. The UIKit-to-SwiftUI migration is complete (CarPlay necessarily uses the UIKit-style `CPTemplate` API).
+
+### Conventions
+
+Cross-cutting rules that have each been learned from a real bug; the sections below give the specifics.
+
+- **`let` and non-optionals by default.** Add `var` only when something genuinely reassigns; add `?` only when `nil` is a real state the code handles. Never use `!` (implicitly unwrapped) for dependencies that always exist — the CarPlay classes hold `interfaceController`, `player` (`AudioPlayerArchive.shared`) and `network` as plain `let` constants for this reason.
+- **Only playback-rendering views observe `PlayerViewModel`** (it republishes every 0.5s during playback). See Data Flow.
+- **Each `navigationDestination` type is declared once per stack, at the root**; the Search stack stays uniformly value-based. See Entry Point & Navigation and Search Tab.
+- **Never gate layout on keyboard show/hide notifications** — they fire spuriously; use frame geometry. See Entry Point & Navigation.
+- **File-status scans run off the main thread.** See Downloads.
+- **Cache-first completions may fire twice**, so they must be idempotent. See Metadata Caching.
+- **Any Double→Int conversion in the playback path must guard NaN/infinite durations.** See Playback Engine Details.
+- **Metadata decoding is tolerant**: archive.org fields can be string-or-array or string-or-number per item; a strict decode of one field fails the whole response. See `ShowMetadata.init(from:)`.
 
 ### Entry Point & Navigation
 
@@ -68,7 +89,7 @@ Each `navigationDestination` type must be declared exactly **once per stack**, c
 
 ### Layer Breakdown
 
-- **SwiftUIViews/** — All SwiftUI feature views, organized by tab (`BandsTab/`, `FavoritesTab/`, `DownloadsTab/`, `SearchTab/`, `Player/`), plus `DeepLinkRouter` and `SwiftUIExtensions` (Hashable/Identifiable conformances for navigation)
+- **SwiftUIViews/** — All SwiftUI feature views, organized by tab (`BandsTab/`, `FavoritesTab/`, `DownloadsTab/`, `SearchTab/`, `Player/`), plus `DeepLinkRouter` and `SwiftUIExtensions` (Hashable/Identifiable conformances for navigation). Small shared pieces live beside their first user: `RecordingTypeBadge` in `ShowsListView.swift`, `KeyboardObserver` and `SearchResultsView` in `SearchView.swift`
 - **Breaze/** — App target root: entry point, AppDelegate, ArchiveRootView, PlayerViewModel, CarPlaySceneDelegate, Info.plist
 - **Network/ArchiveAPI.swift** — archive.org API calls (search/scrape queries, metadata fetching, download URLs, MP3 download validation, etree collection discovery, creator-based detection, year-range inference)
 - **Network/BackgroundDownloadManager.swift** — Hybrid track downloader: default URLSession while the app is active (fast), background URLSession when suspended (survives backgrounding); validates HTTP status and file contents, reports per-track progress
@@ -79,8 +100,8 @@ Each `navigationDestination` type must be declared exactly **once per stack**, c
 - **MediaPlayers/AudioPlayerArchive.swift** — AVQueuePlayer, remote command center, Now Playing info + artwork, audio-session interruption handling, background audio, playback state persistence, failure recovery (see below)
 - **Database/LocalDatabase.swift** — GRDB schema/migrations
 - **Database/FavoritesStore.swift** — GRDB `favorites` table (show metadata + show type)
-- **Models/** — Data structures: `ShowMetadataModel`, `PlaybackState`, `CollectionConfig` (+ `CollectionStore`), `ShowTypes`, `SongDetailsModel`, `SearchTermsModel`, `YearsTotalResponse`, `ChateauGPTModel` (unused)
-- **CarPlay/** — CarPlay template manager and downloads player (see CarPlay section)
+- **Models/** — Data structures: `ShowMetadataModel` (plus the display/derivation extensions on `ShowMetadata` — `displayCreator`/`displayBandName`, `recordingType`, `titleVenueLocation`/`displayVenueLine`, `month` — and `ShowMP3.displayTitle`), `PlaybackState`, `CollectionConfig` (+ `CollectionStore`), `ShowTypes`, `SongDetailsModel`, `SearchTermsModel`, `YearsTotalResponse`, `ChateauGPTModel` (unused)
+- **CarPlay/** — `CarPlayTemplateManager` (My Tapes list, launch-time restore, the `CPInterfaceController.pushNowPlaying()` helper) and `CarPlayDownloadsTemplate` (select → engine → Now Playing adapter; see CarPlay section)
 - **Utilities/** — `AppFonts` (text styles), `Utils` (track file paths, missing-track/fully-downloaded checks, timer/date formatting; also retains unused weather-era helpers)
 
 ### Show Types & Multi-Source Support
@@ -139,7 +160,7 @@ The Search tab is a criteria form (term, venue, year range, min rating, band fro
 - The track list is built by `ShowDetailViewModel.buildMP3Array`: derived MP3 entries that carry no tags (common when an item's originals are 24bit Flac) inherit title/track from the same-basename original file entry — archive.org derivatives keep the original's basename. Track order comes from `sortKey`, which parses filename conventions (`d1t01`/`s2t05`, `1-03_`, leading `01_`) and falls back to the metadata track number.
 - `AudioPlayerArchive.resolveTrackURL` prefers the local file when it exists on disk, else the archive.org streaming URL — so a partially downloaded show plays local tracks offline and streams the rest.
 - Failure recovery: when a **local** item fails (corrupt/truncated file), the path is added to `pathsToForceStream` (per-show, in-session), the queue is rebuilt from the current track using the streaming URL for the bad file, and a silent re-download repairs the disk copy. When a **streaming** item fails, up to 3 consecutive failures are skipped before going idle.
-- System integration: `MPRemoteCommandCenter` (play/pause/next/previous), `MPNowPlayingInfoCenter` with downloaded cover art (`setArtworkURL`, falls back to app icon), and audio-session interruption handling with auto-resume.
+- System integration: `MPRemoteCommandCenter` (play/pause/toggle/next/previous — the play and toggle decisions live in `handleRemotePlay()` / `handleRemoteTogglePlayPause()`, outside the command-target closures, so they're unit-testable), `MPNowPlayingInfoCenter` with downloaded cover art (`setArtworkURL`, falls back to app icon), and audio-session interruption handling with auto-resume. `isActivelyPlaying` and `remotePlaySuppressed` are the read-only state accessors.
 - Seek safety: `AVPlayerItem.duration` is NaN/indefinite while an item is loading or after it fails; `AudioPlayerArchive.seekTime` rejects non-finite durations (converting NaN to Int64 is a fatal trap — this crashed slider seeks during queue rebuilds before the guard). Any new Double→Int conversion in the playback path needs the same care.
 
 ### Downloads
@@ -167,7 +188,7 @@ The Search tab is a criteria form (term, venue, year range, min rating, band fro
 - Now Playing is owned by the engine: `CarPlayDownloadsTemplate` delegates to `AudioPlayerArchive.updateNowPlayingInfo(rate:)` rather than keeping its own builder/timer (a second writer racing the engine's tick, with different fallbacks and force-unwraps).
 - **Phone ↔ CarPlay handoff** is inherent: both drive the one `AudioPlayerArchive` in one process. Across launches it rests on `PlaybackState`: `CarPlayTemplateManager` runs `PlayerViewModel.restorePlaybackIfAvailable()` right after installing the root template (a CarPlay-only launch never shows the phone window; after the template so a cold car launch paints first), and that method is guarded (`showMetadataModel == nil`) so whichever side connects first restores and the other never clobbers live playback. The restore publishes Now Playing info at rate 0 so the paused session shows up in CarPlay without starting.
 - **Play/pause across plug-in/out:** car head units send a remote `play` on connect (resuming the last audio source). `CarPlaySceneDelegate.didConnect` calls `AudioPlayerArchive.suppressAutoResumeOnConnect()`, which makes the engine's remote-play handler swallow that command for a 3s grace window *when we weren't already playing* — a paused session stays paused on plug-in, a playing one keeps playing, and any explicit `play()` from our own UI clears the window. `sceneDidDisconnect` pauses (persisting the stop point for the phone to pick up).
-- Selecting a show hands off to `CarPlayDownloadsTemplate`, which plays it through `AudioPlayerArchive` and maintains Now Playing info. (A decade/year browse flow exists in the code but is currently disabled.)
+- Selecting a show hands off to `CarPlayDownloadsTemplate`, a thin "select → engine → Now Playing" adapter: it loads the show into `AudioPlayerArchive` (resuming if it's already the loaded show) and pushes Now Playing. **Remote commands are single-sourced in the engine** (`setupCommandCenter`: play/pause/toggle/next/previous) — a second `MPRemoteCommand` target in CarPlay would fire alongside the engine's and bypass the connect grace window, which is exactly what an earlier copy did. A decade/year browse flow exists in the code but is disabled.
 
 ### Persistence
 
@@ -186,6 +207,7 @@ Files on disk that are **not** part of the build (not referenced by the Xcode ta
 - `Models/ChateauGPTModel.swift` — compiled but referenced by nothing (abandoned GPT experiment).
 - `share` table in `LocalDatabase` — created by migration, never used.
 - `Breaze 2023-01-29 20-25-48/` — an old App Store export artifact (ipa + plists).
+- In `CarPlayDownloadsTemplate`: the disabled decade/year browse flow (`getDownloadedShows`/`createDownloadsCPList`/`checkTracksAndRemove`, reachable only from commented-out code in `CarPlayTemplateManager`), and the `selfRetainer` self-reference (one small object leaks per tape tap; harmless but pointless now that the class holds no observers or timers).
 - `BreazeTests` in the Podfile inherits search paths; `BreazeUITests` is an empty template.
 
 ### Dependencies (CocoaPods)

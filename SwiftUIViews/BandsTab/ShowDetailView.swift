@@ -100,7 +100,7 @@ struct ShowDetailView: View {
 
             // MARK: - Info Section
             Section {
-                if let band = viewModel.fullMetadata?.displayCreator ?? viewModel.fullMetadata?.collection?.first {
+                if let band = viewModel.fullMetadata?.displayBandName {
                     InfoRow(label: "Band", value: band)
                 }
                 if let date = viewModel.fullMetadata?.date { InfoRow(label: "Date", value: date) }
@@ -229,7 +229,7 @@ struct ShowDetailView: View {
                                             .foregroundColor(.secondary)
                                             .frame(width: 24)
                                     }
-                                    Text(track.title ?? track.name ?? "Track \(index + 1)")
+                                    Text(track.displayTitle ?? "Track \(index + 1)")
                                         .font(.system(size: 18))
                                         .foregroundColor(.primary)
                                     Spacer()

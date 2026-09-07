@@ -12,15 +12,20 @@ Default collections include Grateful Dead, Phish, Jerry Garcia, Phil Lesh and Fr
 - **Download** shows for offline playback — downloads continue in the background while the app is suspended, with per-track progress and validation
 - **Download repair** — incomplete downloads are flagged and can be repaired by fetching only the missing tracks; a consistent blue check marks fully downloaded shows and lets you delete/redownload them
 - **Favorites** — star any show and browse favorites in their own tab
-- **Browse** by band, year, month, or search across collections
+- **Browse** by band, year, and month — month lists appear instantly and fill in as data arrives
+- **Fast, resilient browsing** — metadata is cached on device and refreshed in the background; every screen offers a retry when archive.org is struggling
+- **Search** with a criteria form (term, venue, year range, rating, band, recording type) and full-page results
+- **Recording-type badges** — SBD / AUD / MTX / FM tags on every row, read from taper naming conventions
+- **Accurate show info** even for sparsely tagged tapes — venue, location, and source lineage recovered from titles, notes, and embedded file tags
+- **Real band names** — Jerry Garcia's catalog is grouped under one entry but each tape shows who actually played (Jerry Garcia Band, Old & In the Way, Legion of Mary…)
 - **Phish metadata** — setlists, ratings, and venues via Phish.net
 - **Full player** with track list, skip, rewind, fast-forward, and scrubbing
 - **Mini player** bar persists across tabs while audio is playing
 - **Joe's Picks** — curated Grateful Dead filter: top-rated soundboards, one per show date
 - **Add any band** — browse archive.org's Live Music Archive collections or Taper's Section artists and add them at runtime
-- **CarPlay** support for browsing and playing downloaded shows
+- **CarPlay** — browse and play downloaded shows; picks up where the phone left off and hands back when you unplug
 - **Deep links** via `chateauarchive://` URL scheme
-- **Playback persistence** — resumes where you left off after app restart
+- **Playback persistence** — resumes where you left off across restarts, on the phone or in the car
 
 ## Build
 
@@ -33,7 +38,7 @@ open Breaze.xcworkspace
 
 Build and run targeting iOS 18.0+. Always use the `.xcworkspace`, not `.xcodeproj`. The workspace and target are named "Breaze" for historical reasons; the app builds as **Chateau**.
 
-Unit tests live in `BreazeTests/` (run with Cmd+U in Xcode).
+Unit tests live in `BreazeTests/` — 136 of them, run with Cmd+U in Xcode.
 
 ## Architecture
 

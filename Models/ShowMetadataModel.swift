@@ -179,8 +179,8 @@ extension ShowMetadata {
         return creator
     }
 
-    /// Band name for display with the collection as fallback — the single
-    /// derivation for rows, detail, players, CarPlay and Now Playing.
+    /// Band name with the first collection as fallback — used by show detail,
+    /// CarPlay and Now Playing. List rows keep a joined-collections fallback.
     var displayBandName: String? {
         displayCreator ?? collection?.first
     }

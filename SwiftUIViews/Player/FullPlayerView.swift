@@ -32,7 +32,7 @@ struct FullPlayerView: View {
                                     .foregroundColor(.secondary)
                                     .frame(width: 24)
                             }
-                            Text(track.title ?? track.name ?? "Track \(index + 1)")
+                            Text(track.displayTitle ?? "Track \(index + 1)")
                                 .font(.system(size: 16, weight: index == playerViewModel.currentTrackIndex ? .bold : .regular))
                                 .lineLimit(2)
                         }

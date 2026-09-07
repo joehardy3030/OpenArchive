@@ -7,6 +7,7 @@
 //
 
 import XCTest
+import AVFoundation
 @testable import Chateau
 
 class BreazeTests: XCTestCase {
@@ -1192,6 +1193,262 @@ class BreazeTests: XCTestCase {
         XCTAssertEqual(ShowFilter.sbd.rawValue, 1)
         XCTAssertEqual(ShowFilter.joesPicks.rawValue, 2)
         XCTAssertEqual(ShowFilter.allCases.count, 3)
+    }
+
+    // MARK: - Download validation (ArchiveAPI.validateDownloadedMP3)
+
+    private func writeTempFile(_ bytes: [UInt8], padTo size: Int = 0) throws -> URL {
+        var data = Data(bytes)
+        if data.count < size { data.append(Data(repeating: 0, count: size - data.count)) }
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("validate-\(UUID().uuidString).mp3")
+        try data.write(to: url)
+        return url
+    }
+
+    func testValidateRejectsTinyFile() throws {
+        // An HTML error page saved as .mp3 is a few KB at most
+        let url = try writeTempFile([0x49, 0x44, 0x33], padTo: 500)
+        defer { try? FileManager.default.removeItem(at: url) }
+        XCTAssertEqual(ArchiveAPI.validateDownloadedMP3(at: url, expectedSize: -1)?.code, 102)
+    }
+
+    func testValidateRejectsBadHeader() throws {
+        let url = try writeTempFile([0x3C, 0x68, 0x74], padTo: 20_000)   // "<ht"
+        defer { try? FileManager.default.removeItem(at: url) }
+        XCTAssertEqual(ArchiveAPI.validateDownloadedMP3(at: url, expectedSize: -1)?.code, 106)
+    }
+
+    func testValidateRejectsSizeMismatch() throws {
+        let url = try writeTempFile([0x49, 0x44, 0x33], padTo: 20_000)
+        defer { try? FileManager.default.removeItem(at: url) }
+        XCTAssertEqual(ArchiveAPI.validateDownloadedMP3(at: url, expectedSize: 50_000)?.code, 103)
+    }
+
+    func testValidateAcceptsID3AndFrameSync() throws {
+        let id3 = try writeTempFile([0x49, 0x44, 0x33], padTo: 20_000)
+        let sync = try writeTempFile([0xFF, 0xFB, 0x90], padTo: 20_000)
+        defer { try? FileManager.default.removeItem(at: id3); try? FileManager.default.removeItem(at: sync) }
+        XCTAssertNil(ArchiveAPI.validateDownloadedMP3(at: id3, expectedSize: 20_000))
+        XCTAssertNil(ArchiveAPI.validateDownloadedMP3(at: sync, expectedSize: -1))
+    }
+
+    // MARK: - Download destinations (BackgroundDownloadManager.destinationURL)
+
+    func testDestinationURLPreservesNestedPath() throws {
+        let src = URL(string: "https://archive.org/download/gd77-05-08/disc1/gd77-05-08d1t01.mp3")!
+        let dest = try XCTUnwrap(BackgroundDownloadManager.destinationURL(forSourceURL: src, suggestedFilename: nil))
+        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        XCTAssertEqual(dest, docs.appendingPathComponent("disc1").appendingPathComponent("gd77-05-08d1t01.mp3"))
+    }
+
+    func testDestinationURLRejectsTraversal() throws {
+        let src = URL(string: "https://archive.org/download/id/../../evil.mp3")!
+        let dest = try XCTUnwrap(BackgroundDownloadManager.destinationURL(forSourceURL: src, suggestedFilename: "safe.mp3"))
+        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        XCTAssertEqual(dest, docs.appendingPathComponent("safe.mp3"))
+        XCTAssertFalse(dest.path.contains(".."))
+    }
+
+    func testDestinationURLWithoutDownloadSegmentUsesSuggestedName() throws {
+        let src = URL(string: "https://example.org/files/x.mp3")!
+        let dest = try XCTUnwrap(BackgroundDownloadManager.destinationURL(forSourceURL: src, suggestedFilename: "named.mp3"))
+        XCTAssertEqual(dest.lastPathComponent, "named.mp3")
+    }
+
+    // MARK: - Display helpers
+
+    func testDisplayBandNameFallsBackToCollection() {
+        var md = ShowMetadata(identifier: "x")
+        md.collection = ["GratefulDead", "etree"]
+        XCTAssertEqual(md.displayBandName, "GratefulDead")
+        md.creator = "Grateful Dead"
+        XCTAssertEqual(md.displayBandName, "Grateful Dead")
+    }
+
+    func testDisplayTitleFallsBackToFilename() {
+        let untitled = ShowMP3(identifier: "x", name: "d1t01.mp3", title: nil, track: nil, destination: nil)
+        let titled = ShowMP3(identifier: "x", name: "d1t01.mp3", title: "Bertha", track: "1", destination: nil)
+        XCTAssertEqual(untitled.displayTitle, "d1t01.mp3")
+        XCTAssertEqual(titled.displayTitle, "Bertha")
+    }
+
+    // MARK: - PlaybackState persistence round trip
+
+    func testPlaybackStateSaveLoadClear() {
+        defer { PlaybackState.clear() }
+        var md = ShowMetadata(identifier: "persist-test")
+        md.creator = "Test Band"
+        var model = ShowMetadataModel()
+        model.metadata = md
+        model.mp3Array = [ShowMP3(identifier: "persist-test", name: "t01.mp3", title: "One", track: "1", destination: nil)]
+        let state = PlaybackState(showMetadataModel: model, trackIndex: 0, playbackPosition: 42.5,
+                                  isStreaming: true, savedAt: Date(), showTypeRaw: "archive")
+
+        PlaybackState.save(state)
+        let loaded = PlaybackState.load()
+        XCTAssertEqual(loaded?.showMetadataModel.metadata?.identifier, "persist-test")
+        XCTAssertEqual(loaded?.playbackPosition, 42.5)
+        XCTAssertEqual(loaded?.isStreaming, true)
+
+        PlaybackState.clear()
+        XCTAssertNil(PlaybackState.load())
+    }
+
+    // MARK: - Playback engine (CarPlay handoff behavior)
+
+    /// Loads a two-track show and a dummy queue into the shared engine. The
+    /// item's file doesn't exist — these tests exercise state, not audio.
+    private func loadEngineFixture(names: [String] = ["t01.mp3", "t02.mp3"],
+                                   queueItemName: String = "t01.mp3") -> AudioPlayerArchive {
+        let engine = AudioPlayerArchive.shared
+        var md = ShowMetadata(identifier: "engine-test-show")
+        md.creator = "Test Band"
+        var model = ShowMetadataModel()
+        model.metadata = md
+        model.mp3Array = names.enumerated().map { i, name in
+            ShowMP3(identifier: "engine-test-show", name: name, title: "Track \(i + 1)", track: "\(i + 1)", destination: nil)
+        }
+        engine.showMetadataModel = model
+        let item = AVPlayerItem(url: FileManager.default.temporaryDirectory.appendingPathComponent(queueItemName))
+        engine.playerQueue = AVQueuePlayer(items: [item])
+        return engine
+    }
+
+    /// Leaves the shared engine idle and unsuppressed for the next test.
+    private func resetEngine(_ engine: AudioPlayerArchive) {
+        engine.play()                    // clears any suppression window
+        engine.pause(persist: false)     // → paused without touching saved state
+        engine.playerQueue = nil
+        engine.showMetadataModel = nil
+        PlaybackState.clear()
+    }
+
+    func testRemotePlayIsSwallowedDuringConnectWindowWhenIdle() {
+        let engine = loadEngineFixture()
+        defer { resetEngine(engine) }
+        engine.pause(persist: false)
+        XCTAssertFalse(engine.isActivelyPlaying)
+
+        engine.suppressAutoResumeOnConnect(for: 5)
+        XCTAssertTrue(engine.remotePlaySuppressed)
+        XCTAssertEqual(engine.handleRemotePlay(), .success)
+        XCTAssertFalse(engine.isActivelyPlaying, "the head unit's auto-play must not start a paused session")
+    }
+
+    func testRemotePlayIsHonoredOnceWindowExpires() {
+        let engine = loadEngineFixture()
+        defer { resetEngine(engine) }
+        engine.pause(persist: false)
+
+        engine.suppressAutoResumeOnConnect(for: 0)   // already expired
+        XCTAssertFalse(engine.remotePlaySuppressed)
+        XCTAssertEqual(engine.handleRemotePlay(), .success)
+        XCTAssertTrue(engine.isActivelyPlaying)
+    }
+
+    func testConnectSuppressionIsNoOpWhenAlreadyPlaying() {
+        let engine = loadEngineFixture()
+        defer { resetEngine(engine) }
+        engine.play()
+        XCTAssertTrue(engine.isActivelyPlaying)
+
+        engine.suppressAutoResumeOnConnect(for: 5)
+        XCTAssertFalse(engine.remotePlaySuppressed, "a playing session keeps playing on plug-in")
+    }
+
+    func testExplicitPlayClearsSuppression() {
+        let engine = loadEngineFixture()
+        defer { resetEngine(engine) }
+        engine.pause(persist: false)
+        engine.suppressAutoResumeOnConnect(for: 5)
+        XCTAssertTrue(engine.remotePlaySuppressed)
+
+        engine.play()
+        XCTAssertFalse(engine.remotePlaySuppressed)
+        XCTAssertTrue(engine.isActivelyPlaying)
+    }
+
+    func testRemoteToggleHonorsSuppression() {
+        let engine = loadEngineFixture()
+        defer { resetEngine(engine) }
+        engine.pause(persist: false)
+
+        engine.suppressAutoResumeOnConnect(for: 5)
+        engine.handleRemoteTogglePlayPause()
+        XCTAssertFalse(engine.isActivelyPlaying)
+
+        engine.suppressAutoResumeOnConnect(for: 0)   // window over
+        engine.handleRemoteTogglePlayPause()
+        XCTAssertTrue(engine.isActivelyPlaying)
+    }
+
+    func testPausePersistsByDefaultButNotForRebuildStops() {
+        let engine = loadEngineFixture()
+        defer { resetEngine(engine) }
+        PlaybackState.clear()
+
+        engine.play()
+        engine.pause(persist: false)
+        XCTAssertNil(PlaybackState.load(), "pre-rebuild stops must not persist")
+
+        engine.play()
+        engine.pause()
+        XCTAssertEqual(PlaybackState.load()?.showMetadataModel.metadata?.identifier, "engine-test-show")
+    }
+
+    func testSaveIsSkippedWhenNothingIsLoaded() {
+        let engine = AudioPlayerArchive.shared
+        engine.playerQueue = nil
+        engine.showMetadataModel = nil
+        PlaybackState.clear()
+        engine.savePlaybackState()
+        XCTAssertNil(PlaybackState.load())
+    }
+
+    private func makeSavedState(identifier: String) -> PlaybackState {
+        var md = ShowMetadata(identifier: identifier)
+        md.creator = "Saved Band"
+        var model = ShowMetadataModel()
+        model.metadata = md
+        model.mp3Array = [ShowMP3(identifier: identifier, name: "s01.mp3", title: "Saved", track: "1", destination: nil)]
+        return PlaybackState(showMetadataModel: model, trackIndex: 0, playbackPosition: 10,
+                             isStreaming: true, savedAt: Date(), showTypeRaw: "archive")
+    }
+
+    func testRestoreIsNoOpWhenAShowIsAlreadyLoaded() {
+        let engine = loadEngineFixture()
+        defer { resetEngine(engine) }
+        PlaybackState.save(makeSavedState(identifier: "saved-show"))
+
+        PlayerViewModel.shared.restorePlaybackIfAvailable()
+        XCTAssertEqual(engine.showMetadataModel?.metadata?.identifier, "engine-test-show",
+                       "whichever side connects second must not clobber live playback")
+    }
+
+    func testRestoreLoadsSavedSessionWhenIdle() {
+        let engine = AudioPlayerArchive.shared
+        engine.playerQueue = nil
+        engine.showMetadataModel = nil
+        defer { resetEngine(loadEngineFixture()) }
+        PlaybackState.save(makeSavedState(identifier: "saved-show"))
+
+        PlayerViewModel.shared.restorePlaybackIfAvailable()
+        XCTAssertEqual(engine.showMetadataModel?.metadata?.identifier, "saved-show")
+        XCTAssertFalse(engine.isActivelyPlaying, "restore leaves the session paused")
+    }
+
+    // MARK: - AudioPlayerArchive.getCurrentTrackIndex
+
+    func testCurrentTrackIndexMatchesQueueItemByFilename() {
+        let engine = loadEngineFixture(names: ["t01.mp3", "t02.mp3", "t03.mp3"], queueItemName: "t03.mp3")
+        defer { resetEngine(engine) }
+        XCTAssertEqual(engine.getCurrentTrackIndex(), 2)
+    }
+
+    func testCurrentTrackIndexHandlesNestedNamesAndSpaces() {
+        let engine = loadEngineFixture(names: ["disc1/set one.mp3", "disc1/set two.mp3"], queueItemName: "set two.mp3")
+        defer { resetEngine(engine) }
+        XCTAssertEqual(engine.getCurrentTrackIndex(), 1)
     }
 
     // MARK: - Helpers

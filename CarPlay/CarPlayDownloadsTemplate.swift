@@ -16,21 +16,19 @@ class CarPlayDownloadsTemplate: NSObject, CPInterfaceControllerDelegate {
 
     let fileManager = FileManager.default
     let notificationCenter: NotificationCenter = .default
-    let interfaceController: CPInterfaceController?
+    let interfaceController: CPInterfaceController
     let commandCenter = MPRemoteCommandCenter.shared()
-    var nowPlayingInfo = [String : Any]()
     var shows: [ShowMetadataModel]?
     var selectedShow: ShowMetadataModel?
-    var network: NetworkUtility!
+    let network = NetworkUtility()
     let utils = Utils()
     let archiveAPI = ArchiveAPI()
-    var player: AudioPlayerArchive?
+    let player = AudioPlayerArchive.shared
     var isPlaying = false
     
     // Keep a strong reference to self while active
     private var selfRetainer: CarPlayDownloadsTemplate?
     
-    private var nowPlayingInfoUpdateTimer: Timer?
     private var playCommandTarget: Any?
     private var pauseCommandTarget: Any?
     private var togglePlayPauseCommandTarget: Any?
@@ -40,13 +38,11 @@ class CarPlayDownloadsTemplate: NSObject, CPInterfaceControllerDelegate {
     private var timerToken: Any?
     private weak var timerTokenPlayer: AVQueuePlayer?
     
-    init(interfaceController: CPInterfaceController?, decade: String?, year: String?, selectedShow: ShowMetadataModel? = nil) {
+    init(interfaceController: CPInterfaceController, decade: String?, year: String?, selectedShow: ShowMetadataModel? = nil) {
         self.interfaceController = interfaceController
         super.init()
         self.selfRetainer = self // Retain self while active
-        self.interfaceController?.delegate = self
-        self.player = AudioPlayerArchive.shared
-        self.network = NetworkUtility()
+        self.interfaceController.delegate = self
         
         // If a show is pre-selected, play it directly
         if let show = selectedShow {
@@ -58,7 +54,7 @@ class CarPlayDownloadsTemplate: NSObject, CPInterfaceControllerDelegate {
         }
         
         notificationCenter.addObserver(self, selector: #selector(playbackDidStart), name: .playbackStarted, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(playbackDidPause), name: .playbackPaused, object: self.player?.playerQueue)
+        notificationCenter.addObserver(self, selector: #selector(playbackDidPause), name: .playbackPaused, object: self.player.playerQueue)
         notificationCenter.addObserver(self, selector: #selector(playerQueueItemStatusChanged(_:)), name: .playerQueueItemStatusChanged, object: nil)
         // Setup remote command handlers
         setupRemoteCommandHandlers()
@@ -66,7 +62,6 @@ class CarPlayDownloadsTemplate: NSObject, CPInterfaceControllerDelegate {
     
     deinit {
         notificationCenter.removeObserver(self)
-        nowPlayingInfoUpdateTimer?.invalidate()
         // Remove command handlers
         if let target = playCommandTarget {
             commandCenter.playCommand.removeTarget(target)
@@ -159,7 +154,7 @@ class CarPlayDownloadsTemplate: NSObject, CPInterfaceControllerDelegate {
         let section = CPListSection(items: items)
         let listTemplate = CPListTemplate(title: "My Tapes", sections: [section])
         Task {
-            try? await self.interfaceController?.pushTemplate(listTemplate, animated: true)
+            try? await self.interfaceController.pushTemplate(listTemplate, animated: true)
         }
     }
     
@@ -168,8 +163,16 @@ class CarPlayDownloadsTemplate: NSObject, CPInterfaceControllerDelegate {
             print("No show selected")
             return
         }
-        player?.pause()
-        player?.showMetadataModel = show
+        // Tapping the show that's already loaded resumes where it left off
+        // instead of restarting from track one.
+        if player.showMetadataModel?.metadata?.identifier == show.metadata?.identifier,
+           player.playerQueue != nil {
+            player.play()
+            interfaceController.pushNowPlaying()
+            return
+        }
+        player.pause(persist: false)
+        player.showMetadataModel = show
         // Sync state to PlayerViewModel so phone UI is in sync
         DispatchQueue.main.async {
             PlayerViewModel.shared.currentShow = show
@@ -201,22 +204,13 @@ class CarPlayDownloadsTemplate: NSObject, CPInterfaceControllerDelegate {
             return
         }
         setupRemoteCommandHandlers()
-        startNowPlayingInfoUpdates()
         loadDownloadedShow()
-        Task { [weak self] in
-            do {
-                try await self?.interfaceController?.pushTemplate(CPNowPlayingTemplate.shared, animated: true)
-                self?.player?.play()
-                print("player nominally playing")
-            } catch {
-                print("Failed to push now playing template: \(error)")
-            }
-        }
+        interfaceController.pushNowPlaying()
+        player.play()
     }
     
     func loadDownloadedShow() {
-        guard let player = player,
-              let mp3s = player.showMetadataModel?.mp3Array,
+        guard let mp3s = player.showMetadataModel?.mp3Array,
               !mp3s.isEmpty else {
             print("Cannot load show: invalid player or no tracks")
             return
@@ -260,42 +254,6 @@ class CarPlayDownloadsTemplate: NSObject, CPInterfaceControllerDelegate {
         }
     }
     
-    // Per song
-    func setupNotificationView() {
-        guard let ci = self.player?.playerQueue?.currentItem,
-            let mp3s = player?.showMetadataModel?.mp3Array,
-            let md = player?.showMetadataModel?.metadata
-            else { return }
-        guard let ct = player?.getCurrentTrackIndex()
-        else {
-            print("No current track index")
-            return
-        }
-        nowPlayingInfo = [String : Any]()
-        nowPlayingInfo[MPMediaItemPropertyTitle] = mp3s[ct].title
-        nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = String(md.date! + ", " + md.coverage!)
-        if let creator = md.creator {
-            nowPlayingInfo[MPMediaItemPropertyArtist] = creator
-        } else if let collections = md.collection {
-            nowPlayingInfo[MPMediaItemPropertyArtist] = collections[0]
-        } else {
-            nowPlayingInfo[MPMediaItemPropertyArtist] = ""
-        }
-        nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = CMTimeGetSeconds(ci.duration)
-        if let seconds = player?.playerQueue?.currentTime().seconds {
-            nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = seconds
-        }
-        
-        let artworkImage = player?.currentArtworkImage ?? UIImage(named: "Chateau80")
-        if let image = artworkImage {
-            nowPlayingInfo[MPMediaItemPropertyArtwork] =
-                MPMediaItemArtwork(boundsSize: image.size) { size in
-                    return image
-            }
-        }
-        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
-    }
-    
     private func setupRemoteCommandHandlers() {
         // First remove any existing handlers
         if let target = playCommandTarget {
@@ -325,8 +283,8 @@ class CarPlayDownloadsTemplate: NSObject, CPInterfaceControllerDelegate {
         commandCenter.playCommand.isEnabled = true
         playCommandTarget = commandCenter.playCommand.addTarget { [weak self] _ in
             guard let self = self else { return .commandFailed }
-            if self.player?.playerQueue?.rate == 0.0 {
-                self.player?.play()
+            if self.player.playerQueue?.rate == 0.0 {
+                self.player.play()
                 return .success
             }
             return .commandFailed
@@ -335,8 +293,8 @@ class CarPlayDownloadsTemplate: NSObject, CPInterfaceControllerDelegate {
         commandCenter.pauseCommand.isEnabled = true
         pauseCommandTarget = commandCenter.pauseCommand.addTarget { [weak self] _ in
             guard let self = self else { return .commandFailed }
-            if self.player?.playerQueue?.rate ?? 0.0 > 0.0 {
-                self.player?.pause()
+            if self.player.playerQueue?.rate ?? 0.0 > 0.0 {
+                self.player.pause()
                 return .success
             }
             return .commandFailed
@@ -345,10 +303,10 @@ class CarPlayDownloadsTemplate: NSObject, CPInterfaceControllerDelegate {
         commandCenter.togglePlayPauseCommand.isEnabled = true
         togglePlayPauseCommandTarget = commandCenter.togglePlayPauseCommand.addTarget { [weak self] _ in
             guard let self = self else { return .commandFailed }
-            if self.player?.playerQueue?.rate ?? 0.0 > 0.0 {
-                self.player?.pause()
+            if self.player.playerQueue?.rate ?? 0.0 > 0.0 {
+                self.player.pause()
             } else {
-                self.player?.play()
+                self.player.play()
             }
             return .success
         }
@@ -356,85 +314,30 @@ class CarPlayDownloadsTemplate: NSObject, CPInterfaceControllerDelegate {
         commandCenter.nextTrackCommand.isEnabled = true
         nextTrackCommandTarget = commandCenter.nextTrackCommand.addTarget { [weak self] _ in
             guard let self = self else { return .commandFailed }
-            self.player?.playerQueue?.advanceToNextItem()
+            self.player.playerQueue?.advanceToNextItem()
             return .success
         }
         
         commandCenter.previousTrackCommand.isEnabled = true
         previousTrackCommandTarget = commandCenter.previousTrackCommand.addTarget { [weak self] _ in
             guard let self = self else { return .commandFailed }
-            self.player?.playerQueue?.seek(to: .zero)
+            self.player.playerQueue?.seek(to: .zero)
             return .success
         }
     }
     
-    private func startNowPlayingInfoUpdates() {
-        // Stop any existing timer
-        nowPlayingInfoUpdateTimer?.invalidate()
-        
-        // Create new timer that updates every second
-        nowPlayingInfoUpdateTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
-            self?.updateNowPlayingInfo()
-        }
-    }
-    
+    /// Now Playing is owned by the engine (nil-safe, band-code names, artwork,
+    /// finite-duration guards, updated on its own tick) — delegate, don't duplicate.
     private func updateNowPlayingInfo() {
-        guard let player = player,
-              let currentItem = player.playerQueue?.currentItem,
-              let mp3s = player.showMetadataModel?.mp3Array,
-              let md = player.showMetadataModel?.metadata else {
-            return
-        }
-        
-        // Get current index - it's not optional
-        let currentIndex = player.getCurrentTrackIndex()
-        
-        var nowPlayingInfo = [String: Any]()
-        
-        // Basic track info
-        nowPlayingInfo[MPMediaItemPropertyTitle] = mp3s[currentIndex].title
-        nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = String(md.date! + ", " + md.coverage!)
-        if let creator = md.creator {
-            nowPlayingInfo[MPMediaItemPropertyArtist] = creator
-        } else if let collections = md.collection {
-            nowPlayingInfo[MPMediaItemPropertyArtist] = collections[0]
-        }
-        
-        // Playback info
-        nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = CMTimeGetSeconds(currentItem.duration)
-        nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = player.playerQueue?.currentTime().seconds ?? 0
-        nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = player.playerQueue?.rate ?? 0.0
-        
-        // Artwork — use cached cover art if available, otherwise fall back to app icon
-        let artworkImage = player.currentArtworkImage ?? UIImage(named: "Chateau80")
-        if let image = artworkImage {
-            nowPlayingInfo[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(boundsSize: image.size) { _ in
-                return image
-            }
-        }
-
-        // Update the now playing info
-        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+        player.updateNowPlayingInfo()
     }
     
     @objc private func playbackDidStart(_ notification: Notification) {
-        print("Item playing")
-        // Force an immediate play state update
-        var info = MPNowPlayingInfoCenter.default().nowPlayingInfo ?? [:]
-        info[MPNowPlayingInfoPropertyPlaybackRate] = 1.0
-        MPNowPlayingInfoCenter.default().nowPlayingInfo = info
-        // Then update all other info
-        updateNowPlayingInfo()
+        player.updateNowPlayingInfo(rate: 1.0)
     }
     
     @objc private func playbackDidPause(_ notification: Notification) {
-        print("Item paused")
-        // Force an immediate pause state update
-        var info = MPNowPlayingInfoCenter.default().nowPlayingInfo ?? [:]
-        info[MPNowPlayingInfoPropertyPlaybackRate] = 0.0
-        MPNowPlayingInfoCenter.default().nowPlayingInfo = info
-        // Then update all other info
-        updateNowPlayingInfo()
+        player.updateNowPlayingInfo(rate: 0.0)
     }
     
     @objc private func playerQueueItemStatusChanged(_ notification: Notification) {
@@ -458,9 +361,9 @@ class CarPlayDownloadsTemplate: NSObject, CPInterfaceControllerDelegate {
     func setupTimer(completion: @escaping (_ seconds: Double?) -> Void) {
         removePeriodicTimeObserver() // Always remove any existing observer first
         let interval = CMTime(value: 1, timescale: 2)
-        if let player = self.player?.playerQueue {
+        if let player = self.player.playerQueue {
             let timerObserverToken = player.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { [weak self] (progressTime) in
-                if let s = self?.player?.playerQueue?.currentTime().seconds {
+                if let s = self?.player.playerQueue?.currentTime().seconds {
                     completion(s)
                 }
             }

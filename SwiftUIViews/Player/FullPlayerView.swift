@@ -136,8 +136,7 @@ struct FullPlayerView: View {
     private var currentTrackName: String {
         guard let tracks = playerViewModel.currentShow?.mp3Array,
               playerViewModel.currentTrackIndex < tracks.count else { return "" }
-        let t = tracks[playerViewModel.currentTrackIndex]
-        return t.title ?? t.name ?? ""
+        return tracks[playerViewModel.currentTrackIndex].displayTitle ?? ""
     }
 
     private var totalTimeString: String {

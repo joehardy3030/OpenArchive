@@ -60,6 +60,12 @@ class AudioPlayerArchive: NSObject {
     private var currentArtworkURL: URL?
     /// Suppresses playback state saves during advance-to-index loops
     private var isSeeking = false
+    /// Throttles the periodic insurance save during playback
+    private var lastPositionSave = Date.distantPast
+    /// Car head units send a remote `play` on CarPlay connect (resuming the last
+    /// audio source). Remote play is ignored until this date when we weren't
+    /// already playing, so a paused/restored session stays paused on plug-in.
+    private var suppressRemotePlayUntil: Date?
     /// Counts consecutive AVPlayerItem failures so we can skip a few bad tracks
     /// before giving up entirely. Reset whenever an item successfully becomes ready.
     private var consecutiveFailures = 0
@@ -149,6 +155,12 @@ class AudioPlayerArchive: NSObject {
         // Add a handler for the play command.
         commandCenter.playCommand.isEnabled = true
         playCommandTarget = commandCenter.playCommand.addTarget { [unowned self] event in
+            if let until = self.suppressRemotePlayUntil, Date() < until {
+                // CarPlay's automatic resume-on-connect — swallow it; a deliberate
+                // play seconds later still works
+                print("AudioPlayerArchive: ignoring remote play during CarPlay connect grace window")
+                return .success
+            }
             if self.playerQueue?.rate == 0.0 {
                 self.play()
                 return .success
@@ -183,13 +195,28 @@ class AudioPlayerArchive: NSObject {
     }
     
     
+    /// Called on CarPlay connect: keep a paused session paused despite the
+    /// head unit's automatic play command. No-op if already playing.
+    func suppressAutoResumeOnConnect(for seconds: TimeInterval = 3) {
+        guard state != .playing && state != .rewind else { return }
+        suppressRemotePlayUntil = Date().addingTimeInterval(seconds)
+    }
+
     @objc func play() {
+        suppressRemotePlayUntil = nil   // an explicit play from our own UI always wins
         self.playerQueue?.play()
         print("AudioPlayerArchive: play() called")
         state = .playing
     }
 
     @objc func pause() {
+        pause(persist: true)
+    }
+
+    /// `persist: false` is for pre-rebuild stops — the queue is replaced moments
+    /// later and the track-change KVO saves the real state. User/system pauses
+    /// persist so CarPlay/phone handoffs capture the exact stop point.
+    func pause(persist: Bool) {
         switch state {
         case .idle, .paused:
             // Don't need to send a signal if it's already paused
@@ -198,16 +225,15 @@ class AudioPlayerArchive: NSObject {
             if let pq = self.playerQueue {
                 pq.pause()
                 state = .paused
+                if persist { savePlaybackState() }
             }
-            
-            
         }
     }
     
     @objc func rewindToPreviousItem() {
         let index = self.getCurrentTrackIndex()
         let targetIndex = max(index - 1, 0)
-        self.pause()
+        self.pause(persist: false)
 
         guard let tracks = self.showMetadataModel?.mp3Array, !tracks.isEmpty else { return }
 
@@ -498,6 +524,7 @@ extension AudioPlayerArchive {
                 if let s = self?.playerQueue?.currentTime().seconds {
                     completion(s)
                     self?.updateNowPlayingInfo()
+                    self?.savePlaybackStateThrottled()
                 }
             }
             self.timerToken = timerObserverToken
@@ -550,27 +577,27 @@ extension AudioPlayerArchive {
 // MARK: - Playback State Persistence
 extension AudioPlayerArchive {
     
-    /// Save current playback state for later restoration
-    func savePlaybackState() {
+    /// Snapshot of the current session, or nil when there's nothing worth saving.
+    private func currentPlaybackState() -> PlaybackState? {
         // Skip saves while advancing through the queue to reach a target index
-        guard !isSeeking else { return }
+        guard !isSeeking else { return nil }
 
         guard let model = showMetadataModel,
               model.mp3Array?.isEmpty == false else {
             print("AudioPlayerArchive: No show loaded, skipping state save")
-            return
+            return nil
         }
-        
+
         let trackIndex = getCurrentTrackIndex()
         let position = playerQueue?.currentTime().seconds ?? 0.0
-        
+
         // Avoid saving invalid positions
         guard !position.isNaN && !position.isInfinite else {
             print("AudioPlayerArchive: Invalid position, skipping state save")
-            return
+            return nil
         }
-        
-        let state = PlaybackState(
+
+        return PlaybackState(
             showMetadataModel: model,
             trackIndex: trackIndex,
             playbackPosition: position,
@@ -578,8 +605,23 @@ extension AudioPlayerArchive {
             savedAt: Date(),
             showTypeRaw: currentShowType == .phishIn ? "phishIn" : currentShowType == .downloaded ? "downloaded" : "archive"
         )
-        
+    }
+
+    /// Save current playback state for later restoration (synchronous — used on
+    /// pause, track change, background and termination)
+    func savePlaybackState() {
+        guard let state = currentPlaybackState() else { return }
         PlaybackState.save(state)
+    }
+
+    /// Periodic insurance save during playback (every 30s) so a jetsam mid-track
+    /// still resumes near the stop point. Encodes off the main thread — the full
+    /// model (files array included) is a sizeable JSON blob.
+    func savePlaybackStateThrottled() {
+        guard state == .playing, Date().timeIntervalSince(lastPositionSave) > 30 else { return }
+        lastPositionSave = Date()
+        guard let snapshot = currentPlaybackState() else { return }
+        DispatchQueue.global(qos: .utility).async { PlaybackState.save(snapshot) }
     }
     
     /// Restore playback state (loads metadata but does NOT start playback)
@@ -639,8 +681,11 @@ extension AudioPlayerArchive {
             }
             
             let seekTime = CMTime(seconds: state.playbackPosition, preferredTimescale: 1000)
-            queue.seek(to: seekTime) { finished in
+            queue.seek(to: seekTime) { [weak self] finished in
                 print("AudioPlayerArchive: Seek to \(state.playbackPosition)s completed: \(finished)")
+                // Publish the paused session so CarPlay's Now Playing button and
+                // the lock screen show it without playback having started
+                self?.updateNowPlayingInfo(rate: 0.0)
                 completion(finished)
             }
         }
@@ -691,13 +736,13 @@ extension AudioPlayerArchive {
         var info = [String: Any]()
 
         // Track info
-        info[MPMediaItemPropertyTitle] = mp3s[currentIndex].title ?? mp3s[currentIndex].name
+        info[MPMediaItemPropertyTitle] = mp3s[currentIndex].displayTitle
         if let date = md.date, let coverage = md.coverage {
             info[MPMediaItemPropertyAlbumTitle] = "\(date), \(coverage)"
         } else {
             info[MPMediaItemPropertyAlbumTitle] = md.date ?? md.venue ?? ""
         }
-        info[MPMediaItemPropertyArtist] = md.displayCreator ?? md.collection?.first
+        info[MPMediaItemPropertyArtist] = md.displayBandName
 
         // Playback position
         let duration = CMTimeGetSeconds(currentItem.duration)

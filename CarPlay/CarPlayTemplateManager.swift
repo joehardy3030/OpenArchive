@@ -14,9 +14,9 @@ import MediaPlayer
 @available(iOS 14.0, *)
 class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
 
-    let interfaceController: CPInterfaceController?
-    var player: AudioPlayerArchive?
-    var network: NetworkUtility!
+    let interfaceController: CPInterfaceController
+    let player = AudioPlayerArchive.shared
+    let network = NetworkUtility()
     let utils = Utils()
     let decades = ["1960s", "1970s", "1980s", "1990s", "2000s", "2010s", "2020s"]
     let years = ["0","1","2","3","4","5","6","7","8","9"]
@@ -28,17 +28,10 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
     private let itemsPerPage = 10 // Show 10 items + 1 "See more" + 1 "Show previous" = 12 total
     private var myTapesRootTemplate: CPListTemplate?
     
-    init(interfaceController: CPInterfaceController?) {
+    init(interfaceController: CPInterfaceController) {
         self.interfaceController = interfaceController
         super.init()
-        if interfaceController == nil {
-            print("WARNING: interfaceController is nil!")
-        } else {
-            print("interfaceController initialized successfully")
-        }
-        self.interfaceController?.delegate = self
-        self.player = AudioPlayerArchive.shared
-        self.network = NetworkUtility()
+        self.interfaceController.delegate = self
         self.createTabbedInterface()
     }
     
@@ -64,7 +57,13 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
         // template before it's attached to the interface controller can crash
         // under CarPlay's assertion checks on some iOS versions.
         Task {
-            try? await self.interfaceController?.setRootTemplate(myTapesTemplate, animated: true)
+            try? await self.interfaceController.setRootTemplate(myTapesTemplate, animated: true)
+            // A CarPlay-only launch never shows the phone window, so restore the
+            // last session here (guarded — a no-op if a show is already loaded).
+            // Restored paused; Now Playing info is published so CarPlay's Now
+            // Playing button appears. After the root template so a cold car
+            // launch paints first.
+            PlayerViewModel.shared.restorePlaybackIfAvailable()
             self.loadDownloadedShowsForTemplate(myTapesTemplate)
         }
     }
@@ -80,7 +79,7 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
                     let yearsTemplate = self.yearsCPListTemplate(decade: item.text)
                     print("Created years template for decade: \(String(describing: item.text))")
                     print("About to push years template")
-                    self.interfaceController?.pushTemplate(yearsTemplate, animated: true) { success, error in
+                    self.interfaceController.pushTemplate(yearsTemplate, animated: true) { success, error in
                         print("Push template success: \(success)")
                         if let error = error {
                             print("Push template error: \(error)")
@@ -220,16 +219,7 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
             for i in startIndex..<endIndex {
                 let show = allDownloadedShows[i]
                 
-                // Get band name following the same pattern as CarPlayDownloadsTemplate
-                var bandName = ""
-                if let creator = show.metadata?.creator {
-                    bandName = creator
-                } else if let collections = show.metadata?.collection, !collections.isEmpty {
-                    bandName = collections[0]
-                }
-                else {
-                    bandName = "Unknown Band"
-                }
+                let bandName = show.metadata?.displayBandName ?? "Unknown Band"
                 
                 // Use band name as main text, date and coverage as detail text
                 let mainText = "\(bandName), \(show.metadata?.date ?? "Unknown Date")"
@@ -287,13 +277,15 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
             }
         }
         
-        // Update the existing template's sections in place
-        let section = CPListSection(items: items)
-        myTapesRootTemplate?.updateSections([section])
+        // Update the existing template's sections in place. No Continue Listening
+        // row: CarPlay's own Now Playing button (top right) already represents the
+        // loaded track, playing or paused, and a section header would duplicate
+        // the "My Tapes" title in the small car display.
+        myTapesRootTemplate?.updateSections([CPListSection(items: items)])
         
         /* 
         // Original tab bar update code
-        if let currentTemplate = self.interfaceController?.rootTemplate as? CPTabBarTemplate {
+        if let currentTemplate = self.interfaceController.rootTemplate as? CPTabBarTemplate {
             var updatedTemplates: [CPTemplate] = []
             for existingTemplate in currentTemplate.templates {
                 if let listTemplate = existingTemplate as? CPListTemplate, listTemplate.title == "My Tapes" {
@@ -303,7 +295,7 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
                 }
             }
             let updatedTabBarTemplate = CPTabBarTemplate(templates: updatedTemplates)
-            self.interfaceController?.setRootTemplate(updatedTabBarTemplate, animated: false)
+            self.interfaceController.setRootTemplate(updatedTabBarTemplate, animated: false)
         }
         */
     }
@@ -327,7 +319,7 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
     private func loadDownloadedShowsForMyTapes() {
         // This method is no longer used but keeping for compatibility
         /* Original code for tabs
-        if let currentTemplate = self.interfaceController?.rootTemplate as? CPTabBarTemplate {
+        if let currentTemplate = self.interfaceController.rootTemplate as? CPTabBarTemplate {
             for template in currentTemplate.templates {
                 if let listTemplate = template as? CPListTemplate, listTemplate.title == "My Tapes" {
                     loadDownloadedShowsForTemplate(listTemplate)
@@ -338,7 +330,7 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
         */
         
         // Modified version for direct template (no tabs)
-        if let listTemplate = self.interfaceController?.rootTemplate as? CPListTemplate, 
+        if let listTemplate = self.interfaceController.rootTemplate as? CPListTemplate, 
            listTemplate.title == "My Tapes" {
             loadDownloadedShowsForTemplate(listTemplate)
         }
@@ -366,5 +358,13 @@ extension CarPlayTemplateManager: CPInterfaceControllerDelegate {
 extension CarPlayTemplateManager: CPSessionConfigurationDelegate {
     func sessionConfiguration(_ sessionConfiguration: CPSessionConfiguration,
                               limitedUserInterfacesChanged limitedUserInterfaces: CPLimitableUserInterface) {
+    }
+}
+
+extension CPInterfaceController {
+    /// Shows the system Now Playing screen (one place for CarPlay's three
+    /// "play → show Now Playing" paths)
+    func pushNowPlaying() {
+        Task { try? await pushTemplate(CPNowPlayingTemplate.shared, animated: true) }
     }
 }

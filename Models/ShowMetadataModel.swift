@@ -179,6 +179,12 @@ extension ShowMetadata {
         return creator
     }
 
+    /// Band name for display with the collection as fallback — the single
+    /// derivation for rows, detail, players, CarPlay and Now Playing.
+    var displayBandName: String? {
+        displayCreator ?? collection?.first
+    }
+
     /// Recording type ("SBD"/"AUD"/"MTX"/"FM") sniffed from taper naming
     /// conventions in the identifier (dot-separated tokens like
     /// "jg85-10-11.030623.jgjk.set1.sbd.jjoops"), with the source field as a
@@ -230,4 +236,9 @@ struct ShowMP3: Codable {
     let title: String?
     let track: String?
     var destination: URL?	
+}
+
+extension ShowMP3 {
+    /// Track title for display, falling back to the filename
+    var displayTitle: String? { title ?? name }
 }

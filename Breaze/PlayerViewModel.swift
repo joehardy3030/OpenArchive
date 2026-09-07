@@ -105,7 +105,7 @@ final class PlayerViewModel: ObservableObject {
 
     func playTrack(at index: Int) {
         guard let show = currentShow else { return }
-        player.pause()
+        player.pause(persist: false)
         player.showMetadataModel = show
         if currentShowType == .phishIn, let tracks = show.mp3Array {
             let urls = tracks.compactMap { $0.name.flatMap { URL(string: $0) } }
@@ -122,7 +122,11 @@ final class PlayerViewModel: ObservableObject {
         player.play()
     }
 
+    /// Restores the last saved session (paused at the saved position). Safe to
+    /// call from both the phone window and the CarPlay scene: whichever connects
+    /// first restores, and the guard keeps the other from clobbering live playback.
     func restorePlaybackIfAvailable() {
+        guard player.showMetadataModel == nil else { return }
         guard let state = player.restorePlaybackState() else { return }
         currentShow = player.showMetadataModel
         currentTrackIndex = state.trackIndex

@@ -145,7 +145,6 @@ struct MiniPlayerBar: View {
               playerViewModel.currentTrackIndex < tracks.count else {
             return playerViewModel.currentShow?.metadata?.date ?? ""
         }
-        let t = tracks[playerViewModel.currentTrackIndex]
-        return t.title ?? t.name ?? ""
+        return tracks[playerViewModel.currentTrackIndex].displayTitle ?? ""
     }
 }

@@ -17,6 +17,9 @@ class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
     func templateApplicationScene(_ templateApplicationScene: CPTemplateApplicationScene,
                                   didConnect interfaceController: CPInterfaceController) {
         self.interfaceController = interfaceController
+        // The head unit sends an automatic play on connect; only continue if we
+        // were already playing when plugged in (paused stays paused)
+        AudioPlayerArchive.shared.suppressAutoResumeOnConnect()
         // Hand a reference to the interface controller to CarPlayDownloadsTemplate
         self.templateManager = CarPlayTemplateManager(interfaceController: interfaceController)
         print("CarPlayTemplateManager initialized in scene delegate")
@@ -24,6 +27,8 @@ class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
     
     // CarPlay disconnected
     func sceneDidDisconnect(_ scene: UIScene) {
+        // Unplugging pauses (and persists the stop point for the phone to pick up)
+        AudioPlayerArchive.shared.pause()
         self.templateManager = nil
         self.interfaceController = nil
     }

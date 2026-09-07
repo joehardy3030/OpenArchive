@@ -186,7 +186,7 @@ final class ShowDetailViewModel: ObservableObject {
         guard let m = model else { return }
         pendingTrackIndex = index
 
-        player.pause()
+        player.pause(persist: false)
         player.showMetadataModel = m
         player.currentShowType = showType
 

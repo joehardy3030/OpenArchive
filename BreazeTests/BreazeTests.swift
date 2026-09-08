@@ -1443,7 +1443,7 @@ class BreazeTests: XCTestCase {
         let engine = loadEngineFixture()
         defer { resetEngine(engine) }
         engine.pause(persist: false)
-        engine.suppressAutoResumeOnConnect(for: 5)
+        engine.suppressAutoResumeOnConnect(for: 5, humanTapAfter: 0)   // connect long enough ago
         engine.nowPlayingScreenIsVisible = { true }
 
         XCTAssertEqual(engine.handleRemotePlay(), .success)
@@ -1452,6 +1452,19 @@ class BreazeTests: XCTestCase {
 
         engine.cancelAutoResumeSuppression()
         XCTAssertFalse(engine.nowPlayingScreenIsVisible(), "disconnect drops the screen check")
+    }
+
+    /// Re-plug: CarPlay restores the Now Playing screen by itself and the head
+    /// unit's play lands under it within seconds. That is not a person.
+    func testReplugAutoPlayUnderRestoredNowPlayingScreenIsSwallowed() {
+        let engine = loadEngineFixture()
+        defer { resetEngine(engine) }
+        engine.pause(persist: false)
+        engine.suppressAutoResumeOnConnect(for: 5, humanTapAfter: 8)
+        engine.nowPlayingScreenIsVisible = { true }
+
+        XCTAssertEqual(engine.handleRemotePlay(), .success)
+        XCTAssertFalse(engine.isActivelyPlaying, "a play seconds after re-plug is the head unit's, screen or no screen")
     }
 
     func testRepeatedAutoPlayInsideBurstIsSwallowedToo() {

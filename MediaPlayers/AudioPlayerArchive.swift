@@ -83,8 +83,11 @@ class AudioPlayerArchive: NSObject {
     private var swallowBurstDeadline = Date.distantPast
     /// Set by the CarPlay template manager while connected: whether the system
     /// Now Playing screen is on top. A remote play that arrives while a person
-    /// is looking at the play button is that person, not the head unit.
+    /// is looking at the play button is that person, not the head unit —
+    /// but only once the connect is a few seconds old: on a re-plug CarPlay
+    /// restores that screen by itself, and the head unit's play lands under it.
     var nowPlayingScreenIsVisible: () -> Bool = { false }
+    private var humanTapDelay: TimeInterval = 8
     /// Counts consecutive AVPlayerItem failures so we can skip a few bad tracks
     /// before giving up entirely. Reset whenever an item successfully becomes ready.
     private var consecutiveFailures = 0
@@ -241,7 +244,8 @@ class AudioPlayerArchive: NSObject {
     /// is generous because a cold car start delivers that command late; only
     /// one play is swallowed (plus any repeats inside `burst`), so a person
     /// who taps twice always gets through.
-    func suppressAutoResumeOnConnect(for seconds: TimeInterval = 30, burst: TimeInterval = 2) {
+    func suppressAutoResumeOnConnect(for seconds: TimeInterval = 30, burst: TimeInterval = 2,
+                                     humanTapAfter: TimeInterval = 8) {
         guard !isActivelyPlaying else {
             Self.log.notice("CarPlay connected while playing; nothing to suppress")
             return
@@ -251,6 +255,7 @@ class AudioPlayerArchive: NSObject {
         swallowNextRemotePlay = true
         swallowBurstInterval = burst
         swallowBurstDeadline = .distantPast
+        humanTapDelay = humanTapAfter
         // A pending interruption resume (a call that ended, the car that switched
         // off mid-show) must not fire on the strength of the car reconnecting either
         shouldResumeAfterInterruption = false
@@ -268,22 +273,24 @@ class AudioPlayerArchive: NSObject {
     /// one-shot, and repeats inside the burst after it are swallowed too.
     /// Returns true if swallowed. Logs either way, with the time since connect.
     private func swallowRemotePlayIfSuppressed(command: String) -> Bool {
+        let sinceConnect = Date().timeIntervalSince(connectGraceArmedAt)
         let since = connectGraceArmedAt == .distantPast
             ? "no CarPlay connect on record"
-            : String(format: "%.1fs after CarPlay connect", Date().timeIntervalSince(connectGraceArmedAt))
+            : String(format: "%.1fs after CarPlay connect", sinceConnect)
         guard remotePlaySuppressed else {
             Self.log.notice("remote \(command, privacy: .public) honored (\(since, privacy: .public))")
             return false
         }
-        if nowPlayingScreenIsVisible() {
-            Self.log.notice("remote \(command, privacy: .public) honored: the Now Playing screen is up, so a person tapped it (\(since, privacy: .public))")
+        let screenUp = nowPlayingScreenIsVisible()
+        if screenUp, sinceConnect >= humanTapDelay {
+            Self.log.notice("remote \(command, privacy: .public) honored: the Now Playing screen is up and the connect is old enough, so a person tapped it (\(since, privacy: .public))")
             return false
         }
         if swallowNextRemotePlay {
             swallowNextRemotePlay = false
             swallowBurstDeadline = Date().addingTimeInterval(swallowBurstInterval)
         }
-        Self.log.notice("swallowed the head unit's auto-\(command, privacy: .public) (\(since, privacy: .public))")
+        Self.log.notice("swallowed the head unit's auto-\(command, privacy: .public) (\(since, privacy: .public); Now Playing screen up: \(screenUp, privacy: .public))")
         updateNowPlayingInfo(rate: 0.0)   // reassert paused so the car's play button doesn't flip
         return true
     }

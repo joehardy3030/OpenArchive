@@ -29,6 +29,7 @@ class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
     func sceneDidDisconnect(_ scene: UIScene) {
         // Unplugging pauses (and persists the stop point for the phone to pick up)
         // and drops any unspent connect grace so the phone's next play isn't eaten
+        AudioPlayerArchive.log.notice("CarPlay scene disconnected")
         AudioPlayerArchive.shared.pause()
         AudioPlayerArchive.shared.cancelAutoResumeSuppression()
         self.templateManager = nil

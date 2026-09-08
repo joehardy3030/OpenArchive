@@ -38,7 +38,7 @@ open Breaze.xcworkspace
 
 Build and run targeting iOS 18.0+. Always use the `.xcworkspace`, not `.xcodeproj`. The workspace and target are named "Breaze" for historical reasons; the app builds as **Chateau**.
 
-Unit tests live in `BreazeTests/` — 140 of them, run with Cmd+U in Xcode.
+Unit tests live in `BreazeTests/` — 144 of them, run with Cmd+U in Xcode.
 
 ## Architecture
 

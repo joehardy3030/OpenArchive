@@ -1388,7 +1388,7 @@ class BreazeTests: XCTestCase {
         defer { resetEngine(engine) }
         engine.pause(persist: false)
 
-        engine.suppressAutoResumeOnConnect(for: 5)
+        engine.suppressAutoResumeOnConnect(for: 5, burst: 0)
         XCTAssertEqual(engine.handleRemotePlay(), .success)
         XCTAssertFalse(engine.isActivelyPlaying, "the first play is the head unit's auto-play")
         XCTAssertFalse(engine.remotePlaySuppressed, "the swallow is spent")
@@ -1436,6 +1436,77 @@ class BreazeTests: XCTestCase {
         engine.suppressAutoResumeOnConnect(for: 5)
         XCTAssertEqual(engine.handleRemoteTogglePlayPause(), .commandFailed)
         XCTAssertTrue(engine.remotePlaySuppressed)
+    }
+
+    func testRepeatedAutoPlayInsideBurstIsSwallowedToo() {
+        let engine = loadEngineFixture()
+        defer { resetEngine(engine) }
+        engine.pause(persist: false)
+
+        engine.suppressAutoResumeOnConnect(for: 5, burst: 5)
+        XCTAssertEqual(engine.handleRemotePlay(), .success)
+        XCTAssertTrue(engine.remotePlaySuppressed, "the burst after the first swallow is still open")
+        XCTAssertEqual(engine.handleRemoteTogglePlayPause(), .success)   // a head unit that sends play twice
+        XCTAssertFalse(engine.isActivelyPlaying)
+
+        engine.play()   // our own UI ends the burst
+        XCTAssertFalse(engine.remotePlaySuppressed)
+    }
+
+    // MARK: - Audio session interruptions
+
+    private func postInterruption(_ type: AVAudioSession.InterruptionType,
+                                  reason: AVAudioSession.InterruptionReason? = nil,
+                                  shouldResume: Bool = false) {
+        var info: [AnyHashable: Any] = [AVAudioSessionInterruptionTypeKey: type.rawValue]
+        if let reason { info[AVAudioSessionInterruptionReasonKey] = reason.rawValue }
+        if type == .ended {
+            info[AVAudioSessionInterruptionOptionKey] = shouldResume
+                ? AVAudioSession.InterruptionOptions.shouldResume.rawValue : UInt(0)
+        }
+        NotificationCenter.default.post(name: AVAudioSession.interruptionNotification,
+                                        object: AVAudioSession.sharedInstance(), userInfo: info)
+    }
+
+    func testInterruptionResumesOnlyIfItWasPlaying() {
+        let engine = loadEngineFixture()
+        defer { resetEngine(engine) }
+
+        engine.pause(persist: false)
+        postInterruption(.began, reason: .default)
+        postInterruption(.ended, shouldResume: true)
+        XCTAssertFalse(engine.isActivelyPlaying, "a paused session stays paused after someone else's audio ends")
+
+        engine.play()
+        postInterruption(.began, reason: .default)
+        XCTAssertFalse(engine.isActivelyPlaying, "the interruption pauses us")
+        postInterruption(.ended, shouldResume: true)
+        XCTAssertTrue(engine.isActivelyPlaying, "a phone call ending resumes what was playing")
+    }
+
+    /// The car switching off mid-show is a route disconnect. Whatever the
+    /// system says when the route comes back, that must not start playback.
+    func testRouteDisconnectInterruptionNeverResumes() {
+        let engine = loadEngineFixture()
+        defer { resetEngine(engine) }
+        engine.play()
+
+        postInterruption(.began, reason: .routeDisconnected)
+        XCTAssertFalse(engine.isActivelyPlaying)
+        postInterruption(.ended, shouldResume: true)
+        XCTAssertFalse(engine.isActivelyPlaying, "the car reconnecting is not a reason to resume")
+    }
+
+    func testCarPlayConnectClearsPendingInterruptionResume() {
+        let engine = loadEngineFixture()
+        defer { resetEngine(engine) }
+        engine.play()
+        postInterruption(.began, reason: .default)   // e.g. a call, mid-show
+        XCTAssertFalse(engine.isActivelyPlaying)
+
+        engine.suppressAutoResumeOnConnect(for: 5)   // then the car connects
+        postInterruption(.ended, shouldResume: true)
+        XCTAssertFalse(engine.isActivelyPlaying, "the paused-at-connect rule wins over a stale resume")
     }
 
     func testPausePersistsByDefaultButNotForRebuildStops() {

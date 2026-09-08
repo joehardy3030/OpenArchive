@@ -1317,6 +1317,7 @@ class BreazeTests: XCTestCase {
     /// Leaves the shared engine idle and unsuppressed for the next test.
     private func resetEngine(_ engine: AudioPlayerArchive) {
         if engine.playerQueue == nil { _ = loadEngineFixture() }   // pause() only leaves .playing with a queue
+        engine.cancelAutoResumeSuppression()   // also drops any Now Playing screen stub
         engine.play()                    // clears any suppression window
         engine.pause(persist: false)     // → paused without touching saved state
         engine.playerQueue = nil
@@ -1436,6 +1437,21 @@ class BreazeTests: XCTestCase {
         engine.suppressAutoResumeOnConnect(for: 5)
         XCTAssertEqual(engine.handleRemoteTogglePlayPause(), .commandFailed)
         XCTAssertTrue(engine.remotePlaySuppressed)
+    }
+
+    func testRemotePlayWhileNowPlayingScreenIsUpIsAPersonTapping() {
+        let engine = loadEngineFixture()
+        defer { resetEngine(engine) }
+        engine.pause(persist: false)
+        engine.suppressAutoResumeOnConnect(for: 5)
+        engine.nowPlayingScreenIsVisible = { true }
+
+        XCTAssertEqual(engine.handleRemotePlay(), .success)
+        XCTAssertTrue(engine.isActivelyPlaying, "a play from the Now Playing screen is never the head unit's")
+        XCTAssertFalse(engine.remotePlaySuppressed, "and it clears the arm like any explicit play")
+
+        engine.cancelAutoResumeSuppression()
+        XCTAssertFalse(engine.nowPlayingScreenIsVisible(), "disconnect drops the screen check")
     }
 
     func testRepeatedAutoPlayInsideBurstIsSwallowedToo() {

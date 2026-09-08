@@ -81,6 +81,10 @@ class AudioPlayerArchive: NSObject {
     /// are swallowed too — some head units send play more than once
     private var swallowBurstInterval: TimeInterval = 2
     private var swallowBurstDeadline = Date.distantPast
+    /// Set by the CarPlay template manager while connected: whether the system
+    /// Now Playing screen is on top. A remote play that arrives while a person
+    /// is looking at the play button is that person, not the head unit.
+    var nowPlayingScreenIsVisible: () -> Bool = { false }
     /// Counts consecutive AVPlayerItem failures so we can skip a few bad tracks
     /// before giving up entirely. Reset whenever an item successfully becomes ready.
     private var consecutiveFailures = 0
@@ -191,9 +195,11 @@ class AudioPlayerArchive: NSObject {
         commandCenter.pauseCommand.isEnabled = true
         pauseCommandTarget = commandCenter.pauseCommand.addTarget { [unowned self] event in
             if self.playerQueue?.rate ?? 0.0 > 0.0 {
+                AudioPlayerArchive.log.notice("remote pause honored")
                 self.pause()
                 return .success
             }
+            AudioPlayerArchive.log.notice("remote pause ignored: not playing")
             return .commandFailed
         }
 
@@ -255,6 +261,7 @@ class AudioPlayerArchive: NSObject {
     func cancelAutoResumeSuppression() {
         swallowNextRemotePlay = false
         swallowBurstDeadline = .distantPast
+        nowPlayingScreenIsVisible = { false }
     }
 
     /// Swallows a remote play inside the connect grace: the first spends the
@@ -268,11 +275,16 @@ class AudioPlayerArchive: NSObject {
             Self.log.notice("remote \(command, privacy: .public) honored (\(since, privacy: .public))")
             return false
         }
+        if nowPlayingScreenIsVisible() {
+            Self.log.notice("remote \(command, privacy: .public) honored: the Now Playing screen is up, so a person tapped it (\(since, privacy: .public))")
+            return false
+        }
         if swallowNextRemotePlay {
             swallowNextRemotePlay = false
             swallowBurstDeadline = Date().addingTimeInterval(swallowBurstInterval)
         }
         Self.log.notice("swallowed the head unit's auto-\(command, privacy: .public) (\(since, privacy: .public))")
+        updateNowPlayingInfo(rate: 0.0)   // reassert paused so the car's play button doesn't flip
         return true
     }
 

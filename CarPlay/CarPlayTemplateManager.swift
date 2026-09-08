@@ -30,6 +30,11 @@ class CarPlayTemplateManager: NSObject, CPInterfaceControllerDelegate {
         self.interfaceController = interfaceController
         super.init()
         self.interfaceController.delegate = self
+        // Lets the engine tell a person's tap on the Now Playing screen from the
+        // head unit's connect-time auto-play, which lands while our list is on top
+        AudioPlayerArchive.shared.nowPlayingScreenIsVisible = { [weak interfaceController] in
+            interfaceController?.topTemplate is CPNowPlayingTemplate
+        }
         self.createTabbedInterface()
     }
     

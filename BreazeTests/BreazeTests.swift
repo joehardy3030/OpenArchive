@@ -1317,7 +1317,7 @@ class BreazeTests: XCTestCase {
     /// Leaves the shared engine idle and unsuppressed for the next test.
     private func resetEngine(_ engine: AudioPlayerArchive) {
         if engine.playerQueue == nil { _ = loadEngineFixture() }   // pause() only leaves .playing with a queue
-        engine.cancelAutoResumeSuppression()   // also drops any Now Playing screen stub
+        engine.cancelAutoResumeSuppression()
         engine.play()                    // clears any suppression window
         engine.pause(persist: false)     // → paused without touching saved state
         engine.playerQueue = nil
@@ -1389,7 +1389,7 @@ class BreazeTests: XCTestCase {
         defer { resetEngine(engine) }
         engine.pause(persist: false)
 
-        engine.suppressAutoResumeOnConnect(for: 5, burst: 0)
+        engine.suppressAutoResumeOnConnect()
         XCTAssertEqual(engine.handleRemotePlay(), .success)
         XCTAssertFalse(engine.isActivelyPlaying, "the first play is the head unit's auto-play")
         XCTAssertFalse(engine.remotePlaySuppressed, "the swallow is spent")
@@ -1439,47 +1439,68 @@ class BreazeTests: XCTestCase {
         XCTAssertTrue(engine.remotePlaySuppressed)
     }
 
-    func testRemotePlayWhileNowPlayingScreenIsUpIsAPersonTapping() {
+    /// Cold starts and automatically restored Now Playing screens may deliver
+    /// the first play more than eight seconds after connect. Visibility cannot
+    /// identify the sender, so there is no screen-based bypass of the grace.
+    func testDelayedStartupPlayIsStillSwallowed() {
         let engine = loadEngineFixture()
         defer { resetEngine(engine) }
         engine.pause(persist: false)
-        engine.suppressAutoResumeOnConnect(for: 5, humanTapAfter: 0)   // connect long enough ago
-        engine.nowPlayingScreenIsVisible = { true }
+        engine.suppressAutoResumeOnConnect(now: Date().addingTimeInterval(-12))
 
+        XCTAssertTrue(engine.remotePlaySuppressed)
         XCTAssertEqual(engine.handleRemotePlay(), .success)
-        XCTAssertTrue(engine.isActivelyPlaying, "a play from the Now Playing screen is never the head unit's")
-        XCTAssertFalse(engine.remotePlaySuppressed, "and it clears the arm like any explicit play")
-
-        engine.cancelAutoResumeSuppression()
-        XCTAssertFalse(engine.nowPlayingScreenIsVisible(), "disconnect drops the screen check")
-    }
-
-    /// Re-plug: CarPlay restores the Now Playing screen by itself and the head
-    /// unit's play lands under it within seconds. That is not a person.
-    func testReplugAutoPlayUnderRestoredNowPlayingScreenIsSwallowed() {
-        let engine = loadEngineFixture()
-        defer { resetEngine(engine) }
-        engine.pause(persist: false)
-        engine.suppressAutoResumeOnConnect(for: 5, humanTapAfter: 8)
-        engine.nowPlayingScreenIsVisible = { true }
-
-        XCTAssertEqual(engine.handleRemotePlay(), .success)
-        XCTAssertFalse(engine.isActivelyPlaying, "a play seconds after re-plug is the head unit's, screen or no screen")
-    }
-
-    func testRepeatedAutoPlayInsideBurstIsSwallowedToo() {
-        let engine = loadEngineFixture()
-        defer { resetEngine(engine) }
-        engine.pause(persist: false)
-
-        engine.suppressAutoResumeOnConnect(for: 5, burst: 5)
-        XCTAssertEqual(engine.handleRemotePlay(), .success)
-        XCTAssertTrue(engine.remotePlaySuppressed, "the burst after the first swallow is still open")
-        XCTAssertEqual(engine.handleRemoteTogglePlayPause(), .success)   // a head unit that sends play twice
         XCTAssertFalse(engine.isActivelyPlaying)
+        XCTAssertEqual(engine.handleRemotePlay(), .success)
+        XCTAssertTrue(engine.isActivelyPlaying, "the immediate second press must play")
+    }
 
-        engine.play()   // our own UI ends the burst
-        XCTAssertFalse(engine.remotePlaySuppressed)
+    func testImmediateSecondTogglePlays() {
+        let engine = loadEngineFixture()
+        defer { resetEngine(engine) }
+        engine.pause(persist: false)
+        engine.suppressAutoResumeOnConnect()
+
+        XCTAssertEqual(engine.handleRemoteTogglePlayPause(), .success)
+        XCTAssertFalse(engine.isActivelyPlaying)
+        XCTAssertEqual(engine.handleRemoteTogglePlayPause(), .success)
+        XCTAssertTrue(engine.isActivelyPlaying)
+    }
+
+    func testPlayThenImmediateToggleSpendsOnlyOneSwallow() {
+        let engine = loadEngineFixture()
+        defer { resetEngine(engine) }
+        engine.pause(persist: false)
+        engine.suppressAutoResumeOnConnect()
+
+        XCTAssertEqual(engine.handleRemotePlay(), .success)
+        XCTAssertFalse(engine.isActivelyPlaying)
+        XCTAssertEqual(engine.handleRemoteTogglePlayPause(), .success)
+        XCTAssertTrue(engine.isActivelyPlaying)
+    }
+
+    func testEmptyQueueDoesNotSpendStartupSwallow() {
+        let engine = loadEngineFixture()
+        defer { resetEngine(engine) }
+        engine.playerQueue = AVQueuePlayer()
+        engine.suppressAutoResumeOnConnect()
+
+        XCTAssertEqual(engine.handleRemotePlay(), .commandFailed)
+        XCTAssertEqual(engine.handleRemoteTogglePlayPause(), .commandFailed)
+        XCTAssertTrue(engine.remotePlaySuppressed)
+    }
+
+    func testRemoteTogglePausesWhileBuffering() {
+        let engine = loadEngineFixture()
+        defer { resetEngine(engine) }
+        engine.play()
+        engine.playerQueue?.pause() // rate zero, but engine still intends to play
+        XCTAssertTrue(engine.isActivelyPlaying)
+
+        engine.suppressAutoResumeOnConnect()
+        XCTAssertFalse(engine.remotePlaySuppressed, "buffering playback continues across connection")
+        XCTAssertEqual(engine.handleRemoteTogglePlayPause(), .success)
+        XCTAssertFalse(engine.isActivelyPlaying, "toggle pauses the requested playback, even at rate zero")
     }
 
     // MARK: - Audio session interruptions
@@ -1538,6 +1559,94 @@ class BreazeTests: XCTestCase {
         XCTAssertFalse(engine.isActivelyPlaying, "the paused-at-connect rule wins over a stale resume")
     }
 
+    func testDisconnectDuringCallCancelsPendingResume() {
+        let engine = loadEngineFixture()
+        defer { resetEngine(engine) }
+        engine.play()
+        postInterruption(.began, reason: .default)
+
+        engine.handleCarPlayDisconnect()
+        postInterruption(.ended, shouldResume: true)
+        XCTAssertFalse(engine.isActivelyPlaying, "a call ending after unplugging must not resume")
+        XCTAssertEqual(engine.handleRemotePlay(), .success)
+        XCTAssertTrue(engine.isActivelyPlaying, "phone play works immediately after disconnect")
+    }
+
+    func testRemotePauseDuringCallCancelsPendingResume() {
+        let engine = loadEngineFixture()
+        defer { resetEngine(engine) }
+        engine.play()
+        postInterruption(.began, reason: .default)
+
+        XCTAssertEqual(engine.handleRemotePause(), .success)
+        postInterruption(.ended, shouldResume: true)
+        XCTAssertFalse(engine.isActivelyPlaying)
+    }
+
+    func testPhonePauseDuringCallCancelsPendingResume() {
+        let engine = loadEngineFixture()
+        defer { resetEngine(engine) }
+        engine.play()
+        postInterruption(.began, reason: .default)
+
+        engine.pause()
+        postInterruption(.ended, shouldResume: true)
+        XCTAssertFalse(engine.isActivelyPlaying)
+    }
+
+    func testDisconnectPausesAndSavesTrack() {
+        let engine = loadEngineFixture(queueItemName: "t02.mp3")
+        defer { resetEngine(engine) }
+        PlaybackState.clear()
+        engine.play()
+
+        engine.handleCarPlayDisconnect()
+        XCTAssertFalse(engine.isActivelyPlaying)
+        XCTAssertEqual(PlaybackState.load()?.trackIndex, 1)
+        XCTAssertEqual(PlaybackState.load()?.showMetadataModel.metadata?.identifier, "engine-test-show")
+    }
+
+    private func postRouteChange(_ reason: AVAudioSession.RouteChangeReason) {
+        NotificationCenter.default.post(name: AVAudioSession.routeChangeNotification,
+                                        object: AVAudioSession.sharedInstance(),
+                                        userInfo: [AVAudioSessionRouteChangeReasonKey: reason.rawValue])
+    }
+
+    func testAudioRouteLossPausesWithoutSceneDisconnect() {
+        let engine = loadEngineFixture()
+        defer { resetEngine(engine) }
+        engine.play()
+        postRouteChange(.oldDeviceUnavailable)
+
+        XCTAssertFalse(engine.isActivelyPlaying)
+        XCTAssertNotNil(PlaybackState.load())
+        postInterruption(.ended, shouldResume: true)
+        XCTAssertFalse(engine.isActivelyPlaying)
+    }
+
+    func testAudioRouteLossDuringCallCancelsPendingResume() {
+        let engine = loadEngineFixture()
+        defer { resetEngine(engine) }
+        engine.play()
+        postInterruption(.began, reason: .default)
+        postRouteChange(.oldDeviceUnavailable)
+        postInterruption(.ended, shouldResume: true)
+
+        XCTAssertFalse(engine.isActivelyPlaying)
+    }
+
+    func testNewAudioRoutePreservesPlayingOrPausedState() {
+        let engine = loadEngineFixture()
+        defer { resetEngine(engine) }
+        engine.pause(persist: false)
+        postRouteChange(.newDeviceAvailable)
+        XCTAssertFalse(engine.isActivelyPlaying)
+
+        engine.play()
+        postRouteChange(.newDeviceAvailable)
+        XCTAssertTrue(engine.isActivelyPlaying)
+    }
+
     func testPausePersistsByDefaultButNotForRebuildStops() {
         let engine = loadEngineFixture()
         defer { resetEngine(engine) }
@@ -1576,7 +1685,11 @@ class BreazeTests: XCTestCase {
         defer { resetEngine(engine) }
         PlaybackState.save(makeSavedState(identifier: "saved-show"))
 
+        engine.play()
+        let playingQueue = engine.playerQueue
         PlayerViewModel.shared.restorePlaybackIfAvailable()
+        XCTAssertTrue(engine.playerQueue === playingQueue)
+        XCTAssertTrue(engine.isActivelyPlaying)
         XCTAssertEqual(engine.showMetadataModel?.metadata?.identifier, "engine-test-show",
                        "whichever side connects second must not clobber live playback")
     }
@@ -1591,6 +1704,117 @@ class BreazeTests: XCTestCase {
         PlayerViewModel.shared.restorePlaybackIfAvailable()
         XCTAssertEqual(engine.showMetadataModel?.metadata?.identifier, "saved-show")
         XCTAssertFalse(engine.isActivelyPlaying, "restore leaves the session paused")
+    }
+
+    /// Async recovery/restore tests need real audio: a missing-file fixture can
+    /// itself fail and trigger unrelated recovery while the test awaits a callback.
+    private func makeSilentTrack() throws -> URL {
+        let url = try XCTUnwrap(Utils().getDocumentsDirectory())
+            .appendingPathComponent("carplay-test-\(UUID().uuidString).caf")
+        let format = try XCTUnwrap(AVAudioFormat(standardFormatWithSampleRate: 8000, channels: 1))
+        let buffer = try XCTUnwrap(AVAudioPCMBuffer(pcmFormat: format, frameCapacity: 160000))
+        buffer.frameLength = buffer.frameCapacity
+        let samples = try XCTUnwrap(buffer.floatChannelData?[0])
+        samples.initialize(repeating: 0, count: Int(buffer.frameLength))
+        do {
+            let file = try AVAudioFile(forWriting: url, settings: format.settings)
+            try file.write(from: buffer)
+        } catch {
+            try? FileManager.default.removeItem(at: url)
+            throw error
+        }
+        return url
+    }
+
+    private func loadEngineFixture(trackURL: URL) -> AudioPlayerArchive {
+        let engine = loadEngineFixture(names: [trackURL.lastPathComponent])
+        engine.playerQueue = AVQueuePlayer(items: [AVPlayerItem(url: trackURL)])
+        return engine
+    }
+
+    @MainActor
+    func testQueuedRecoveryDoesNotResumeAfterDisconnect() async throws {
+        let trackURL = try makeSilentTrack()
+        defer { try? FileManager.default.removeItem(at: trackURL) }
+        let engine = loadEngineFixture(trackURL: trackURL)
+        defer { resetEngine(engine) }
+        engine.play()
+        engine.scheduleQueueRecovery(startingAt: 0)
+        engine.handleCarPlayDisconnect()
+
+        let recovered = expectation(description: "queued recovery processed")
+        DispatchQueue.main.async { recovered.fulfill() }
+        await fulfillment(of: [recovered], timeout: 2)
+        XCTAssertFalse(engine.isActivelyPlaying, "recovery cannot reuse intent from before disconnect")
+    }
+
+    @MainActor
+    func testQueuedRecoveryDoesNotReplaceNewTape() async throws {
+        let trackURL = try makeSilentTrack()
+        defer { try? FileManager.default.removeItem(at: trackURL) }
+        let engine = loadEngineFixture(trackURL: trackURL)
+        defer { resetEngine(engine) }
+        engine.play()
+        engine.scheduleQueueRecovery(startingAt: 1)
+        _ = loadEngineFixture(trackURL: trackURL)
+        let selectedQueue = engine.playerQueue
+        engine.play()
+
+        let recovered = expectation(description: "stale recovery processed")
+        DispatchQueue.main.async { recovered.fulfill() }
+        await fulfillment(of: [recovered], timeout: 2)
+        XCTAssertTrue(engine.playerQueue === selectedQueue)
+        XCTAssertTrue(engine.isActivelyPlaying)
+    }
+
+    @MainActor
+    func testDelayedRestoreDoesNotTouchNewTape() async throws {
+        let trackURL = try makeSilentTrack()
+        defer { try? FileManager.default.removeItem(at: trackURL) }
+        let engine = loadEngineFixture(trackURL: trackURL)
+        defer { resetEngine(engine) }
+        engine.pause(persist: false)
+        let saved = makeSavedState(identifier: "saved-show")
+        engine.showMetadataModel = saved.showMetadataModel
+        let restored = expectation(description: "stale restore canceled")
+        engine.prepareRestoredPlayback(state: saved) { finished in
+            XCTAssertFalse(finished)
+            restored.fulfill()
+        }
+
+        _ = loadEngineFixture(trackURL: trackURL)
+        let selectedQueue = engine.playerQueue
+        engine.play()
+        await fulfillment(of: [restored], timeout: 2)
+        XCTAssertTrue(engine.playerQueue === selectedQueue)
+        XCTAssertTrue(engine.isActivelyPlaying)
+    }
+
+    @MainActor
+    func testRestoreSeeksToSavedPositionAndStaysPaused() async throws {
+        let trackURL = try makeSilentTrack()
+        defer { try? FileManager.default.removeItem(at: trackURL) }
+        let engine = loadEngineFixture(trackURL: trackURL)
+        defer { resetEngine(engine) }
+        engine.pause(persist: false)
+        let saved = PlaybackState(showMetadataModel: try XCTUnwrap(engine.showMetadataModel),
+                                  trackIndex: 0, playbackPosition: 10, isStreaming: false,
+                                  savedAt: Date(), showTypeRaw: "downloaded")
+        let restored = expectation(description: "restored at saved position")
+        engine.prepareRestoredPlayback(state: saved) { finished in
+            XCTAssertTrue(finished)
+            restored.fulfill()
+        }
+        await fulfillment(of: [restored], timeout: 3)
+        XCTAssertEqual(try XCTUnwrap(engine.playerQueue?.currentTime().seconds), 10, accuracy: 0.1)
+        XCTAssertFalse(engine.isActivelyPlaying)
+        XCTAssertEqual(engine.playerQueue?.rate, 0)
+
+        // The other surface appearing cannot replace or reposition this queue.
+        let restoredQueue = engine.playerQueue
+        PlayerViewModel.shared.restorePlaybackIfAvailable()
+        XCTAssertTrue(engine.playerQueue === restoredQueue)
+        XCTAssertEqual(try XCTUnwrap(engine.playerQueue?.currentTime().seconds), 10, accuracy: 0.1)
     }
 
     // MARK: - AudioPlayerArchive.getCurrentTrackIndex

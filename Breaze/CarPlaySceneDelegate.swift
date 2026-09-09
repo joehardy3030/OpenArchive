@@ -25,8 +25,10 @@ class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
         print("CarPlayTemplateManager initialized in scene delegate")
     }
     
+    // The Swift name keeps the "InterfaceController" suffix here (unlike didConnect);
+    // a `didDisconnect:` spelling compiles but is never called.
     func templateApplicationScene(_ templateApplicationScene: CPTemplateApplicationScene,
-                                  didDisconnect interfaceController: CPInterfaceController) {
+                                  didDisconnectInterfaceController interfaceController: CPInterfaceController) {
         disconnectCarPlay()
     }
 

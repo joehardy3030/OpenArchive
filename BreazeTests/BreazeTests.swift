@@ -1317,178 +1317,25 @@ class BreazeTests: XCTestCase {
     /// Leaves the shared engine idle and unsuppressed for the next test.
     private func resetEngine(_ engine: AudioPlayerArchive) {
         if engine.playerQueue == nil { _ = loadEngineFixture() }   // pause() only leaves .playing with a queue
-        engine.cancelAutoResumeSuppression()
-        engine.play()                    // clears any suppression window
+        engine.play()
         engine.pause(persist: false)     // → paused without touching saved state
         engine.playerQueue = nil
         engine.showMetadataModel = nil
         PlaybackState.clear()
     }
 
-    func testRemotePlayIsSwallowedDuringConnectWindowWhenIdle() {
-        let engine = loadEngineFixture()
-        defer { resetEngine(engine) }
-        engine.pause(persist: false)
-        XCTAssertFalse(engine.isActivelyPlaying)
 
-        engine.suppressAutoResumeOnConnect(for: 5)
-        XCTAssertTrue(engine.remotePlaySuppressed)
-        XCTAssertEqual(engine.handleRemotePlay(), .success)
-        XCTAssertFalse(engine.isActivelyPlaying, "the head unit's auto-play must not start a paused session")
-    }
 
-    func testRemotePlayIsHonoredOnceWindowExpires() {
-        let engine = loadEngineFixture()
-        defer { resetEngine(engine) }
-        engine.pause(persist: false)
 
-        engine.suppressAutoResumeOnConnect(for: 0)   // already expired
-        XCTAssertFalse(engine.remotePlaySuppressed)
-        XCTAssertEqual(engine.handleRemotePlay(), .success)
-        XCTAssertTrue(engine.isActivelyPlaying)
-    }
 
-    func testConnectSuppressionIsNoOpWhenAlreadyPlaying() {
-        let engine = loadEngineFixture()
-        defer { resetEngine(engine) }
-        engine.play()
-        XCTAssertTrue(engine.isActivelyPlaying)
 
-        engine.suppressAutoResumeOnConnect(for: 5)
-        XCTAssertFalse(engine.remotePlaySuppressed, "a playing session keeps playing on plug-in")
-    }
 
-    func testExplicitPlayClearsSuppression() {
-        let engine = loadEngineFixture()
-        defer { resetEngine(engine) }
-        engine.pause(persist: false)
-        engine.suppressAutoResumeOnConnect(for: 5)
-        XCTAssertTrue(engine.remotePlaySuppressed)
 
-        engine.play()
-        XCTAssertFalse(engine.remotePlaySuppressed)
-        XCTAssertTrue(engine.isActivelyPlaying)
-    }
 
-    func testRemoteToggleHonorsSuppression() {
-        let engine = loadEngineFixture()
-        defer { resetEngine(engine) }
-        engine.pause(persist: false)
 
-        engine.suppressAutoResumeOnConnect(for: 5)
-        engine.handleRemoteTogglePlayPause()
-        XCTAssertFalse(engine.isActivelyPlaying)
 
-        engine.suppressAutoResumeOnConnect(for: 0)   // window over
-        engine.handleRemoteTogglePlayPause()
-        XCTAssertTrue(engine.isActivelyPlaying)
-    }
 
-    func testOnlyOneRemotePlayIsSwallowedPerConnect() {
-        let engine = loadEngineFixture()
-        defer { resetEngine(engine) }
-        engine.pause(persist: false)
 
-        engine.suppressAutoResumeOnConnect()
-        XCTAssertEqual(engine.handleRemotePlay(), .success)
-        XCTAssertFalse(engine.isActivelyPlaying, "the first play is the head unit's auto-play")
-        XCTAssertFalse(engine.remotePlaySuppressed, "the swallow is spent")
-
-        XCTAssertEqual(engine.handleRemotePlay(), .success)
-        XCTAssertTrue(engine.isActivelyPlaying, "a second play inside the window is a person tapping")
-    }
-
-    /// Cold car start: the head unit's play can arrive before the restore has
-    /// loaded anything, and again seconds later once Now Playing is published.
-    func testColdStartAutoPlayAfterRestoreIsStillSwallowed() {
-        let engine = AudioPlayerArchive.shared
-        defer { resetEngine(engine) }
-        engine.playerQueue = nil
-        engine.showMetadataModel = nil
-
-        engine.suppressAutoResumeOnConnect(for: 5)          // scene connects, nothing loaded yet
-        XCTAssertEqual(engine.handleRemotePlay(), .commandFailed, "nothing to play yet")
-        XCTAssertTrue(engine.remotePlaySuppressed, "an early play must not spend the swallow")
-
-        _ = loadEngineFixture()                              // the restore lands
-        engine.pause(persist: false)
-        XCTAssertEqual(engine.handleRemotePlay(), .success)  // the late auto-play
-        XCTAssertFalse(engine.isActivelyPlaying, "the restored session stays paused")
-    }
-
-    func testDisconnectCancelsSuppression() {
-        let engine = loadEngineFixture()
-        defer { resetEngine(engine) }
-        engine.pause(persist: false)
-        engine.suppressAutoResumeOnConnect(for: 5)
-
-        engine.cancelAutoResumeSuppression()
-        XCTAssertFalse(engine.remotePlaySuppressed)
-        engine.handleRemotePlay()
-        XCTAssertTrue(engine.isActivelyPlaying, "the phone's lock-screen play works right after unplugging")
-    }
-
-    func testRemoteToggleWithNothingLoadedFailsWithoutSpendingSwallow() {
-        let engine = AudioPlayerArchive.shared
-        defer { resetEngine(engine) }
-        engine.playerQueue = nil
-        engine.showMetadataModel = nil
-
-        engine.suppressAutoResumeOnConnect(for: 5)
-        XCTAssertEqual(engine.handleRemoteTogglePlayPause(), .commandFailed)
-        XCTAssertTrue(engine.remotePlaySuppressed)
-    }
-
-    /// Cold starts and automatically restored Now Playing screens may deliver
-    /// the first play more than eight seconds after connect. Visibility cannot
-    /// identify the sender, so there is no screen-based bypass of the grace.
-    func testDelayedStartupPlayIsStillSwallowed() {
-        let engine = loadEngineFixture()
-        defer { resetEngine(engine) }
-        engine.pause(persist: false)
-        engine.suppressAutoResumeOnConnect(now: Date().addingTimeInterval(-12))
-
-        XCTAssertTrue(engine.remotePlaySuppressed)
-        XCTAssertEqual(engine.handleRemotePlay(), .success)
-        XCTAssertFalse(engine.isActivelyPlaying)
-        XCTAssertEqual(engine.handleRemotePlay(), .success)
-        XCTAssertTrue(engine.isActivelyPlaying, "the immediate second press must play")
-    }
-
-    func testImmediateSecondTogglePlays() {
-        let engine = loadEngineFixture()
-        defer { resetEngine(engine) }
-        engine.pause(persist: false)
-        engine.suppressAutoResumeOnConnect()
-
-        XCTAssertEqual(engine.handleRemoteTogglePlayPause(), .success)
-        XCTAssertFalse(engine.isActivelyPlaying)
-        XCTAssertEqual(engine.handleRemoteTogglePlayPause(), .success)
-        XCTAssertTrue(engine.isActivelyPlaying)
-    }
-
-    func testPlayThenImmediateToggleSpendsOnlyOneSwallow() {
-        let engine = loadEngineFixture()
-        defer { resetEngine(engine) }
-        engine.pause(persist: false)
-        engine.suppressAutoResumeOnConnect()
-
-        XCTAssertEqual(engine.handleRemotePlay(), .success)
-        XCTAssertFalse(engine.isActivelyPlaying)
-        XCTAssertEqual(engine.handleRemoteTogglePlayPause(), .success)
-        XCTAssertTrue(engine.isActivelyPlaying)
-    }
-
-    func testEmptyQueueDoesNotSpendStartupSwallow() {
-        let engine = loadEngineFixture()
-        defer { resetEngine(engine) }
-        engine.playerQueue = AVQueuePlayer()
-        engine.suppressAutoResumeOnConnect()
-
-        XCTAssertEqual(engine.handleRemotePlay(), .commandFailed)
-        XCTAssertEqual(engine.handleRemoteTogglePlayPause(), .commandFailed)
-        XCTAssertTrue(engine.remotePlaySuppressed)
-    }
 
     func testRemoteTogglePausesWhileBuffering() {
         let engine = loadEngineFixture()
@@ -1497,10 +1344,43 @@ class BreazeTests: XCTestCase {
         engine.playerQueue?.pause() // rate zero, but engine still intends to play
         XCTAssertTrue(engine.isActivelyPlaying)
 
-        engine.suppressAutoResumeOnConnect()
-        XCTAssertFalse(engine.remotePlaySuppressed, "buffering playback continues across connection")
         XCTAssertEqual(engine.handleRemoteTogglePlayPause(), .success)
         XCTAssertFalse(engine.isActivelyPlaying, "toggle pauses the requested playback, even at rate zero")
+    }
+
+    /// The platform convention (Apple Podcasts, Music): the head unit's
+    /// connect-time play resumes the last session. No suppression window.
+    func testRemotePlayResumesPausedSession() {
+        let engine = loadEngineFixture()
+        defer { resetEngine(engine) }
+        engine.pause(persist: false)
+
+        XCTAssertEqual(engine.handleRemotePlay(), .success)
+        XCTAssertTrue(engine.isActivelyPlaying, "a remote play always starts a loaded, paused session")
+    }
+
+    func testRemoteToggleAlternatesFromPaused() {
+        let engine = loadEngineFixture()
+        defer { resetEngine(engine) }
+        engine.pause(persist: false)
+
+        XCTAssertEqual(engine.handleRemoteTogglePlayPause(), .success)
+        XCTAssertTrue(engine.isActivelyPlaying)
+        XCTAssertEqual(engine.handleRemoteTogglePlayPause(), .success)
+        XCTAssertFalse(engine.isActivelyPlaying)
+    }
+
+    /// A command that arrives before the restore has loaded anything (a cold
+    /// CarPlay launch) must fail rather than start an empty queue.
+    func testRemoteCommandsWithNothingLoadedFail() {
+        let engine = loadEngineFixture()
+        defer { resetEngine(engine) }
+        engine.playerQueue = AVQueuePlayer()
+
+        XCTAssertEqual(engine.handleRemotePlay(), .commandFailed)
+        XCTAssertEqual(engine.handleRemoteTogglePlayPause(), .commandFailed)
+        XCTAssertEqual(engine.handleRemotePause(), .commandFailed)
+        XCTAssertFalse(engine.isActivelyPlaying)
     }
 
     // MARK: - Audio session interruptions
@@ -1547,17 +1427,6 @@ class BreazeTests: XCTestCase {
         XCTAssertFalse(engine.isActivelyPlaying, "the car reconnecting is not a reason to resume")
     }
 
-    func testCarPlayConnectClearsPendingInterruptionResume() {
-        let engine = loadEngineFixture()
-        defer { resetEngine(engine) }
-        engine.play()
-        postInterruption(.began, reason: .default)   // e.g. a call, mid-show
-        XCTAssertFalse(engine.isActivelyPlaying)
-
-        engine.suppressAutoResumeOnConnect(for: 5)   // then the car connects
-        postInterruption(.ended, shouldResume: true)
-        XCTAssertFalse(engine.isActivelyPlaying, "the paused-at-connect rule wins over a stale resume")
-    }
 
     func testDisconnectDuringCallCancelsPendingResume() {
         let engine = loadEngineFixture()

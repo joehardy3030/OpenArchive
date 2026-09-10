@@ -67,16 +67,6 @@ class AudioPlayerArchive: NSObject {
     private var isSeeking = false
     /// Throttles the periodic insurance save during playback
     private var lastPositionSave = Date.distantPast
-    /// Car head units send a remote `play` on CarPlay connect (resuming the last
-    /// audio source). On a cold car start it can land many seconds after the
-    /// scene connects — once the restored session has been published — so a
-    /// short fixed window from connect misses it. Instead, when we weren't
-    /// already playing at connect, the *next* remote play is swallowed whenever
-    /// it arrives before the deadline; a second one (a person tapping again) is
-    /// honored, and our own `play()` clears the whole thing.
-    private var swallowNextRemotePlay = false
-    private var connectGraceArmedAt = Date.distantPast
-    private var connectGraceDeadline = Date.distantPast
     /// Counts consecutive AVPlayerItem failures so we can skip a few bad tracks
     /// before giving up entirely. Reset whenever an item successfully becomes ready.
     private var consecutiveFailures = 0
@@ -232,64 +222,16 @@ class AudioPlayerArchive: NSObject {
     /// True while the engine considers itself playing (state-based, not rate-based)
     var isActivelyPlaying: Bool { state == .playing || state == .rewind }
 
-    /// Whether a remote play would be swallowed right now (CarPlay connect grace)
-    var remotePlaySuppressed: Bool {
-        let now = Date()
-        return swallowNextRemotePlay && now < connectGraceDeadline
-    }
-
-    /// Called on CarPlay connect: keep a paused session paused despite the
-    /// head unit's automatic play command. No-op if already playing. The window
-    /// is generous because a cold car start delivers that command late; only
-    /// one play is swallowed, so even an immediate second press gets through.
-    /// A restored Now Playing screen is not evidence of a person's intent.
-    func suppressAutoResumeOnConnect(for seconds: TimeInterval = 30, now: Date = Date()) {
-        // A pending interruption resume must not start a paused connection.
-        shouldResumeAfterInterruption = false
-        guard !isActivelyPlaying else {
-            Self.log.notice("CarPlay connected while playing; nothing to suppress")
-            return
-        }
-        connectGraceArmedAt = now
-        connectGraceDeadline = connectGraceArmedAt.addingTimeInterval(seconds)
-        swallowNextRemotePlay = true
-        Self.log.notice("CarPlay connected while \(String(describing: self.state), privacy: .public); armed to swallow the head unit's auto-play for \(seconds, privacy: .public)s")
-    }
-
-    /// Called on CarPlay disconnect so the phone's next lock-screen play isn't eaten
-    func cancelAutoResumeSuppression() {
-        swallowNextRemotePlay = false
-    }
-
     /// Both CarPlay disconnection callbacks use this path. A call may have
-    /// already paused us, so cancellation must also work while paused.
+    /// already paused us, so this must also work while paused.
     func handleCarPlayDisconnect() {
         Self.log.notice("CarPlay disconnected; pausing and saving the stop point")
         pause()
-        cancelAutoResumeSuppression()
-    }
-
-    /// Swallows exactly one remote play inside the connect grace.
-    /// Returns true if swallowed. Logs either way, with the time since connect.
-    private func swallowRemotePlayIfSuppressed(command: String) -> Bool {
-        let sinceConnect = Date().timeIntervalSince(connectGraceArmedAt)
-        let since = connectGraceArmedAt == .distantPast
-            ? "no CarPlay connect on record"
-            : String(format: "%.1fs after CarPlay connect", sinceConnect)
-        guard remotePlaySuppressed else {
-            Self.log.notice("remote \(command, privacy: .public) honored (\(since, privacy: .public))")
-            return false
-        }
-        swallowNextRemotePlay = false
-        Self.log.notice("swallowed the head unit's auto-\(command, privacy: .public) (\(since, privacy: .public))")
-        updateNowPlayingInfo(rate: 0.0)   // reassert paused so the car's play button doesn't flip
-        return true
     }
 
     /// Remote play (lock screen, CarPlay, headset). Kept out of the command
-    /// target closure so the decision is unit-testable. A play that arrives
-    /// before anything is loaded (a cold start, mid-restore) fails without
-    /// spending the swallow, so the head unit's later retry is still caught.
+    /// target closure so the decision is unit-testable. A head unit's
+    /// connect-time play is honored like any other — see the CarPlay notes.
     @discardableResult
     func handleRemotePlay() -> MPRemoteCommandHandlerStatus {
         guard playerQueue?.currentItem != nil else {
@@ -298,7 +240,7 @@ class AudioPlayerArchive: NSObject {
         }
         // Buffering can leave the rate at zero even though play was requested.
         guard !isActivelyPlaying else { return .success }
-        if swallowRemotePlayIfSuppressed(command: "play") { return .success }
+        Self.log.notice("remote play honored")
         play()
         return .success
     }
@@ -311,23 +253,19 @@ class AudioPlayerArchive: NSObject {
         return .success
     }
 
-    /// Remote toggle; honors the same connect grace as play.
+    /// Remote toggle, for head units that send it instead of play/pause.
     @discardableResult
     func handleRemoteTogglePlayPause() -> MPRemoteCommandHandlerStatus {
         guard playerQueue?.currentItem != nil else {
             Self.log.notice("remote toggle ignored: nothing loaded")
             return .commandFailed
         }
-        if isActivelyPlaying {
-            pause()
-        } else if !swallowRemotePlayIfSuppressed(command: "toggle") {
-            play()
-        }
+        Self.log.notice("remote toggle honored")
+        if isActivelyPlaying { pause() } else { play() }
         return .success
     }
 
     @objc func play() {
-        swallowNextRemotePlay = false   // an explicit play from our own UI always wins
         shouldResumeAfterInterruption = false
         self.playerQueue?.play()
         Self.log.notice("play() called")
